@@ -1,12 +1,12 @@
-import mongoose from 'mongoose';
 import app from './app';
 import config from './config/config';
 import logger from './config/logger';
+import prisma from './config/prisma';
 
 let server: ReturnType<typeof app.listen>;
 
-mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
-  logger.info('Connected to MongoDB');
+prisma.$connect().then(() => {
+  logger.info('Connected to PostgreSQL');
   server = app.listen(config.port, () => {
     logger.info(`Listening to port ${config.port}`);
   });
@@ -14,9 +14,11 @@ mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
 
 const exitHandler = () => {
   if (server) {
-    server.close(() => {
-      logger.info('Server closed');
-      process.exit(1);
+    prisma.$disconnect().then(() => {
+      server.close(() => {
+        logger.info('Server closed');
+        process.exit(1);
+      });
     });
   } else {
     process.exit(1);

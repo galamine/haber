@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
-import { User } from '../models';
 import config from './config';
+import prisma from './prisma';
 import { tokenTypes } from './tokens';
 
 const jwtOptions = {
@@ -16,7 +16,18 @@ const jwtVerify = async (
     if (payload.type !== tokenTypes.ACCESS) {
       throw new Error('Invalid token type');
     }
-    const user = await User.findById(payload.sub);
+    const user = await prisma.user.findUnique({
+      where: { id: payload.sub },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        isEmailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
     if (!user) {
       return done(null, false);
     }

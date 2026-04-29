@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const httpStatus = require('http-status');
 const httpMocks = require('node-mocks-http');
 const { errorConverter, errorHandler } = require('../../../src/middlewares/error');
@@ -62,22 +61,6 @@ describe('Error middlewares', () => {
         expect.objectContaining({
           statusCode: error.statusCode,
           message: httpStatus[error.statusCode],
-          isOperational: false,
-        })
-      );
-    });
-
-    test('should convert a Mongoose error to ApiError with status 400 and preserve its message', () => {
-      const error = new mongoose.Error('Any mongoose error');
-      const next = jest.fn();
-
-      errorConverter(error, httpMocks.createRequest(), httpMocks.createResponse(), next);
-
-      expect(next).toHaveBeenCalledWith(expect.any(ApiError));
-      expect(next).toHaveBeenCalledWith(
-        expect.objectContaining({
-          statusCode: httpStatus.BAD_REQUEST,
-          message: error.message,
           isOperational: false,
         })
       );

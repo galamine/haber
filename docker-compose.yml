@@ -5,25 +5,29 @@ services:
     build: .
     image: node-app
     environment:
-      - MONGODB_URL=mongodb://mongodb:27017/node-boilerplate
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/node_boilerplate
     ports:
       - '3000:3000'
     depends_on:
-      - mongodb
+      - postgres
     networks:
       - node-network
 
-  mongodb:
-    image: mongo:7.0
+  postgres:
+    image: postgres:16-alpine
     ports:
-      - '27017:27017'
+      - '5432:5432'
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=node_boilerplate
     volumes:
-      - dbdata:/data/db
+      - pgdata:/var/lib/postgresql/data
     networks:
       - node-network
 
 volumes:
-  dbdata:
+  pgdata:
 
 networks:
   node-network:

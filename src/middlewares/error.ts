@@ -1,6 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
-import mongoose from 'mongoose';
 import config from '../config/config';
 import logger from '../config/logger';
 import { ApiError } from '../utils/ApiError';
@@ -13,9 +12,8 @@ interface ErrorWithStatus extends Error {
 const errorConverter = (err: ErrorWithStatus, _req: Request, _res: Response, next: NextFunction) => {
   let error = err;
   if (!(error instanceof ApiError)) {
-    const statusCode =
-      error.statusCode || error instanceof mongoose.Error ? httpStatus.BAD_REQUEST : httpStatus.INTERNAL_SERVER_ERROR;
-    const message = error.message || httpStatus[statusCode];
+    const statusCode = error.statusCode || httpStatus.BAD_REQUEST;
+    const message = error.message || String(httpStatus[statusCode as keyof typeof httpStatus]);
     error = new ApiError(statusCode, message, false, err.stack);
   }
   next(error);

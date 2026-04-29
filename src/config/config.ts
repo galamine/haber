@@ -2,7 +2,7 @@ import path from 'node:path';
 import dotenv from 'dotenv';
 import Joi from 'joi';
 
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+dotenv.config({ path: path.join(__dirname, '../../../.env') });
 
 interface IJwt {
   secret: string;
@@ -24,15 +24,14 @@ interface IEmail {
   from?: string;
 }
 
-interface IMongoose {
+interface IPostgres {
   url: string;
-  options: Record<string, never>;
 }
 
 interface Config {
   env: string;
   port: number;
-  mongoose: IMongoose;
+  postgres: IPostgres;
   jwt: IJwt;
   email: IEmail;
 }
@@ -41,7 +40,7 @@ const envVarsSchema = Joi.object()
   .keys({
     NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
     PORT: Joi.number().default(3000),
-    MONGODB_URL: Joi.string().required().description('Mongo DB url'),
+    DATABASE_URL: Joi.string().required().description('PostgreSQL DB url'),
     JWT_SECRET: Joi.string().required().description('JWT secret key'),
     JWT_ACCESS_EXPIRATION_MINUTES: Joi.number().default(30).description('minutes after which access tokens expire'),
     JWT_REFRESH_EXPIRATION_DAYS: Joi.number().default(30).description('days after which refresh tokens expire'),
@@ -65,12 +64,25 @@ if (error) {
   throw new Error(`Config validation error: ${error.message}`);
 }
 
+const getPostgresUrl = (url: string, env: string): string => {
+  if (env === 'test') {
+    try {
+      const urlObj = new URL(url);
+      const pathname = urlObj.pathname.replace(/\/$/, '');
+      urlObj.pathname = `${pathname}_test`;
+      return urlObj.toString();
+    } catch {
+      return `${url}_test`;
+    }
+  }
+  return url;
+};
+
 const _config: Config = {
   env: envVars.NODE_ENV as string,
   port: envVars.PORT as number,
-  mongoose: {
-    url: (envVars.MONGODB_URL as string) + (envVars.NODE_ENV === 'test' ? '-test' : ''),
-    options: {},
+  postgres: {
+    url: getPostgresUrl(envVars.DATABASE_URL as string, envVars.NODE_ENV as string),
   },
   jwt: {
     secret: envVars.JWT_SECRET as string,

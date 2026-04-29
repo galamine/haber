@@ -1,18 +1,20 @@
-const mongoose = require('mongoose');
-const config = require('../../src/config/config');
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 const setupTestDB = () => {
   beforeAll(async () => {
-    await mongoose.connect(config.mongoose.url, config.mongoose.options);
+    await prisma.$connect();
   });
 
   beforeEach(async () => {
-    await Promise.all(Object.values(mongoose.connection.collections).map(async (collection) => collection.deleteMany()));
+    await prisma.user.deleteMany();
+    await prisma.token.deleteMany();
   });
 
   afterAll(async () => {
-    await mongoose.disconnect();
+    await prisma.$disconnect();
   });
 };
 
-module.exports = setupTestDB;
+module.exports = { setupTestDB, prisma };

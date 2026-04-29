@@ -1,8 +1,8 @@
+import type { User } from '@prisma/client';
 import type { Request } from 'express';
-import type { IUser } from './models';
 
 export interface AuthRequest extends Request {
-  user?: IUser | Express.User;
+  user?: User | Express.User;
 }
 
 export interface PaginateQuery extends Request {
