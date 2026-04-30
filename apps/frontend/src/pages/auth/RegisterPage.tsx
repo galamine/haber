@@ -1,8 +1,8 @@
+import type { RegisterDto } from '@haber/shared';
+import { RegisterDtoSchema } from '@haber/shared';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import type { RegisterDto } from '@haber/shared';
-import { RegisterDtoSchema } from '@haber/shared';
 import { useRegister } from '../../hooks/useAuth';
 
 export function RegisterPage() {

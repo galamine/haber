@@ -25,7 +25,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   const { useAuthStore } = await import('../store/authStore');
   const token = useAuthStore.getState().accessToken;
   if (token) {
-    defaultHeaders['Authorization'] = `Bearer ${token}`;
+    defaultHeaders.Authorization = `Bearer ${token}`;
   }
 
   const response = await fetch(`${BASE_URL}${endpoint}`, {
@@ -36,11 +36,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new ApiError(
-      response.status,
-      (errorData as { message?: string }).message ?? response.statusText,
-      errorData
-    );
+    throw new ApiError(response.status, (errorData as { message?: string }).message ?? response.statusText, errorData);
   }
 
   if (response.status === 204) {

@@ -1,11 +1,11 @@
 export type {
-  RegisterDto,
+  AuthResponseDto,
+  AuthTokensDto,
+  ForgotPasswordDto,
   LoginDto,
   LogoutDto,
   RefreshTokensDto,
-  ForgotPasswordDto,
+  RegisterDto,
   ResetPasswordDto,
   TokenPayloadDto,
-  AuthTokensDto,
-  AuthResponseDto,
 } from '../schemas/auth.schema';

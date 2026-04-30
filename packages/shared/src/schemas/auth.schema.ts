@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserDtoSchema, passwordSchema } from './user.schema';
+import { passwordSchema, UserDtoSchema } from './user.schema';
 
 export const RegisterDtoSchema = z.object({
   name: z.string().min(1, 'Name is required'),

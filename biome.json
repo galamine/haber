@@ -6,14 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": false,
-    "ignore": [
-      "**/dist/**",
-      "**/node_modules/**",
-      "**/.swc-cache/**",
-      "**/coverage/**",
-      "apps/frontend/src/components/ui/**"
-    ]
+    "ignoreUnknown": false
   },
   "formatter": {
     "enabled": true,
@@ -42,14 +35,29 @@
       "jsxQuoteStyle": "double"
     }
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "overrides": [
     {
-      "include": ["apps/frontend/**"],
+      "includes": ["apps/frontend/**"],
       "linter": {
         "rules": {
           "correctness": {
             "useExhaustiveDependencies": "warn",
             "useHookAtTopLevel": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/frontend/**/*.css"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noUnknownAtRules": "off"
           }
         }
       }

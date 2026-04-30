@@ -1,8 +1,8 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { PageShell } from './components/layout/PageShell';
-import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
+import { DashboardPage } from './pages/DashboardPage';
 import { UserDetailPage } from './pages/users/UserDetailPage';
 import { UserListPage } from './pages/users/UserListPage';
 import { useAuthStore } from './store/authStore';

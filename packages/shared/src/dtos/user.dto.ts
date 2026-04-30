@@ -1,1 +1,1 @@
-export type { UserDto, CreateUserDto, UpdateUserDto, PaginatedUsersDto } from '../schemas/user.schema';
+export type { CreateUserDto, PaginatedUsersDto, UpdateUserDto, UserDto } from '../schemas/user.schema';

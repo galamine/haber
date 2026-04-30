@@ -33,7 +33,7 @@ export function PageShell() {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-muted-foreground">{user?.name}</span>
-              <button onClick={handleLogout} className="text-sm text-muted-foreground hover:text-foreground">
+              <button type="button" onClick={handleLogout} className="text-sm text-muted-foreground hover:text-foreground">
                 Logout
               </button>
             </div>

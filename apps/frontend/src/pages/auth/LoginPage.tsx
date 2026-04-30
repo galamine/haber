@@ -1,8 +1,8 @@
+import type { LoginDto } from '@haber/shared';
+import { LoginDtoSchema } from '@haber/shared';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import type { LoginDto } from '@haber/shared';
-import { LoginDtoSchema } from '@haber/shared';
 import { useLogin } from '../../hooks/useAuth';
 
 export function LoginPage() {
