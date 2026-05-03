@@ -74,7 +74,7 @@ packages/
 - **Routing**: React Router v6. Protected routes check `useAuthStore` for `accessToken`. Layout wraps authenticated pages in `PageShell`.
 - **State**: Zustand (`store/authStore.ts`) for auth (persisted to `localStorage` as `haber-auth`). Server state via TanStack Query (`hooks/`).
 - **API client**: `api/client.ts` — thin fetch wrapper that reads the token from the Zustand store at request time. Base URL from `VITE_API_URL` env var (defaults to `/api`).
-- **UI**: shadcn/ui components (Radix primitives + Tailwind). Components live in `components/`. `lib/utils.ts` exports `cn` (clsx + tailwind-merge).
+- **UI / design system**: See `apps/frontend/DESIGN.md`. Primitives (Radix + CVA) live in `components/ui/`; layout and product chrome in `components/`. Global tokens and Tailwind v4 entry are in `styles/globals.css`. `lib/utils.ts` exports `cn` (clsx + tailwind-merge).
 
 ## Shared Package (`packages/shared/src/`)
 

@@ -1,6 +1,7 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { useLogout } from '../../hooks/useAuth';
-import { useAuthStore } from '../../store/authStore';
+import { Button } from '@/components/ui/button';
+import { useLogout } from '@/hooks/useAuth';
+import { useAuthStore } from '@/store/authStore';
 
 export function PageShell() {
   const user = useAuthStore((s) => s.user);
@@ -33,9 +34,9 @@ export function PageShell() {
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-muted-foreground">{user?.name}</span>
-              <button type="button" onClick={handleLogout} className="text-sm text-muted-foreground hover:text-foreground">
+              <Button type="button" variant="ghost" size="sm" onClick={handleLogout}>
                 Logout
-              </button>
+              </Button>
             </div>
           </div>
         </div>

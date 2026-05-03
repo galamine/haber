@@ -1,7 +1,7 @@
 import type { UpdateUserDto } from '@haber/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { GetUsersParams } from '../api/users';
-import { usersApi } from '../api/users';
+import type { GetUsersParams } from '@/api/users';
+import { usersApi } from '@/api/users';
 
 export const userKeys = {
   all: ['users'] as const,

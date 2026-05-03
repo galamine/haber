@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { useUsers } from '../../hooks/useUsers';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useUsers } from '@/hooks/useUsers';
 
 export function UserListPage() {
   const { data, isLoading, error } = useUsers();
@@ -11,39 +12,39 @@ export function UserListPage() {
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Users</h1>
       <div className="rounded-md border">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b bg-muted/50">
-              <th className="px-4 py-3 text-left font-medium">Name</th>
-              <th className="px-4 py-3 text-left font-medium">Email</th>
-              <th className="px-4 py-3 text-left font-medium">Role</th>
-              <th className="px-4 py-3 text-left font-medium">Verified</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50 hover:bg-muted/50">
+              <TableHead className="px-4 py-3">Name</TableHead>
+              <TableHead className="px-4 py-3">Email</TableHead>
+              <TableHead className="px-4 py-3">Role</TableHead>
+              <TableHead className="px-4 py-3">Verified</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {data?.results.map((user) => (
-              <tr key={user.id} className="border-b last:border-0 hover:bg-muted/30">
-                <td className="px-4 py-3">
+              <TableRow key={user.id}>
+                <TableCell className="px-4 py-3">
                   <Link to={`/users/${user.id}`} className="font-medium hover:underline">
                     {user.name}
                   </Link>
-                </td>
-                <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
-                <td className="px-4 py-3">
+                </TableCell>
+                <TableCell className="px-4 py-3 text-muted-foreground">{user.email}</TableCell>
+                <TableCell className="px-4 py-3">
                   <span className="rounded-full bg-secondary px-2 py-0.5 text-xs">{user.role}</span>
-                </td>
-                <td className="px-4 py-3 text-muted-foreground">{user.isEmailVerified ? 'Yes' : 'No'}</td>
-              </tr>
+                </TableCell>
+                <TableCell className="px-4 py-3 text-muted-foreground">{user.isEmailVerified ? 'Yes' : 'No'}</TableCell>
+              </TableRow>
             ))}
-            {data?.results.length === 0 && (
-              <tr>
-                <td colSpan={4} className="px-4 py-6 text-center text-muted-foreground">
+            {data && data.results.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={4} className="px-4 py-6 text-center text-muted-foreground">
                   No users found
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
       {data && (
         <p className="text-sm text-muted-foreground">
