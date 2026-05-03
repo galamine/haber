@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useUser } from '../../hooks/useUsers';
+import { useUser } from '@/hooks/useUsers';
 
 export function UserDetailPage() {
   const { userId } = useParams<{ userId: string }>();

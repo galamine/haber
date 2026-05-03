@@ -61,6 +61,47 @@
           }
         }
       }
+    },
+    {
+      "includes": [
+        "apps/frontend/src/components/ui/**",
+        "apps/frontend/src/components/shell/**",
+        "apps/frontend/src/components/blocks/**",
+        "apps/frontend/src/components/media/**",
+        "apps/frontend/src/constants/**",
+        "apps/frontend/src/hooks/use-mobile.ts",
+        "apps/frontend/src/hooks/useInputKeyboardShortcuts.ts"
+      ],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "recommended": false
+          },
+          "security": {
+            "noDangerouslySetInnerHtml": "off"
+          },
+          "suspicious": {
+            "noArrayIndexKey": "off",
+            "noDocumentCookie": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/frontend/src/styles/**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noImportantStyles": "off"
+          },
+          "correctness": {
+            "noInvalidPositionAtImportRule": "off"
+          }
+        }
+      },
+      "formatter": {
+        "enabled": false
+      }
     }
   ]
 }
