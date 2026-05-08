@@ -184,3 +184,11 @@ throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid input');
 - Copy `.env` to `.env.local` for local development
 - Never commit secrets to repository
 - Use `config.ts` in `apps/backend/src/config/` to access env vars
+
+## Frontend Component Reference
+
+For all frontend tasks involving UI components, refer to `apps/frontend/DESIGN_SYSTEM_COMPONENTS.md` for:
+- Component purpose and use cases
+- Import paths and variant APIs
+- Design token usage
+- Dark mode patterns
