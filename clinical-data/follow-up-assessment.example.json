@@ -1,0 +1,135 @@
+{
+  "_meta": {
+    "form": "FORM 2 — FOLLOW-UP ASSESSMENT",
+    "source": "Haber_Specialisto_Clinical_Toolkit.pdf v1.0 (Section: Form 2)",
+    "purpose": "Populated example instance showing the full shape of a follow-up assessment record. Conducted every 4–6 sessions or when clinically indicated; compares against the initial baseline (initial-assessment.example.json).",
+    "linked_to": "student_id, initial_assessment_id, treatment_plan_id"
+  },
+
+  "follow_up_id": "followup_01HXXXXXXXXXXXXXXXX",
+  "tenant_id": "tenant_01HXXXXXXXXXXXXXXXX",
+  "student_id": "stud_01HYYYYYYYYYYYYYYYYY",
+  "initial_assessment_id": "assess_01HXXXXXXXXXXXXXXXX",
+  "treatment_plan_id": "plan_01HXXXXXXXXXXXXXXXX",
+  "version": 1,
+  "is_active": true,
+  "type": "follow_up",
+  "status": "completed",
+  "created_at": "2026-06-18T14:00:00+05:30",
+  "completed_at": "2026-06-18T14:35:00+05:30",
+
+  "section_a_session_information": {
+    "patient_name": "Aarav Sharma",
+    "follow_up_date": "2026-06-18",
+    "therapist_user_id": "user_01HZZZZZZZZZZZZZZZZZ",
+    "therapist_name": "Dr. Anjali Rao",
+    "session_number": 12,
+    "weeks_since_initial_assessment": 6,
+    "parent_caregiver_present": true,
+    "caregiver_present_name": "Riya Sharma"
+  },
+
+  "section_b_goal_progress_review": [
+    {
+      "goal_id": "goal_st_1",
+      "horizon": "short_term",
+      "description": "Tolerate light touch to hands 3/5 trials without distress.",
+      "attainment_pct": 80,
+      "status": "in_progress",
+      "evidence_notes": "3/5 trials tolerated in clinic; 1/5 with novel textures."
+    },
+    {
+      "goal_id": "goal_st_2",
+      "horizon": "short_term",
+      "description": "Engage in sand/rice tactile bin play for 5 minutes.",
+      "attainment_pct": 100,
+      "status": "met",
+      "evidence_notes": "Sustained engagement for 7 min in last two sessions."
+    },
+    {
+      "goal_id": "goal_st_3",
+      "horizon": "short_term",
+      "description": "Imitate 3-step motor sequence with 1 verbal prompt.",
+      "attainment_pct": 60,
+      "status": "in_progress",
+      "evidence_notes": "Imitates 2-step reliably; 3-step inconsistent."
+    },
+    {
+      "goal_id": "goal_st_4",
+      "horizon": "short_term",
+      "description": "Reduce meltdown frequency by 30% (parent log).",
+      "attainment_pct": 40,
+      "status": "not_met",
+      "evidence_notes": "Parent log shows 18% reduction. School transitions still trigger meltdowns."
+    }
+  ],
+
+  "section_c_sensory_processing_progress_check": [
+    { "system_id": "tactile",            "initial_rating": 5, "now_rating": 4, "change": -1, "notes": "Improvement \u2014 tolerates rice/sand bins." },
+    { "system_id": "vestibular",         "initial_rating": 4, "now_rating": 4, "change":  0, "notes": "Unchanged \u2014 still seeks rotary input." },
+    { "system_id": "proprioceptive",     "initial_rating": 4, "now_rating": 3, "change": -1, "notes": "Heavy work routine helping; less crashing." },
+    { "system_id": "auditory",           "initial_rating": 5, "now_rating": 5, "change":  0, "notes": "No change \u2014 noise-cancelling headphones in use." },
+    { "system_id": "visual",             "initial_rating": 3, "now_rating": 3, "change":  0, "notes": "Stable." },
+    { "system_id": "olfactory_gustatory","initial_rating": 5, "now_rating": 4, "change": -1, "notes": "Tolerated mild-smelling new food once." },
+    { "system_id": "interoception",      "initial_rating": 2, "now_rating": 2, "change":  0, "notes": "Limited progress \u2014 add toilet schedule." }
+  ],
+
+  "section_d_follow_up_clinical_questions": {
+    "improvements_at_home_or_school": "Mother reports child voluntarily participated in messy art class twice. Less resistance to bath time. Teacher notes one full circle-time without leaving group.",
+    "regression_new_concerns": "New sleep onset difficulty starting 2 weeks ago; correlates with school field trip. No skill regression.",
+    "home_program_compliance_id": "good",
+    "child_engagement_tolerance_id": "good",
+    "school_performance_changes": "Teacher reports increased peer initiation; still struggles with handwriting tasks.",
+    "behavior_emotional_regulation_changes": "Uses 'breathing card' independently 2/5 times when prompted by teacher.",
+    "new_skills_observed": "Self-fed yogurt with spoon; tolerated short haircut at salon.",
+    "equipment_or_sensory_tools_effectively_used": "Weighted lap pad daily; chewy necklace during homework; noise-cancelling headphones in transit.",
+    "therapist_clinical_observations_this_session": "Child presented regulated. Engaged in tactile circuit for 15 min including sand bin (new). Resisted vertical writing surface task; agreed after weighted vest. Mother reports good carry-over of brushing protocol."
+  },
+
+  "section_e_plan_adjustment_next_steps": {
+    "goal_status_decisions": ["modify_existing", "add_new", "continue_all"],
+    "updated_goals_for_next_period": [
+      {
+        "goal_id": "goal_st_1",
+        "action": "continue",
+        "description": "Tolerate light touch to hands 4/5 trials including novel textures."
+      },
+      {
+        "goal_id": "goal_st_3",
+        "action": "modify",
+        "description": "Imitate 3-step motor sequence independently 4/5 trials."
+      },
+      {
+        "goal_id": "goal_st_5_new",
+        "action": "add",
+        "description": "Initiate use of breathing/regulation card independently 3/5 dysregulation events.",
+        "horizon": "short_term"
+      }
+    ],
+    "updated_home_program_sensory_diet": "Add evening bedtime routine: 5 min rocker + dim lighting + weighted blanket. Continue Wilbarger brushing 2x daily. Trial visual schedule for school transitions.",
+    "next_follow_up_date": "2026-07-30",
+    "next_assessment_type": "follow_up",
+    "clinical_notes_for_team_supervisor": "Discuss with SLP at next MDT \u2014 verbal output increasing; consider AAC trial. Recommend OT supervisor review of brushing protocol carry-over data."
+  },
+
+  "section_f_signatures": {
+    "therapist": {
+      "user_id": "user_01HZZZZZZZZZZZZZZZZZ",
+      "name": "Dr. Anjali Rao",
+      "signed_at": "2026-06-18T14:35:00+05:30",
+      "signed_ip": "203.0.113.42"
+    },
+    "parent_guardian": {
+      "guardian_id": "guard_01HXXXXXXXXXXXXXXXX",
+      "name": "Riya Sharma",
+      "signed_at": "2026-06-18T14:36:00+05:30",
+      "signed_ip": "203.0.113.42"
+    }
+  },
+
+  "_links": {
+    "initial_assessment": "assess_01HXXXXXXXXXXXXXXXX",
+    "previous_follow_up": null,
+    "treatment_plan": "plan_01HXXXXXXXXXXXXXXXX"
+  }
+}

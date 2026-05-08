@@ -1,0 +1,231 @@
+{
+  "_meta": {
+    "form": "SECTION 3 — EVIDENCE-BASED TREATMENT PLAN TEMPLATES",
+    "source": "Haber_Specialisto_Clinical_Toolkit.pdf v1.0 (Section 3, 5 cases)",
+    "purpose": "Plan presets ONLY. These are starter values a doctor copies into a free-form treatment plan; they are NOT first-class entities, do NOT have a lifecycle, and do NOT version. Per-child plans are authored fresh from a preset and individualized.",
+    "id_convention": "preset_<case_slug>",
+    "preset_count": 5,
+    "consumer_module": "TreatmentPlanService (clone preset \u2192 per-student TreatmentPlan)"
+  },
+
+  "presets": [
+    {
+      "preset_id": "preset_asd_sensory",
+      "case_label": "Autism Spectrum Disorder (ASD) with Sensory Processing Difficulties",
+      "linked_diagnoses": ["asd", "spd"],
+      "typical_age_years": 4,
+      "intervention_setting": "hybrid",
+      "intervention_setting_detail": "OT Clinic + Home",
+      "frequency_sessions_per_week": 3,
+      "session_duration_minutes": 60,
+      "presenting_concerns": "Hypersensitivity to light touch and loud sounds; toe-walking; poor eye contact; meltdowns in new or busy environments; avoids messy/wet textures; limited functional play skills; rigid routines.",
+      "assessment_findings_template": "SP2: Significant sensory sensitivity and sensory avoiding patterns. BOT-2: Bilateral coordination at 2nd percentile. CARS-2: Moderate autism. Notable proprioceptive and vestibular seeking behaviors observed.",
+      "approach_tags": ["ayres_si", "dir_floortime", "snoezelen", "sensory_diet"],
+      "approach_notes": "Ayres Sensory Integration (ASI); DIR/Floortime; Snoezelen multi-sensory room sessions (20 min x 3/week); Sensory Diet Protocol; parent coaching in naturalistic sensory strategies.",
+      "equipment": [
+        "lycra_body_sock", "crash_mat", "weighted_lap_pad", "linear_swing", "rotary_swing",
+        "tactile_bin_sand", "tactile_bin_rice", "tactile_bin_water_beads", "visual_timer",
+        "bubble_tube", "fibre_optic_strands", "noise_cancelling_headphones"
+      ],
+      "session_structure": [
+        { "phase": "arrival_regulation", "minutes": 5,  "label": "Arrival & regulation check" },
+        { "phase": "heavy_work",         "minutes": 15, "label": "Heavy work (proprioceptive input — wall push-ups, bear walks, animal walks)" },
+        { "phase": "sensory_circuit",    "minutes": 20, "label": "Sensory circuit (swinging, tactile, balance)" },
+        { "phase": "fine_motor",         "minutes": 15, "label": "Fine motor / structured play" },
+        { "phase": "cooldown_transition","minutes": 5,  "label": "Cool-down & transition preparation" }
+      ],
+      "home_program": "Wilbarger brushing protocol 2x daily; 10 min movement break before school; weighted blanket at bedtime; chewy tool during homework; parent coaching session monthly; written sensory diet schedule provided.",
+      "outcome_measures": [
+        { "tool_id": "sp2",   "schedule": "Re-administer at 3 months" },
+        { "tool_id": "gas",   "schedule": "Rating at 6 weeks" },
+        { "tool_id": "other", "schedule": "Parent-reported meltdown frequency log (weekly); therapist behavioural observation checklist" }
+      ],
+      "short_term_goals_template": [
+        "Tolerate light touch to hands 3/5 trials without distress",
+        "Engage in sand/rice tactile bin play for 5 minutes",
+        "Imitate 3-step motor sequence with 1 verbal prompt",
+        "Reduce meltdown frequency by 30% (parent log)"
+      ],
+      "long_term_goals_template": [
+        "Independent participation in group sensory activities at school",
+        "Independently use 2+ self-regulation strategies when dysregulated",
+        "Age-appropriate fine motor skills — pre-writing readiness",
+        "Tolerance of varied food textures at mealtimes"
+      ]
+    },
+
+    {
+      "preset_id": "preset_cp_spastic_diplegia_gmfcs2",
+      "case_label": "Cerebral Palsy (Spastic Diplegia), GMFCS Level II",
+      "linked_diagnoses": ["cp"],
+      "typical_age_years": 6,
+      "intervention_setting": "pediatric_rehab",
+      "intervention_setting_detail": "Pediatric Rehab Clinic",
+      "frequency_sessions_per_week": 4,
+      "frequency_breakdown": "OT 2x + PT 2x per week",
+      "session_duration_minutes": 45,
+      "presenting_concerns": "Increased muscle tone in bilateral lower limbs; scissor gait pattern; poor hand function for classroom tasks; difficulty with self-care (buttons, zippers, shoe-tying); tires easily during academic tasks; low endurance.",
+      "assessment_findings_template": "PDMS-2: Fine motor age equivalent 3.5 years. WeeFIM Self-Care: 28/56 (moderate assistance required). MAS spasticity score: Lower limbs 2, Upper limbs 1. Functional grip strength reduced bilaterally.",
+      "approach_tags": ["cimt", "task_oriented", "ndt"],
+      "approach_notes": "Constraint-Induced Movement Therapy (CIMT); task-oriented training; Neurodevelopmental Technique (NDT); dynamic splinting program; assistive technology (laptop, adapted pencils); graded activity for endurance.",
+      "equipment": [
+        "dynamic_wrist_splint", "pencil_grips", "triangular_pencils", "dycem_mat",
+        "adapted_scissors", "built_up_utensil_handles", "slant_board",
+        "elastic_shoelaces", "button_hook"
+      ],
+      "session_structure": [
+        { "phase": "warm_up_rom",         "minutes": 5,  "label": "Warm-up & passive ROM exercises" },
+        { "phase": "functional_task",     "minutes": 20, "label": "Functional task practice — bilateral UE activities, fine motor tasks" },
+        { "phase": "adl_simulation",      "minutes": 15, "label": "ADL simulation (dressing, self-care practice)" },
+        { "phase": "cooldown_review",     "minutes": 5,  "label": "Cool-down & home program review" }
+      ],
+      "home_program": "Passive stretching routine 2x daily (10 min — provided handout); practice dressing tasks at same time each day (habit stacking); splint wearing schedule per OT protocol; weekly video check-in available; school occupational therapy teacher liaison letter provided.",
+      "outcome_measures": [
+        { "tool_id": "weefim",       "schedule": "At 3 months" },
+        { "tool_id": "abilhand_kids","schedule": "Questionnaire" },
+        { "tool_id": "other",        "schedule": "School occupational performance checklist; handwriting speed & legibility measure" }
+      ],
+      "short_term_goals_template": [
+        "Button shirt independently 4/5 attempts in 3 minutes",
+        "Maintain functional pencil grip with adapted tool for 10 min writing task",
+        "Don and doff AFO/orthotics with minimal assistance",
+        "Legible handwriting output for short classroom tasks"
+      ],
+      "long_term_goals_template": [
+        "Full independence in school-day ADLs",
+        "Legible handwriting at grade-level speed",
+        "Sustained fine motor endurance for full school day",
+        "Community ambulation with assistive device as needed"
+      ]
+    },
+
+    {
+      "preset_id": "preset_adhd_sensory_seeking",
+      "case_label": "ADHD with Sensory Seeking & Poor Attention Regulation",
+      "linked_diagnoses": ["adhd"],
+      "typical_age_years": 7,
+      "intervention_setting": "hybrid",
+      "intervention_setting_detail": "School + OT Clinic",
+      "frequency_sessions_per_week": 2,
+      "session_duration_minutes": 45,
+      "presenting_concerns": "Cannot sit still in class; constantly seeking movement — jumping, crashing, spinning; poor and illegible handwriting; frequently loses belongings; emotional outbursts during transitions; difficulty following multi-step instructions; peer conflict.",
+      "assessment_findings_template": "SP2: Sensation seeking quadrant significantly elevated (>2 SD). Beery VMI: 5th percentile. COPM: School performance 2/10 (performance), 3/10 (satisfaction). Teacher Connors: Elevated hyperactivity/impulsivity subscale.",
+      "approach_tags": ["sensory_diet", "alert_program", "zones_regulation", "hwt"],
+      "approach_notes": "Sensory diet — Alert Program (How Does Your Engine Run?); Zones of Regulation (self-regulation curriculum); Handwriting Without Tears (HWT); executive function skill-building; classroom consultation and teacher education.",
+      "equipment": [
+        "wobble_cushion", "fidget_tool_tangle", "fidget_tool_putty", "weighted_vest",
+        "chewable_silicone_necklace", "visual_schedule_cards", "therapy_ball_chair",
+        "time_timer", "color_coded_folders"
+      ],
+      "session_structure": [
+        { "phase": "heavy_work",            "minutes": 5,  "label": "Heavy work (wall push-ups, bear walks, resistance band — proprioceptive loading)" },
+        { "phase": "fine_motor_handwriting","minutes": 15, "label": "Fine motor & handwriting (HWT approach)" },
+        { "phase": "self_regulation",       "minutes": 15, "label": "Self-regulation skills — Zones of Regulation activities" },
+        { "phase": "executive_function",    "minutes": 10, "label": "Executive function games & organizational skill practice" }
+      ],
+      "home_program": "Morning proprioceptive routine (10 min before school); dedicated quiet homework station with visual schedule; visual timer for task chunks (10 min work, 3 min movement break); color-coded folder system at home and school; teacher briefing note and strategy sheet provided; monthly review with parents.",
+      "outcome_measures": [
+        { "tool_id": "copm",  "schedule": "Re-score at 8 weeks" },
+        { "tool_id": "other", "schedule": "Teacher Connors rating scale (monthly); handwriting legibility and speed checklist; self-regulation incident log" }
+      ],
+      "short_term_goals_template": [
+        "Remain seated at desk for 15 min using 1 scheduled movement break",
+        "Complete classroom writing task within allotted time with legible output",
+        "Independently use 2 self-regulation strategies when recognizing dysregulation",
+        "Follow 3-step verbal instruction 4/5 trials"
+      ],
+      "long_term_goals_template": [
+        "Legible & functional handwriting for full academic output",
+        "Self-regulate through 80% of school-day transitions independently",
+        "Organizational system maintained for school materials (daily check)",
+        "Positive peer interactions without adult prompt in structured activities"
+      ]
+    },
+
+    {
+      "preset_id": "preset_down_syndrome_gdd",
+      "case_label": "Down Syndrome with Global Developmental Delay",
+      "linked_diagnoses": ["down_syndrome", "gdd"],
+      "typical_age_years": 3,
+      "intervention_setting": "early_intervention",
+      "intervention_setting_detail": "Early Intervention Programme",
+      "frequency_sessions_per_week": 3,
+      "session_duration_minutes": 45,
+      "presenting_concerns": "Low muscle tone (hypotonia) throughout body; significantly delayed fine and gross motor milestones; feeding difficulties — tongue thrust and poor oral-motor control; limited hand manipulation skills; short attention span for structured activities; delayed self-care skills.",
+      "assessment_findings_template": "PDMS-2: Gross motor age equivalent 12 months; Fine motor age equivalent 10 months. PEDI-CAT: Self-care domain severely limited. Oral-motor assessment: tongue thrust present, poor lip closure, limited jaw grading.",
+      "approach_tags": ["early_intervention", "oral_motor_therapy", "ndt", "sensory_diet"],
+      "approach_notes": "Play-based early intervention (family-centred); oral-motor therapy (pre-feeding skills); Neurodevelopmental Technique (NDT) to address hypotonia; sensory-motor activities to build muscle tone and postural control; family coaching and parent education at every session.",
+      "equipment": [
+        "therapy_ball", "adapted_spoon", "dycem_mat", "ark_grabber",
+        "cause_effect_switch_toys", "mirror_oral_motor", "inset_puzzle_boards", "duplo"
+      ],
+      "session_structure": [
+        { "phase": "tummy_time_warmup", "minutes": 10, "label": "Tummy time & gross motor warm-up (strengthening, postural control)" },
+        { "phase": "fine_motor_play",   "minutes": 15, "label": "Fine motor play activities (grasping, pinching, stacking, manipulation)" },
+        { "phase": "oral_motor",        "minutes": 10, "label": "Oral-motor exercises & feeding skill practice" },
+        { "phase": "parent_coaching",   "minutes": 10, "label": "Parent coaching — reviewing home strategies" }
+      ],
+      "home_program": "Tummy time 3x daily (10 min — graded positioning); practice spoon feeding at every mealtime; oral-motor exercises before meals (therapist-guided programme); daily cause-effect toy / book play (10 min); parent coaching at every session; monthly multidisciplinary team review.",
+      "outcome_measures": [
+        { "tool_id": "pdms2",   "schedule": "At 6 months" },
+        { "tool_id": "pedi_cat","schedule": "Quarterly" },
+        { "tool_id": "other",   "schedule": "Developmental milestone tracker (parent daily log); oral-motor feeding skills checklist" }
+      ],
+      "short_term_goals_template": [
+        "Consistent pincer grasp for small objects 3/5 trials",
+        "Spoon-feed soft/mashed food with minimal assistance (wrist guidance)",
+        "Stack 3 blocks independently",
+        "Engage with cause-effect toy for 5 min (sustained attention)"
+      ],
+      "long_term_goals_template": [
+        "Self-feed full meal with spoon and fork with supervision only",
+        "Age-appropriate play skills in parallel play with same-age peers",
+        "Independent dressing skills for simple garments (pull-on pants, socks)",
+        "Communicative gestures and joint attention during play"
+      ]
+    },
+
+    {
+      "preset_id": "preset_dcd_dyspraxia",
+      "case_label": "Developmental Coordination Disorder (Dyspraxia / DCD)",
+      "linked_diagnoses": ["dcd", "dyspraxia"],
+      "typical_age_years": 8,
+      "intervention_setting": "hybrid",
+      "intervention_setting_detail": "OT Clinic + School Consultation",
+      "frequency_sessions_per_week": 2,
+      "session_duration_minutes": 60,
+      "presenting_concerns": "Clumsy — frequent trips and collisions; illegible and slow handwriting significantly below class peers; very slow to complete written tasks in school; difficulty learning new motor skills (bicycle, catching, swimming); actively avoids PE and sports; low self-esteem around physical activities; social withdrawal.",
+      "assessment_findings_template": "MABC-2: 3rd percentile (significant motor impairment). Beery VMI: 7th percentile. BOT-2: Running speed/agility 4th percentile. Parent and teacher report: avoids physical play, negative self-talk about motor skills.",
+      "approach_tags": ["co_op", "task_oriented", "errorless_learning", "motor_imagery", "hwt"],
+      "approach_notes": "CO-OP (Cognitive Orientation to daily Occupational Performance) — child-led goal setting and strategy discovery; task-specific practice with errorless learning; motor imagery training; Handwriting Without Tears (HWT); self-monitoring strategies; classroom consultation & school letter.",
+      "equipment": [
+        "slant_board", "pencil_grips", "graph_paper", "laptop_alternative_output",
+        "balance_beam", "stepping_stones", "catching_mitts", "mirror_oral_motor"
+      ],
+      "session_structure": [
+        { "phase": "warmup_body_awareness","minutes": 10, "label": "Warm-up & body awareness activities (proprioceptive, motor planning games)" },
+        { "phase": "handwriting_fine_motor","minutes": 20, "label": "Handwriting & fine motor skills (HWT approach, meaningful writing tasks)" },
+        { "phase": "gross_motor_co_op",    "minutes": 20, "label": "Gross motor skill practice using CO-OP — Goal-Plan-Do-Check framework" },
+        { "phase": "self_reflection",      "minutes": 10, "label": "Self-reflection and personal goal-setting with child" }
+      ],
+      "home_program": "Daily 10-min handwriting practice (structured — not freeform); teacher education letter provided with strategies for classroom support; classroom seating assessment (preferred front positioning); encourage swimming, cycling, or martial arts (lower collision-risk sports); practice chosen CO-OP skill daily (5 min); monthly parent review meeting.",
+      "outcome_measures": [
+        { "tool_id": "mabc2", "schedule": "At 6 months" },
+        { "tool_id": "copm",  "schedule": "At 3 months" },
+        { "tool_id": "other", "schedule": "Handwriting speed & legibility checklist (monthly); PEGS — child self-report; PE teacher observation report" }
+      ],
+      "short_term_goals_template": [
+        "Produce legible handwriting at functional speed for classroom tasks",
+        "Catch a tennis ball 7/10 trials at 2 metres distance",
+        "Navigate school stairs safely without holding railing",
+        "Manage full lunchbox and utensils independently"
+      ],
+      "long_term_goals_template": [
+        "Active participation in PE class activities alongside peers",
+        "Consistent written output at grade-level speed and legibility",
+        "Positive self-efficacy statements around physical and motor activities",
+        "Independent organization of school materials and schedule"
+      ]
+    }
+  ]
+}

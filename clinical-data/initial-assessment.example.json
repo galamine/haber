@@ -1,0 +1,163 @@
+{
+  "_meta": {
+    "form": "FORM 1 — INITIAL / FIRST ASSESSMENT",
+    "source": "Haber_Specialisto_Clinical_Toolkit.pdf v1.0 (Section: Form 1)",
+    "purpose": "Populated example instance showing the full shape of an initial-assessment record. References taxonomy IDs from clinical-taxonomies.seed.json.",
+    "expected_duration_minutes": "45–60",
+    "linked_to": "student_id (auto-populated by app)"
+  },
+
+  "assessment_id": "assess_01HXXXXXXXXXXXXXXXX",
+  "tenant_id": "tenant_01HXXXXXXXXXXXXXXXX",
+  "student_id": "stud_01HYYYYYYYYYYYYYYYYY",
+  "version": 1,
+  "is_active": true,
+  "type": "initial",
+  "status": "completed",
+  "created_at": "2026-05-07T09:30:00+05:30",
+  "completed_at": "2026-05-07T10:25:00+05:30",
+
+  "section_a_patient_referral": {
+    "patient_full_name": "Aarav Sharma",
+    "date_of_birth": "2022-04-12",
+    "age": { "years": 4, "months": 1 },
+    "gender": "male",
+    "date_of_assessment": "2026-05-07",
+    "assessment_location": "Haber Specialisto Clinic — Bengaluru, Indiranagar",
+    "referring_doctor": "Dr. Meera Iyer (Pediatrician)",
+    "referral_source": "Pediatric outpatient referral",
+    "primary_caregiver_name": "Riya Sharma",
+    "relationship_to_child": "Mother",
+    "contact_number": "+91-98XXXXXX12",
+    "email_address": "riya.sharma@example.com",
+    "chief_complaint": "Avoids messy textures, frequent meltdowns in noisy environments, toe-walking, limited eye contact."
+  },
+
+  "section_b_medical_developmental_history": {
+    "primary_diagnoses": ["asd", "spd"],
+    "other_diagnosis_specify": null,
+    "prenatal_history": "Uncomplicated pregnancy. Routine antenatal care.",
+    "birth_history_complications": "Term delivery via emergency C-section due to non-reassuring fetal heart rate. APGAR 7/9.",
+    "neonatal_history": "Brief 48h NICU stay for observation; discharged stable.",
+    "gestational_age_at_birth_weeks": 39,
+    "past_medical_surgical_history": "Recurrent otitis media at age 2; bilateral grommet insertion at age 3.",
+    "current_medications": "Multivitamin syrup (5 ml OD). No prescription medications.",
+    "allergies_clinical_precautions": "Mild eczema; avoid lanolin-based products.",
+    "previous_therapies_duration": "Speech therapy at private centre, 6 months (3 sessions/week)."
+  },
+
+  "section_c_developmental_milestones": [
+    { "milestone_id": "head_control",            "achieved_at_age_months": 4,  "delayed": false, "notes": "" },
+    { "milestone_id": "rolling",                 "achieved_at_age_months": 6,  "delayed": false, "notes": "" },
+    { "milestone_id": "sitting_independently",   "achieved_at_age_months": 8,  "delayed": false, "notes": "" },
+    { "milestone_id": "crawling",                "achieved_at_age_months": 11, "delayed": false, "notes": "" },
+    { "milestone_id": "standing",                "achieved_at_age_months": 13, "delayed": false, "notes": "" },
+    { "milestone_id": "walking",                 "achieved_at_age_months": 16, "delayed": true,  "notes": "Toe-walking pattern persisted past 24 months." },
+    { "milestone_id": "first_words",             "achieved_at_age_months": 24, "delayed": true,  "notes": "Single words only at 24 months." },
+    { "milestone_id": "two_word_phrases",        "achieved_at_age_months": 36, "delayed": true,  "notes": "Two-word phrases not consistent until 36 months." },
+    { "milestone_id": "toilet_training",         "achieved_at_age_months": null, "delayed": true,  "notes": "In progress; resists toilet for bowel movements." },
+    { "milestone_id": "self_feeding",            "achieved_at_age_months": 30, "delayed": true,  "notes": "Refuses utensils for textured food." },
+    { "milestone_id": "dressing",                "achieved_at_age_months": null, "delayed": true,  "notes": "Cannot manage buttons or zippers; tolerates pull-on clothing only." },
+    { "milestone_id": "eye_contact_social_smile","achieved_at_age_months": 18, "delayed": true,  "notes": "Reduced and inconsistent eye contact." }
+  ],
+
+  "section_d_sensory_processing_profile": {
+    "scale_anchors": { "1": "Hypo-responsive", "3": "Typical", "5": "Hyper-responsive" },
+    "ratings": [
+      { "system_id": "tactile",            "rating": 5, "notes": "Avoids messy textures; tags on clothing trigger meltdowns." },
+      { "system_id": "vestibular",         "rating": 4, "notes": "Seeks rotary movement; spins frequently." },
+      { "system_id": "proprioceptive",     "rating": 4, "notes": "Crashing, jumping, deep pressure seeking." },
+      { "system_id": "auditory",           "rating": 5, "notes": "Covers ears at vacuum cleaner; meltdowns in malls." },
+      { "system_id": "visual",             "rating": 3, "notes": "Typical." },
+      { "system_id": "olfactory_gustatory","rating": 5, "notes": "Refuses strong-smelling foods; gags on textures." },
+      { "system_id": "interoception",      "rating": 2, "notes": "Limited awareness of toilet needs and hunger." }
+    ],
+    "behavioural_observations": "Child sought weighted lap pad during transitions. Covered ears repeatedly when corridor noise increased. Avoided sand bin; tolerated rice bin for 2 minutes after modeling."
+  },
+
+  "section_e_functional_fine_motor": {
+    "areas_of_concern": [
+      "buttoning_zipping_dressing",
+      "feeding_skills_oral_motor",
+      "play_skills",
+      "social_participation_peer_interaction",
+      "adl_independence",
+      "emotional_regulation_behavior"
+    ],
+    "clinical_observations_findings": "Bilateral coordination at 2nd percentile (BOT-2). Rigid play schemas — lines up cars repeatedly, resists peer entry. Strong proprioceptive seeking. Refuses messy art tasks."
+  },
+
+  "section_f_standardized_assessment_tools": {
+    "tools_used": [
+      {
+        "tool_id": "sp2",
+        "scores_summary": "Significant sensory sensitivity (>2 SD above mean) and sensory avoiding patterns elevated."
+      },
+      {
+        "tool_id": "bot2",
+        "scores_summary": "Bilateral coordination at 2nd percentile."
+      },
+      {
+        "tool_id": "cars2",
+        "scores_summary": "Total score 32.5 — Moderate autism range."
+      }
+    ],
+    "scores_percentiles_summary": "Profile consistent with ASD + sensory modulation disorder; bilateral coordination impairment at 2nd percentile; auditory and tactile hyper-responsivity dominant.",
+    "other_tool_specify": null
+  },
+
+  "section_g_initial_goals_intervention_plan": {
+    "short_term_goals_4_6_weeks": [
+      { "goal_id": "goal_st_1", "description": "Tolerate light touch to hands 3/5 trials without distress.", "target_attainment_pct": 100 },
+      { "goal_id": "goal_st_2", "description": "Engage in sand/rice tactile bin play for 5 minutes.",         "target_attainment_pct": 100 },
+      { "goal_id": "goal_st_3", "description": "Imitate 3-step motor sequence with 1 verbal prompt.",          "target_attainment_pct": 100 },
+      { "goal_id": "goal_st_4", "description": "Reduce meltdown frequency by 30% (parent log).",                "target_attainment_pct": 100 }
+    ],
+    "long_term_goals_3_6_months": [
+      { "goal_id": "goal_lt_1", "description": "Independent participation in group sensory activities at school.", "target_attainment_pct": 100 },
+      { "goal_id": "goal_lt_2", "description": "Independently use 2+ self-regulation strategies when dysregulated.","target_attainment_pct": 100 },
+      { "goal_id": "goal_lt_3", "description": "Age-appropriate fine motor skills — pre-writing readiness.",         "target_attainment_pct": 100 },
+      { "goal_id": "goal_lt_4", "description": "Tolerance of varied food textures at mealtimes.",                    "target_attainment_pct": 100 }
+    ],
+    "recommended_frequency_sessions_per_week": 3,
+    "session_duration_minutes": 60,
+    "intervention_setting": "hybrid",
+    "intervention_setting_detail": "OT Clinic + Home",
+    "review_period_weeks": 6,
+    "home_program_recommendations": "Wilbarger brushing protocol 2x daily; 10 min movement break before school; weighted blanket at bedtime; chewy tool during homework; written sensory diet schedule provided.",
+    "equipment_sensory_diet_recommended": [
+      "lycra_body_sock",
+      "weighted_lap_pad",
+      "linear_swing",
+      "tactile_bin_rice",
+      "tactile_bin_sand",
+      "noise_cancelling_headphones",
+      "weighted_blanket",
+      "chewable_silicone_necklace",
+      "visual_timer"
+    ],
+    "referrals_to_other_specialists": "Speech-Language Pathologist (continue current); Developmental Paediatrician for medication review (if meltdowns persist)."
+  },
+
+  "section_h_signatures_consent": {
+    "therapist": {
+      "user_id": "user_01HZZZZZZZZZZZZZZZZZ",
+      "name": "Dr. Anjali Rao",
+      "credentials": "BOT, MOT (Pediatrics), AIOTA Reg. #IND-OT-12345",
+      "signature_typed_name": "Dr. Anjali Rao",
+      "signed_at": "2026-05-07T10:25:00+05:30",
+      "signed_ip": "203.0.113.42"
+    },
+    "parent_guardian": {
+      "guardian_id": "guard_01HXXXXXXXXXXXXXXXX",
+      "name": "Riya Sharma",
+      "signature_typed_name": "Riya Sharma",
+      "signed_at": "2026-05-07T10:26:14+05:30",
+      "signed_ip": "203.0.113.42",
+      "consent_obtained_for_assessment_and_treatment": true
+    }
+  },
+
+  "linked_milestone_tags": ["eye_contact_social_smile", "two_word_phrases", "self_feeding", "dressing"],
+  "_notes": "Doctor MUST tag at least one specific milestone (PRD User Story 23) — these tags drive the longitudinal radar chart and recommender."
+}
