@@ -16,7 +16,7 @@ Clinic Admins can create Departments (logical groupings of staff) and Sensory Ro
 
 **API endpoints**
 - [ ] `POST /departments` — clinic_admin only: create department (name, headUserId, description)
-- [ ] `GET /departments` — clinic_admin, doctor, therapist: list departments in caller's clinic
+- [ ] `GET /departments` — clinic_admin, therapist: list departments in caller's clinic
 - [ ] `PATCH /departments/:id` — clinic_admin only: update name, head, description
 - [ ] `DELETE /departments/:id` — clinic_admin only: only if no active rooms assigned
 - [ ] `POST /sensory-rooms` — clinic_admin only: create room (name, code, departmentId, equipmentList, status)

@@ -35,6 +35,11 @@ enum OtpType {
   invite
 }
 
+enum RoomStatus {
+  active
+  maintenance
+}
+
 model SubscriptionPlan {
   id                String           @id @default(uuid())
   name              String
@@ -64,27 +69,31 @@ model Clinic {
   updatedAt          DateTime          @updatedAt @map("updated_at")
   subscriptionPlan   SubscriptionPlan? @relation(fields: [subscriptionPlanId], references: [id])
   users              User[]
+  departments        Department[]
+  sensoryRooms       SensoryRoom[]
+  gameToggles        ClinicGameToggle[]
 
   @@map("clinics")
 }
 
 model User {
-  id              String            @id @default(uuid())
-  name            String
-  email           String            @unique
-  role            Role              @default(staff)
-  tenantId        String?           @map("tenant_id")
-  isActive        Boolean           @default(true) @map("is_active")
-  invitedByUserId String?           @map("invited_by_user_id")
-  departmentIds   Json              @default("[]") @map("department_ids")
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
-  tokens          Token[]
-  otpRecords      OtpRecord[]
-  clinic          Clinic?           @relation(fields: [tenantId], references: [id])
-  invitedBy       User?             @relation("InvitedBy", fields: [invitedByUserId], references: [id])
-  invitedUsers    User[]            @relation("InvitedBy")
-  staffPermission StaffPermission?
+  id                    String            @id @default(uuid())
+  name                  String
+  email                 String            @unique
+  role                  Role              @default(staff)
+  tenantId              String?           @map("tenant_id")
+  isActive              Boolean           @default(true) @map("is_active")
+  invitedByUserId       String?           @map("invited_by_user_id")
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @updatedAt @map("updated_at")
+  tokens                Token[]
+  otpRecords            OtpRecord[]
+  clinic                Clinic?           @relation(fields: [tenantId], references: [id])
+  invitedBy             User?             @relation("InvitedBy", fields: [invitedByUserId], references: [id])
+  invitedUsers          User[]            @relation("InvitedBy")
+  staffPermission       StaffPermission?
+  headOfDepartments     Department[]      @relation("DepartmentHead")
+  departmentMemberships UserDepartment[]
 
   @@index([tenantId])
   @@map("users")
@@ -129,4 +138,73 @@ model OtpRecord {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("otp_records")
+}
+
+model Game {
+  id          String             @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime           @default(now()) @map("created_at")
+  updatedAt   DateTime           @updatedAt @map("updated_at")
+  toggles     ClinicGameToggle[]
+
+  @@map("games")
+}
+
+model Department {
+  id          String           @id @default(uuid())
+  tenantId    String           @map("tenant_id")
+  name        String
+  headUserId  String?          @map("head_user_id")
+  description String?
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  clinic      Clinic           @relation(fields: [tenantId], references: [id])
+  headUser    User?            @relation("DepartmentHead", fields: [headUserId], references: [id])
+  rooms       SensoryRoom[]
+  members     UserDepartment[]
+
+  @@index([tenantId])
+  @@map("departments")
+}
+
+model UserDepartment {
+  userId       String     @map("user_id")
+  departmentId String     @map("department_id")
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@id([userId, departmentId])
+  @@map("user_departments")
+}
+
+model SensoryRoom {
+  id            String      @id @default(uuid())
+  tenantId      String      @map("tenant_id")
+  name          String
+  code          String
+  departmentId  String?     @map("department_id")
+  equipmentList Json        @default("[]") @map("equipment_list")
+  status        RoomStatus  @default(active)
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  clinic        Clinic      @relation(fields: [tenantId], references: [id])
+  department    Department? @relation(fields: [departmentId], references: [id])
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("sensory_rooms")
+}
+
+model ClinicGameToggle {
+  id        String   @id @default(uuid())
+  tenantId  String   @map("tenant_id")
+  gameId    String   @map("game_id")
+  enabled   Boolean  @default(true)
+  updatedAt DateTime @updatedAt @map("updated_at")
+  clinic    Clinic   @relation(fields: [tenantId], references: [id])
+  game      Game     @relation(fields: [gameId], references: [id])
+
+  @@unique([tenantId, gameId])
+  @@map("clinic_game_toggles")
 }

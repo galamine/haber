@@ -34,6 +34,10 @@ interface StaffShape {
   updatedAt: Date;
 }
 
+interface DepartmentMembership {
+  departmentId: string;
+}
+
 interface StaffFilter {
   name?: string;
   role?: 'therapist' | 'staff';
@@ -50,7 +54,9 @@ const staffSelect = {
   email: true,
   role: true,
   isActive: true,
-  departmentIds: true,
+  departmentMemberships: {
+    select: { departmentId: true },
+  },
   invitedByUserId: true,
   staffPermission: {
     select: {
@@ -68,7 +74,7 @@ const transformStaff = (staff: Record<string, unknown>): StaffShape => ({
   role: staff.role as 'therapist' | 'staff',
   isActive: staff.isActive as boolean,
   permissions: (staff.staffPermission as { permissions: string[] } | null)?.permissions ?? [],
-  departmentIds: staff.departmentIds as string[],
+  departmentIds: ((staff.departmentMemberships as DepartmentMembership[]) ?? []).map((m) => m.departmentId),
   invitedByUserId: staff.invitedByUserId as string | null,
   createdAt: staff.createdAt as Date,
   updatedAt: staff.updatedAt as Date,
@@ -114,9 +120,14 @@ const inviteStaff = async (inviterId: string, tenantId: string, body: InviteStaf
         tenantId,
         isActive: false,
         invitedByUserId: inviterId,
-        departmentIds: body.departmentIds,
       },
     });
+
+    if (body.departmentIds && body.departmentIds.length > 0) {
+      await tx.userDepartment.createMany({
+        data: body.departmentIds.map((departmentId) => ({ userId: user.id, departmentId })),
+      });
+    }
 
     await tx.otpRecord.create({
       data: {
@@ -197,9 +208,13 @@ const updateStaff = async (tenantId: string, userId: string, body: UpdateStaffDt
     throw new ApiError(httpStatus.NOT_FOUND, 'Staff member not found');
   }
 
-  const updateData: Record<string, unknown> = {};
   if (body.departmentIds !== undefined) {
-    updateData.departmentIds = body.departmentIds;
+    await prisma.userDepartment.deleteMany({ where: { userId } });
+    if (body.departmentIds.length > 0) {
+      await prisma.userDepartment.createMany({
+        data: body.departmentIds.map((departmentId) => ({ userId, departmentId })),
+      });
+    }
   }
 
   if (body.permissions !== undefined) {
@@ -207,13 +222,6 @@ const updateStaff = async (tenantId: string, userId: string, body: UpdateStaffDt
       where: { userId },
       create: { userId, permissions: body.permissions },
       update: { permissions: body.permissions },
-    });
-  }
-
-  if (Object.keys(updateData).length > 0) {
-    await prisma.user.update({
-      where: { id: userId },
-      data: updateData,
     });
   }
 

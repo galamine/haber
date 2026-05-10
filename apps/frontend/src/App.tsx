@@ -3,6 +3,7 @@ import { PageShell } from '@/components/layout/PageShell';
 import { Toaster } from '@/components/ui/sonner';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { MyClinicPage } from '@/pages/clinic/MyClinicPage';
+import { ClinicSetupPage } from '@/pages/clinic-admin/setup/ClinicSetupPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { StaffDetailPage } from '@/pages/StaffDetailPage';
 import { StaffPage } from '@/pages/StaffPage';
@@ -99,6 +100,14 @@ export default function App() {
             element={
               <ProtectedRoute requiredRoles={['clinic_admin']}>
                 <MyClinicPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="clinic/setup"
+            element={
+              <ProtectedRoute requiredRoles={['clinic_admin']}>
+                <ClinicSetupPage />
               </ProtectedRoute>
             }
           />
