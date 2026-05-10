@@ -103,6 +103,27 @@ import { RegisterDtoSchema } from '@haber/shared';
 import { USER_ROLES } from '@haber/shared/constants';
 ```
 
+## Transactions
+
+Use `prisma.$transaction` whenever a service operation must be atomic across multiple tables:
+
+```typescript
+// Sequential operations (array form — simpler, no interdependency)
+const [user, token] = await prisma.$transaction([
+  prisma.user.create({ data: userData }),
+  prisma.token.create({ data: tokenData }),
+]);
+
+// Interactive form — use when later steps depend on earlier results
+const result = await prisma.$transaction(async (tx) => {
+  const user = await tx.user.create({ data: userData });
+  await tx.profile.create({ data: { userId: user.id, ...profileData } });
+  return user;
+});
+```
+
+Always pass the `tx` client through to every Prisma call inside the callback instead of the module-level `prisma` singleton. Never mix `tx` and `prisma` inside the same transaction callback.
+
 ## Error Handling
 
 Use the `ApiError` class for operational errors:

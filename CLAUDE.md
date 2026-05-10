@@ -69,6 +69,8 @@ packages/
 
 **Error handling**: throw `ApiError(httpStatus.XXX, message)` for operational errors. The `errorConverter` + `errorHandler` middlewares in `middlewares/error.ts` handle serialisation.
 
+**Transactions**: Use `prisma.$transaction([...])` or the interactive `prisma.$transaction(async (tx) => { ... })` form whenever a service operation touches multiple tables or must be atomic. Pass the `tx` client through to every Prisma call inside the callback instead of the global `prisma` singleton.
+
 ## Frontend Architecture (`apps/frontend/src/`)
 
 - **Routing**: React Router v6. Protected routes check `useAuthStore` for `accessToken`. Layout wraps authenticated pages in `PageShell`.
