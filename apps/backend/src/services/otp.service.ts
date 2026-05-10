@@ -51,7 +51,7 @@ const verifyOtp = async (email: string, otp: string, tx?: Prisma.TransactionClie
   }
 
   const otpRecord = await db.otpRecord.findFirst({
-    where: { userId: user.id, type: 'login', usedAt: null },
+    where: { userId: user.id, usedAt: null },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -69,7 +69,6 @@ const verifyOtp = async (email: string, otp: string, tx?: Prisma.TransactionClie
 
   const isValid = await bcrypt.compare(otp, otpRecord.hashedOtp);
   if (!isValid) {
-    // Use prisma directly so this increment commits even if the caller's transaction rolls back
     await prisma.otpRecord.update({
       where: { id: otpRecord.id },
       data: { attempts: { increment: 1 } },
@@ -78,6 +77,14 @@ const verifyOtp = async (email: string, otp: string, tx?: Prisma.TransactionClie
   }
 
   await db.otpRecord.update({ where: { id: otpRecord.id }, data: { usedAt: new Date() } });
+
+  if (otpRecord.type === 'invite') {
+    await db.user.update({
+      where: { id: user.id },
+      data: { isActive: true },
+    });
+  }
+
   return user;
 };
 

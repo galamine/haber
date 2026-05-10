@@ -2,6 +2,7 @@ import { Router } from 'express';
 import authRoute from './auth.route';
 import clinicRoute from './clinic.route';
 import docsRoute from './docs.route';
+import staffRoute from './staff.route';
 import superAdminRoute from './superAdmin.route';
 import userRoute from './user.route';
 
@@ -24,6 +25,10 @@ const defaultRoutes: Route[] = [
   {
     path: '/docs',
     route: docsRoute,
+  },
+  {
+    path: '/staff',
+    route: staffRoute,
   },
   {
     path: '/super-admin',

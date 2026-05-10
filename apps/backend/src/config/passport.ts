@@ -24,6 +24,7 @@ const jwtVerify = async (
         email: true,
         role: true,
         tenantId: true,
+        isActive: true,
         clinic: { select: { status: true, deletedAt: true } },
       },
     });
@@ -32,6 +33,9 @@ const jwtVerify = async (
     }
     if (user.clinic && (user.clinic.status === 'suspended' || user.clinic.deletedAt !== null)) {
       return done(new Error('CLINIC_SUSPENDED'), false);
+    }
+    if (!user.isActive) {
+      return done(new Error('USER_DEACTIVATED'), false);
     }
     done(null, user);
   } catch (error) {

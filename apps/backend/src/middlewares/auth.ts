@@ -13,6 +13,9 @@ const verifyCallback =
       if (err instanceof Error && err.message === 'CLINIC_SUSPENDED') {
         return reject(new ApiError(httpStatus.FORBIDDEN, 'CLINIC_SUSPENDED'));
       }
+      if (err instanceof Error && err.message === 'USER_DEACTIVATED') {
+        return reject(new ApiError(httpStatus.UNAUTHORIZED, 'USER_DEACTIVATED'));
+      }
       return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
     }
     req.user = user;

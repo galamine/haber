@@ -5,7 +5,7 @@
 
 ## What to build
 
-Clinic Admins can invite staff (Doctor, Therapist, Staff) by email using an OTP-based invite flow. Each staff member gets granular permissions on top of their role defaults (e.g., a senior therapist can have `student.intake` added). Staff can be deactivated without deleting their data. The active user count per role is visible and enforced against the subscription plan limits.
+Clinic Admins can invite staff (Therapist, Staff) by email using an OTP-based invite flow. Each staff member gets granular permissions on top of their role defaults (e.g., a senior therapist can have `student.intake` added). Staff can be deactivated without deleting their data. The active user count per role is visible and enforced against the subscription plan limits.
 
 ## Acceptance criteria
 
@@ -30,13 +30,13 @@ Clinic Admins can invite staff (Doctor, Therapist, Staff) by email using an OTP-
 - [ ] Staff list page (clinic_admin only): table with name, role, permissions count, departments, active status, actions (edit, deactivate, reactivate)
 - [ ] "Invite Staff" modal: email input, role selector, permission checkboxes (grouped by resource: student, session, treatment_plan), department multi-select
 - [ ] Staff detail/edit page: shows all permissions; inline toggle to add/remove granular permissions
-- [ ] Capacity widget at top of staff list: pills showing "Doctors: 3/5", "Therapists: 8/10", "Staff: 2/5"
+- [ ] Capacity widget at top of staff list: pills showing "Therapists: 8/10", "Staff: 2/5"
 - [ ] Deactivated staff shown with greyed-out row and "Deactivated" badge
 
 **Tests**
 - [ ] Clinic admin invites a new therapist — invite OTP email is sent; user record created with `isActive: false`
 - [ ] Invited user enters correct OTP — `isActive` set to true; can now authenticate
-- [ ] Inviting a 6th doctor when plan limit is 5 returns 422 `PLAN_LIMIT_EXCEEDED`
+- [ ] Inviting a 6th therapist when plan limit is 5 returns 422 `PLAN_LIMIT_EXCEEDED`
 - [ ] Deactivated user's JWT is rejected with 401 `USER_DEACTIVATED`
 - [ ] Clinic admin from Clinic A cannot list or edit staff from Clinic B (tenant isolation)
 - [ ] Senior therapist with `student.intake` permission granted can reach the intake API; without it returns 403

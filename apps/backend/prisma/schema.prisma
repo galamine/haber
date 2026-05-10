@@ -69,19 +69,36 @@ model Clinic {
 }
 
 model User {
-  id         String      @id @default(uuid())
-  name       String
-  email      String      @unique
-  role       Role        @default(staff)
-  tenantId   String?     @map("tenant_id")
-  createdAt  DateTime    @default(now()) @map("created_at")
-  updatedAt  DateTime    @updatedAt @map("updated_at")
-  tokens     Token[]
-  otpRecords OtpRecord[]
-  clinic     Clinic?     @relation(fields: [tenantId], references: [id])
+  id              String            @id @default(uuid())
+  name            String
+  email           String            @unique
+  role            Role              @default(staff)
+  tenantId        String?           @map("tenant_id")
+  isActive        Boolean           @default(true) @map("is_active")
+  invitedByUserId String?           @map("invited_by_user_id")
+  departmentIds   Json              @default("[]") @map("department_ids")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  tokens          Token[]
+  otpRecords      OtpRecord[]
+  clinic          Clinic?           @relation(fields: [tenantId], references: [id])
+  invitedBy       User?             @relation("InvitedBy", fields: [invitedByUserId], references: [id])
+  invitedUsers    User[]            @relation("InvitedBy")
+  staffPermission StaffPermission?
 
   @@index([tenantId])
   @@map("users")
+}
+
+model StaffPermission {
+  id          String   @id @default(uuid())
+  userId      String   @unique @map("user_id")
+  permissions Json     @default("[]")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("staff_permissions")
 }
 
 model Token {

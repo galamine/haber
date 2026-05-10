@@ -4,6 +4,8 @@ import { Toaster } from '@/components/ui/sonner';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { MyClinicPage } from '@/pages/clinic/MyClinicPage';
 import { DashboardPage } from '@/pages/DashboardPage';
+import { StaffDetailPage } from '@/pages/StaffDetailPage';
+import { StaffPage } from '@/pages/StaffPage';
 import { ClinicFormPage } from '@/pages/super-admin/clinics/ClinicFormPage';
 import { ClinicListPage } from '@/pages/super-admin/clinics/ClinicListPage';
 import { SubscriptionPlanFormPage } from '@/pages/super-admin/subscription-plans/SubscriptionPlanFormPage';
@@ -28,6 +30,22 @@ export default function App() {
           <Route index element={<DashboardPage />} />
           <Route path="users" element={<UserListPage />} />
           <Route path="users/:userId" element={<UserDetailPage />} />
+          <Route
+            path="staff"
+            element={
+              <ProtectedRoute requiredRoles={['clinic_admin']}>
+                <StaffPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="staff/:userId"
+            element={
+              <ProtectedRoute requiredRoles={['clinic_admin']}>
+                <StaffDetailPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="super-admin/clinics"
             element={

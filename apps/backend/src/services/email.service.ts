@@ -55,8 +55,27 @@ const sendOtpEmail = async (to: string, otp: string) => {
   await sendEmail(to, subject, html, text);
 };
 
+const sendInviteEmail = async (to: string, clinicName: string, role: string, otp: string) => {
+  logger.info('[email] Sending invite email', { to });
+  const subject = `You've been invited to join ${clinicName}`;
+  const html = `
+    <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px">
+      <h2 style="color:#1a1a2e;margin-bottom:8px">Haber</h2>
+      <p style="color:#444;margin-bottom:24px">You've been invited to join <strong>${clinicName}</strong> as a <strong>${role}</strong>.</p>
+      <p style="color:#444;margin-bottom:24px">Your one-time code is:</p>
+      <div style="background:#f4f4f8;border-radius:8px;padding:24px;text-align:center;letter-spacing:12px;font-size:36px;font-weight:700;color:#1a1a2e">
+        ${otp}
+      </div>
+      <p style="color:#888;font-size:13px;margin-top:24px">It expires in <strong>10 minutes</strong>. If you did not expect this invitation, you can safely ignore this email.</p>
+    </div>
+  `;
+  const text = `You've been invited to join ${clinicName} as a ${role}.\nYour one-time code is: ${otp}\nIt expires in 10 minutes.`;
+  await sendEmail(to, subject, html, text);
+};
+
 export const emailService = {
   transport,
   sendEmail,
   sendOtpEmail,
+  sendInviteEmail,
 };
