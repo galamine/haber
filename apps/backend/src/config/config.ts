@@ -8,8 +8,6 @@ interface IJwt {
   secret: string;
   accessExpirationMinutes: number;
   refreshExpirationDays: number;
-  resetPasswordExpirationMinutes: number;
-  verifyEmailExpirationMinutes: number;
 }
 
 interface IEmail {
@@ -43,8 +41,6 @@ const envSchema = z.object({
   JWT_SECRET: z.string().min(1, 'JWT secret key is required'),
   JWT_ACCESS_EXPIRATION_MINUTES: z.coerce.number().default(30),
   JWT_REFRESH_EXPIRATION_DAYS: z.coerce.number().default(30),
-  JWT_RESET_PASSWORD_EXPIRATION_MINUTES: z.coerce.number().default(10),
-  JWT_VERIFY_EMAIL_EXPIRATION_MINUTES: z.coerce.number().default(10),
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().optional(),
   SMTP_USERNAME: z.string().optional(),
@@ -85,8 +81,6 @@ const _config: Config = {
     secret: envVars.JWT_SECRET,
     accessExpirationMinutes: envVars.JWT_ACCESS_EXPIRATION_MINUTES,
     refreshExpirationDays: envVars.JWT_REFRESH_EXPIRATION_DAYS,
-    resetPasswordExpirationMinutes: envVars.JWT_RESET_PASSWORD_EXPIRATION_MINUTES,
-    verifyEmailExpirationMinutes: envVars.JWT_VERIFY_EMAIL_EXPIRATION_MINUTES,
   },
   email: {
     smtp: {

@@ -8,7 +8,7 @@ const createUser = { body: CreateUserDtoSchema };
 const getUsers = {
   query: z.object({
     name: z.string().optional(),
-    role: z.enum(['user', 'admin']).optional(),
+    role: z.enum(['super_admin', 'clinic_admin', 'therapist', 'staff']).optional(),
     sortBy: z.string().optional(),
     limit: z.coerce.number().int().positive().optional(),
     page: z.coerce.number().int().positive().optional(),

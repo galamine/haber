@@ -1,21 +1,24 @@
 import type { Response } from 'express';
 import httpStatus from 'http-status';
-import { authService, emailService, tokenService, userService } from '../services';
+import { authService, otpService, tokenService, userService } from '../services';
 import type { AuthRequest } from '../types';
 import { ApiError } from '../utils/ApiError';
 import { catchAsync } from '../utils/catchAsync';
 
-const register = catchAsync(async (req: AuthRequest, res: Response) => {
-  const user = await userService.createUser(req.body);
-  const tokens = await tokenService.generateAuthTokens(user);
-  res.status(httpStatus.CREATED).send({ user, tokens });
+const requestOtp = catchAsync(async (req: AuthRequest, res: Response) => {
+  const result = await otpService.requestOtp(req.body.email);
+  res.send(result);
 });
 
-const login = catchAsync(async (req: AuthRequest, res: Response) => {
-  const { email, password } = req.body;
-  const user = await authService.loginUserWithEmailAndPassword(email, password);
-  const tokens = await tokenService.generateAuthTokens(user);
-  res.send({ user, tokens });
+const verifyOtp = catchAsync(async (req: AuthRequest, res: Response) => {
+  const { user, tokens } = await authService.authenticateWithOtp(req.body.email, req.body.otp);
+  const userDto = await userService.getUserById(user.id);
+  res.send({ user: userDto, tokens });
+});
+
+const refreshTokens = catchAsync(async (req: AuthRequest, res: Response) => {
+  const tokens = await tokenService.refreshAuthTokens(req.body.refreshToken);
+  res.send({ ...tokens });
 });
 
 const logout = catchAsync(async (req: AuthRequest, res: Response) => {
@@ -23,45 +26,13 @@ const logout = catchAsync(async (req: AuthRequest, res: Response) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-const refreshTokens = catchAsync(async (req: AuthRequest, res: Response) => {
-  const tokens = await authService.refreshAuth(req.body.refreshToken);
-  res.send({ ...tokens });
-});
-
-const forgotPassword = catchAsync(async (req: AuthRequest, res: Response) => {
-  const resetPasswordToken = await tokenService.generateResetPasswordToken(req.body.email);
-  await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
-  res.status(httpStatus.NO_CONTENT).send();
-});
-
-const resetPassword = catchAsync(async (req: AuthRequest, res: Response) => {
-  await authService.resetPassword(req.query.token as string, req.body.password);
-  res.status(httpStatus.NO_CONTENT).send();
-});
-
-const sendVerificationEmail = catchAsync(async (req: AuthRequest, res: Response) => {
+const logoutAll = catchAsync(async (req: AuthRequest, res: Response) => {
   if (!req.user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate');
   }
-  const verifyEmailToken = await tokenService.generateVerifyEmailToken(req.user as any);
-  await emailService.sendVerificationEmail((req.user as any).email, verifyEmailToken);
+  await authService.logoutAll((req.user as { id: string }).id);
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-const verifyEmail = catchAsync(async (req: AuthRequest, res: Response) => {
-  await authService.verifyEmail(req.query.token as string);
-  res.status(httpStatus.NO_CONTENT).send();
-});
-
-const authController = {
-  register,
-  login,
-  logout,
-  refreshTokens,
-  forgotPassword,
-  resetPassword,
-  sendVerificationEmail,
-  verifyEmail,
-};
-
+const authController = { requestOtp, verifyOtp, refreshTokens, logout, logoutAll };
 export default authController;

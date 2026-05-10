@@ -1,14 +1,9 @@
-export const USER_ROLES = ['user', 'admin'] as const;
+export const USER_ROLES = ['super_admin', 'clinic_admin', 'therapist', 'staff'] as const;
 export type UserRole = (typeof USER_ROLES)[number];
 
 export const allRoles: Record<UserRole, string[]> = {
-  user: [],
-  admin: ['getUsers', 'manageUsers'],
+  super_admin: ['getUsers', 'manageUsers'],
+  clinic_admin: ['getUsers', 'manageUsers'],
+  therapist: ['getUsers'],
+  staff: ['getUsers'],
 };
-
-export enum TokenType {
-  ACCESS = 'access',
-  REFRESH = 'refresh',
-  RESET_PASSWORD = 'resetPassword',
-  VERIFY_EMAIL = 'verifyEmail',
-}

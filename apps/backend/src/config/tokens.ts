@@ -1,1 +1,6 @@
-export { TokenType, TokenType as tokenTypes } from '@haber/shared';
+export enum TokenType {
+  ACCESS = 'access',
+  REFRESH = 'refresh',
+}
+
+export { TokenType as tokenTypes };

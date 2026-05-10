@@ -1,28 +1,8 @@
-import {
-  ForgotPasswordDtoSchema,
-  LoginDtoSchema,
-  LogoutDtoSchema,
-  RefreshTokensDtoSchema,
-  RegisterDtoSchema,
-  ResetPasswordDtoSchema,
-  TokenQuerySchema,
-} from '@haber/shared';
+import { LogoutDtoSchema, RefreshTokensDtoSchema, RequestOtpDtoSchema, VerifyOtpDtoSchema } from '@haber/shared';
 
-const register = { body: RegisterDtoSchema };
-
-const login = { body: LoginDtoSchema };
-
+const requestOtp = { body: RequestOtpDtoSchema };
+const verifyOtp = { body: VerifyOtpDtoSchema };
 const logout = { body: LogoutDtoSchema };
-
 const refreshTokens = { body: RefreshTokensDtoSchema };
 
-const forgotPassword = { body: ForgotPasswordDtoSchema };
-
-const resetPassword = {
-  query: TokenQuerySchema,
-  body: ResetPasswordDtoSchema,
-};
-
-const verifyEmail = { query: TokenQuerySchema };
-
-export default { register, login, logout, refreshTokens, forgotPassword, resetPassword, verifyEmail };
+export default { requestOtp, verifyOtp, logout, refreshTokens };

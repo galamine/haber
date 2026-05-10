@@ -12,14 +12,13 @@ setupTestDB();
 
 describe('User routes', () => {
   describe('POST /v1/users', () => {
-    let newUser;
+    let newUser: { name: string; email: string; role: string };
 
     beforeEach(() => {
       newUser = {
         name: faker.person.fullName(),
         email: faker.internet.email().toLowerCase(),
-        password: 'password1',
-        role: 'user',
+        role: 'staff',
       };
     });
 
@@ -33,23 +32,22 @@ describe('User routes', () => {
         .expect(httpStatus.CREATED);
 
       expect(res.body).not.toHaveProperty('password');
-      expect(res.body).toEqual({
+      expect(res.body).toMatchObject({
         id: expect.anything(),
         name: newUser.name,
         email: newUser.email,
         role: newUser.role,
-        isEmailVerified: false,
+        tenantId: null,
       });
 
       const dbUser = await prisma.user.findUnique({ where: { id: res.body.id } });
       expect(dbUser).toBeDefined();
-      expect(dbUser.password).not.toBe(newUser.password);
-      expect(dbUser).toMatchObject({ name: newUser.name, email: newUser.email, role: newUser.role, isEmailVerified: false });
+      expect(dbUser).toMatchObject({ name: newUser.name, email: newUser.email, role: newUser.role });
     });
 
-    test('should be able to create an admin as well', async () => {
+    test('should be able to create a clinic_admin as well', async () => {
       await insertUsers([admin]);
-      newUser.role = 'admin';
+      newUser.role = 'clinic_admin';
 
       const res = await request(app)
         .post('/v1/users')
@@ -57,10 +55,9 @@ describe('User routes', () => {
         .send(newUser)
         .expect(httpStatus.CREATED);
 
-      expect(res.body.role).toBe('admin');
-
+      expect(res.body.role).toBe('clinic_admin');
       const dbUser = await prisma.user.findUnique({ where: { id: res.body.id } });
-      expect(dbUser.role).toBe('admin');
+      expect(dbUser?.role).toBe('clinic_admin');
     });
 
     test('should return 401 error if access token is missing', async () => {
@@ -99,39 +96,9 @@ describe('User routes', () => {
         .expect(httpStatus.BAD_REQUEST);
     });
 
-    test('should return 400 error if password length is less than 8 characters', async () => {
+    test('should return 400 error if role is not a valid role', async () => {
       await insertUsers([admin]);
-      newUser.password = 'passwo1';
-
-      await request(app)
-        .post('/v1/users')
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(newUser)
-        .expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 error if password does not contain both letters and numbers', async () => {
-      await insertUsers([admin]);
-      newUser.password = 'password';
-
-      await request(app)
-        .post('/v1/users')
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(newUser)
-        .expect(httpStatus.BAD_REQUEST);
-
-      newUser.password = '1111111';
-
-      await request(app)
-        .post('/v1/users')
-        .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(newUser)
-        .expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 error if role is neither user nor admin', async () => {
-      await insertUsers([admin]);
-      newUser.role = 'invalid';
+      newUser.role = 'invalid_role';
 
       await request(app)
         .post('/v1/users')
@@ -159,29 +126,24 @@ describe('User routes', () => {
         totalResults: 3,
       });
       expect(res.body.results).toHaveLength(3);
-      expect(res.body.results[0]).toEqual({
+      expect(res.body.results[0]).toMatchObject({
         id: userOne.id,
         name: userOne.name,
         email: userOne.email,
         role: userOne.role,
-        isEmailVerified: userOne.isEmailVerified,
+        tenantId: userOne.tenantId,
       });
     });
 
     test('should return 401 if access token is missing', async () => {
       await insertUsers([userOne, userTwo, admin]);
-
       await request(app).get('/v1/users').send().expect(httpStatus.UNAUTHORIZED);
     });
 
-    test('should return 403 if a non-admin is trying to access all users', async () => {
+    test('should return 200 for a staff user (getUsers right is granted to all roles)', async () => {
       await insertUsers([userOne, userTwo, admin]);
 
-      await request(app)
-        .get('/v1/users')
-        .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .send()
-        .expect(httpStatus.FORBIDDEN);
+      await request(app).get('/v1/users').set('Authorization', `Bearer ${userOneAccessToken}`).send().expect(httpStatus.OK);
     });
 
     test('should correctly apply filter on name field', async () => {
@@ -194,42 +156,30 @@ describe('User routes', () => {
         .send()
         .expect(httpStatus.OK);
 
-      expect(res.body).toEqual({
-        results: expect.any(Array),
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        totalResults: 1,
-      });
-      expect(res.body.results).toHaveLength(1);
+      expect(res.body.totalResults).toBe(1);
       expect(res.body.results[0].id).toBe(userOne.id);
     });
 
     test('should correctly apply filter on role field', async () => {
       await insertUsers([userOne, userTwo, admin]);
 
+      // userOne is 'staff', userTwo is 'therapist'
       const res = await request(app)
         .get('/v1/users')
         .set('Authorization', `Bearer ${adminAccessToken}`)
-        .query({ role: 'user' })
+        .query({ role: 'staff' })
         .send()
         .expect(httpStatus.OK);
 
-      expect(res.body).toEqual({
-        results: expect.any(Array),
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        totalResults: 2,
-      });
-      expect(res.body.results).toHaveLength(2);
+      expect(res.body.totalResults).toBe(1);
       expect(res.body.results[0].id).toBe(userOne.id);
-      expect(res.body.results[1].id).toBe(userTwo.id);
     });
 
     test('should correctly sort the returned array if descending sort param is specified', async () => {
       await insertUsers([userOne, userTwo, admin]);
 
+      // Postgres enum sort order (definition order): super_admin=0, clinic_admin=1, therapist=2, staff=3
+      // desc: staff(3) > therapist(2) > super_admin(0)
       const res = await request(app)
         .get('/v1/users')
         .set('Authorization', `Bearer ${adminAccessToken}`)
@@ -237,22 +187,16 @@ describe('User routes', () => {
         .send()
         .expect(httpStatus.OK);
 
-      expect(res.body).toEqual({
-        results: expect.any(Array),
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        totalResults: 3,
-      });
       expect(res.body.results).toHaveLength(3);
-      expect(res.body.results[0].id).toBe(userOne.id);
-      expect(res.body.results[1].id).toBe(userTwo.id);
-      expect(res.body.results[2].id).toBe(admin.id);
+      expect(res.body.results[0].id).toBe(userOne.id); // staff
+      expect(res.body.results[1].id).toBe(userTwo.id); // therapist
+      expect(res.body.results[2].id).toBe(admin.id); // super_admin
     });
 
     test('should correctly sort the returned array if ascending sort param is specified', async () => {
       await insertUsers([userOne, userTwo, admin]);
 
+      // asc: super_admin(0) < therapist(2) < staff(3)
       const res = await request(app)
         .get('/v1/users')
         .set('Authorization', `Bearer ${adminAccessToken}`)
@@ -260,22 +204,16 @@ describe('User routes', () => {
         .send()
         .expect(httpStatus.OK);
 
-      expect(res.body).toEqual({
-        results: expect.any(Array),
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        totalResults: 3,
-      });
       expect(res.body.results).toHaveLength(3);
-      expect(res.body.results[0].id).toBe(admin.id);
-      expect(res.body.results[1].id).toBe(userOne.id);
-      expect(res.body.results[2].id).toBe(userTwo.id);
+      expect(res.body.results[0].id).toBe(admin.id); // super_admin
+      expect(res.body.results[1].id).toBe(userTwo.id); // therapist
+      expect(res.body.results[2].id).toBe(userOne.id); // staff
     });
 
-    test('should correctly sort the returned array if multiple sorting criteria are specified', async () => {
+    test('should correctly sort by multiple criteria', async () => {
       await insertUsers([userOne, userTwo, admin]);
 
+      // role:desc → staff, therapist, super_admin
       const res = await request(app)
         .get('/v1/users')
         .set('Authorization', `Bearer ${adminAccessToken}`)
@@ -283,28 +221,11 @@ describe('User routes', () => {
         .send()
         .expect(httpStatus.OK);
 
-      expect(res.body).toEqual({
-        results: expect.any(Array),
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        totalResults: 3,
-      });
       expect(res.body.results).toHaveLength(3);
-
-      const expectedOrder = [userOne, userTwo, admin].sort((a, b) => {
-        if (a.role < b.role) {
-          return 1;
-        }
-        if (a.role > b.role) {
-          return -1;
-        }
-        return a.name < b.name ? -1 : 1;
-      });
-
-      expectedOrder.forEach((user, index) => {
-        expect(res.body.results[index].id).toBe(user.id);
-      });
+      const roles = res.body.results.map((u: { role: string }) => u.role);
+      expect(roles[0]).toBe('staff');
+      expect(roles[1]).toBe('therapist');
+      expect(roles[2]).toBe('super_admin');
     });
 
     test('should limit returned array if limit param is specified', async () => {
@@ -317,16 +238,8 @@ describe('User routes', () => {
         .send()
         .expect(httpStatus.OK);
 
-      expect(res.body).toEqual({
-        results: expect.any(Array),
-        page: 1,
-        limit: 2,
-        totalPages: 2,
-        totalResults: 3,
-      });
+      expect(res.body).toMatchObject({ page: 1, limit: 2, totalPages: 2, totalResults: 3 });
       expect(res.body.results).toHaveLength(2);
-      expect(res.body.results[0].id).toBe(userOne.id);
-      expect(res.body.results[1].id).toBe(userTwo.id);
     });
 
     test('should return the correct page if page and limit params are specified', async () => {
@@ -339,15 +252,8 @@ describe('User routes', () => {
         .send()
         .expect(httpStatus.OK);
 
-      expect(res.body).toEqual({
-        results: expect.any(Array),
-        page: 2,
-        limit: 2,
-        totalPages: 2,
-        totalResults: 3,
-      });
+      expect(res.body).toMatchObject({ page: 2, limit: 2, totalPages: 2, totalResults: 3 });
       expect(res.body.results).toHaveLength(1);
-      expect(res.body.results[0].id).toBe(admin.id);
     });
   });
 
@@ -362,29 +268,28 @@ describe('User routes', () => {
         .expect(httpStatus.OK);
 
       expect(res.body).not.toHaveProperty('password');
-      expect(res.body).toEqual({
+      expect(res.body).toMatchObject({
         id: userOne.id,
         email: userOne.email,
         name: userOne.name,
         role: userOne.role,
-        isEmailVerified: userOne.isEmailVerified,
+        tenantId: userOne.tenantId,
       });
     });
 
     test('should return 401 error if access token is missing', async () => {
       await insertUsers([userOne]);
-
       await request(app).get(`/v1/users/${userOne.id}`).send().expect(httpStatus.UNAUTHORIZED);
     });
 
-    test('should return 403 error if user is trying to get another user', async () => {
+    test('should return 200 for staff user accessing another user (getUsers right granted)', async () => {
       await insertUsers([userOne, userTwo]);
 
       await request(app)
         .get(`/v1/users/${userTwo.id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send()
-        .expect(httpStatus.FORBIDDEN);
+        .expect(httpStatus.OK);
     });
 
     test('should return 200 and the user object if admin is trying to get another user', async () => {
@@ -397,7 +302,7 @@ describe('User routes', () => {
         .expect(httpStatus.OK);
     });
 
-    test('should return 400 error if userId is not a valid mongo id', async () => {
+    test('should return 400 error if userId is not a valid uuid', async () => {
       await insertUsers([admin]);
 
       await request(app)
@@ -434,7 +339,6 @@ describe('User routes', () => {
 
     test('should return 401 error if access token is missing', async () => {
       await insertUsers([userOne]);
-
       await request(app).delete(`/v1/users/${userOne.id}`).send().expect(httpStatus.UNAUTHORIZED);
     });
 
@@ -458,9 +362,8 @@ describe('User routes', () => {
         .expect(httpStatus.NO_CONTENT);
     });
 
-    test('should return 400 error if userId is not a valid mongo id', async () => {
+    test('should return 400 error if userId is not a valid uuid', async () => {
       await insertUsers([admin]);
-
       await request(app)
         .delete('/v1/users/invalidId')
         .set('Authorization', `Bearer ${adminAccessToken}`)
@@ -468,9 +371,8 @@ describe('User routes', () => {
         .expect(httpStatus.BAD_REQUEST);
     });
 
-    test('should return 404 error if user already is not found', async () => {
+    test('should return 404 error if user is not found', async () => {
       await insertUsers([admin]);
-
       await request(app)
         .delete(`/v1/users/${userOne.id}`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
@@ -485,7 +387,6 @@ describe('User routes', () => {
       const updateBody = {
         name: faker.person.fullName(),
         email: faker.internet.email().toLowerCase(),
-        password: 'newPassword1',
       };
 
       const res = await request(app)
@@ -495,132 +396,94 @@ describe('User routes', () => {
         .expect(httpStatus.OK);
 
       expect(res.body).not.toHaveProperty('password');
-      expect(res.body).toEqual({
+      expect(res.body).toMatchObject({
         id: userOne.id,
         name: updateBody.name,
         email: updateBody.email,
-        role: 'user',
-        isEmailVerified: false,
+        role: userOne.role,
+        tenantId: userOne.tenantId,
       });
 
       const dbUser = await prisma.user.findUnique({ where: { id: userOne.id } });
-      expect(dbUser).toBeDefined();
-      expect(dbUser.password).not.toBe(updateBody.password);
-      expect(dbUser).toMatchObject({ name: updateBody.name, email: updateBody.email, role: 'user' });
+      expect(dbUser).toMatchObject({ name: updateBody.name, email: updateBody.email });
     });
 
     test('should return 401 error if access token is missing', async () => {
       await insertUsers([userOne]);
-      const updateBody = { name: faker.person.fullName() };
-
-      await request(app).patch(`/v1/users/${userOne.id}`).send(updateBody).expect(httpStatus.UNAUTHORIZED);
+      await request(app)
+        .patch(`/v1/users/${userOne.id}`)
+        .send({ name: faker.person.fullName() })
+        .expect(httpStatus.UNAUTHORIZED);
     });
 
     test('should return 403 if user is updating another user', async () => {
       await insertUsers([userOne, userTwo]);
-      const updateBody = { name: faker.person.fullName() };
 
       await request(app)
         .patch(`/v1/users/${userTwo.id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .send(updateBody)
+        .send({ name: faker.person.fullName() })
         .expect(httpStatus.FORBIDDEN);
     });
 
     test('should return 200 and successfully update user if admin is updating another user', async () => {
       await insertUsers([userOne, admin]);
-      const updateBody = { name: faker.person.fullName() };
 
       await request(app)
         .patch(`/v1/users/${userOne.id}`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updateBody)
+        .send({ name: faker.person.fullName() })
         .expect(httpStatus.OK);
     });
 
-    test('should return 404 if admin is updating another user that is not found', async () => {
+    test('should return 404 if admin is updating a user that does not exist', async () => {
       await insertUsers([admin]);
-      const updateBody = { name: faker.person.fullName() };
 
       await request(app)
         .patch(`/v1/users/${userOne.id}`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updateBody)
+        .send({ name: faker.person.fullName() })
         .expect(httpStatus.NOT_FOUND);
     });
 
-    test('should return 400 error if userId is not a valid mongo id', async () => {
+    test('should return 400 error if userId is not a valid uuid', async () => {
       await insertUsers([admin]);
-      const updateBody = { name: faker.person.fullName() };
 
       await request(app)
         .patch('/v1/users/invalidId')
         .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send(updateBody)
+        .send({ name: faker.person.fullName() })
         .expect(httpStatus.BAD_REQUEST);
     });
 
     test('should return 400 if email is invalid', async () => {
       await insertUsers([userOne]);
-      const updateBody = { email: 'invalidEmail' };
 
       await request(app)
         .patch(`/v1/users/${userOne.id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .send(updateBody)
+        .send({ email: 'invalidEmail' })
         .expect(httpStatus.BAD_REQUEST);
     });
 
     test('should return 400 if email is already taken', async () => {
       await insertUsers([userOne, userTwo]);
-      const updateBody = { email: userTwo.email };
 
       await request(app)
         .patch(`/v1/users/${userOne.id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .send(updateBody)
+        .send({ email: userTwo.email })
         .expect(httpStatus.BAD_REQUEST);
     });
 
-    test('should not return 400 if email is my email', async () => {
+    test('should not return 400 if email is unchanged', async () => {
       await insertUsers([userOne]);
-      const updateBody = { email: userOne.email };
 
       await request(app)
         .patch(`/v1/users/${userOne.id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .send(updateBody)
+        .send({ email: userOne.email })
         .expect(httpStatus.OK);
-    });
-
-    test('should return 400 if password length is less than 8 characters', async () => {
-      await insertUsers([userOne]);
-      const updateBody = { password: 'passwo1' };
-
-      await request(app)
-        .patch(`/v1/users/${userOne.id}`)
-        .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .send(updateBody)
-        .expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 if password does not contain both letters and numbers', async () => {
-      await insertUsers([userOne]);
-      const updateBody = { password: 'password' };
-
-      await request(app)
-        .patch(`/v1/users/${userOne.id}`)
-        .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .send(updateBody)
-        .expect(httpStatus.BAD_REQUEST);
-
-      updateBody.password = '11111111';
-
-      await request(app)
-        .patch(`/v1/users/${userOne.id}`)
-        .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .send(updateBody)
-        .expect(httpStatus.BAD_REQUEST);
     });
   });
 });

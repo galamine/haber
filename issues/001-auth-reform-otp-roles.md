@@ -5,7 +5,7 @@
 
 ## What to build
 
-Replace the existing email+password auth system with an email+OTP flow (no passwords). Expand the role system from `user/admin` to five roles: `super_admin`, `clinic_admin`, `doctor`, `therapist`, `staff`. Every subsequent feature depends on this role system and the expanded JWT claims.
+Replace the existing email+password auth system with an email+OTP flow (no passwords). Expand the role system from `user/admin` to four roles: `super_admin`, `clinic_admin`, `therapist`, `staff`. Every subsequent feature depends on this role system and the expanded JWT claims.
 
 The OTP flow: user enters email → server generates 6-digit OTP, sends via email, stores hashed OTP with 10-minute expiry and 5-attempt rate limit → user enters OTP → server issues access token (24h idle expiry) + refresh token (rotation with reuse detection). Session "log out everywhere" invalidates all refresh tokens for the user.
 
@@ -15,7 +15,7 @@ The OTP flow: user enters email → server generates 6-digit OTP, sends via emai
 
 **Schema / migrations**
 - [ ] Remove `password` field from `User` model
-- [ ] Add `role` enum values: `super_admin`, `clinic_admin`, `doctor`, `therapist`, `staff` (replacing `user` and `admin`)
+- [ ] Add `role` enum values: `super_admin`, `clinic_admin`, `therapist`, `staff` (replacing `user` and `admin`)
 - [ ] Add `OtpRecord` model: `id`, `userId` (FK), `hashedOtp`, `expiresAt`, `attempts` (int default 0), `type` (`login` | `invite`), `usedAt` (nullable), `createdAt`
 - [ ] Add `tenant_id` (nullable UUID FK to `Clinic`) on `User` — nullable until Clinic model is added in issue 002
 - [ ] Token model gains `deviceId` (nullable) for "log out everywhere" targeting
@@ -28,7 +28,7 @@ The OTP flow: user enters email → server generates 6-digit OTP, sends via emai
 - [ ] `POST /auth/logout-all` — invalidates all refresh tokens for the caller
 - [ ] Remove `POST /auth/register`, `POST /auth/login`, `POST /auth/forgot-password`, `POST /auth/reset-password`, `POST /auth/verify-email` (these flows no longer exist)
 - [ ] JWT payload gains `role` and `tenant_id` claims
-- [ ] Role-rights map in `@haber/shared` updated with the 5 new roles and their base rights
+- [ ] Role-rights map in `@haber/shared` updated with the 4 new roles and their base rights
 
 **Frontend**
 - [ ] Replace `LoginPage.tsx` with a two-step OTP flow: step 1 email input, step 2 OTP input (6-digit, auto-submit on last digit)
@@ -55,7 +55,7 @@ The OTP flow: user enters email → server generates 6-digit OTP, sends via emai
 - [ ] Enter the wrong OTP 5 times — verify you are locked out (401, "too many attempts" message)
 - [ ] Request a new OTP, enter it correctly — verify you land on the dashboard and the JWT in localStorage contains `role` and `tenant_id`
 - [ ] Open the app in a second tab, log out everywhere from the first tab — verify the second tab's next API call returns 401 and redirects to login
-- [ ] Attempt to access `/users` as a `therapist` role — verify a 403 page is shown
+- [ ] Attempt to access an admin-only route as a `therapist` — verify a 403 page is shown
 
 ## Blocked by
 

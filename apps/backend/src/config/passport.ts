@@ -23,7 +23,7 @@ const jwtVerify = async (
         name: true,
         email: true,
         role: true,
-        isEmailVerified: true,
+        tenantId: true,
       },
     });
     if (!user) {

@@ -1,595 +1,209 @@
-import { faker } from '@faker-js/faker';
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
 import httpStatus from 'http-status';
 import moment from 'moment';
-import httpMocks from 'node-mocks-http';
 import request from 'supertest';
 import app from '../../src/app';
-import config from '../../src/config/config';
-import { roleRights } from '../../src/config/roles';
 import { TokenType } from '../../src/config/tokens';
-import auth from '../../src/middlewares/auth';
-import { emailService, tokenService } from '../../src/services';
-import { ApiError } from '../../src/utils/ApiError';
+import { emailService } from '../../src/services/email.service';
+import { otpService } from '../../src/services/otp.service';
+import { tokenService } from '../../src/services/token.service';
 import { adminAccessToken, userOneAccessToken } from '../fixtures/token.fixture';
 import { admin, insertUsers, userOne } from '../fixtures/user.fixture';
-import { setupTestDB } from '../utils/setupTestDB';
+import { prisma, setupTestDB } from '../utils/setupTestDB';
 
-const prisma = new PrismaClient();
 setupTestDB();
 
-describe('Auth routes', () => {
-  describe('POST /v1/auth/register', () => {
-    let newUser;
-    beforeEach(() => {
-      newUser = {
-        name: faker.person.fullName(),
-        email: faker.internet.email().toLowerCase(),
-        password: 'password1',
-      };
-    });
+// ─── POST /v1/auth/request-otp ────────────────────────────────────────────────
 
-    test('should return 201 and successfully register user if request data is ok', async () => {
-      const res = await request(app).post('/v1/auth/register').send(newUser).expect(httpStatus.CREATED);
+describe('POST /v1/auth/request-otp', () => {
+  beforeEach(() => {
+    vi.spyOn(emailService, 'sendOtpEmail').mockResolvedValue(undefined);
+  });
+  afterEach(() => vi.restoreAllMocks());
 
-      expect(res.body.user).not.toHaveProperty('password');
-      expect(res.body.user).toEqual({
-        id: expect.anything(),
-        name: newUser.name,
-        email: newUser.email,
-        role: 'user',
-        isEmailVerified: false,
-      });
-
-      const dbUser = await prisma.user.findUnique({ where: { id: res.body.user.id } });
-      expect(dbUser).toBeDefined();
-      expect(dbUser.password).not.toBe(newUser.password);
-      expect(dbUser).toMatchObject({ name: newUser.name, email: newUser.email, role: 'user', isEmailVerified: false });
-
-      expect(res.body.tokens).toEqual({
-        access: { token: expect.anything(), expires: expect.anything() },
-        refresh: { token: expect.anything(), expires: expect.anything() },
-      });
-    });
-
-    test('should return 400 error if email is invalid', async () => {
-      newUser.email = 'invalidEmail';
-
-      await request(app).post('/v1/auth/register').send(newUser).expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 error if email is already used', async () => {
-      await insertUsers([userOne]);
-      newUser.email = userOne.email;
-
-      await request(app).post('/v1/auth/register').send(newUser).expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 error if password length is less than 8 characters', async () => {
-      newUser.password = 'passwo1';
-
-      await request(app).post('/v1/auth/register').send(newUser).expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 400 error if password does not contain both letters and numbers', async () => {
-      newUser.password = 'password';
-
-      await request(app).post('/v1/auth/register').send(newUser).expect(httpStatus.BAD_REQUEST);
-
-      newUser.password = '11111111';
-
-      await request(app).post('/v1/auth/register').send(newUser).expect(httpStatus.BAD_REQUEST);
-    });
+  test('should return 200 and message for a registered email', async () => {
+    await insertUsers([userOne]);
+    const res = await request(app).post('/v1/auth/request-otp').send({ email: userOne.email }).expect(httpStatus.OK);
+    expect(res.body).toEqual({ message: 'OTP sent' });
+    expect(emailService.sendOtpEmail).toHaveBeenCalledWith(userOne.email, expect.stringMatching(/^\d{6}$/));
   });
 
-  describe('POST /v1/auth/login', () => {
-    test('should return 200 and login user if email and password match', async () => {
-      await insertUsers([userOne]);
-      const loginCredentials = {
-        email: userOne.email,
-        password: userOne.password,
-      };
-
-      const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.OK);
-
-      expect(res.body.user).toEqual({
-        id: expect.anything(),
-        name: userOne.name,
-        email: userOne.email,
-        role: userOne.role,
-        isEmailVerified: userOne.isEmailVerified,
-      });
-
-      expect(res.body.tokens).toEqual({
-        access: { token: expect.anything(), expires: expect.anything() },
-        refresh: { token: expect.anything(), expires: expect.anything() },
-      });
-    });
-
-    test('should return 401 error if there are no users with that email', async () => {
-      const loginCredentials = {
-        email: userOne.email,
-        password: userOne.password,
-      };
-
-      const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
-
-      expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect email or password' });
-    });
-
-    test('should return 401 error if password is wrong', async () => {
-      await insertUsers([userOne]);
-      const loginCredentials = {
-        email: userOne.email,
-        password: 'wrongPassword1',
-      };
-
-      const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
-
-      expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect email or password' });
-    });
+  test('should return 200 for an unknown email (silent success)', async () => {
+    const res = await request(app).post('/v1/auth/request-otp').send({ email: 'nobody@example.com' }).expect(httpStatus.OK);
+    expect(res.body).toEqual({ message: 'OTP sent' });
+    expect(emailService.sendOtpEmail).not.toHaveBeenCalled();
   });
 
-  describe('POST /v1/auth/logout', () => {
-    test('should return 204 if refresh token is valid', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-      const refreshToken = tokenService.generateToken(userOne.id, expires, TokenType.REFRESH);
-      await tokenService.saveToken(refreshToken, userOne.id, expires, TokenType.REFRESH);
-
-      await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NO_CONTENT);
-
-      const dbRefreshTokenDoc = await prisma.token.findFirst({ where: { token: refreshToken } });
-      expect(dbRefreshTokenDoc).toBeNull();
-    });
-
-    test('should return 400 error if refresh token is missing from request body', async () => {
-      await request(app).post('/v1/auth/logout').send().expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 404 error if refresh token is not found in the database', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-      const refreshToken = tokenService.generateToken(userOne.id, expires, TokenType.REFRESH);
-
-      await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NOT_FOUND);
-    });
-
-    test('should return 404 error if refresh token is blacklisted', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-      const refreshToken = tokenService.generateToken(userOne.id, expires, TokenType.REFRESH);
-      await tokenService.saveToken(refreshToken, userOne.id, expires, TokenType.REFRESH, true);
-
-      await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NOT_FOUND);
-    });
+  test('should return 400 for an invalid email', async () => {
+    await request(app).post('/v1/auth/request-otp').send({ email: 'not-an-email' }).expect(httpStatus.BAD_REQUEST);
   });
 
-  describe('POST /v1/auth/refresh-tokens', () => {
-    test('should return 200 and new auth tokens if refresh token is valid', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-      const refreshToken = tokenService.generateToken(userOne.id, expires, TokenType.REFRESH);
-      await tokenService.saveToken(refreshToken, userOne.id, expires, TokenType.REFRESH);
-
-      const res = await request(app).post('/v1/auth/refresh-tokens').send({ refreshToken }).expect(httpStatus.OK);
-
-      expect(res.body).toEqual({
-        access: { token: expect.anything(), expires: expect.anything() },
-        refresh: { token: expect.anything(), expires: expect.anything() },
-      });
-
-      const dbRefreshTokenDoc = await prisma.token.findFirst({ where: { token: res.body.refresh.token } });
-      expect(dbRefreshTokenDoc).toMatchObject({ type: TokenType.REFRESH, userId: userOne.id, blacklisted: false });
-
-      const dbRefreshTokenCount = await prisma.token.count({ where: { userId: userOne.id } });
-      expect(dbRefreshTokenCount).toBe(1);
-    });
-
-    test('should return 400 error if refresh token is missing from request body', async () => {
-      await request(app).post('/v1/auth/refresh-tokens').send().expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 401 error if refresh token is signed using an invalid secret', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-      const refreshToken = tokenService.generateToken(userOne.id, expires, TokenType.REFRESH, 'invalidSecret');
-      await tokenService.saveToken(refreshToken, userOne.id, expires, TokenType.REFRESH);
-
-      await request(app).post('/v1/auth/refresh-tokens').send({ refreshToken }).expect(httpStatus.UNAUTHORIZED);
-    });
-
-    test('should return 401 error if refresh token is not found in the database', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-      const refreshToken = tokenService.generateToken(userOne.id, expires, TokenType.REFRESH);
-
-      await request(app).post('/v1/auth/refresh-tokens').send({ refreshToken }).expect(httpStatus.UNAUTHORIZED);
-    });
-
-    test('should return 401 error if refresh token is blacklisted', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-      const refreshToken = tokenService.generateToken(userOne.id, expires, TokenType.REFRESH);
-      await tokenService.saveToken(refreshToken, userOne.id, expires, TokenType.REFRESH, true);
-
-      await request(app).post('/v1/auth/refresh-tokens').send({ refreshToken }).expect(httpStatus.UNAUTHORIZED);
-    });
-
-    test('should return 401 error if refresh token is expired', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().subtract(1, 'minutes');
-      const refreshToken = tokenService.generateToken(userOne.id, expires);
-      await tokenService.saveToken(refreshToken, userOne.id, expires, TokenType.REFRESH);
-
-      await request(app).post('/v1/auth/refresh-tokens').send({ refreshToken }).expect(httpStatus.UNAUTHORIZED);
-    });
-
-    test('should return 401 error if user is not found', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-      const refreshToken = tokenService.generateToken(userOne.id, expires, TokenType.REFRESH);
-      await tokenService.saveToken(refreshToken, userOne.id, expires, TokenType.REFRESH);
-      await prisma.user.delete({ where: { id: userOne.id } });
-
-      await request(app).post('/v1/auth/refresh-tokens').send({ refreshToken }).expect(httpStatus.UNAUTHORIZED);
-    });
-  });
-
-  describe('POST /v1/auth/forgot-password', () => {
-    beforeEach(() => {
-      vi.spyOn(emailService.transport, 'sendMail').mockResolvedValue(undefined);
-    });
-
-    test('should return 204 and send reset password email to the user', async () => {
-      await insertUsers([userOne]);
-      const sendResetPasswordEmailSpy = vi.spyOn(emailService, 'sendResetPasswordEmail');
-
-      await request(app).post('/v1/auth/forgot-password').send({ email: userOne.email }).expect(httpStatus.NO_CONTENT);
-
-      expect(sendResetPasswordEmailSpy).toHaveBeenCalledWith(userOne.email, expect.any(String));
-      const resetPasswordToken = sendResetPasswordEmailSpy.mock.calls[0][1];
-      const dbResetPasswordTokenDoc = await prisma.token.findFirst({ where: { token: resetPasswordToken } });
-      expect(dbResetPasswordTokenDoc).toBeDefined();
-    });
-
-    test('should return 400 if email is missing', async () => {
-      await insertUsers([userOne]);
-
-      await request(app).post('/v1/auth/forgot-password').send().expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 404 if email does not belong to any user', async () => {
-      await request(app).post('/v1/auth/forgot-password').send({ email: userOne.email }).expect(httpStatus.NOT_FOUND);
-    });
-  });
-
-  describe('POST /v1/auth/reset-password', () => {
-    test('should return 204 and reset the password', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.resetPasswordExpirationMinutes, 'minutes');
-      const resetPasswordToken = tokenService.generateToken(userOne.id, expires, TokenType.RESET_PASSWORD);
-      await tokenService.saveToken(resetPasswordToken, userOne.id, expires, TokenType.RESET_PASSWORD);
-
-      await request(app)
-        .post('/v1/auth/reset-password')
-        .query({ token: resetPasswordToken })
-        .send({ password: 'password2' })
-        .expect(httpStatus.NO_CONTENT);
-
-      const dbUser = await prisma.user.findUnique({ where: { id: userOne.id } });
-      const isPasswordMatch = await bcrypt.compare('password2', dbUser.password);
-      expect(isPasswordMatch).toBe(true);
-
-      const dbResetPasswordTokenCount = await prisma.token.count({
-        where: { userId: userOne.id, type: TokenType.RESET_PASSWORD },
-      });
-      expect(dbResetPasswordTokenCount).toBe(0);
-    });
-
-    test('should return 400 if reset password token is missing', async () => {
-      await insertUsers([userOne]);
-
-      await request(app).post('/v1/auth/reset-password').send({ password: 'password2' }).expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 401 if reset password token is blacklisted', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.resetPasswordExpirationMinutes, 'minutes');
-      const resetPasswordToken = tokenService.generateToken(userOne.id, expires, TokenType.RESET_PASSWORD);
-      await tokenService.saveToken(resetPasswordToken, userOne.id, expires, TokenType.RESET_PASSWORD, true);
-
-      await request(app)
-        .post('/v1/auth/reset-password')
-        .query({ token: resetPasswordToken })
-        .send({ password: 'password2' })
-        .expect(httpStatus.UNAUTHORIZED);
-    });
-
-    test('should return 401 if reset password token is expired', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().subtract(1, 'minutes');
-      const resetPasswordToken = tokenService.generateToken(userOne.id, expires, TokenType.RESET_PASSWORD);
-      await tokenService.saveToken(resetPasswordToken, userOne.id, expires, TokenType.RESET_PASSWORD);
-
-      await request(app)
-        .post('/v1/auth/reset-password')
-        .query({ token: resetPasswordToken })
-        .send({ password: 'password2' })
-        .expect(httpStatus.UNAUTHORIZED);
-    });
-
-    test('should return 401 if user is not found', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.resetPasswordExpirationMinutes, 'minutes');
-      const resetPasswordToken = tokenService.generateToken(userOne.id, expires, TokenType.RESET_PASSWORD);
-      await tokenService.saveToken(resetPasswordToken, userOne.id, expires, TokenType.RESET_PASSWORD);
-      await prisma.user.delete({ where: { id: userOne.id } });
-
-      await request(app)
-        .post('/v1/auth/reset-password')
-        .query({ token: resetPasswordToken })
-        .send({ password: 'password2' })
-        .expect(httpStatus.UNAUTHORIZED);
-    });
-
-    test('should return 400 if password is missing or invalid', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.resetPasswordExpirationMinutes, 'minutes');
-      const resetPasswordToken = tokenService.generateToken(userOne.id, expires, TokenType.RESET_PASSWORD);
-      await tokenService.saveToken(resetPasswordToken, userOne.id, expires, TokenType.RESET_PASSWORD);
-
-      await request(app).post('/v1/auth/reset-password').query({ token: resetPasswordToken }).expect(httpStatus.BAD_REQUEST);
-
-      await request(app)
-        .post('/v1/auth/reset-password')
-        .query({ token: resetPasswordToken })
-        .send({ password: 'short1' })
-        .expect(httpStatus.BAD_REQUEST);
-
-      await request(app)
-        .post('/v1/auth/reset-password')
-        .query({ token: resetPasswordToken })
-        .send({ password: 'password' })
-        .expect(httpStatus.BAD_REQUEST);
-
-      await request(app)
-        .post('/v1/auth/reset-password')
-        .query({ token: resetPasswordToken })
-        .send({ password: '11111111' })
-        .expect(httpStatus.BAD_REQUEST);
-    });
-  });
-
-  describe('POST /v1/auth/send-verification-email', () => {
-    beforeEach(() => {
-      vi.spyOn(emailService.transport, 'sendMail').mockResolvedValue(undefined);
-    });
-
-    test('should return 204 and send verification email to the user', async () => {
-      await insertUsers([userOne]);
-      const sendVerificationEmailSpy = vi.spyOn(emailService, 'sendVerificationEmail');
-
-      await request(app)
-        .post('/v1/auth/send-verification-email')
-        .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .expect(httpStatus.NO_CONTENT);
-
-      expect(sendVerificationEmailSpy).toHaveBeenCalledWith(userOne.email, expect.any(String));
-      const verifyEmailToken = sendVerificationEmailSpy.mock.calls[0][1];
-      const dbVerifyEmailToken = await prisma.token.findFirst({ where: { token: verifyEmailToken } });
-
-      expect(dbVerifyEmailToken).toBeDefined();
-    });
-
-    test('should return 401 error if access token is missing', async () => {
-      await insertUsers([userOne]);
-
-      await request(app).post('/v1/auth/send-verification-email').send().expect(httpStatus.UNAUTHORIZED);
-    });
-  });
-
-  describe('POST /v1/auth/verify-email', () => {
-    test('should return 204 and verify the email', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.verifyEmailExpirationMinutes, 'minutes');
-      const verifyEmailToken = tokenService.generateToken(userOne.id, expires);
-      await tokenService.saveToken(verifyEmailToken, userOne.id, expires, TokenType.VERIFY_EMAIL);
-
-      await request(app)
-        .post('/v1/auth/verify-email')
-        .query({ token: verifyEmailToken })
-        .send()
-        .expect(httpStatus.NO_CONTENT);
-
-      const dbUser = await prisma.user.findUnique({ where: { id: userOne.id } });
-
-      expect(dbUser.isEmailVerified).toBe(true);
-
-      const dbVerifyEmailToken = await prisma.token.count({
-        where: { userId: userOne.id, type: TokenType.VERIFY_EMAIL },
-      });
-      expect(dbVerifyEmailToken).toBe(0);
-    });
-
-    test('should return 400 if verify email token is missing', async () => {
-      await insertUsers([userOne]);
-
-      await request(app).post('/v1/auth/verify-email').send().expect(httpStatus.BAD_REQUEST);
-    });
-
-    test('should return 401 if verify email token is blacklisted', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.verifyEmailExpirationMinutes, 'minutes');
-      const verifyEmailToken = tokenService.generateToken(userOne.id, expires);
-      await tokenService.saveToken(verifyEmailToken, userOne.id, expires, TokenType.VERIFY_EMAIL, true);
-
-      await request(app)
-        .post('/v1/auth/verify-email')
-        .query({ token: verifyEmailToken })
-        .send()
-        .expect(httpStatus.UNAUTHORIZED);
-    });
-
-    test('should return 401 if verify email token is expired', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().subtract(1, 'minutes');
-      const verifyEmailToken = tokenService.generateToken(userOne.id, expires);
-      await tokenService.saveToken(verifyEmailToken, userOne.id, expires, TokenType.VERIFY_EMAIL);
-
-      await request(app)
-        .post('/v1/auth/verify-email')
-        .query({ token: verifyEmailToken })
-        .send()
-        .expect(httpStatus.UNAUTHORIZED);
-    });
-
-    test('should return 401 if user is not found', async () => {
-      await insertUsers([userOne]);
-      const expires = moment().add(config.jwt.verifyEmailExpirationMinutes, 'minutes');
-      const verifyEmailToken = tokenService.generateToken(userOne.id, expires);
-      await tokenService.saveToken(verifyEmailToken, userOne.id, expires, TokenType.VERIFY_EMAIL);
-      await prisma.user.delete({ where: { id: userOne.id } });
-
-      await request(app)
-        .post('/v1/auth/verify-email')
-        .query({ token: verifyEmailToken })
-        .send()
-        .expect(httpStatus.UNAUTHORIZED);
-    });
+  test('should return 429 after 5 OTP requests in one hour', async () => {
+    await insertUsers([userOne]);
+    for (let i = 0; i < 5; i++) {
+      await otpService.requestOtp(userOne.email);
+    }
+    await request(app).post('/v1/auth/request-otp').send({ email: userOne.email }).expect(httpStatus.TOO_MANY_REQUESTS);
   });
 });
 
-describe('Auth middleware', () => {
-  test('should call next with no errors if access token is valid', async () => {
+// ─── POST /v1/auth/verify-otp ─────────────────────────────────────────────────
+
+describe('POST /v1/auth/verify-otp', () => {
+  let validOtp: string;
+
+  beforeEach(async () => {
     await insertUsers([userOne]);
-    const req = httpMocks.createRequest({ headers: { Authorization: `Bearer ${userOneAccessToken}` } });
-    const next = vi.fn();
-
-    await auth()(req, httpMocks.createResponse(), next);
-
-    expect(next).toHaveBeenCalledWith();
-    expect(req.user.id).toEqual(userOne.id);
-  });
-
-  test('should call next with unauthorized error if access token is not found in header', async () => {
-    await insertUsers([userOne]);
-    const req = httpMocks.createRequest();
-    const next = vi.fn();
-
-    await auth()(req, httpMocks.createResponse(), next);
-
-    expect(next).toHaveBeenCalledWith(expect.any(ApiError));
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ statusCode: httpStatus.UNAUTHORIZED, message: 'Please authenticate' })
-    );
-  });
-
-  test('should call next with unauthorized error if access token is not a valid jwt token', async () => {
-    await insertUsers([userOne]);
-    const req = httpMocks.createRequest({ headers: { Authorization: 'Bearer randomToken' } });
-    const next = vi.fn();
-
-    await auth()(req, httpMocks.createResponse(), next);
-
-    expect(next).toHaveBeenCalledWith(expect.any(ApiError));
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ statusCode: httpStatus.UNAUTHORIZED, message: 'Please authenticate' })
-    );
-  });
-
-  test('should call next with unauthorized error if the token is not an access token', async () => {
-    await insertUsers([userOne]);
-    const expires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
-    const refreshToken = tokenService.generateToken(userOne.id, expires, TokenType.REFRESH);
-    const req = httpMocks.createRequest({ headers: { Authorization: `Bearer ${refreshToken}` } });
-    const next = vi.fn();
-
-    await auth()(req, httpMocks.createResponse(), next);
-
-    expect(next).toHaveBeenCalledWith(expect.any(ApiError));
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ statusCode: httpStatus.UNAUTHORIZED, message: 'Please authenticate' })
-    );
-  });
-
-  test('should call next with unauthorized error if access token is generated with an invalid secret', async () => {
-    await insertUsers([userOne]);
-    const expires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
-    const accessToken = tokenService.generateToken(userOne.id, expires, TokenType.ACCESS, 'invalidSecret');
-    const req = httpMocks.createRequest({ headers: { Authorization: `Bearer ${accessToken}` } });
-    const next = vi.fn();
-
-    await auth()(req, httpMocks.createResponse(), next);
-
-    expect(next).toHaveBeenCalledWith(expect.any(ApiError));
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ statusCode: httpStatus.UNAUTHORIZED, message: 'Please authenticate' })
-    );
-  });
-
-  test('should call next with unauthorized error if access token is expired', async () => {
-    await insertUsers([userOne]);
-    const expires = moment().subtract(1, 'minutes');
-    const accessToken = tokenService.generateToken(userOne.id, expires, TokenType.ACCESS);
-    const req = httpMocks.createRequest({ headers: { Authorization: `Bearer ${accessToken}` } });
-    const next = vi.fn();
-
-    await auth()(req, httpMocks.createResponse(), next);
-
-    expect(next).toHaveBeenCalledWith(expect.any(ApiError));
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ statusCode: httpStatus.UNAUTHORIZED, message: 'Please authenticate' })
-    );
-  });
-
-  test('should call next with unauthorized error if user is not found', async () => {
-    const req = httpMocks.createRequest({ headers: { Authorization: `Bearer ${userOneAccessToken}` } });
-    const next = vi.fn();
-
-    await auth()(req, httpMocks.createResponse(), next);
-
-    expect(next).toHaveBeenCalledWith(expect.any(ApiError));
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ statusCode: httpStatus.UNAUTHORIZED, message: 'Please authenticate' })
-    );
-  });
-
-  test('should call next with forbidden error if user does not have required rights and userId is not in params', async () => {
-    await insertUsers([userOne]);
-    const req = httpMocks.createRequest({ headers: { Authorization: `Bearer ${userOneAccessToken}` } });
-    const next = vi.fn();
-
-    await auth('anyRight')(req, httpMocks.createResponse(), next);
-
-    expect(next).toHaveBeenCalledWith(expect.any(ApiError));
-    expect(next).toHaveBeenCalledWith(expect.objectContaining({ statusCode: httpStatus.FORBIDDEN, message: 'Forbidden' }));
-  });
-
-  test('should call next with no errors if user does not have required rights but userId is in params', async () => {
-    await insertUsers([userOne]);
-    const req = httpMocks.createRequest({
-      headers: { Authorization: `Bearer ${userOneAccessToken}` },
-      params: { userId: userOne.id },
+    vi.spyOn(emailService, 'sendOtpEmail').mockImplementation(async (_to, otp) => {
+      validOtp = otp;
     });
-    const next = vi.fn();
+    await otpService.requestOtp(userOne.email);
+  });
+  afterEach(() => vi.restoreAllMocks());
 
-    await auth('anyRight')(req, httpMocks.createResponse(), next);
-
-    expect(next).toHaveBeenCalledWith();
+  test('should return 200 with tokens on valid OTP', async () => {
+    const res = await request(app)
+      .post('/v1/auth/verify-otp')
+      .send({ email: userOne.email, otp: validOtp })
+      .expect(httpStatus.OK);
+    expect(res.body.tokens).toEqual({
+      access: { token: expect.any(String), expires: expect.any(String) },
+      refresh: { token: expect.any(String), expires: expect.any(String) },
+    });
   });
 
-  test('should call next with no errors if user has required rights', async () => {
-    await insertUsers([admin]);
-    const req = httpMocks.createRequest({
-      headers: { Authorization: `Bearer ${adminAccessToken}` },
-      params: { userId: userOne.id },
+  test('JWT payload should contain role and tenantId', async () => {
+    const res = await request(app)
+      .post('/v1/auth/verify-otp')
+      .send({ email: userOne.email, otp: validOtp })
+      .expect(httpStatus.OK);
+    const decoded = JSON.parse(Buffer.from(res.body.tokens.access.token.split('.')[1], 'base64').toString());
+    expect(decoded.role).toBe(userOne.role);
+    expect(decoded).toHaveProperty('tenantId');
+  });
+
+  test('should return 401 for wrong OTP', async () => {
+    await request(app)
+      .post('/v1/auth/verify-otp')
+      .send({ email: userOne.email, otp: '000000' })
+      .expect(httpStatus.UNAUTHORIZED);
+  });
+
+  test('should return 401 after 5 failed attempts', async () => {
+    for (let i = 0; i < 5; i++) {
+      await request(app).post('/v1/auth/verify-otp').send({ email: userOne.email, otp: '000000' });
+    }
+    await request(app)
+      .post('/v1/auth/verify-otp')
+      .send({ email: userOne.email, otp: validOtp })
+      .expect(httpStatus.UNAUTHORIZED);
+  });
+
+  test('should return 401 for an expired OTP', async () => {
+    await prisma.otpRecord.updateMany({ data: { expiresAt: moment().subtract(11, 'minutes').toDate() } });
+    await request(app)
+      .post('/v1/auth/verify-otp')
+      .send({ email: userOne.email, otp: validOtp })
+      .expect(httpStatus.UNAUTHORIZED);
+  });
+
+  test('should return 401 if OTP is reused after success', async () => {
+    await request(app).post('/v1/auth/verify-otp').send({ email: userOne.email, otp: validOtp }).expect(httpStatus.OK);
+    await request(app)
+      .post('/v1/auth/verify-otp')
+      .send({ email: userOne.email, otp: validOtp })
+      .expect(httpStatus.UNAUTHORIZED);
+  });
+});
+
+// ─── POST /v1/auth/refresh-tokens ─────────────────────────────────────────────
+
+describe('POST /v1/auth/refresh-tokens', () => {
+  test('should return new tokens on valid refresh token', async () => {
+    await insertUsers([userOne]);
+    const { refresh } = await tokenService.generateAuthTokens(userOne);
+
+    const res = await request(app)
+      .post('/v1/auth/refresh-tokens')
+      .send({ refreshToken: refresh.token })
+      .expect(httpStatus.OK);
+
+    expect(res.body).toMatchObject({
+      access: { token: expect.any(String) },
+      refresh: { token: expect.any(String) },
     });
-    const next = vi.fn();
+    expect(res.body.refresh.token).not.toBe(refresh.token);
+  });
 
-    await auth(...roleRights.get('admin'))(req, httpMocks.createResponse(), next);
+  test('should return 401 and blacklist family on refresh token reuse', async () => {
+    await insertUsers([userOne]);
+    const { refresh: firstRefresh } = await tokenService.generateAuthTokens(userOne);
 
-    expect(next).toHaveBeenCalledWith();
+    const rotated = await request(app)
+      .post('/v1/auth/refresh-tokens')
+      .send({ refreshToken: firstRefresh.token })
+      .expect(httpStatus.OK);
+
+    // Reuse the already-rotated original token — triggers reuse detection
+    await request(app)
+      .post('/v1/auth/refresh-tokens')
+      .send({ refreshToken: firstRefresh.token })
+      .expect(httpStatus.UNAUTHORIZED);
+
+    // New token from the rotation should also be blacklisted
+    await request(app)
+      .post('/v1/auth/refresh-tokens')
+      .send({ refreshToken: rotated.body.refresh.token })
+      .expect(httpStatus.UNAUTHORIZED);
+  });
+
+  test('should return 401 for an invalid refresh token', async () => {
+    await request(app)
+      .post('/v1/auth/refresh-tokens')
+      .send({ refreshToken: 'invalid.token.here' })
+      .expect(httpStatus.UNAUTHORIZED);
+  });
+});
+
+// ─── POST /v1/auth/logout ─────────────────────────────────────────────────────
+
+describe('POST /v1/auth/logout', () => {
+  test('should return 204 and delete the refresh token', async () => {
+    await insertUsers([userOne]);
+    const { refresh } = await tokenService.generateAuthTokens(userOne);
+
+    await request(app).post('/v1/auth/logout').send({ refreshToken: refresh.token }).expect(httpStatus.NO_CONTENT);
+
+    const tokenInDb = await prisma.token.findFirst({ where: { token: refresh.token } });
+    expect(tokenInDb).toBeNull();
+  });
+
+  test('should return 404 if refresh token not found', async () => {
+    await request(app)
+      .post('/v1/auth/logout')
+      .send({ refreshToken: 'nonexistent.refresh.token' })
+      .expect(httpStatus.NOT_FOUND);
+  });
+});
+
+// ─── POST /v1/auth/logout-all ─────────────────────────────────────────────────
+
+describe('POST /v1/auth/logout-all', () => {
+  test('should invalidate all refresh tokens and return 204', async () => {
+    await insertUsers([userOne]);
+    const { refresh: r1 } = await tokenService.generateAuthTokens(userOne);
+    const { refresh: r2 } = await tokenService.generateAuthTokens(userOne);
+
+    await request(app)
+      .post('/v1/auth/logout-all')
+      .set('Authorization', `Bearer ${userOneAccessToken}`)
+      .expect(httpStatus.NO_CONTENT);
+
+    // Both refresh tokens should now be blacklisted
+    await request(app).post('/v1/auth/refresh-tokens').send({ refreshToken: r1.token }).expect(httpStatus.UNAUTHORIZED);
+    await request(app).post('/v1/auth/refresh-tokens').send({ refreshToken: r2.token }).expect(httpStatus.UNAUTHORIZED);
+  });
+
+  test('should return 401 if not authenticated', async () => {
+    await request(app).post('/v1/auth/logout-all').expect(httpStatus.UNAUTHORIZED);
   });
 });

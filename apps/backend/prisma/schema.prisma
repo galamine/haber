@@ -7,33 +7,63 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id             String    @id @default(uuid())
-  name           String
-  email          String    @unique
-  password       String
-  role           String    @default("user")
-  isEmailVerified Boolean  @default(false)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+enum Role {
+  super_admin
+  clinic_admin
+  therapist
+  staff
+}
 
-  tokens         Token[]
+enum TokenType {
+  access
+  refresh
+}
+
+enum OtpType {
+  login
+  invite
+}
+
+model User {
+  id         String      @id @default(uuid())
+  name       String
+  email      String      @unique
+  role       Role        @default(staff)
+  tenantId   String?     @map("tenant_id")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+  tokens     Token[]
+  otpRecords OtpRecord[]
 
   @@map("users")
 }
 
 model Token {
-  id          String   @id @default(uuid())
-  token       String
-  userId      String
-  type        String
+  id          String    @id @default(uuid())
+  token       String    @db.Text
+  userId      String    @map("user_id")
+  type        TokenType
   expires     DateTime
-  blacklisted Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  blacklisted Boolean   @default(false)
+  familyId    String?   @map("family_id")
+  deviceId    String?   @map("device_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([token])
   @@index([userId, type])
   @@map("tokens")
+}
+
+model OtpRecord {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  hashedOtp String    @map("hashed_otp")
+  expiresAt DateTime  @map("expires_at")
+  attempts  Int       @default(0)
+  type      OtpType
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("otp_records")
 }

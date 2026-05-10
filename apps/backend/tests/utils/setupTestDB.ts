@@ -8,8 +8,9 @@ const setupTestDB = () => {
   });
 
   beforeEach(async () => {
-    await prisma.user.deleteMany();
+    await prisma.otpRecord.deleteMany();
     await prisma.token.deleteMany();
+    await prisma.user.deleteMany();
   });
 
   afterAll(async () => {
