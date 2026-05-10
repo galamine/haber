@@ -2,12 +2,11 @@ import httpStatus from 'http-status';
 import moment from 'moment';
 import request from 'supertest';
 import app from '../../src/app';
-import { TokenType } from '../../src/config/tokens';
 import { emailService } from '../../src/services/email.service';
 import { otpService } from '../../src/services/otp.service';
 import { tokenService } from '../../src/services/token.service';
-import { adminAccessToken, userOneAccessToken } from '../fixtures/token.fixture';
-import { admin, insertUsers, userOne } from '../fixtures/user.fixture';
+import { userOneAccessToken } from '../fixtures/token.fixture';
+import { insertUsers, userOne } from '../fixtures/user.fixture';
 import { prisma, setupTestDB } from '../utils/setupTestDB';
 
 setupTestDB();

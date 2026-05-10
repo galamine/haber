@@ -24,10 +24,14 @@ const jwtVerify = async (
         email: true,
         role: true,
         tenantId: true,
+        clinic: { select: { status: true, deletedAt: true } },
       },
     });
     if (!user) {
       return done(null, false);
+    }
+    if (user.clinic && (user.clinic.status === 'suspended' || user.clinic.deletedAt !== null)) {
+      return done(new Error('CLINIC_SUSPENDED'), false);
     }
     done(null, user);
   } catch (error) {

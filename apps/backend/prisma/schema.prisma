@@ -14,6 +14,17 @@ enum Role {
   staff
 }
 
+enum ClinicStatus {
+  active
+  suspended
+}
+
+enum SubscriptionTier {
+  basic
+  advanced
+  enterprise
+}
+
 enum TokenType {
   access
   refresh
@@ -22,6 +33,39 @@ enum TokenType {
 enum OtpType {
   login
   invite
+}
+
+model SubscriptionPlan {
+  id                String           @id @default(uuid())
+  name              String
+  tier              SubscriptionTier
+  maxUsersByRole    Json             @map("max_users_by_role")
+  maxSensoryRooms   Int              @map("max_sensory_rooms")
+  maxActiveChildren Int              @map("max_active_children")
+  featureFlags      Json             @map("feature_flags")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+  clinics           Clinic[]
+
+  @@map("subscription_plans")
+}
+
+model Clinic {
+  id                 String            @id @default(uuid())
+  name               String
+  address            String
+  contactPhone       String            @map("contact_phone")
+  contactEmail       String            @map("contact_email")
+  timezone           String
+  subscriptionPlanId String?           @map("subscription_plan_id")
+  status             ClinicStatus      @default(active)
+  deletedAt          DateTime?         @map("deleted_at")
+  createdAt          DateTime          @default(now()) @map("created_at")
+  updatedAt          DateTime          @updatedAt @map("updated_at")
+  subscriptionPlan   SubscriptionPlan? @relation(fields: [subscriptionPlanId], references: [id])
+  users              User[]
+
+  @@map("clinics")
 }
 
 model User {
@@ -34,7 +78,9 @@ model User {
   updatedAt  DateTime    @updatedAt @map("updated_at")
   tokens     Token[]
   otpRecords OtpRecord[]
+  clinic     Clinic?     @relation(fields: [tenantId], references: [id])
 
+  @@index([tenantId])
   @@map("users")
 }
 

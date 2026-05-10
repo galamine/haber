@@ -16,7 +16,6 @@ export function UserDetailPage() {
         {[
           ['Email', user.email],
           ['Role', user.role],
-          ['Email verified', user.isEmailVerified ? 'Yes' : 'No'],
           ['Member since', new Date(user.createdAt).toLocaleDateString()],
         ].map(([label, value]) => (
           <div key={label} className="flex items-center gap-8 px-4 py-3">

@@ -8,36 +8,36 @@
   "diagnoses": {
     "description": "Primary clinical diagnoses captured during intake / initial assessment (Form 1 Section B). Multi-select. 'other' triggers a free-text 'other_specify' field.",
     "items": [
-      { "id": "asd",                    "label": "Autism Spectrum Disorder (ASD)" },
-      { "id": "cp",                     "label": "Cerebral Palsy (CP)" },
-      { "id": "adhd",                   "label": "ADHD / ADD" },
-      { "id": "down_syndrome",          "label": "Down Syndrome" },
-      { "id": "gdd",                    "label": "Global Developmental Delay (GDD)" },
-      { "id": "spd",                    "label": "Sensory Processing Disorder (SPD)" },
-      { "id": "dcd",                    "label": "Developmental Coordination Disorder (DCD)" },
-      { "id": "intellectual_disability","label": "Intellectual Disability" },
-      { "id": "learning_disability",    "label": "Learning Disability (Dyslexia / Dyscalculia)" },
-      { "id": "dyspraxia",              "label": "Dyspraxia" },
-      { "id": "abi",                    "label": "Acquired Brain Injury (ABI)" },
-      { "id": "other",                  "label": "Other (specify)" }
+      { "id": "asd", "label": "Autism Spectrum Disorder (ASD)" },
+      { "id": "cp", "label": "Cerebral Palsy (CP)" },
+      { "id": "adhd", "label": "ADHD / ADD" },
+      { "id": "down_syndrome", "label": "Down Syndrome" },
+      { "id": "gdd", "label": "Global Developmental Delay (GDD)" },
+      { "id": "spd", "label": "Sensory Processing Disorder (SPD)" },
+      { "id": "dcd", "label": "Developmental Coordination Disorder (DCD)" },
+      { "id": "intellectual_disability", "label": "Intellectual Disability" },
+      { "id": "learning_disability", "label": "Learning Disability (Dyslexia / Dyscalculia)" },
+      { "id": "dyspraxia", "label": "Dyspraxia" },
+      { "id": "abi", "label": "Acquired Brain Injury (ABI)" },
+      { "id": "other", "label": "Other (specify)" }
     ]
   },
 
   "developmental_milestones": {
     "description": "Developmental milestones captured per child during initial assessment (Form 1 Section C). Each child record stores achieved_at_age_months, delayed (boolean), notes (free text). Canonical age bands per milestone are TBD pending clinical advisor sign-off (Open Question #2 in PRD).",
     "items": [
-      { "id": "head_control",            "label": "Head control" },
-      { "id": "rolling",                 "label": "Rolling" },
-      { "id": "sitting_independently",   "label": "Sitting independently" },
-      { "id": "crawling",                "label": "Crawling" },
-      { "id": "standing",                "label": "Standing" },
-      { "id": "walking",                 "label": "Walking" },
-      { "id": "first_words",             "label": "First words" },
-      { "id": "two_word_phrases",        "label": "Two-word phrases" },
-      { "id": "toilet_training",         "label": "Toilet training" },
-      { "id": "self_feeding",            "label": "Self-feeding" },
-      { "id": "dressing",                "label": "Dressing" },
-      { "id": "eye_contact_social_smile","label": "Eye contact / Social smile" }
+      { "id": "head_control", "label": "Head control" },
+      { "id": "rolling", "label": "Rolling" },
+      { "id": "sitting_independently", "label": "Sitting independently" },
+      { "id": "crawling", "label": "Crawling" },
+      { "id": "standing", "label": "Standing" },
+      { "id": "walking", "label": "Walking" },
+      { "id": "first_words", "label": "First words" },
+      { "id": "two_word_phrases", "label": "Two-word phrases" },
+      { "id": "toilet_training", "label": "Toilet training" },
+      { "id": "self_feeding", "label": "Self-feeding" },
+      { "id": "dressing", "label": "Dressing" },
+      { "id": "eye_contact_social_smile", "label": "Eye contact / Social smile" }
     ]
   },
 
@@ -53,172 +53,172 @@
       }
     },
     "items": [
-      { "id": "tactile",            "label": "Tactile (Touch)" },
-      { "id": "vestibular",         "label": "Vestibular (Movement / Balance)" },
-      { "id": "proprioceptive",     "label": "Proprioceptive (Body Awareness)" },
-      { "id": "auditory",           "label": "Auditory (Sound)" },
-      { "id": "visual",             "label": "Visual" },
-      { "id": "olfactory_gustatory","label": "Olfactory / Gustatory (Smell / Taste)" },
-      { "id": "interoception",      "label": "Interoception (Internal Body Signals)" }
+      { "id": "tactile", "label": "Tactile (Touch)" },
+      { "id": "vestibular", "label": "Vestibular (Movement / Balance)" },
+      { "id": "proprioceptive", "label": "Proprioceptive (Body Awareness)" },
+      { "id": "auditory", "label": "Auditory (Sound)" },
+      { "id": "visual", "label": "Visual" },
+      { "id": "olfactory_gustatory", "label": "Olfactory / Gustatory (Smell / Taste)" },
+      { "id": "interoception", "label": "Interoception (Internal Body Signals)" }
     ]
   },
 
   "functional_concerns": {
     "description": "Functional & Fine Motor Skill concern checklist (Form 1 Section E). Multi-select on initial assessment.",
     "items": [
-      { "id": "pencil_grasp_handwriting",          "label": "Pencil grasp & handwriting quality" },
-      { "id": "scissors_use",                       "label": "Scissors use" },
-      { "id": "bilateral_coordination",             "label": "Bilateral coordination" },
-      { "id": "buttoning_zipping_dressing",         "label": "Buttoning / zipping / dressing" },
-      { "id": "feeding_skills_oral_motor",          "label": "Feeding skills / oral motor" },
-      { "id": "postural_control_core_stability",    "label": "Postural control & core stability" },
-      { "id": "eye_hand_coordination",              "label": "Eye-hand coordination" },
-      { "id": "gross_motor_planning_sequencing",    "label": "Gross motor planning & sequencing" },
-      { "id": "sustained_attention_task_completion","label": "Sustained attention / task completion" },
-      { "id": "play_skills",                        "label": "Play skills (parallel, cooperative)" },
-      { "id": "social_participation_peer_interaction","label": "Social participation & peer interaction" },
-      { "id": "adl_independence",                   "label": "ADL independence (self-care)" },
-      { "id": "emotional_regulation_behavior",      "label": "Emotional regulation & behavior" },
-      { "id": "visual_perceptual_skills",           "label": "Visual perceptual skills" },
-      { "id": "pre_academic_school_readiness",      "label": "Pre-academic / school readiness" },
-      { "id": "transfers_mobility",                 "label": "Transfers & mobility" }
+      { "id": "pencil_grasp_handwriting", "label": "Pencil grasp & handwriting quality" },
+      { "id": "scissors_use", "label": "Scissors use" },
+      { "id": "bilateral_coordination", "label": "Bilateral coordination" },
+      { "id": "buttoning_zipping_dressing", "label": "Buttoning / zipping / dressing" },
+      { "id": "feeding_skills_oral_motor", "label": "Feeding skills / oral motor" },
+      { "id": "postural_control_core_stability", "label": "Postural control & core stability" },
+      { "id": "eye_hand_coordination", "label": "Eye-hand coordination" },
+      { "id": "gross_motor_planning_sequencing", "label": "Gross motor planning & sequencing" },
+      { "id": "sustained_attention_task_completion", "label": "Sustained attention / task completion" },
+      { "id": "play_skills", "label": "Play skills (parallel, cooperative)" },
+      { "id": "social_participation_peer_interaction", "label": "Social participation & peer interaction" },
+      { "id": "adl_independence", "label": "ADL independence (self-care)" },
+      { "id": "emotional_regulation_behavior", "label": "Emotional regulation & behavior" },
+      { "id": "visual_perceptual_skills", "label": "Visual perceptual skills" },
+      { "id": "pre_academic_school_readiness", "label": "Pre-academic / school readiness" },
+      { "id": "transfers_mobility", "label": "Transfers & mobility" }
     ]
   },
 
   "standardized_assessment_tools": {
     "description": "Standardized assessment instruments (Form 1 Section F). Multi-select on initial assessment; each selected tool can carry scores/percentiles in a free-text summary on the assessment record.",
     "items": [
-      { "id": "sp2",            "label": "Sensory Profile 2 (SP2)" },
-      { "id": "beery_vmi",      "label": "Beery VMI (Visual-Motor Integration)" },
-      { "id": "bot2",           "label": "BOT-2 (Bruininks-Oseretsky)" },
-      { "id": "pdms2",          "label": "PDMS-2 (Peabody Dev. Motor Scales)" },
-      { "id": "weefim",         "label": "WeeFIM (Functional Independence)" },
-      { "id": "pedi_cat",       "label": "PEDI-CAT" },
-      { "id": "sipt",           "label": "SIPT (Sensory Integration & Praxis)" },
-      { "id": "cars2",          "label": "CARS-2 (Autism Rating Scale)" },
-      { "id": "gas",            "label": "GAS (Goal Attainment Scaling)" },
-      { "id": "copm",           "label": "COPM (Canadian Occupational Performance)" },
-      { "id": "mabc2",          "label": "MABC-2 (Movement Assessment Battery)" },
-      { "id": "beery_buktenica","label": "Beery-Buktenica (VMI)" },
-      { "id": "abilhand_kids",  "label": "ABILHAND-Kids" },
-      { "id": "other",          "label": "Other (specify)" }
+      { "id": "sp2", "label": "Sensory Profile 2 (SP2)" },
+      { "id": "beery_vmi", "label": "Beery VMI (Visual-Motor Integration)" },
+      { "id": "bot2", "label": "BOT-2 (Bruininks-Oseretsky)" },
+      { "id": "pdms2", "label": "PDMS-2 (Peabody Dev. Motor Scales)" },
+      { "id": "weefim", "label": "WeeFIM (Functional Independence)" },
+      { "id": "pedi_cat", "label": "PEDI-CAT" },
+      { "id": "sipt", "label": "SIPT (Sensory Integration & Praxis)" },
+      { "id": "cars2", "label": "CARS-2 (Autism Rating Scale)" },
+      { "id": "gas", "label": "GAS (Goal Attainment Scaling)" },
+      { "id": "copm", "label": "COPM (Canadian Occupational Performance)" },
+      { "id": "mabc2", "label": "MABC-2 (Movement Assessment Battery)" },
+      { "id": "beery_buktenica", "label": "Beery-Buktenica (VMI)" },
+      { "id": "abilhand_kids", "label": "ABILHAND-Kids" },
+      { "id": "other", "label": "Other (specify)" }
     ]
   },
 
   "equipment_catalog": {
     "description": "Equipment / sensory tools referenced by treatment plan presets (PDF Section 3). Drawn verbatim from PDF case studies; this is a starter catalog the clinic admin can extend.",
     "items": [
-      { "id": "lycra_body_sock",            "label": "Lycra body sock" },
-      { "id": "crash_mat",                  "label": "Crash mat" },
-      { "id": "weighted_lap_pad",           "label": "Weighted lap pad (5–10% body weight)" },
-      { "id": "linear_swing",               "label": "Linear swing" },
-      { "id": "rotary_swing",               "label": "Rotary swing" },
-      { "id": "tactile_bin_sand",           "label": "Tactile bin — sand" },
-      { "id": "tactile_bin_rice",           "label": "Tactile bin — rice" },
-      { "id": "tactile_bin_water_beads",    "label": "Tactile bin — water beads" },
-      { "id": "visual_timer",               "label": "Visual timer" },
-      { "id": "bubble_tube",                "label": "Bubble tube (Snoezelen)" },
-      { "id": "fibre_optic_strands",        "label": "Fibre optic strands (Snoezelen)" },
-      { "id": "noise_cancelling_headphones","label": "Noise-cancelling headphones" },
-      { "id": "dynamic_wrist_splint",       "label": "Dynamic wrist splint (thermoplastic)" },
-      { "id": "pencil_grips",               "label": "Pencil grips" },
-      { "id": "triangular_pencils",         "label": "Triangular pencils" },
-      { "id": "dycem_mat",                  "label": "Dycem non-slip mat" },
-      { "id": "adapted_scissors",           "label": "Adapted scissors (loop or spring-loaded)" },
-      { "id": "built_up_utensil_handles",   "label": "Built-up utensil handles" },
-      { "id": "slant_board",                "label": "Slant board for writing (~20°)" },
-      { "id": "elastic_shoelaces",          "label": "Elastic shoelaces" },
-      { "id": "button_hook",                "label": "Button hook" },
-      { "id": "wobble_cushion",             "label": "Wobble cushion" },
-      { "id": "fidget_tool_tangle",         "label": "Fidget tool — Tangle" },
-      { "id": "fidget_tool_putty",          "label": "Fidget tool — putty" },
-      { "id": "weighted_vest",              "label": "Weighted vest (20 min on / 20 min off)" },
+      { "id": "lycra_body_sock", "label": "Lycra body sock" },
+      { "id": "crash_mat", "label": "Crash mat" },
+      { "id": "weighted_lap_pad", "label": "Weighted lap pad (5–10% body weight)" },
+      { "id": "linear_swing", "label": "Linear swing" },
+      { "id": "rotary_swing", "label": "Rotary swing" },
+      { "id": "tactile_bin_sand", "label": "Tactile bin — sand" },
+      { "id": "tactile_bin_rice", "label": "Tactile bin — rice" },
+      { "id": "tactile_bin_water_beads", "label": "Tactile bin — water beads" },
+      { "id": "visual_timer", "label": "Visual timer" },
+      { "id": "bubble_tube", "label": "Bubble tube (Snoezelen)" },
+      { "id": "fibre_optic_strands", "label": "Fibre optic strands (Snoezelen)" },
+      { "id": "noise_cancelling_headphones", "label": "Noise-cancelling headphones" },
+      { "id": "dynamic_wrist_splint", "label": "Dynamic wrist splint (thermoplastic)" },
+      { "id": "pencil_grips", "label": "Pencil grips" },
+      { "id": "triangular_pencils", "label": "Triangular pencils" },
+      { "id": "dycem_mat", "label": "Dycem non-slip mat" },
+      { "id": "adapted_scissors", "label": "Adapted scissors (loop or spring-loaded)" },
+      { "id": "built_up_utensil_handles", "label": "Built-up utensil handles" },
+      { "id": "slant_board", "label": "Slant board for writing (~20°)" },
+      { "id": "elastic_shoelaces", "label": "Elastic shoelaces" },
+      { "id": "button_hook", "label": "Button hook" },
+      { "id": "wobble_cushion", "label": "Wobble cushion" },
+      { "id": "fidget_tool_tangle", "label": "Fidget tool — Tangle" },
+      { "id": "fidget_tool_putty", "label": "Fidget tool — putty" },
+      { "id": "weighted_vest", "label": "Weighted vest (20 min on / 20 min off)" },
       { "id": "chewable_silicone_necklace", "label": "Chewable silicone necklace" },
-      { "id": "visual_schedule_cards",      "label": "Visual schedule cards (with pictures)" },
-      { "id": "therapy_ball_chair",         "label": "Therapy ball chair" },
-      { "id": "time_timer",                 "label": "Time Timer (visual)" },
-      { "id": "color_coded_folders",        "label": "Color-coded folder system" },
-      { "id": "therapy_ball",               "label": "Therapy ball (prone positioning)" },
-      { "id": "adapted_spoon",              "label": "Adapted spoon (built-up handle)" },
-      { "id": "ark_grabber",                "label": "ARK Grabber chew tool" },
-      { "id": "cause_effect_switch_toys",   "label": "Cause-effect switch toys" },
-      { "id": "mirror_oral_motor",          "label": "Mirror for oral-motor feedback" },
-      { "id": "inset_puzzle_boards",        "label": "Inset puzzle boards" },
-      { "id": "duplo",                      "label": "Duplo / large manipulation toys" },
-      { "id": "balance_beam",               "label": "Balance beam" },
-      { "id": "stepping_stones",            "label": "Stepping stones" },
-      { "id": "catching_mitts",             "label": "Catching mitts (graduated size)" },
-      { "id": "graph_paper",                "label": "Graph paper (for letter spacing)" },
-      { "id": "laptop_alternative_output",  "label": "Laptop / tablet (alternative written output)" },
-      { "id": "weighted_blanket",           "label": "Weighted blanket" }
+      { "id": "visual_schedule_cards", "label": "Visual schedule cards (with pictures)" },
+      { "id": "therapy_ball_chair", "label": "Therapy ball chair" },
+      { "id": "time_timer", "label": "Time Timer (visual)" },
+      { "id": "color_coded_folders", "label": "Color-coded folder system" },
+      { "id": "therapy_ball", "label": "Therapy ball (prone positioning)" },
+      { "id": "adapted_spoon", "label": "Adapted spoon (built-up handle)" },
+      { "id": "ark_grabber", "label": "ARK Grabber chew tool" },
+      { "id": "cause_effect_switch_toys", "label": "Cause-effect switch toys" },
+      { "id": "mirror_oral_motor", "label": "Mirror for oral-motor feedback" },
+      { "id": "inset_puzzle_boards", "label": "Inset puzzle boards" },
+      { "id": "duplo", "label": "Duplo / large manipulation toys" },
+      { "id": "balance_beam", "label": "Balance beam" },
+      { "id": "stepping_stones", "label": "Stepping stones" },
+      { "id": "catching_mitts", "label": "Catching mitts (graduated size)" },
+      { "id": "graph_paper", "label": "Graph paper (for letter spacing)" },
+      { "id": "laptop_alternative_output", "label": "Laptop / tablet (alternative written output)" },
+      { "id": "weighted_blanket", "label": "Weighted blanket" }
     ]
   },
 
   "intervention_approaches": {
     "description": "Named therapeutic approaches referenced in PDF treatment plan presets. Used as a tag on treatment plans (multi-select).",
     "items": [
-      { "id": "ayres_si",       "label": "Ayres Sensory Integration (ASI)" },
-      { "id": "dir_floortime",  "label": "DIR/Floortime" },
-      { "id": "snoezelen",      "label": "Snoezelen multi-sensory room" },
-      { "id": "sensory_diet",   "label": "Sensory Diet Protocol" },
-      { "id": "cimt",           "label": "Constraint-Induced Movement Therapy (CIMT)" },
-      { "id": "ndt",            "label": "Neurodevelopmental Technique (NDT)" },
-      { "id": "task_oriented",  "label": "Task-oriented training" },
-      { "id": "alert_program",  "label": "Alert Program (How Does Your Engine Run?)" },
-      { "id": "zones_regulation","label": "Zones of Regulation" },
-      { "id": "hwt",            "label": "Handwriting Without Tears (HWT)" },
-      { "id": "co_op",          "label": "CO-OP (Cognitive Orientation to daily Occupational Performance)" },
-      { "id": "wilbarger",      "label": "Wilbarger brushing protocol" },
-      { "id": "early_intervention","label": "Play-based early intervention (family-centred)" },
-      { "id": "oral_motor_therapy","label": "Oral-motor therapy" },
-      { "id": "errorless_learning","label": "Errorless learning" },
-      { "id": "motor_imagery",  "label": "Motor imagery training" }
+      { "id": "ayres_si", "label": "Ayres Sensory Integration (ASI)" },
+      { "id": "dir_floortime", "label": "DIR/Floortime" },
+      { "id": "snoezelen", "label": "Snoezelen multi-sensory room" },
+      { "id": "sensory_diet", "label": "Sensory Diet Protocol" },
+      { "id": "cimt", "label": "Constraint-Induced Movement Therapy (CIMT)" },
+      { "id": "ndt", "label": "Neurodevelopmental Technique (NDT)" },
+      { "id": "task_oriented", "label": "Task-oriented training" },
+      { "id": "alert_program", "label": "Alert Program (How Does Your Engine Run?)" },
+      { "id": "zones_regulation", "label": "Zones of Regulation" },
+      { "id": "hwt", "label": "Handwriting Without Tears (HWT)" },
+      { "id": "co_op", "label": "CO-OP (Cognitive Orientation to daily Occupational Performance)" },
+      { "id": "wilbarger", "label": "Wilbarger brushing protocol" },
+      { "id": "early_intervention", "label": "Play-based early intervention (family-centred)" },
+      { "id": "oral_motor_therapy", "label": "Oral-motor therapy" },
+      { "id": "errorless_learning", "label": "Errorless learning" },
+      { "id": "motor_imagery", "label": "Motor imagery training" }
     ]
   },
 
   "session_quality_tags": {
     "description": "Optional quality tag a therapist attaches when completing a session (PRD User Story 45).",
     "items": [
-      { "id": "calm",        "label": "Calm" },
-      { "id": "distracted",  "label": "Distracted" },
-      { "id": "refused",     "label": "Refused" }
+      { "id": "calm", "label": "Calm" },
+      { "id": "distracted", "label": "Distracted" },
+      { "id": "refused", "label": "Refused" }
     ]
   },
 
   "home_program_compliance": {
     "description": "Caregiver-reported home-program compliance levels (Form 2 Section D). Captured at every follow-up.",
     "items": [
-      { "id": "excellent",  "label": "Excellent — completed daily" },
-      { "id": "good",       "label": "Good — most days" },
-      { "id": "partial",    "label": "Partial — some days only" },
-      { "id": "minimal",    "label": "Minimal compliance" },
-      { "id": "not_started","label": "Not started / unable to implement" }
+      { "id": "excellent", "label": "Excellent — completed daily" },
+      { "id": "good", "label": "Good — most days" },
+      { "id": "partial", "label": "Partial — some days only" },
+      { "id": "minimal", "label": "Minimal compliance" },
+      { "id": "not_started", "label": "Not started / unable to implement" }
     ]
   },
 
   "session_engagement": {
     "description": "Therapist rating of child engagement & tolerance during session (Form 2 Section D).",
     "items": [
-      { "id": "excellent","label": "Excellent — highly cooperative" },
-      { "id": "good",     "label": "Good — cooperative most of the time" },
-      { "id": "fair",     "label": "Fair — some resistance / distraction" },
-      { "id": "poor",     "label": "Poor — significant behavioral challenges" }
+      { "id": "excellent", "label": "Excellent — highly cooperative" },
+      { "id": "good", "label": "Good — cooperative most of the time" },
+      { "id": "fair", "label": "Fair — some resistance / distraction" },
+      { "id": "poor", "label": "Poor — significant behavioral challenges" }
     ]
   },
 
   "goal_status": {
     "description": "Status of a treatment goal at follow-up review (Form 2 Section B).",
     "items": [
-      { "id": "met",         "label": "Met" },
+      { "id": "met", "label": "Met" },
       { "id": "in_progress", "label": "In Progress" },
-      { "id": "not_met",     "label": "Not Met" }
+      { "id": "not_met", "label": "Not Met" }
     ]
   },
 
   "goal_horizon": {
     "description": "Horizon of a treatment goal (Form 1 Section G). Short-term and long-term are clinically distinct categories.",
     "items": [
-      { "id": "short_term","label": "Short-Term (4–6 Weeks)" },
+      { "id": "short_term", "label": "Short-Term (4–6 Weeks)" },
       { "id": "long_term", "label": "Long-Term (3–6 Months)" }
     ]
   },
@@ -226,23 +226,23 @@
   "goal_status_decisions": {
     "description": "Plan-level goal status decisions on follow-up (Form 2 Section E). Multi-select.",
     "items": [
-      { "id": "continue_all",   "label": "Continue all current goals" },
-      { "id": "modify_existing","label": "Modify existing goals" },
-      { "id": "add_new",        "label": "Add new goals" },
-      { "id": "discontinue",    "label": "Discontinue — goal met / discharged" },
-      { "id": "refer_specialist","label": "Refer to another specialist" }
+      { "id": "continue_all", "label": "Continue all current goals" },
+      { "id": "modify_existing", "label": "Modify existing goals" },
+      { "id": "add_new", "label": "Add new goals" },
+      { "id": "discontinue", "label": "Discontinue — goal met / discharged" },
+      { "id": "refer_specialist", "label": "Refer to another specialist" }
     ]
   },
 
   "intervention_settings": {
     "description": "Possible intervention settings for a treatment plan (Form 1 Section G).",
     "items": [
-      { "id": "ot_clinic",          "label": "OT Clinic" },
-      { "id": "home",               "label": "Home" },
-      { "id": "school",             "label": "School" },
+      { "id": "ot_clinic", "label": "OT Clinic" },
+      { "id": "home", "label": "Home" },
+      { "id": "school", "label": "School" },
       { "id": "early_intervention", "label": "Early Intervention Programme" },
-      { "id": "pediatric_rehab",    "label": "Pediatric Rehabilitation Clinic" },
-      { "id": "hybrid",             "label": "Hybrid (combination)" }
+      { "id": "pediatric_rehab", "label": "Pediatric Rehabilitation Clinic" },
+      { "id": "hybrid", "label": "Hybrid (combination)" }
     ]
   }
 }

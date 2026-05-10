@@ -47,30 +47,65 @@
   },
 
   "section_c_developmental_milestones": [
-    { "milestone_id": "head_control",            "achieved_at_age_months": 4,  "delayed": false, "notes": "" },
-    { "milestone_id": "rolling",                 "achieved_at_age_months": 6,  "delayed": false, "notes": "" },
-    { "milestone_id": "sitting_independently",   "achieved_at_age_months": 8,  "delayed": false, "notes": "" },
-    { "milestone_id": "crawling",                "achieved_at_age_months": 11, "delayed": false, "notes": "" },
-    { "milestone_id": "standing",                "achieved_at_age_months": 13, "delayed": false, "notes": "" },
-    { "milestone_id": "walking",                 "achieved_at_age_months": 16, "delayed": true,  "notes": "Toe-walking pattern persisted past 24 months." },
-    { "milestone_id": "first_words",             "achieved_at_age_months": 24, "delayed": true,  "notes": "Single words only at 24 months." },
-    { "milestone_id": "two_word_phrases",        "achieved_at_age_months": 36, "delayed": true,  "notes": "Two-word phrases not consistent until 36 months." },
-    { "milestone_id": "toilet_training",         "achieved_at_age_months": null, "delayed": true,  "notes": "In progress; resists toilet for bowel movements." },
-    { "milestone_id": "self_feeding",            "achieved_at_age_months": 30, "delayed": true,  "notes": "Refuses utensils for textured food." },
-    { "milestone_id": "dressing",                "achieved_at_age_months": null, "delayed": true,  "notes": "Cannot manage buttons or zippers; tolerates pull-on clothing only." },
-    { "milestone_id": "eye_contact_social_smile","achieved_at_age_months": 18, "delayed": true,  "notes": "Reduced and inconsistent eye contact." }
+    { "milestone_id": "head_control", "achieved_at_age_months": 4, "delayed": false, "notes": "" },
+    { "milestone_id": "rolling", "achieved_at_age_months": 6, "delayed": false, "notes": "" },
+    { "milestone_id": "sitting_independently", "achieved_at_age_months": 8, "delayed": false, "notes": "" },
+    { "milestone_id": "crawling", "achieved_at_age_months": 11, "delayed": false, "notes": "" },
+    { "milestone_id": "standing", "achieved_at_age_months": 13, "delayed": false, "notes": "" },
+    {
+      "milestone_id": "walking",
+      "achieved_at_age_months": 16,
+      "delayed": true,
+      "notes": "Toe-walking pattern persisted past 24 months."
+    },
+    {
+      "milestone_id": "first_words",
+      "achieved_at_age_months": 24,
+      "delayed": true,
+      "notes": "Single words only at 24 months."
+    },
+    {
+      "milestone_id": "two_word_phrases",
+      "achieved_at_age_months": 36,
+      "delayed": true,
+      "notes": "Two-word phrases not consistent until 36 months."
+    },
+    {
+      "milestone_id": "toilet_training",
+      "achieved_at_age_months": null,
+      "delayed": true,
+      "notes": "In progress; resists toilet for bowel movements."
+    },
+    {
+      "milestone_id": "self_feeding",
+      "achieved_at_age_months": 30,
+      "delayed": true,
+      "notes": "Refuses utensils for textured food."
+    },
+    {
+      "milestone_id": "dressing",
+      "achieved_at_age_months": null,
+      "delayed": true,
+      "notes": "Cannot manage buttons or zippers; tolerates pull-on clothing only."
+    },
+    {
+      "milestone_id": "eye_contact_social_smile",
+      "achieved_at_age_months": 18,
+      "delayed": true,
+      "notes": "Reduced and inconsistent eye contact."
+    }
   ],
 
   "section_d_sensory_processing_profile": {
     "scale_anchors": { "1": "Hypo-responsive", "3": "Typical", "5": "Hyper-responsive" },
     "ratings": [
-      { "system_id": "tactile",            "rating": 5, "notes": "Avoids messy textures; tags on clothing trigger meltdowns." },
-      { "system_id": "vestibular",         "rating": 4, "notes": "Seeks rotary movement; spins frequently." },
-      { "system_id": "proprioceptive",     "rating": 4, "notes": "Crashing, jumping, deep pressure seeking." },
-      { "system_id": "auditory",           "rating": 5, "notes": "Covers ears at vacuum cleaner; meltdowns in malls." },
-      { "system_id": "visual",             "rating": 3, "notes": "Typical." },
-      { "system_id": "olfactory_gustatory","rating": 5, "notes": "Refuses strong-smelling foods; gags on textures." },
-      { "system_id": "interoception",      "rating": 2, "notes": "Limited awareness of toilet needs and hunger." }
+      { "system_id": "tactile", "rating": 5, "notes": "Avoids messy textures; tags on clothing trigger meltdowns." },
+      { "system_id": "vestibular", "rating": 4, "notes": "Seeks rotary movement; spins frequently." },
+      { "system_id": "proprioceptive", "rating": 4, "notes": "Crashing, jumping, deep pressure seeking." },
+      { "system_id": "auditory", "rating": 5, "notes": "Covers ears at vacuum cleaner; meltdowns in malls." },
+      { "system_id": "visual", "rating": 3, "notes": "Typical." },
+      { "system_id": "olfactory_gustatory", "rating": 5, "notes": "Refuses strong-smelling foods; gags on textures." },
+      { "system_id": "interoception", "rating": 2, "notes": "Limited awareness of toilet needs and hunger." }
     ],
     "behavioural_observations": "Child sought weighted lap pad during transitions. Covered ears repeatedly when corridor noise increased. Avoided sand bin; tolerated rice bin for 2 minutes after modeling."
   },
@@ -108,16 +143,48 @@
 
   "section_g_initial_goals_intervention_plan": {
     "short_term_goals_4_6_weeks": [
-      { "goal_id": "goal_st_1", "description": "Tolerate light touch to hands 3/5 trials without distress.", "target_attainment_pct": 100 },
-      { "goal_id": "goal_st_2", "description": "Engage in sand/rice tactile bin play for 5 minutes.",         "target_attainment_pct": 100 },
-      { "goal_id": "goal_st_3", "description": "Imitate 3-step motor sequence with 1 verbal prompt.",          "target_attainment_pct": 100 },
-      { "goal_id": "goal_st_4", "description": "Reduce meltdown frequency by 30% (parent log).",                "target_attainment_pct": 100 }
+      {
+        "goal_id": "goal_st_1",
+        "description": "Tolerate light touch to hands 3/5 trials without distress.",
+        "target_attainment_pct": 100
+      },
+      {
+        "goal_id": "goal_st_2",
+        "description": "Engage in sand/rice tactile bin play for 5 minutes.",
+        "target_attainment_pct": 100
+      },
+      {
+        "goal_id": "goal_st_3",
+        "description": "Imitate 3-step motor sequence with 1 verbal prompt.",
+        "target_attainment_pct": 100
+      },
+      {
+        "goal_id": "goal_st_4",
+        "description": "Reduce meltdown frequency by 30% (parent log).",
+        "target_attainment_pct": 100
+      }
     ],
     "long_term_goals_3_6_months": [
-      { "goal_id": "goal_lt_1", "description": "Independent participation in group sensory activities at school.", "target_attainment_pct": 100 },
-      { "goal_id": "goal_lt_2", "description": "Independently use 2+ self-regulation strategies when dysregulated.","target_attainment_pct": 100 },
-      { "goal_id": "goal_lt_3", "description": "Age-appropriate fine motor skills — pre-writing readiness.",         "target_attainment_pct": 100 },
-      { "goal_id": "goal_lt_4", "description": "Tolerance of varied food textures at mealtimes.",                    "target_attainment_pct": 100 }
+      {
+        "goal_id": "goal_lt_1",
+        "description": "Independent participation in group sensory activities at school.",
+        "target_attainment_pct": 100
+      },
+      {
+        "goal_id": "goal_lt_2",
+        "description": "Independently use 2+ self-regulation strategies when dysregulated.",
+        "target_attainment_pct": 100
+      },
+      {
+        "goal_id": "goal_lt_3",
+        "description": "Age-appropriate fine motor skills — pre-writing readiness.",
+        "target_attainment_pct": 100
+      },
+      {
+        "goal_id": "goal_lt_4",
+        "description": "Tolerance of varied food textures at mealtimes.",
+        "target_attainment_pct": 100
+      }
     ],
     "recommended_frequency_sessions_per_week": 3,
     "session_duration_minutes": 60,

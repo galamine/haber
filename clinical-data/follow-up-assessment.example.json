@@ -65,13 +65,49 @@
   ],
 
   "section_c_sensory_processing_progress_check": [
-    { "system_id": "tactile",            "initial_rating": 5, "now_rating": 4, "change": -1, "notes": "Improvement \u2014 tolerates rice/sand bins." },
-    { "system_id": "vestibular",         "initial_rating": 4, "now_rating": 4, "change":  0, "notes": "Unchanged \u2014 still seeks rotary input." },
-    { "system_id": "proprioceptive",     "initial_rating": 4, "now_rating": 3, "change": -1, "notes": "Heavy work routine helping; less crashing." },
-    { "system_id": "auditory",           "initial_rating": 5, "now_rating": 5, "change":  0, "notes": "No change \u2014 noise-cancelling headphones in use." },
-    { "system_id": "visual",             "initial_rating": 3, "now_rating": 3, "change":  0, "notes": "Stable." },
-    { "system_id": "olfactory_gustatory","initial_rating": 5, "now_rating": 4, "change": -1, "notes": "Tolerated mild-smelling new food once." },
-    { "system_id": "interoception",      "initial_rating": 2, "now_rating": 2, "change":  0, "notes": "Limited progress \u2014 add toilet schedule." }
+    {
+      "system_id": "tactile",
+      "initial_rating": 5,
+      "now_rating": 4,
+      "change": -1,
+      "notes": "Improvement \u2014 tolerates rice/sand bins."
+    },
+    {
+      "system_id": "vestibular",
+      "initial_rating": 4,
+      "now_rating": 4,
+      "change": 0,
+      "notes": "Unchanged \u2014 still seeks rotary input."
+    },
+    {
+      "system_id": "proprioceptive",
+      "initial_rating": 4,
+      "now_rating": 3,
+      "change": -1,
+      "notes": "Heavy work routine helping; less crashing."
+    },
+    {
+      "system_id": "auditory",
+      "initial_rating": 5,
+      "now_rating": 5,
+      "change": 0,
+      "notes": "No change \u2014 noise-cancelling headphones in use."
+    },
+    { "system_id": "visual", "initial_rating": 3, "now_rating": 3, "change": 0, "notes": "Stable." },
+    {
+      "system_id": "olfactory_gustatory",
+      "initial_rating": 5,
+      "now_rating": 4,
+      "change": -1,
+      "notes": "Tolerated mild-smelling new food once."
+    },
+    {
+      "system_id": "interoception",
+      "initial_rating": 2,
+      "now_rating": 2,
+      "change": 0,
+      "notes": "Limited progress \u2014 add toilet schedule."
+    }
   ],
 
   "section_d_follow_up_clinical_questions": {

@@ -1,2 +1,4 @@
 export type * from './auth.dto';
+export type * from './clinic.dto';
+export type * from './subscriptionPlan.dto';
 export type * from './user.dto';

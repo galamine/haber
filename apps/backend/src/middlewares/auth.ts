@@ -10,6 +10,9 @@ const verifyCallback =
   (req: Request, resolve: (value?: unknown) => void, reject: (reason?: ApiError) => void, requiredRights: string[]) =>
   async (err: Error | null, user?: null | false | Express.User, info?: unknown) => {
     if (err || info || !user) {
+      if (err instanceof Error && err.message === 'CLINIC_SUSPENDED') {
+        return reject(new ApiError(httpStatus.FORBIDDEN, 'CLINIC_SUSPENDED'));
+      }
       return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
     }
     req.user = user;

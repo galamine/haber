@@ -11,6 +11,8 @@ const setupTestDB = () => {
     await prisma.otpRecord.deleteMany();
     await prisma.token.deleteMany();
     await prisma.user.deleteMany();
+    await prisma.clinic.deleteMany();
+    await prisma.subscriptionPlan.deleteMany();
   });
 
   afterAll(async () => {

@@ -2,8 +2,8 @@ export const USER_ROLES = ['super_admin', 'clinic_admin', 'therapist', 'staff'] 
 export type UserRole = (typeof USER_ROLES)[number];
 
 export const allRoles: Record<UserRole, string[]> = {
-  super_admin: ['getUsers', 'manageUsers'],
-  clinic_admin: ['getUsers', 'manageUsers'],
+  super_admin: ['getUsers', 'manageUsers', 'manageClinics', 'manageSubscriptionPlans'],
+  clinic_admin: ['getUsers', 'manageUsers', 'getClinic'],
   therapist: ['getUsers'],
   staff: ['getUsers'],
 };
