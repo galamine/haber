@@ -118,6 +118,40 @@ const evaluateIntakeComplete = async (
   return complete;
 };
 
+const evaluateConsentStatus = async (
+  tx: Parameters<Parameters<typeof prisma.$transaction>[0]>[0],
+  childId: string
+): Promise<'all_consented' | 'partial' | 'none' | 'withdrawn'> => {
+  const guardians = await tx.guardian.findMany({ where: { childId, deletedAt: null } });
+  if (guardians.length === 0) {
+    await tx.child.update({ where: { id: childId }, data: { consentStatus: 'none' } });
+    return 'none';
+  }
+
+  const activeRecords = await tx.consentRecord.findMany({ where: { childId, status: 'active' } });
+  const withdrawnRecords = await tx.consentRecord.findMany({ where: { childId, status: 'withdrawn' } });
+
+  const activeSet = new Set(activeRecords.map((r) => `${r.guardianId}:${r.type}`));
+
+  const hasUnresolvedWithdrawal = withdrawnRecords.some((r) => !activeSet.has(`${r.guardianId}:${r.type}`));
+  if (hasUnresolvedWithdrawal) {
+    await tx.child.update({ where: { id: childId }, data: { consentStatus: 'withdrawn' } });
+    return 'withdrawn';
+  }
+
+  const allConsented = guardians.every((g) =>
+    (['treatment', 'data_processing'] as const).every((type) => activeSet.has(`${g.id}:${type}`))
+  );
+  if (allConsented) {
+    await tx.child.update({ where: { id: childId }, data: { consentStatus: 'all_consented' } });
+    return 'all_consented';
+  }
+
+  const status = activeRecords.length > 0 ? 'partial' : 'none';
+  await tx.child.update({ where: { id: childId }, data: { consentStatus: status } });
+  return status;
+};
+
 const createChild = async (_callerId: string, tenantId: string, body: CreateChildDto): Promise<ChildDto> => {
   return prisma.$transaction(async (tx) => {
     const latestChild = await tx.child.findFirst({
@@ -426,4 +460,5 @@ export const childService = {
   updateGuardian,
   getIntakeStatus,
   softDeleteChild,
+  evaluateConsentStatus,
 };

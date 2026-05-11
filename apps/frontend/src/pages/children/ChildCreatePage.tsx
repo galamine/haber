@@ -1,9 +1,12 @@
-import type { CreateGuardianDto, GuardianDto, UpsertMedicalHistoryDto } from '@haber/shared';
-import { X } from 'lucide-react';
+import type { CaptureConsentDto, CreateGuardianDto, GuardianDto, UpsertMedicalHistoryDto } from '@haber/shared';
+import { CheckCircle2, X } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -12,18 +15,27 @@ import { TagInput } from '@/components/ui/tag-input';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useCreateChild, useCreateGuardian, useUpdateChild, useUpsertMedicalHistory } from '@/hooks/useChildren';
+import { useCaptureConsent, useConsentStatus } from '@/hooks/useConsent';
 
 const STEPS = [
   { number: 1, label: 'Demographics' },
   { number: 2, label: 'Guardians' },
   { number: 3, label: 'Medical History' },
   { number: 4, label: 'Anthropometrics' },
+  { number: 5, label: 'Consent' },
 ];
 
 interface MedicationRow {
+  id: string;
   name: string;
   dose: string;
   frequency: string;
+}
+
+interface ConsentFormState {
+  treatment: boolean;
+  data_processing: boolean;
+  typedName: string;
 }
 
 export function ChildCreatePage() {
@@ -35,6 +47,8 @@ export function ChildCreatePage() {
   const upsertMedicalHistory = useUpsertMedicalHistory();
   const updateChild = useUpdateChild();
   const createGuardian = useCreateGuardian();
+  const captureConsent = useCaptureConsent(childId ?? '');
+  const { data: consentStatus, refetch: refetchConsentStatus } = useConsentStatus(childId ?? '');
 
   const [demographics, setDemographics] = useState({
     fullName: '',
@@ -53,6 +67,8 @@ export function ChildCreatePage() {
   });
 
   const [guardians, setGuardians] = useState<GuardianDto[]>([]);
+
+  const [consentForms, setConsentForms] = useState<Record<string, ConsentFormState>>({});
 
   const [medicalHistory, setMedicalHistory] = useState<UpsertMedicalHistoryDto>({
     birthTerm: 'term',
@@ -74,6 +90,8 @@ export function ChildCreatePage() {
     weightKg: '' as string | number,
     measurementDate: '',
   });
+
+  const [consentSubmitted, setConsentSubmitted] = useState(false);
 
   const handleStep1Next = async () => {
     const child = await createChild.mutateAsync({
@@ -99,6 +117,10 @@ export function ChildCreatePage() {
     };
     const guardian = await createGuardian.mutateAsync({ childId, data });
     setGuardians([...guardians, guardian]);
+    setConsentForms((prev) => ({
+      ...prev,
+      [guardian.id]: { treatment: false, data_processing: false, typedName: '' },
+    }));
     setGuardianForm({ fullName: '', relationship: '', phone: '', email: '' });
   };
 
@@ -118,7 +140,7 @@ export function ChildCreatePage() {
     setStep(4);
   };
 
-  const handleFinish = async () => {
+  const handleStep4Next = async () => {
     if (!childId) return;
     await updateChild.mutateAsync({
       childId,
@@ -128,7 +150,44 @@ export function ChildCreatePage() {
         measurementDate: new Date(anthropometrics.measurementDate).toISOString(),
       },
     });
+    setStep(5);
+  };
+
+  const handleStep5Submit = async () => {
+    if (!childId) return;
+
+    const captures: CaptureConsentDto[] = [];
+    for (const guardian of guardians) {
+      const form = consentForms[guardian.id];
+      if (!form) continue;
+      if (form.treatment && form.typedName.trim()) {
+        captures.push({ guardianId: guardian.id, type: 'treatment', typedName: form.typedName.trim() });
+      }
+      if (form.data_processing && form.typedName.trim()) {
+        captures.push({ guardianId: guardian.id, type: 'data_processing', typedName: form.typedName.trim() });
+      }
+    }
+
+    if (captures.length === 0) {
+      toast.warning('No consents selected — skipping. Consent can be captured later from the child profile.');
+      navigate(`/children/${childId}`);
+      return;
+    }
+
+    await Promise.all(captures.map((c) => captureConsent.mutateAsync(c)));
+    await refetchConsentStatus();
+    setConsentSubmitted(true);
+    toast.success('Consents recorded successfully');
+  };
+
+  const handleSkipConsent = () => {
+    if (!childId) return;
+    toast.warning('Consent skipped — you can capture it later from the child profile.');
     navigate(`/children/${childId}`);
+  };
+
+  const handleFinish = () => {
+    if (childId) navigate(`/children/${childId}`);
   };
 
   return (
@@ -140,7 +199,7 @@ export function ChildCreatePage() {
         </Button>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {STEPS.map((s) => (
           <div
             key={s.number}
@@ -401,26 +460,23 @@ export function ChildCreatePage() {
                   <Input
                     placeholder="Name"
                     value={med.name}
-                    onChange={(e) => {
-                      const updated = medications.map((m) => (m.id === med.id ? { ...m, name: e.target.value } : m));
-                      setMedications(updated);
-                    }}
+                    onChange={(e) =>
+                      setMedications(medications.map((m) => (m.id === med.id ? { ...m, name: e.target.value } : m)))
+                    }
                   />
                   <Input
                     placeholder="Dose"
                     value={med.dose}
-                    onChange={(e) => {
-                      const updated = medications.map((m) => (m.id === med.id ? { ...m, dose: e.target.value } : m));
-                      setMedications(updated);
-                    }}
+                    onChange={(e) =>
+                      setMedications(medications.map((m) => (m.id === med.id ? { ...m, dose: e.target.value } : m)))
+                    }
                   />
                   <Input
                     placeholder="Frequency"
                     value={med.frequency}
-                    onChange={(e) => {
-                      const updated = medications.map((m) => (m.id === med.id ? { ...m, frequency: e.target.value } : m));
-                      setMedications(updated);
-                    }}
+                    onChange={(e) =>
+                      setMedications(medications.map((m) => (m.id === med.id ? { ...m, frequency: e.target.value } : m)))
+                    }
                   />
                   <Button
                     type="button"
@@ -436,7 +492,9 @@ export function ChildCreatePage() {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setMedications([...medications, { name: '', dose: '', frequency: '' }])}
+                onClick={() =>
+                  setMedications([...medications, { id: crypto.randomUUID(), name: '', dose: '', frequency: '' }])
+                }
               >
                 Add Medication
               </Button>
@@ -519,9 +577,111 @@ export function ChildCreatePage() {
             <Button variant="outline" onClick={() => setStep(3)}>
               Back
             </Button>
-            <Button onClick={handleFinish} disabled={updateChild.isPending}>
-              {updateChild.isPending ? 'Saving...' : 'Finish'}
+            <Button onClick={handleStep4Next} disabled={updateChild.isPending}>
+              {updateChild.isPending ? 'Saving...' : 'Next'}
             </Button>
+          </div>
+        </div>
+      )}
+
+      {step === 5 && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-lg font-semibold">Guardian Consent</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Each guardian must consent to treatment and data processing. Type their full name to sign.
+            </p>
+          </div>
+
+          {consentSubmitted && consentStatus?.allConsented ? (
+            <Alert variant="success">
+              <CheckCircle2 className="size-4" />
+              <AlertDescription>All consents recorded successfully.</AlertDescription>
+            </Alert>
+          ) : (
+            <div className="space-y-6">
+              {guardians.map((guardian) => {
+                const form = consentForms[guardian.id] ?? { treatment: false, data_processing: false, typedName: '' };
+                return (
+                  <div key={guardian.id} className="rounded-lg border p-4 space-y-4">
+                    <div>
+                      <p className="font-semibold">{guardian.fullName}</p>
+                      <p className="text-sm text-muted-foreground">{guardian.relationship}</p>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          id={`treatment-${guardian.id}`}
+                          checked={form.treatment}
+                          onCheckedChange={(checked) =>
+                            setConsentForms((prev) => ({
+                              ...prev,
+                              [guardian.id]: { ...form, treatment: !!checked },
+                            }))
+                          }
+                        />
+                        <Label htmlFor={`treatment-${guardian.id}`} className="cursor-pointer">
+                          I consent to <span className="font-medium">treatment</span>
+                        </Label>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          id={`data-${guardian.id}`}
+                          checked={form.data_processing}
+                          onCheckedChange={(checked) =>
+                            setConsentForms((prev) => ({
+                              ...prev,
+                              [guardian.id]: { ...form, data_processing: !!checked },
+                            }))
+                          }
+                        />
+                        <Label htmlFor={`data-${guardian.id}`} className="cursor-pointer">
+                          I consent to <span className="font-medium">data processing</span>
+                        </Label>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor={`typedName-${guardian.id}`}>
+                        Type full name to sign{' '}
+                        {(form.treatment || form.data_processing) && <span className="text-destructive">*</span>}
+                      </Label>
+                      <Input
+                        id={`typedName-${guardian.id}`}
+                        placeholder={guardian.fullName}
+                        value={form.typedName}
+                        onChange={(e) =>
+                          setConsentForms((prev) => ({
+                            ...prev,
+                            [guardian.id]: { ...form, typedName: e.target.value },
+                          }))
+                        }
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setStep(4)} disabled={captureConsent.isPending}>
+              Back
+            </Button>
+            {consentSubmitted && consentStatus?.allConsented ? (
+              <Button onClick={handleFinish}>Finish</Button>
+            ) : (
+              <>
+                <Button onClick={handleStep5Submit} disabled={captureConsent.isPending}>
+                  {captureConsent.isPending ? 'Submitting...' : 'Submit Consents'}
+                </Button>
+                <Button variant="ghost" onClick={handleSkipConsent} disabled={captureConsent.isPending}>
+                  Skip for Now
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}

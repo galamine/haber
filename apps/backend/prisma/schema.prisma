@@ -51,6 +51,23 @@ enum RoomStatus {
   maintenance
 }
 
+enum ConsentType {
+  treatment
+  data_processing
+}
+
+enum ConsentRecordStatus {
+  active
+  withdrawn
+}
+
+enum ChildConsentStatus {
+  all_consented
+  partial
+  none
+  withdrawn
+}
+
 model SubscriptionPlan {
   id                String           @id @default(uuid())
   name              String
@@ -240,6 +257,7 @@ model Child {
   measurementDate      DateTime? @db.Date @map("measurement_date")
   latestPlanId         String?   @map("latest_plan_id")
   intakeComplete       Boolean   @default(false) @map("intake_complete")
+  consentStatus        ChildConsentStatus @default(none) @map("consent_status")
   deletedAt            DateTime? @map("deleted_at")
   createdAt            DateTime  @default(now()) @map("created_at")
   updatedAt            DateTime  @updatedAt @map("updated_at")
@@ -249,6 +267,7 @@ model Child {
   guardians           Guardian[]
   medicalHistory      MedicalHistory?
   assignedTherapists  ChildTherapist[]
+  consentRecords      ConsentRecord[]
 
   @@unique([tenantId, childCode])
   @@index([tenantId])
@@ -256,17 +275,18 @@ model Child {
 }
 
 model Guardian {
-  id           String    @id @default(uuid())
-  childId      String    @map("child_id")
-  fullName     String    @map("full_name")
-  relationship String
-  phone        String
-  email        String?
-  loginEnabled Boolean   @default(false) @map("login_enabled")
-  deletedAt    DateTime? @map("deleted_at")
-  createdAt    DateTime  @default(now()) @map("created_at")
+  id              String    @id @default(uuid())
+  childId         String    @map("child_id")
+  fullName        String    @map("full_name")
+  relationship    String
+  phone           String
+  email           String?
+  loginEnabled    Boolean   @default(false) @map("login_enabled")
+  deletedAt       DateTime? @map("deleted_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
 
-  child Child @relation(fields: [childId], references: [id], onDelete: Cascade)
+  child           Child           @relation(fields: [childId], references: [id], onDelete: Cascade)
+  consentRecords  ConsentRecord[]
 
   @@index([childId])
   @@map("guardians")
@@ -302,4 +322,24 @@ model ChildTherapist {
 
   @@id([childId, userId])
   @@map("child_therapists")
+}
+
+model ConsentRecord {
+  id              String              @id @default(uuid())
+  guardianId      String              @map("guardian_id")
+  childId         String              @map("child_id")
+  type            ConsentType
+  typedName       String              @map("typed_name")
+  checkedAt       DateTime            @map("checked_at")
+  ipAddress       String              @map("ip_address")
+  status          ConsentRecordStatus @default(active)
+  withdrawnAt     DateTime?           @map("withdrawn_at")
+  withdrawnReason String?             @map("withdrawn_reason")
+  createdAt       DateTime            @default(now()) @map("created_at")
+
+  guardian Guardian @relation(fields: [guardianId], references: [id], onDelete: Cascade)
+  child    Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId, type, status])
+  @@map("consent_records")
 }

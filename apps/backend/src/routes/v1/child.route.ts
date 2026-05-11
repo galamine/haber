@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import childController from '../../controllers/child.controller';
+import consentController from '../../controllers/consent.controller';
 import auth from '../../middlewares/auth';
 import validate from '../../middlewares/validate';
 import childValidation from '../../validations/child.validation';
+import consentValidation from '../../validations/consent.validation';
 
 const router = Router();
 
@@ -33,6 +35,30 @@ router.get(
   auth('child.intake'),
   validate(childValidation.getIntakeStatus),
   childController.getIntakeStatus
+);
+router.post(
+  '/:childId/consent',
+  auth('child.consent'),
+  validate(consentValidation.captureConsent),
+  consentController.captureConsent
+);
+router.get(
+  '/:childId/consent-status',
+  auth('child.consent'),
+  validate(consentValidation.getConsentStatus),
+  consentController.getConsentStatus
+);
+router.post(
+  '/:childId/consent/:consentId/withdraw',
+  auth('child.consent'),
+  validate(consentValidation.withdrawConsent),
+  consentController.withdrawConsent
+);
+router.get(
+  '/:childId/consent',
+  auth('child.consent'),
+  validate(consentValidation.getConsentHistory),
+  consentController.getConsentHistory
 );
 router.delete('/:childId', auth(), childController.softDeleteChild);
 

@@ -73,9 +73,39 @@ const sendInviteEmail = async (to: string, clinicName: string, role: string, otp
   await sendEmail(to, subject, html, text);
 };
 
+const sendConsentWithdrawnEmail = async (
+  recipients: string[],
+  childName: string,
+  guardianName: string,
+  consentType: string
+) => {
+  logger.info('[email] Sending consent withdrawn email', { recipients, childName, guardianName, consentType });
+  const subject = `Consent withdrawn — ${childName}`;
+  const html = `
+    <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px">
+      <h2 style="color:#1a1a2e;margin-bottom:8px">Haber</h2>
+      <p style="color:#444;margin-bottom:24px">
+        <strong>${guardianName}</strong> has withdrawn <strong>${consentType}</strong> consent for <strong>${childName}</strong>.
+      </p>
+      <p style="color:#444;margin-bottom:24px">
+        Clinical activities may be paused. Contact clinic admin to resolve.
+      </p>
+      <p style="color:#888;font-size:13px;margin-top:24px">
+        If you did not expect this notification, please contact your clinic admin.
+      </p>
+    </div>
+  `;
+  const text = `${guardianName} has withdrawn ${consentType} consent for ${childName}. Clinical activities may be paused. Contact clinic admin to resolve.`;
+
+  for (const recipient of recipients) {
+    await sendEmail(recipient, subject, html, text);
+  }
+};
+
 export const emailService = {
   transport,
   sendEmail,
   sendOtpEmail,
   sendInviteEmail,
+  sendConsentWithdrawnEmail,
 };

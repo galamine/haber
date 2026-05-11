@@ -1,5 +1,8 @@
 export type {
+  CaptureConsentDto,
   ChildDto,
+  ConsentRecordDto,
+  ConsentStatusDto,
   CreateChildDto,
   CreateGuardianDto,
   GuardianDto,
@@ -9,4 +12,5 @@ export type {
   UpdateChildDto,
   UpdateGuardianDto,
   UpsertMedicalHistoryDto,
+  WithdrawConsentDto,
 } from '../schemas/child.schema';

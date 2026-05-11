@@ -6,6 +6,15 @@ export type Sex = z.infer<typeof SexEnum>;
 export const BirthTermEnum = z.enum(['term', 'preterm']);
 export type BirthTerm = z.infer<typeof BirthTermEnum>;
 
+export const ConsentTypeEnum = z.enum(['treatment', 'data_processing']);
+export type ConsentType = z.infer<typeof ConsentTypeEnum>;
+
+export const ConsentRecordStatusEnum = z.enum(['active', 'withdrawn']);
+export type ConsentRecordStatus = z.infer<typeof ConsentRecordStatusEnum>;
+
+export const ChildConsentStatusEnum = z.enum(['all_consented', 'partial', 'none', 'withdrawn']);
+export type ChildConsentStatus = z.infer<typeof ChildConsentStatusEnum>;
+
 export const CreateChildDtoSchema = z.object({
   fullName: z.string().min(1),
   dob: z.string().datetime(),
@@ -125,6 +134,48 @@ export const IntakeStatusDtoSchema = z.object({
   missingFields: z.string().array(),
 });
 
+export const CaptureConsentDtoSchema = z.object({
+  guardianId: z.string().uuid(),
+  type: ConsentTypeEnum,
+  typedName: z.string().min(1),
+});
+
+export const WithdrawConsentDtoSchema = z.object({
+  reason: z.string().min(1),
+});
+
+export const ConsentRecordDtoSchema = z.object({
+  id: z.string().uuid(),
+  guardianId: z.string().uuid(),
+  childId: z.string().uuid(),
+  type: ConsentTypeEnum,
+  typedName: z.string(),
+  checkedAt: z.string().datetime(),
+  ipAddress: z.string(),
+  status: ConsentRecordStatusEnum,
+  withdrawnAt: z.string().datetime().nullable(),
+  withdrawnReason: z.string().nullable(),
+  createdAt: z.string().datetime(),
+});
+
+export const GuardianConsentDtoSchema = z.object({
+  guardianId: z.string().uuid(),
+  guardianName: z.string(),
+  consents: z.array(
+    z.object({
+      type: ConsentTypeEnum,
+      status: ConsentRecordStatusEnum,
+      checkedAt: z.string().datetime().nullable(),
+    })
+  ),
+});
+
+export const ConsentStatusDtoSchema = z.object({
+  allConsented: z.boolean(),
+  consentStatus: ChildConsentStatusEnum,
+  guardians: z.array(GuardianConsentDtoSchema),
+});
+
 export type CreateChildDto = z.infer<typeof CreateChildDtoSchema>;
 export type UpdateChildDto = z.infer<typeof UpdateChildDtoSchema>;
 export type CreateGuardianDto = z.infer<typeof CreateGuardianDtoSchema>;
@@ -136,3 +187,7 @@ export type GuardianDto = z.infer<typeof GuardianDtoSchema>;
 export type MedicalHistoryDto = z.infer<typeof MedicalHistoryDtoSchema>;
 export type PaginatedChildDto = z.infer<typeof PaginatedChildDtoSchema>;
 export type IntakeStatusDto = z.infer<typeof IntakeStatusDtoSchema>;
+export type CaptureConsentDto = z.infer<typeof CaptureConsentDtoSchema>;
+export type WithdrawConsentDto = z.infer<typeof WithdrawConsentDtoSchema>;
+export type ConsentRecordDto = z.infer<typeof ConsentRecordDtoSchema>;
+export type ConsentStatusDto = z.infer<typeof ConsentStatusDtoSchema>;
