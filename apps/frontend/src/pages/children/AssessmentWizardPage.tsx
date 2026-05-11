@@ -1,8 +1,10 @@
 import type { AssessmentDto, UpdateAssessmentDto } from '@haber/shared';
+import type { MilestoneDto, SensorySystemDto } from '@haber/shared/dtos';
 import { CheckCircle2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
+import { ApiError } from '@/api/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,17 +14,32 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TagInput } from '@/components/ui/tag-input';
 import { Textarea } from '@/components/ui/textarea';
-import { useAssessment, useFinaliseAssessment, useUpdateAssessment } from '@/hooks/useAssessments';
+import {
+  useAssessment,
+  useFinaliseAssessment,
+  useFunctionalConcerns,
+  useMilestones,
+  useSensoryProfile,
+  useUpdateAssessment,
+  useUpsertFunctionalConcerns,
+  useUpsertMilestones,
+  useUpsertSensoryProfile,
+} from '@/hooks/useAssessments';
 import { useChild } from '@/hooks/useChildren';
 import { useTaxonomy } from '@/hooks/useTaxonomies';
+import { cn } from '@/lib/utils';
 
 const STEPS = [
   { number: 1, label: 'Referral Info' },
   { number: 2, label: 'Chief Complaint' },
   { number: 3, label: 'Medical History' },
   { number: 4, label: 'Diagnoses' },
+  { number: 5, label: 'Milestones' },
+  { number: 6, label: 'Sensory Profile' },
+  { number: 7, label: 'Functional Concerns' },
 ];
 
 interface S1 {
@@ -72,6 +89,11 @@ interface S4 {
   primaryDiagnosisIds: string[];
 }
 
+// Keyed by milestoneId for O(1) updates
+type S5Record = Record<string, { achievedAtAgeMonths: string; delayed: boolean; notes: string }>;
+// Keyed by sensorySystemId; null means unrated (will be excluded from PUT)
+type S6Record = Record<string, { rating: number | null; notes: string }>;
+
 function buildS3FromSnapshot(snap: Record<string, unknown>): S3 {
   const meds = (snap.currentMedications as Array<{ name: string; dose: string; frequency: string }> | null) ?? [];
   const therapies = (snap.previousTherapies as Array<{ name: string; durationMonths: number | null }> | null) ?? [];
@@ -104,17 +126,31 @@ export function AssessmentWizardPage() {
   const { childId = '', assessmentId = '' } = useParams<{ childId: string; assessmentId: string }>();
   const navigate = useNavigate();
   const initialized = useRef(false);
+  const s5InitRef = useRef(false);
+  const s6InitRef = useRef(false);
+  const s7InitRef = useRef(false);
   const [step, setStep] = useState(1);
 
   const { data: child } = useChild(childId);
   const { data: assessment, isLoading } = useAssessment(childId, assessmentId);
   const updateMut = useUpdateAssessment();
   const finaliseMut = useFinaliseAssessment();
+  const upsertMilestonesMut = useUpsertMilestones();
+  const upsertSensoryProfileMut = useUpsertSensoryProfile();
+  const upsertFunctionalConcernsMut = useUpsertFunctionalConcerns();
 
+  // Taxonomy lists
+  const { data: milestones = [] } = useTaxonomy('milestones');
   const { data: functionalConcerns = [] } = useTaxonomy('functional-concerns');
   const { data: sensorySystems = [] } = useTaxonomy('sensory-systems');
   const { data: diagnoses = [] } = useTaxonomy('diagnoses');
 
+  // Saved section data from backend
+  const { data: milestonesData } = useMilestones(childId, assessmentId);
+  const { data: sensoryProfileData } = useSensoryProfile(childId, assessmentId);
+  const { data: functionalConcernsData } = useFunctionalConcerns(childId, assessmentId);
+
+  // Core assessment state (steps 1–4)
   const [s1, setS1] = useState<S1>({ assessmentDate: '', assessmentLocation: '', referringDoctor: '', referralSource: '' });
   const [s2, setS2] = useState<S2>({
     chiefComplaintTags: [],
@@ -139,6 +175,14 @@ export function AssessmentWizardPage() {
   });
   const [s4, setS4] = useState<S4>({ primaryDiagnosisIds: [] });
 
+  // Section state (steps 5–7)
+  const [s5, setS5] = useState<S5Record>({});
+  const [s6, setS6] = useState<S6Record>({});
+  const [sensoryObservations, setSensoryObservations] = useState('');
+  const [s7FunctionalConcernIds, setS7FunctionalConcernIds] = useState<string[]>([]);
+  const [clinicalObservations, setClinicalObservations] = useState('');
+
+  // Hydrate core assessment state once
   useEffect(() => {
     if (!assessment || initialized.current) return;
     initialized.current = true;
@@ -159,54 +203,131 @@ export function AssessmentWizardPage() {
     setS4({ primaryDiagnosisIds: assessment.primaryDiagnosisIds });
   }, [assessment]);
 
+  // Hydrate milestone section state once
+  useEffect(() => {
+    if (!milestonesData || s5InitRef.current) return;
+    s5InitRef.current = true;
+    const record: S5Record = {};
+    for (const row of milestonesData) {
+      record[row.milestoneId] = {
+        achievedAtAgeMonths: row.achievedAtAgeMonths != null ? String(row.achievedAtAgeMonths) : '',
+        delayed: row.delayed,
+        notes: row.notes ?? '',
+      };
+    }
+    setS5(record);
+  }, [milestonesData]);
+
+  // Hydrate sensory section state once
+  useEffect(() => {
+    if (!sensoryProfileData || s6InitRef.current) return;
+    s6InitRef.current = true;
+    const record: S6Record = {};
+    for (const row of sensoryProfileData.ratings) {
+      record[row.sensorySystemId] = { rating: row.rating, notes: row.notes ?? '' };
+    }
+    setS6(record);
+    setSensoryObservations(sensoryProfileData.sensoryObservations ?? '');
+  }, [sensoryProfileData]);
+
+  // Hydrate functional concerns section state once
+  useEffect(() => {
+    if (!functionalConcernsData || s7InitRef.current) return;
+    s7InitRef.current = true;
+    setS7FunctionalConcernIds(functionalConcernsData.concerns.map((c) => c.functionalConcernId));
+    setClinicalObservations(functionalConcernsData.functionalConcernObservations ?? '');
+  }, [functionalConcernsData]);
+
   const isReadOnly = assessment?.status === 'finalised';
 
   const handleNext = async () => {
-    let data: UpdateAssessmentDto;
-    switch (step) {
-      case 1:
-        data = {
-          assessmentDate: s1.assessmentDate || undefined,
-          assessmentLocation: s1.assessmentLocation || null,
-          referringDoctor: s1.referringDoctor || null,
-          referralSource: s1.referralSource || null,
-        };
-        break;
-      case 2:
-        data = {
-          chiefComplaintTags: s2.chiefComplaintTags,
-          chiefComplaint: s2.chiefComplaint || null,
-          observations: s2.observations || null,
-          findings: s2.findings,
-          notes: s2.notes || null,
-        };
-        break;
-      case 3: {
-        const snapshot: Record<string, unknown> = {
-          birthTerm: s3.birthTerm || null,
-          gestationalAgeWeeks: s3.gestationalAgeWeeks ? Number(s3.gestationalAgeWeeks) : null,
-          birthComplications: s3.birthComplications || null,
-          neonatalHistory: s3.neonatalHistory || null,
-          prenatalHistory: s3.prenatalHistory || null,
-          immunizations: s3.immunizations || null,
-          allergies: s3.allergies || null,
-          currentMedications: s3.currentMedications.map(({ id: _id, ...m }) => m),
-          priorDiagnoses: s3.priorDiagnoses,
-          familyHistory: s3.familyHistory || null,
-          sensorySensitivities: s3.sensorySensitivities || null,
-          previousTherapies: s3.previousTherapies.map(({ id: _id, name, durationMonths }) => ({
-            name,
-            durationMonths: durationMonths ? Number(durationMonths) : null,
-          })),
-        };
-        data = { medicalHistorySnapshot: snapshot };
-        break;
-      }
-      default:
-        return;
-    }
     try {
-      await updateMut.mutateAsync({ childId, assessmentId, data });
+      switch (step) {
+        case 1:
+          await updateMut.mutateAsync({
+            childId,
+            assessmentId,
+            data: {
+              assessmentDate: s1.assessmentDate || undefined,
+              assessmentLocation: s1.assessmentLocation || null,
+              referringDoctor: s1.referringDoctor || null,
+              referralSource: s1.referralSource || null,
+            },
+          });
+          break;
+        case 2:
+          await updateMut.mutateAsync({
+            childId,
+            assessmentId,
+            data: {
+              chiefComplaintTags: s2.chiefComplaintTags,
+              chiefComplaint: s2.chiefComplaint || null,
+              observations: s2.observations || null,
+              findings: s2.findings,
+              notes: s2.notes || null,
+            },
+          });
+          break;
+        case 3: {
+          const snapshot: Record<string, unknown> = {
+            birthTerm: s3.birthTerm || null,
+            gestationalAgeWeeks: s3.gestationalAgeWeeks ? Number(s3.gestationalAgeWeeks) : null,
+            birthComplications: s3.birthComplications || null,
+            neonatalHistory: s3.neonatalHistory || null,
+            prenatalHistory: s3.prenatalHistory || null,
+            immunizations: s3.immunizations || null,
+            allergies: s3.allergies || null,
+            currentMedications: s3.currentMedications.map(({ id: _id, ...m }) => m),
+            priorDiagnoses: s3.priorDiagnoses,
+            familyHistory: s3.familyHistory || null,
+            sensorySensitivities: s3.sensorySensitivities || null,
+            previousTherapies: s3.previousTherapies.map(({ id: _id, name, durationMonths }) => ({
+              name,
+              durationMonths: durationMonths ? Number(durationMonths) : null,
+            })),
+          };
+          await updateMut.mutateAsync({ childId, assessmentId, data: { medicalHistorySnapshot: snapshot } });
+          break;
+        }
+        case 4:
+          await updateMut.mutateAsync({ childId, assessmentId, data: { primaryDiagnosisIds: s4.primaryDiagnosisIds } });
+          break;
+        case 5:
+          await upsertMilestonesMut.mutateAsync({
+            childId,
+            assessmentId,
+            data: {
+              milestones: (milestones as unknown as MilestoneDto[]).map((m) => {
+                const row = s5[m.id] ?? { achievedAtAgeMonths: '', delayed: false, notes: '' };
+                return {
+                  milestoneId: m.id,
+                  achievedAtAgeMonths: row.achievedAtAgeMonths ? parseInt(row.achievedAtAgeMonths) : null,
+                  delayed: row.delayed,
+                  notes: row.notes || null,
+                };
+              }),
+            },
+          });
+          break;
+        case 6:
+          await upsertSensoryProfileMut.mutateAsync({
+            childId,
+            assessmentId,
+            data: {
+              ratings: (sensorySystems as unknown as SensorySystemDto[])
+                .filter((sys) => s6[sys.id]?.rating != null)
+                .map((sys) => ({
+                  sensorySystemId: sys.id,
+                  rating: s6[sys.id].rating!,
+                  notes: s6[sys.id].notes || null,
+                })),
+              sensoryObservations: sensoryObservations || null,
+            },
+          });
+          break;
+        default:
+          return;
+      }
       setStep(step + 1);
     } catch {
       toast.error('Failed to save. Please try again.');
@@ -215,10 +336,27 @@ export function AssessmentWizardPage() {
 
   const handleFinalise = async () => {
     try {
-      await updateMut.mutateAsync({ childId, assessmentId, data: { primaryDiagnosisIds: s4.primaryDiagnosisIds } });
+      await upsertFunctionalConcernsMut.mutateAsync({
+        childId,
+        assessmentId,
+        data: {
+          functionalConcernIds: s7FunctionalConcernIds,
+          clinicalObservations: clinicalObservations || null,
+        },
+      });
       await finaliseMut.mutateAsync({ childId, assessmentId });
-    } catch {
-      toast.error('Failed to finalise. Please try again.');
+    } catch (err) {
+      if (err instanceof ApiError) {
+        if (err.message === 'MILESTONE_REQUIRED') {
+          toast.error('Please rate at least one milestone before finalising.');
+        } else if (err.message === 'SENSORY_PROFILE_INCOMPLETE') {
+          toast.error('Please rate all 7 sensory systems before finalising.');
+        } else {
+          toast.error('Failed to finalise. Please try again.');
+        }
+      } else {
+        toast.error('Failed to finalise. Please try again.');
+      }
     }
   };
 
@@ -234,7 +372,12 @@ export function AssessmentWizardPage() {
 
   if (!assessment) return <p className="text-destructive">Assessment not found</p>;
 
-  const isSaving = updateMut.isPending || finaliseMut.isPending;
+  const isSaving =
+    updateMut.isPending ||
+    finaliseMut.isPending ||
+    upsertMilestonesMut.isPending ||
+    upsertSensoryProfileMut.isPending ||
+    upsertFunctionalConcernsMut.isPending;
 
   return (
     <div className="space-y-6">
@@ -747,6 +890,198 @@ export function AssessmentWizardPage() {
         </div>
       )}
 
+      {/* ─── Section 5: Developmental Milestones ─── */}
+      {step === 5 && (
+        <div className="space-y-4">
+          <div>
+            <p className="text-sm text-muted-foreground">
+              For each milestone, note whether it was delayed and the age at which it was achieved (if known).
+            </p>
+          </div>
+
+          {milestones.length === 0 ? (
+            <Skeleton className="h-64 w-full" />
+          ) : (
+            <div className="overflow-x-auto rounded-lg border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="min-w-[180px]">Milestone</TableHead>
+                    <TableHead className="whitespace-nowrap">Age Band</TableHead>
+                    <TableHead className="whitespace-nowrap">Achieved At (months)</TableHead>
+                    <TableHead className="text-center">Delayed</TableHead>
+                    <TableHead className="min-w-[160px]">Notes</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {(milestones as unknown as MilestoneDto[]).map((m) => {
+                    const row = s5[m.id] ?? { achievedAtAgeMonths: '', delayed: false, notes: '' };
+                    return (
+                      <TableRow key={m.id}>
+                        <TableCell className="font-medium text-sm">{m.name}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                          {m.ageBandMinMonths}–{m.ageBandMaxMonths}m
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            type="number"
+                            min={0}
+                            max={240}
+                            value={row.achievedAtAgeMonths}
+                            onChange={(e) =>
+                              setS5((prev) => ({ ...prev, [m.id]: { ...row, achievedAtAgeMonths: e.target.value } }))
+                            }
+                            className="w-24"
+                            placeholder="—"
+                            disabled={isReadOnly}
+                          />
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Checkbox
+                            checked={row.delayed}
+                            onCheckedChange={(checked) =>
+                              setS5((prev) => ({ ...prev, [m.id]: { ...row, delayed: !!checked } }))
+                            }
+                            disabled={isReadOnly}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            value={row.notes}
+                            onChange={(e) => setS5((prev) => ({ ...prev, [m.id]: { ...row, notes: e.target.value } }))}
+                            placeholder="Optional notes..."
+                            disabled={isReadOnly}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ─── Section 6: Sensory Processing Profile ─── */}
+      {step === 6 && (
+        <div className="space-y-6">
+          <div className="flex items-center gap-6 text-xs text-muted-foreground">
+            <span>
+              <span className="font-medium text-foreground">1</span> = Hypo-responsive
+            </span>
+            <span>
+              <span className="font-medium text-foreground">3</span> = Typical
+            </span>
+            <span>
+              <span className="font-medium text-foreground">5</span> = Hyper-responsive
+            </span>
+          </div>
+
+          {sensorySystems.length === 0 ? (
+            <Skeleton className="h-64 w-full" />
+          ) : (
+            <div className="space-y-3">
+              {(sensorySystems as unknown as SensorySystemDto[]).map((sys) => {
+                const row = s6[sys.id] ?? { rating: null, notes: '' };
+                return (
+                  <div key={sys.id} className="rounded-lg border p-4 space-y-3">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-medium">{sys.name}</p>
+                        {sys.description && <p className="text-xs text-muted-foreground mt-0.5">{sys.description}</p>}
+                      </div>
+                      <div className="flex gap-1.5 shrink-0">
+                        {([1, 2, 3, 4, 5] as const).map((n) => (
+                          <button
+                            key={n}
+                            type="button"
+                            disabled={isReadOnly}
+                            onClick={() => setS6((prev) => ({ ...prev, [sys.id]: { ...row, rating: n } }))}
+                            className={cn(
+                              'w-9 h-9 rounded-full border text-sm font-semibold transition-colors',
+                              row.rating === n
+                                ? 'bg-primary text-primary-foreground border-primary'
+                                : 'border-border hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed'
+                            )}
+                          >
+                            {n}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <Input
+                      value={row.notes}
+                      onChange={(e) => setS6((prev) => ({ ...prev, [sys.id]: { ...row, notes: e.target.value } }))}
+                      placeholder="Notes for this system..."
+                      disabled={isReadOnly}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          <div>
+            <Label htmlFor="sensoryObservations">Overall Sensory Observations</Label>
+            <Textarea
+              id="sensoryObservations"
+              value={sensoryObservations}
+              onChange={(e) => setSensoryObservations(e.target.value)}
+              placeholder="Overall behavioural observations across sensory systems..."
+              rows={3}
+              disabled={isReadOnly}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ─── Section 7: Functional & Fine-Motor Concerns ─── */}
+      {step === 7 && (
+        <div className="space-y-6">
+          <div>
+            <Label>Functional & Fine-Motor Concerns</Label>
+            <p className="text-xs text-muted-foreground mb-3">Select all concerns that apply to this child</p>
+            {functionalConcerns.length === 0 ? (
+              <Skeleton className="h-48 w-full" />
+            ) : (
+              <div className="grid grid-cols-1 gap-y-2.5 sm:grid-cols-2">
+                {functionalConcerns.map((fc) => (
+                  <div key={fc.id} className="flex items-start gap-2">
+                    <Checkbox
+                      id={`s7-fc-${fc.id}`}
+                      checked={s7FunctionalConcernIds.includes(fc.id)}
+                      onCheckedChange={(checked) =>
+                        setS7FunctionalConcernIds((prev) => (checked ? [...prev, fc.id] : prev.filter((id) => id !== fc.id)))
+                      }
+                      disabled={isReadOnly}
+                    />
+                    <Label htmlFor={`s7-fc-${fc.id}`} className="cursor-pointer font-normal text-sm leading-snug">
+                      {fc.name}
+                      {'category' in fc && fc.category && (
+                        <span className="ml-1.5 text-xs text-muted-foreground">({fc.category})</span>
+                      )}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <Label htmlFor="clinicalObservations">Clinical Observations</Label>
+            <Textarea
+              id="clinicalObservations"
+              value={clinicalObservations}
+              onChange={(e) => setClinicalObservations(e.target.value)}
+              placeholder="Clinical observations related to functional and fine-motor concerns..."
+              rows={4}
+              disabled={isReadOnly}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Navigation */}
       <div className="flex gap-2 pt-2">
         {step > 1 && (
@@ -754,12 +1089,12 @@ export function AssessmentWizardPage() {
             Back
           </Button>
         )}
-        {step < 4 && !isReadOnly && (
+        {step < STEPS.length && !isReadOnly && (
           <Button onClick={handleNext} disabled={isSaving}>
             {isSaving ? 'Saving...' : 'Next'}
           </Button>
         )}
-        {step === 4 && !isReadOnly && (
+        {step === STEPS.length && !isReadOnly && (
           <Button onClick={handleFinalise} disabled={isSaving}>
             {isSaving ? 'Finalising...' : 'Finalise Assessment'}
           </Button>

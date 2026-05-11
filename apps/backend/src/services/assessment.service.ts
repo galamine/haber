@@ -167,6 +167,12 @@ const finaliseAssessment = async (
 
   await verifyAssignment(childId, callerId, callerRole);
 
+  const milestoneCount = await prisma.assessmentMilestone.count({ where: { assessmentId } });
+  if (milestoneCount === 0) throw new ApiError(httpStatus.UNPROCESSABLE_ENTITY, 'MILESTONE_REQUIRED');
+
+  const sensoryCount = await prisma.assessmentSensoryRating.count({ where: { assessmentId } });
+  if (sensoryCount < 7) throw new ApiError(httpStatus.UNPROCESSABLE_ENTITY, 'SENSORY_PROFILE_INCOMPLETE');
+
   const updated = await prisma.assessment.update({ where: { id: assessmentId }, data: { status: 'finalised' } });
   return transformAssessment(updated as unknown as Record<string, unknown>);
 };

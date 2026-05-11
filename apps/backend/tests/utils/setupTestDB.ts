@@ -8,6 +8,9 @@ const setupTestDB = () => {
   });
 
   beforeEach(async () => {
+    await prisma.assessmentFunctionalConcern.deleteMany();
+    await prisma.assessmentSensoryRating.deleteMany();
+    await prisma.assessmentMilestone.deleteMany();
     await prisma.assessment.deleteMany();
     await prisma.childTherapist.deleteMany();
     await prisma.medicalHistory.deleteMany();

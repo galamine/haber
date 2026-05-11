@@ -1,4 +1,5 @@
 export { assessmentService } from './assessment.service';
+export { assessmentSectionsService } from './assessmentSections.service';
 export { authService } from './auth.service';
 export { childService } from './child.service';
 export { clinicService } from './clinic.service';

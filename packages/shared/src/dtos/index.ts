@@ -4,6 +4,16 @@ export type {
   CreateAssessmentDto,
   UpdateAssessmentDto,
 } from '../schemas/assessment.schema';
+export type {
+  AssessmentFunctionalConcernDto,
+  AssessmentMilestoneDto,
+  AssessmentSensoryRatingDto,
+  MilestoneRatingInput,
+  SensoryRatingInput,
+  UpsertFunctionalConcernsDto,
+  UpsertMilestonesDto,
+  UpsertSensoryProfileDto,
+} from '../schemas/assessmentSections.schema';
 export type * from './auth.dto';
 export type * from './child.dto';
 export type * from './clinic.dto';

@@ -386,6 +386,7 @@ model Milestone {
   tenantId         String?  @map("tenant_id")
   createdAt        DateTime @default(now()) @map("created_at")
   clinic           Clinic?  @relation(fields: [tenantId], references: [id])
+  assessmentMilestones AssessmentMilestone[]
 
   @@index([frameworkId, tenantId])
   @@map("milestones")
@@ -399,6 +400,7 @@ model SensorySystem {
   tenantId    String?  @map("tenant_id")
   createdAt   DateTime @default(now()) @map("created_at")
   clinic      Clinic?  @relation(fields: [tenantId], references: [id])
+  assessmentSensoryRatings AssessmentSensoryRating[]
 
   @@index([frameworkId, tenantId])
   @@map("sensory_systems")
@@ -412,6 +414,7 @@ model FunctionalConcern {
   tenantId    String?  @map("tenant_id")
   createdAt   DateTime @default(now()) @map("created_at")
   clinic      Clinic?  @relation(fields: [tenantId], references: [id])
+  assessmentFunctionalConcerns AssessmentFunctionalConcern[]
 
   @@index([frameworkId, tenantId])
   @@map("functional_concerns")
@@ -458,32 +461,79 @@ model InterventionApproach {
 }
 
 model Assessment {
-  id                     String           @id @default(uuid())
-  childId                String           @map("child_id")
-  tenantId               String           @map("tenant_id")
-  version                Int
-  status                 AssessmentStatus @default(draft)
-  assessmentDate         DateTime         @db.Date @map("assessment_date")
-  assessmentLocation     String?          @map("assessment_location")
-  referringDoctor        String?          @map("referring_doctor")
-  referralSource         String?          @map("referral_source")
-  chiefComplaint         String?          @map("chief_complaint")
-  chiefComplaintTags     Json             @default("[]") @map("chief_complaint_tags")
-  observations           String?
-  findings               Json             @default("{}")
-  notes                  String?
-  primaryDiagnosisIds    Json             @default("[]") @map("primary_diagnosis_ids")
-  medicalHistorySnapshot Json?            @map("medical_history_snapshot")
-  recordedByUserId       String           @map("recorded_by_user_id")
-  createdAt              DateTime         @default(now()) @map("created_at")
-  updatedAt              DateTime         @updatedAt @map("updated_at")
+  id                            String           @id @default(uuid())
+  childId                       String           @map("child_id")
+  tenantId                      String           @map("tenant_id")
+  version                       Int
+  status                        AssessmentStatus @default(draft)
+  assessmentDate                DateTime         @db.Date @map("assessment_date")
+  assessmentLocation            String?          @map("assessment_location")
+  referringDoctor               String?          @map("referring_doctor")
+  referralSource                String?          @map("referral_source")
+  chiefComplaint                String?          @map("chief_complaint")
+  chiefComplaintTags            Json             @default("[]") @map("chief_complaint_tags")
+  observations                  String?
+  findings                      Json             @default("{}")
+  notes                         String?
+  primaryDiagnosisIds           Json             @default("[]") @map("primary_diagnosis_ids")
+  medicalHistorySnapshot        Json?            @map("medical_history_snapshot")
+  functionalConcernObservations String?          @map("functional_concern_observations")
+  sensoryObservations           String?          @map("sensory_observations")
+  recordedByUserId              String           @map("recorded_by_user_id")
+  createdAt                     DateTime         @default(now()) @map("created_at")
+  updatedAt                     DateTime         @updatedAt @map("updated_at")
 
-  child      Child  @relation(fields: [childId], references: [id])
-  clinic     Clinic @relation(fields: [tenantId], references: [id])
-  recordedBy User   @relation("RecordedAssessments", fields: [recordedByUserId], references: [id])
+  child                        Child                         @relation(fields: [childId], references: [id])
+  clinic                       Clinic                        @relation(fields: [tenantId], references: [id])
+  recordedBy                   User                          @relation("RecordedAssessments", fields: [recordedByUserId], references: [id])
+  assessmentMilestones         AssessmentMilestone[]
+  assessmentSensoryRatings     AssessmentSensoryRating[]
+  assessmentFunctionalConcerns AssessmentFunctionalConcern[]
 
   @@unique([childId, version])
   @@index([childId, version])
   @@index([tenantId])
   @@map("assessments")
+}
+
+model AssessmentMilestone {
+  id                  String   @id @default(uuid())
+  assessmentId        String   @map("assessment_id")
+  milestoneId         String   @map("milestone_id")
+  achievedAtAgeMonths Int?     @map("achieved_at_age_months")
+  delayed             Boolean  @default(false)
+  notes               String?
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  assessment Assessment @relation(fields: [assessmentId], references: [id])
+  milestone  Milestone  @relation(fields: [milestoneId], references: [id])
+
+  @@unique([assessmentId, milestoneId])
+  @@map("assessment_milestones")
+}
+
+model AssessmentSensoryRating {
+  id              String   @id @default(uuid())
+  assessmentId    String   @map("assessment_id")
+  sensorySystemId String   @map("sensory_system_id")
+  rating          Int
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  assessment    Assessment    @relation(fields: [assessmentId], references: [id])
+  sensorySystem SensorySystem @relation(fields: [sensorySystemId], references: [id])
+
+  @@unique([assessmentId, sensorySystemId])
+  @@map("assessment_sensory_ratings")
+}
+
+model AssessmentFunctionalConcern {
+  assessmentId        String @map("assessment_id")
+  functionalConcernId String @map("functional_concern_id")
+
+  assessment        Assessment        @relation(fields: [assessmentId], references: [id])
+  functionalConcern FunctionalConcern @relation(fields: [functionalConcernId], references: [id])
+
+  @@id([assessmentId, functionalConcernId])
+  @@map("assessment_functional_concerns")
 }

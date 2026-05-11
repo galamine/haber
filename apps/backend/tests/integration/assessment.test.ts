@@ -98,6 +98,36 @@ const insertReadyChild = async (opts: { assignTherapistId?: string } = {}) => {
 
 const TODAY = new Date().toISOString().split('T')[0];
 
+const seedFinalisableData = async (assessmentId: string) => {
+  const { v4: uuidv4 } = await import('uuid');
+  const milestone = await prisma.milestone.create({
+    data: {
+      id: uuidv4(),
+      name: 'Finalise Test Milestone',
+      ageBandMinMonths: 0,
+      ageBandMaxMonths: 12,
+      scoringScaleMin: 1,
+      scoringScaleMax: 5,
+      description: 'desc',
+      frameworkId: 'fw-001',
+      tenantId: clinicOne.id,
+    },
+  });
+  await prisma.assessmentMilestone.create({ data: { assessmentId, milestoneId: milestone.id, delayed: false } });
+  for (let i = 0; i < 7; i++) {
+    const sys = await prisma.sensorySystem.create({
+      data: {
+        id: uuidv4(),
+        name: `Sensory ${i}`,
+        description: 'desc',
+        frameworkId: 'fw-001',
+        tenantId: clinicOne.id,
+      },
+    });
+    await prisma.assessmentSensoryRating.create({ data: { assessmentId, sensorySystemId: sys.id, rating: 3 } });
+  }
+};
+
 // ─── Tracer bullet ─────────────────────────────────────────────────────────
 
 describe('POST /v1/children/:childId/assessments', () => {
@@ -212,6 +242,8 @@ describe('POST /v1/children/:childId/assessments', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({ assessmentDate: TODAY })
       .expect(httpStatus.CREATED);
+
+    await seedFinalisableData(v1Res.body.id);
 
     await request(app)
       .post(`/v1/children/${child.id}/assessments/${v1Res.body.id}/finalise`)
@@ -341,6 +373,8 @@ describe('PATCH /v1/children/:childId/assessments/:assessmentId', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({ assessmentDate: TODAY });
 
+    await seedFinalisableData(created.body.id);
+
     await request(app)
       .post(`/v1/children/${child.id}/assessments/${created.body.id}/finalise`)
       .set('Authorization', `Bearer ${token}`);
@@ -370,6 +404,8 @@ describe('POST /v1/children/:childId/assessments/:assessmentId/finalise', () => 
       .post(`/v1/children/${child.id}/assessments`)
       .set('Authorization', `Bearer ${token}`)
       .send({ assessmentDate: TODAY });
+
+    await seedFinalisableData(created.body.id);
 
     const res = await request(app)
       .post(`/v1/children/${child.id}/assessments/${created.body.id}/finalise`)

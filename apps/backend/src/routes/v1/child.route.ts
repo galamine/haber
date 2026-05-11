@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import assessmentController from '../../controllers/assessment.controller';
+import assessmentSectionsController from '../../controllers/assessmentSections.controller';
 import childController from '../../controllers/child.controller';
 import consentController from '../../controllers/consent.controller';
 import auth from '../../middlewares/auth';
 import validate from '../../middlewares/validate';
 import assessmentValidation from '../../validations/assessment.validation';
+import assessmentSectionsValidation from '../../validations/assessmentSections.validation';
 import childValidation from '../../validations/child.validation';
 import consentValidation from '../../validations/consent.validation';
 
@@ -92,6 +94,42 @@ router.post(
   validate(assessmentValidation.finalise),
   assessmentController.finaliseAssessment
 );
+router
+  .route('/:childId/assessments/:assessmentId/milestones')
+  .put(
+    auth('child.assessment'),
+    validate(assessmentSectionsValidation.upsertMilestones),
+    assessmentSectionsController.upsertMilestones
+  )
+  .get(
+    auth('child.assessment'),
+    validate(assessmentSectionsValidation.getMilestones),
+    assessmentSectionsController.getMilestones
+  );
+router
+  .route('/:childId/assessments/:assessmentId/sensory-profile')
+  .put(
+    auth('child.assessment'),
+    validate(assessmentSectionsValidation.upsertSensoryProfile),
+    assessmentSectionsController.upsertSensoryProfile
+  )
+  .get(
+    auth('child.assessment'),
+    validate(assessmentSectionsValidation.getSensoryProfile),
+    assessmentSectionsController.getSensoryProfile
+  );
+router
+  .route('/:childId/assessments/:assessmentId/functional-concerns')
+  .put(
+    auth('child.assessment'),
+    validate(assessmentSectionsValidation.upsertFunctionalConcerns),
+    assessmentSectionsController.upsertFunctionalConcerns
+  )
+  .get(
+    auth('child.assessment'),
+    validate(assessmentSectionsValidation.getFunctionalConcerns),
+    assessmentSectionsController.getFunctionalConcerns
+  );
 router.delete('/:childId', auth(), childController.softDeleteChild);
 
 export default router;
