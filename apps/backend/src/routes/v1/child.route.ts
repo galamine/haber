@@ -1,8 +1,10 @@
 import { Router } from 'express';
+import assessmentController from '../../controllers/assessment.controller';
 import childController from '../../controllers/child.controller';
 import consentController from '../../controllers/consent.controller';
 import auth from '../../middlewares/auth';
 import validate from '../../middlewares/validate';
+import assessmentValidation from '../../validations/assessment.validation';
 import childValidation from '../../validations/child.validation';
 import consentValidation from '../../validations/consent.validation';
 
@@ -59,6 +61,36 @@ router.get(
   auth('child.consent'),
   validate(consentValidation.getConsentHistory),
   consentController.getConsentHistory
+);
+router.post(
+  '/:childId/assessments',
+  auth('child.assessment'),
+  validate(assessmentValidation.create),
+  assessmentController.createAssessment
+);
+router.get(
+  '/:childId/assessments',
+  auth('child.assessment'),
+  validate(assessmentValidation.list),
+  assessmentController.listAssessments
+);
+router.get(
+  '/:childId/assessments/:assessmentId',
+  auth('child.assessment'),
+  validate(assessmentValidation.get),
+  assessmentController.getAssessment
+);
+router.patch(
+  '/:childId/assessments/:assessmentId',
+  auth('child.assessment'),
+  validate(assessmentValidation.update),
+  assessmentController.updateAssessment
+);
+router.post(
+  '/:childId/assessments/:assessmentId/finalise',
+  auth('child.assessment'),
+  validate(assessmentValidation.finalise),
+  assessmentController.finaliseAssessment
 );
 router.delete('/:childId', auth(), childController.softDeleteChild);
 

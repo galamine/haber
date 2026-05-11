@@ -1,3 +1,9 @@
+export type {
+  AssessmentCreatedDto,
+  AssessmentDto,
+  CreateAssessmentDto,
+  UpdateAssessmentDto,
+} from '../schemas/assessment.schema';
 export type * from './auth.dto';
 export type * from './child.dto';
 export type * from './clinic.dto';

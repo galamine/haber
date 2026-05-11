@@ -58,6 +58,12 @@ export const MedicationEntrySchema = z.object({
   frequency: z.string(),
 });
 
+export const PreviousTherapySchema = z.object({
+  name: z.string(),
+  durationMonths: z.number().int().positive().nullable(),
+});
+export type PreviousTherapy = z.infer<typeof PreviousTherapySchema>;
+
 export const UpsertMedicalHistoryDtoSchema = z.object({
   birthTerm: BirthTermEnum,
   gestationalAgeWeeks: z.number().int().positive().optional(),
@@ -69,6 +75,8 @@ export const UpsertMedicalHistoryDtoSchema = z.object({
   priorDiagnoses: z.string().array().optional(),
   familyHistory: z.string().optional(),
   sensorySensitivities: z.string().optional(),
+  prenatalHistory: z.string().optional(),
+  previousTherapies: PreviousTherapySchema.array().default([]),
 });
 
 export const ChildDtoSchema = z.object({
@@ -117,6 +125,8 @@ export const MedicalHistoryDtoSchema = z.object({
   priorDiagnoses: z.string().array().nullable(),
   familyHistory: z.string().nullable(),
   sensorySensitivities: z.string().nullable(),
+  prenatalHistory: z.string().nullable(),
+  previousTherapies: PreviousTherapySchema.array(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });

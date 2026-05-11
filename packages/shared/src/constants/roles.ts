@@ -15,8 +15,9 @@ export const allRoles: Record<UserRole, string[]> = {
     'getGameToggles',
     'child.intake',
     'child.consent',
+    'child.assessment',
     'manageTaxonomies',
   ],
-  therapist: ['getUsers', 'getDepartments', 'getRooms', 'child.intake'],
+  therapist: ['getUsers', 'getDepartments', 'getRooms', 'child.intake', 'child.assessment'],
   staff: ['getUsers'],
 };

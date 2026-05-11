@@ -6,7 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useChild, useIntakeStatus } from '@/hooks/useChildren';
 import { useConsentHistory, useConsentStatus } from '@/hooks/useConsent';
 import { useAuthStore } from '@/store/authStore';
-import { AssessmentsStub } from './tabs/AssessmentsStub';
+import { AssessmentsTab } from './tabs/AssessmentsTab';
 import { ConsentTab } from './tabs/ConsentTab';
 import { GuardiansTab } from './tabs/GuardiansTab';
 import { MedicalHistoryTab } from './tabs/MedicalHistoryTab';
@@ -99,7 +99,11 @@ export function ChildDetailPage() {
         </TabsContent>
 
         <TabsContent value="assessments" className="mt-4">
-          <AssessmentsStub intakeComplete={intakeStatus?.intakeComplete} />
+          <AssessmentsTab
+            childId={childId ?? ''}
+            intakeComplete={intakeStatus?.intakeComplete}
+            consentStatus={consentStatusValue}
+          />
         </TabsContent>
 
         <TabsContent value="treatment-plan" className="mt-4">

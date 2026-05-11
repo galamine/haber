@@ -1,3 +1,4 @@
+export * from './assessment.schema';
 export * from './auth.schema';
 export * from './child.schema';
 export * from './clinic.schema';

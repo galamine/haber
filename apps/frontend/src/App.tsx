@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { PageShell } from '@/components/layout/PageShell';
 import { Toaster } from '@/components/ui/sonner';
 import { LoginPage } from '@/pages/auth/LoginPage';
+import { AssessmentWizardPage } from '@/pages/children/AssessmentWizardPage';
 import { ChildCreatePage } from '@/pages/children/ChildCreatePage';
 import { ChildDetailPage } from '@/pages/children/ChildDetailPage';
 import { ChildListPage } from '@/pages/children/ChildListPage';
@@ -71,6 +72,14 @@ export default function App() {
             element={
               <ProtectedRoute requiredRoles={['clinic_admin', 'therapist']}>
                 <ChildDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="children/:childId/assessments/:assessmentId"
+            element={
+              <ProtectedRoute requiredRoles={['clinic_admin', 'therapist']}>
+                <AssessmentWizardPage />
               </ProtectedRoute>
             }
           />
