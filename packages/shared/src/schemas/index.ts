@@ -1,4 +1,5 @@
 export * from './auth.schema';
+export * from './child.schema';
 export * from './clinic.schema';
 export * from './department.schema';
 export * from './gameToggle.schema';

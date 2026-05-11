@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import authRoute from './auth.route';
+import childRoute from './child.route';
 import clinicRoute from './clinic.route';
 import departmentRoute from './department.route';
 import docsRoute from './docs.route';
@@ -47,6 +48,10 @@ const defaultRoutes: Route[] = [
   {
     path: '/sensory-rooms',
     route: sensoryRoomRoute,
+  },
+  {
+    path: '/children',
+    route: childRoute,
   },
 ];
 

@@ -14,6 +14,17 @@ enum Role {
   staff
 }
 
+enum Sex {
+  male
+  female
+  other
+}
+
+enum BirthTerm {
+  term
+  preterm
+}
+
 enum ClinicStatus {
   active
   suspended
@@ -72,6 +83,7 @@ model Clinic {
   departments        Department[]
   sensoryRooms       SensoryRoom[]
   gameToggles        ClinicGameToggle[]
+  children           Child[]
 
   @@map("clinics")
 }
@@ -94,6 +106,8 @@ model User {
   staffPermission       StaffPermission?
   headOfDepartments     Department[]      @relation("DepartmentHead")
   departmentMemberships UserDepartment[]
+  preferredForChildren  Child[]           @relation("PreferredTherapist")
+  assignedChildren     ChildTherapist[]
 
   @@index([tenantId])
   @@map("users")
@@ -207,4 +221,85 @@ model ClinicGameToggle {
 
   @@unique([tenantId, gameId])
   @@map("clinic_game_toggles")
+}
+
+model Child {
+  id                   String    @id @default(uuid())
+  tenantId             String    @map("tenant_id")
+  childCode            String    @map("child_code")
+  opNumber             String?   @map("op_number")
+  fullName             String    @map("full_name")
+  dob                  DateTime  @db.Date
+  sex                  Sex
+  photoUrl             String?   @map("photo_url")
+  spokenLanguages      Json      @default("[]") @map("spoken_languages")
+  school               String?
+  preferredTherapistId String?   @map("preferred_therapist_id")
+  heightCm             Decimal?  @map("height_cm")
+  weightKg             Decimal?  @map("weight_kg")
+  measurementDate      DateTime? @db.Date @map("measurement_date")
+  latestPlanId         String?   @map("latest_plan_id")
+  intakeComplete       Boolean   @default(false) @map("intake_complete")
+  deletedAt            DateTime? @map("deleted_at")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  clinic              Clinic          @relation(fields: [tenantId], references: [id])
+  preferredTherapist  User?           @relation("PreferredTherapist", fields: [preferredTherapistId], references: [id])
+  guardians           Guardian[]
+  medicalHistory      MedicalHistory?
+  assignedTherapists  ChildTherapist[]
+
+  @@unique([tenantId, childCode])
+  @@index([tenantId])
+  @@map("children")
+}
+
+model Guardian {
+  id           String    @id @default(uuid())
+  childId      String    @map("child_id")
+  fullName     String    @map("full_name")
+  relationship String
+  phone        String
+  email        String?
+  loginEnabled Boolean   @default(false) @map("login_enabled")
+  deletedAt    DateTime? @map("deleted_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  child Child @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId])
+  @@map("guardians")
+}
+
+model MedicalHistory {
+  id                   String    @id @default(uuid())
+  childId              String    @unique @map("child_id")
+  birthTerm            BirthTerm @map("birth_term")
+  birthComplications   Json?     @map("birth_complications")
+  neonatalHistory      String?   @map("neonatal_history")
+  gestationalAgeWeeks  Int?      @map("gestational_age_weeks")
+  immunizations        String?
+  allergies            String?
+  currentMedications   Json      @default("[]") @map("current_medications")
+  priorDiagnoses       Json?     @map("prior_diagnoses")
+  familyHistory        String?   @map("family_history")
+  sensorySensitivities String?  @map("sensory_sensitivities")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  child Child @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@map("medical_histories")
+}
+
+model ChildTherapist {
+  childId String @map("child_id")
+  userId  String @map("user_id")
+
+  child Child @relation(fields: [childId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([childId, userId])
+  @@map("child_therapists")
 }

@@ -1,4 +1,5 @@
 export type * from './auth.dto';
+export type * from './child.dto';
 export type * from './clinic.dto';
 export type * from './staff.dto';
 export type * from './subscriptionPlan.dto';

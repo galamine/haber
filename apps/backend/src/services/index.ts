@@ -1,4 +1,5 @@
 export { authService } from './auth.service';
+export { childService } from './child.service';
 export { clinicService } from './clinic.service';
 export { departmentService } from './department.service';
 export { emailService } from './email.service';

@@ -10,6 +10,7 @@ import {
   PanelLeftClose,
   Stethoscope,
   Users,
+  UsersRound,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -42,6 +43,7 @@ const NAV_ITEMS: NavItem[] = [
     exact: true,
   },
   { label: 'Users', href: '/users', icon: Users, roles: ['super_admin', 'clinic_admin'] },
+  { label: 'Children', href: '/children', icon: UsersRound, roles: ['clinic_admin', 'therapist'] },
   { label: 'Clinics', href: '/super-admin/clinics', icon: Building2, roles: ['super_admin'] },
   { label: 'Subscription Plans', href: '/super-admin/subscription-plans', icon: CreditCard, roles: ['super_admin'] },
   { label: 'My Clinic', href: '/clinic/me', icon: Stethoscope, roles: ['clinic_admin'] },
