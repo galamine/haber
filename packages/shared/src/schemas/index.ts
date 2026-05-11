@@ -6,4 +6,5 @@ export * from './gameToggle.schema';
 export * from './sensoryRoom.schema';
 export * from './staff.schema';
 export * from './subscriptionPlan.schema';
+export * from './taxonomy.schema';
 export * from './user.schema';

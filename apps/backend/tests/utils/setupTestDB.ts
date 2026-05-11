@@ -21,6 +21,13 @@ const setupTestDB = () => {
     await prisma.otpRecord.deleteMany();
     await prisma.token.deleteMany();
     await prisma.user.deleteMany();
+    await prisma.diagnosis.deleteMany();
+    await prisma.milestone.deleteMany();
+    await prisma.sensorySystem.deleteMany();
+    await prisma.functionalConcern.deleteMany();
+    await prisma.assessmentTool.deleteMany();
+    await prisma.equipment.deleteMany();
+    await prisma.interventionApproach.deleteMany();
     await prisma.clinic.deleteMany();
     await prisma.subscriptionPlan.deleteMany();
   });

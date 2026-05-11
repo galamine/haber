@@ -1,0 +1,17 @@
+export type {
+  AssessmentToolDto,
+  CreateAssessmentToolDto,
+  CreateDiagnosisDto,
+  CreateEquipmentDto,
+  CreateFunctionalConcernDto,
+  CreateInterventionApproachDto,
+  CreateMilestoneDto,
+  CreateSensorySystemDto,
+  DiagnosisDto,
+  EquipmentDto,
+  FunctionalConcernDto,
+  InterventionApproachDto,
+  MilestoneDto,
+  SensorySystemDto,
+  TaxonomyType,
+} from '../schemas/taxonomy.schema';

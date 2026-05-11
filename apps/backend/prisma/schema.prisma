@@ -99,8 +99,15 @@ model Clinic {
   users              User[]
   departments        Department[]
   sensoryRooms       SensoryRoom[]
-  gameToggles        ClinicGameToggle[]
-  children           Child[]
+  gameToggles            ClinicGameToggle[]
+  children               Child[]
+  diagnoses              Diagnosis[]
+  milestones             Milestone[]
+  sensorySystems         SensorySystem[]
+  functionalConcerns     FunctionalConcern[]
+  assessmentTools        AssessmentTool[]
+  equipment              Equipment[]
+  interventionApproaches InterventionApproach[]
 
   @@map("clinics")
 }
@@ -342,4 +349,100 @@ model ConsentRecord {
 
   @@index([childId, type, status])
   @@map("consent_records")
+}
+
+model Diagnosis {
+  id           String   @id @default(uuid())
+  name         String
+  icdReference String?  @map("icd_reference")
+  frameworkId  String   @map("framework_id")
+  tenantId     String?  @map("tenant_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  clinic       Clinic?  @relation(fields: [tenantId], references: [id])
+
+  @@index([frameworkId, tenantId])
+  @@map("diagnoses")
+}
+
+model Milestone {
+  id               String   @id @default(uuid())
+  name             String
+  ageBandMinMonths Int      @map("age_band_min_months")
+  ageBandMaxMonths Int      @map("age_band_max_months")
+  scoringScaleMin  Int      @map("scoring_scale_min")
+  scoringScaleMax  Int      @map("scoring_scale_max")
+  description      String
+  frameworkId      String   @map("framework_id")
+  tenantId         String?  @map("tenant_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+  clinic           Clinic?  @relation(fields: [tenantId], references: [id])
+
+  @@index([frameworkId, tenantId])
+  @@map("milestones")
+}
+
+model SensorySystem {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  frameworkId String   @map("framework_id")
+  tenantId    String?  @map("tenant_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  clinic      Clinic?  @relation(fields: [tenantId], references: [id])
+
+  @@index([frameworkId, tenantId])
+  @@map("sensory_systems")
+}
+
+model FunctionalConcern {
+  id          String   @id @default(uuid())
+  name        String
+  category    String?
+  frameworkId String   @map("framework_id")
+  tenantId    String?  @map("tenant_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  clinic      Clinic?  @relation(fields: [tenantId], references: [id])
+
+  @@index([frameworkId, tenantId])
+  @@map("functional_concerns")
+}
+
+model AssessmentTool {
+  id          String   @id @default(uuid())
+  name        String
+  fullName    String?  @map("full_name")
+  description String?
+  frameworkId String   @map("framework_id")
+  tenantId    String?  @map("tenant_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  clinic      Clinic?  @relation(fields: [tenantId], references: [id])
+
+  @@index([frameworkId, tenantId])
+  @@map("assessment_tools")
+}
+
+model Equipment {
+  id          String   @id @default(uuid())
+  name        String
+  category    String?
+  frameworkId String   @map("framework_id")
+  tenantId    String?  @map("tenant_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  clinic      Clinic?  @relation(fields: [tenantId], references: [id])
+
+  @@index([frameworkId, tenantId])
+  @@map("equipment")
+}
+
+model InterventionApproach {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  frameworkId String   @map("framework_id")
+  tenantId    String?  @map("tenant_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  clinic      Clinic?  @relation(fields: [tenantId], references: [id])
+
+  @@index([frameworkId, tenantId])
+  @@map("intervention_approaches")
 }

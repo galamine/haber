@@ -1,4 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ClinicExtensionsTab from './ClinicExtensionsTab';
 import { DepartmentsTab } from './DepartmentsTab';
 import { GameLibraryTab } from './GameLibraryTab';
 import { SensoryRoomsTab } from './SensoryRoomsTab';
@@ -16,6 +17,7 @@ export function ClinicSetupPage() {
           <TabsTrigger value="departments">Departments</TabsTrigger>
           <TabsTrigger value="rooms">Sensory Rooms</TabsTrigger>
           <TabsTrigger value="games">Game Library</TabsTrigger>
+          <TabsTrigger value="extensions">Clinic Extensions</TabsTrigger>
         </TabsList>
 
         <TabsContent value="departments" className="mt-4">
@@ -28,6 +30,10 @@ export function ClinicSetupPage() {
 
         <TabsContent value="games" className="mt-4">
           <GameLibraryTab />
+        </TabsContent>
+
+        <TabsContent value="extensions" className="mt-4">
+          <ClinicExtensionsTab />
         </TabsContent>
       </Tabs>
     </div>

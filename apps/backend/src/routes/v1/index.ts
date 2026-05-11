@@ -7,6 +7,7 @@ import docsRoute from './docs.route';
 import sensoryRoomRoute from './sensoryRoom.route';
 import staffRoute from './staff.route';
 import superAdminRoute from './superAdmin.route';
+import taxonomyRoute from './taxonomy.route';
 import userRoute from './user.route';
 
 const router = Router();
@@ -52,6 +53,10 @@ const defaultRoutes: Route[] = [
   {
     path: '/children',
     route: childRoute,
+  },
+  {
+    path: '/taxonomies',
+    route: taxonomyRoute,
   },
 ];
 

@@ -9,5 +9,6 @@ export { otpService } from './otp.service';
 export { sensoryRoomService } from './sensoryRoom.service';
 export { staffService } from './staff.service';
 export { subscriptionPlanService } from './subscriptionPlan.service';
+export { taxonomyService } from './taxonomy.service';
 export { tokenService } from './token.service';
 export { userService } from './user.service';

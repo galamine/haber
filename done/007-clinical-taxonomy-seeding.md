@@ -51,6 +51,38 @@ Seed the clinical reference data from `clinical-data/clinical-taxonomies.seed.js
 - [ ] Try to delete the global "ASD" diagnosis from the API → verify 403 is returned
 - [ ] Open a Form 1 draft (after issues 008–010 are complete) → verify the diagnosis multi-select shows both global entries and the custom extension
 
+## Design Decisions (resolved)
+
+- **Seed scope:** Only 7 DB models. `session_quality_tags`, `home_program_compliance`, `session_engagement`, `goal_status`, `goal_horizon`, `goal_status_decisions` → Zod enums in `@haber/shared` (fixed enumerations; clinics will never extend them).
+
+- **Milestone model:** `parentMilestoneId` and `extensions` JSONB fields dropped. No hierarchy in seed data — 12 milestones are flat.
+
+- **Milestone age bands (WHO/CDC):**
+  | Milestone | Min months | Max months |
+  |---|---|---|
+  | Head control | 1 | 4 |
+  | Rolling | 3 | 6 |
+  | Sitting | 4 | 9 |
+  | Crawling | 6 | 12 |
+  | Standing | 8 | 14 |
+  | Walking | 10 | 18 |
+  | First words | 9 | 18 |
+  | Two-word phrases | 18 | 30 |
+  | Toilet training | 18 | 36 |
+  | Self-feeding | 8 | 18 |
+  | Dressing | 24 | 48 |
+  | Eye contact/Social smile | 1 | 3 |
+
+- **Milestone scoring scale:** All 12 milestones seeded with `scoringScaleMin=0`, `scoringScaleMax=5` (ordinal — gives form rendering flexibility without a future migration).
+
+- **Delete strategy:** Hard delete for tenant extensions. No `deletedAt` on taxonomy models. Global entries return 403 `CANNOT_DELETE_GLOBAL_TAXONOMY`.
+
+- **Permissions:** GET endpoints reuse existing `child.intake` (covers clinic_admin + therapist). POST/DELETE use new `manageTaxonomies` permission added to `clinic_admin` only.
+
+- **Architecture:** Single polymorphic taxonomy route/controller/service with a `MODEL_MAP` type-dispatch. Not 7 separate files per taxonomy.
+
+- **Response shape:** Flat array `{ data: TaxonomyItem[] }`. No pagination — consumers are form dropdowns that need the full list.
+
 ## Blocked by
 
 - Issue 002 — Tenant, Clinic & Subscription Setup
