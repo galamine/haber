@@ -1,9 +1,12 @@
 import type {
   CreateAssessmentDto,
+  SignDto,
   UpdateAssessmentDto,
   UpsertFunctionalConcernsDto,
+  UpsertInterventionPlanDto,
   UpsertMilestonesDto,
   UpsertSensoryProfileDto,
+  UpsertToolResultsDto,
 } from '@haber/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +22,12 @@ export const assessmentKeys = {
     [...assessmentKeys.detail(childId, assessmentId), 'sensory-profile'] as const,
   functionalConcerns: (childId: string, assessmentId: string) =>
     [...assessmentKeys.detail(childId, assessmentId), 'functional-concerns'] as const,
+  toolResults: (childId: string, assessmentId: string) =>
+    [...assessmentKeys.detail(childId, assessmentId), 'tool-results'] as const,
+  interventionPlan: (childId: string, assessmentId: string) =>
+    [...assessmentKeys.detail(childId, assessmentId), 'intervention-plan'] as const,
+  signatures: (childId: string, assessmentId: string) =>
+    [...assessmentKeys.detail(childId, assessmentId), 'signatures'] as const,
 };
 
 export function useAssessments(childId: string) {
@@ -65,7 +74,7 @@ export function useFinaliseAssessment() {
   const navigate = useNavigate();
   return useMutation({
     mutationFn: ({ childId, assessmentId }: { childId: string; assessmentId: string }) =>
-      assessmentsApi.finalise(childId, assessmentId),
+      assessmentsApi.finalise(childId, assessmentId, {}),
     onSuccess: (_, { childId }) => {
       queryClient.invalidateQueries({ queryKey: assessmentKeys.list(childId) });
       navigate(`/children/${childId}`);
@@ -140,6 +149,74 @@ export function useUpsertFunctionalConcerns() {
     }) => assessmentsApi.upsertFunctionalConcerns(childId, assessmentId, data),
     onSuccess: (result, { childId, assessmentId }) => {
       queryClient.setQueryData(assessmentKeys.functionalConcerns(childId, assessmentId), result);
+    },
+  });
+}
+
+export function useToolResults(childId: string, assessmentId: string) {
+  return useQuery({
+    queryKey: assessmentKeys.toolResults(childId, assessmentId),
+    queryFn: () => assessmentsApi.getToolResults(childId, assessmentId),
+    enabled: !!childId && !!assessmentId,
+  });
+}
+
+export function useUpsertToolResults() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ childId, assessmentId, data }: { childId: string; assessmentId: string; data: UpsertToolResultsDto }) =>
+      assessmentsApi.upsertToolResults(childId, assessmentId, data),
+    onSuccess: (result, { childId, assessmentId }) => {
+      queryClient.setQueryData(assessmentKeys.toolResults(childId, assessmentId), result);
+    },
+  });
+}
+
+export function useInterventionPlan(childId: string, assessmentId: string) {
+  return useQuery({
+    queryKey: assessmentKeys.interventionPlan(childId, assessmentId),
+    queryFn: () => assessmentsApi.getInterventionPlan(childId, assessmentId),
+    enabled: !!childId && !!assessmentId,
+  });
+}
+
+export function useUpsertInterventionPlan() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      childId,
+      assessmentId,
+      data,
+    }: {
+      childId: string;
+      assessmentId: string;
+      data: UpsertInterventionPlanDto;
+    }) => assessmentsApi.upsertInterventionPlan(childId, assessmentId, data),
+    onSuccess: (result, { childId, assessmentId }) => {
+      queryClient.setQueryData(assessmentKeys.interventionPlan(childId, assessmentId), result);
+    },
+  });
+}
+
+export function useSignatures(childId: string, assessmentId: string) {
+  return useQuery({
+    queryKey: assessmentKeys.signatures(childId, assessmentId),
+    queryFn: () => assessmentsApi.getSignatures(childId, assessmentId),
+    enabled: !!childId && !!assessmentId,
+  });
+}
+
+export function useSignAssessment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ childId, assessmentId, data }: { childId: string; assessmentId: string; data: SignDto }) =>
+      assessmentsApi.sign(childId, assessmentId, data),
+    onSuccess: (result, { childId, assessmentId }) => {
+      queryClient.setQueryData(assessmentKeys.signatures(childId, assessmentId), (old: unknown) => {
+        if (!Array.isArray(old)) return [result];
+        const filtered = old.filter((s) => s.signatoryType !== result.signatoryType);
+        return [...filtered, result];
+      });
     },
   });
 }

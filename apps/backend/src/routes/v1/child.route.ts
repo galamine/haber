@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import assessmentController from '../../controllers/assessment.controller';
+import assessmentFinalSectionsController from '../../controllers/assessmentFinalSections.controller';
 import assessmentSectionsController from '../../controllers/assessmentSections.controller';
 import childController from '../../controllers/child.controller';
 import consentController from '../../controllers/consent.controller';
 import auth from '../../middlewares/auth';
 import validate from '../../middlewares/validate';
 import assessmentValidation from '../../validations/assessment.validation';
+import assessmentFinalSectionsValidation from '../../validations/assessmentFinalSections.validation';
 import assessmentSectionsValidation from '../../validations/assessmentSections.validation';
 import childValidation from '../../validations/child.validation';
 import consentValidation from '../../validations/consent.validation';
@@ -130,6 +132,43 @@ router
     validate(assessmentSectionsValidation.getFunctionalConcerns),
     assessmentSectionsController.getFunctionalConcerns
   );
+router
+  .route('/:childId/assessments/:assessmentId/tool-results')
+  .put(
+    auth('child.assessment'),
+    validate(assessmentFinalSectionsValidation.upsertToolResults),
+    assessmentFinalSectionsController.upsertToolResults
+  )
+  .get(
+    auth('child.assessment'),
+    validate(assessmentFinalSectionsValidation.getToolResults),
+    assessmentFinalSectionsController.getToolResults
+  );
+router
+  .route('/:childId/assessments/:assessmentId/intervention-plan')
+  .put(
+    auth('child.assessment'),
+    validate(assessmentFinalSectionsValidation.upsertInterventionPlan),
+    assessmentFinalSectionsController.upsertInterventionPlan
+  )
+  .get(
+    auth('child.assessment'),
+    validate(assessmentFinalSectionsValidation.getInterventionPlan),
+    assessmentFinalSectionsController.getInterventionPlan
+  );
+router
+  .route('/:childId/assessments/:assessmentId/sign')
+  .post(
+    auth('child.assessment'),
+    validate(assessmentFinalSectionsValidation.sign),
+    assessmentFinalSectionsController.signAssessment
+  );
+router.get(
+  '/:childId/assessments/:assessmentId/signatures',
+  auth('child.assessment'),
+  validate(assessmentFinalSectionsValidation.getSignatures),
+  assessmentFinalSectionsController.getSignatures
+);
 router.delete('/:childId', auth(), childController.softDeleteChild);
 
 export default router;

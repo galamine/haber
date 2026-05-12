@@ -73,6 +73,20 @@ enum AssessmentStatus {
   finalised
 }
 
+enum InterventionSetting {
+  clinic
+  home
+  school
+  early_intervention
+  rehab
+  hybrid
+}
+
+enum SignatoryType {
+  therapist
+  guardian
+}
+
 model SubscriptionPlan {
   id                String           @id @default(uuid())
   name              String
@@ -124,8 +138,9 @@ model User {
   email                 String            @unique
   role                  Role              @default(staff)
   tenantId              String?           @map("tenant_id")
-  isActive              Boolean           @default(true) @map("is_active")
-  invitedByUserId       String?           @map("invited_by_user_id")
+  isActive                   Boolean           @default(true) @map("is_active")
+  credentialsQualifications String?           @map("credentials_qualifications")
+  invitedByUserId           String?           @map("invited_by_user_id")
   createdAt             DateTime          @default(now()) @map("created_at")
   updatedAt             DateTime          @updatedAt @map("updated_at")
   tokens                Token[]
@@ -429,6 +444,7 @@ model AssessmentTool {
   tenantId    String?  @map("tenant_id")
   createdAt   DateTime @default(now()) @map("created_at")
   clinic      Clinic?  @relation(fields: [tenantId], references: [id])
+  assessmentToolResults AssessmentToolResult[]
 
   @@index([frameworkId, tenantId])
   @@map("assessment_tools")
@@ -479,6 +495,7 @@ model Assessment {
   medicalHistorySnapshot        Json?            @map("medical_history_snapshot")
   functionalConcernObservations String?          @map("functional_concern_observations")
   sensoryObservations           String?          @map("sensory_observations")
+  overallScoresSummary           String?          @map("overall_scores_summary")
   recordedByUserId              String           @map("recorded_by_user_id")
   createdAt                     DateTime         @default(now()) @map("created_at")
   updatedAt                     DateTime         @updatedAt @map("updated_at")
@@ -489,6 +506,9 @@ model Assessment {
   assessmentMilestones         AssessmentMilestone[]
   assessmentSensoryRatings     AssessmentSensoryRating[]
   assessmentFunctionalConcerns AssessmentFunctionalConcern[]
+  assessmentToolResults        AssessmentToolResult[]
+  assessmentInterventionPlan   AssessmentInterventionPlan?
+  assessmentSignatures        AssessmentSignature[]
 
   @@unique([childId, version])
   @@index([childId, version])
@@ -536,4 +556,54 @@ model AssessmentFunctionalConcern {
 
   @@id([assessmentId, functionalConcernId])
   @@map("assessment_functional_concerns")
+}
+
+model AssessmentToolResult {
+  id               String   @id @default(uuid())
+  assessmentId     String   @map("assessment_id")
+  assessmentToolId  String   @map("assessment_tool_id")
+  scoresSummary    String?  @db.Text @map("scores_summary")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  assessment    Assessment     @relation(fields: [assessmentId], references: [id])
+  assessmentTool AssessmentTool @relation(fields: [assessmentToolId], references: [id])
+
+  @@unique([assessmentId, assessmentToolId])
+  @@map("assessment_tool_results")
+}
+
+model AssessmentInterventionPlan {
+  id                       String            @id @default(uuid())
+  assessmentId             String            @unique @map("assessment_id")
+  frequencyPerWeek         Int               @map("frequency_per_week")
+  sessionDurationMinutes   Int               @map("session_duration_minutes")
+  interventionSetting      InterventionSetting @map("intervention_setting")
+  reviewPeriodWeeks        Int               @map("review_period_weeks")
+  homeProgramRecommendations String?         @map("home_program_recommendations") @db.Text
+  referralsToSpecialists   String?           @map("referrals_to_specialists") @db.Text
+  shortTermGoals           Json              @default("[]") @map("short_term_goals")
+  longTermGoals            Json              @default("[]") @map("long_term_goals")
+  createdAt                DateTime          @default(now()) @map("created_at")
+  updatedAt                DateTime          @updatedAt @map("updated_at")
+
+  assessment Assessment @relation(fields: [assessmentId], references: [id])
+
+  @@map("assessment_intervention_plans")
+}
+
+model AssessmentSignature {
+  id             String       @id @default(uuid())
+  assessmentId   String       @map("assessment_id")
+  signatoryType  SignatoryType @map("signatory_type")
+  typedName      String       @map("typed_name")
+  credentials    String?      @db.Text
+  timestamp      DateTime
+  ipAddress      String       @map("ip_address")
+  consentCheckbox Boolean?    @map("consent_checkbox")
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  assessment Assessment @relation(fields: [assessmentId], references: [id])
+
+  @@unique([assessmentId, signatoryType])
+  @@map("assessment_signatures")
 }

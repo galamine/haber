@@ -4,7 +4,7 @@ import httpStatus from 'http-status';
 import prisma from '../config/prisma';
 import { ApiError } from '../utils/ApiError';
 
-const transformAssessment = (a: Record<string, unknown>): AssessmentDto => ({
+const transformAssessment = (a: Record<string, unknown>, signatures?: { signatoryType: string }[]): AssessmentDto => ({
   id: a.id as string,
   childId: a.childId as string,
   tenantId: a.tenantId as string,
@@ -21,9 +21,16 @@ const transformAssessment = (a: Record<string, unknown>): AssessmentDto => ({
   notes: a.notes as string | null,
   primaryDiagnosisIds: (a.primaryDiagnosisIds as string[]) ?? [],
   medicalHistorySnapshot: a.medicalHistorySnapshot as Record<string, unknown> | null,
+  overallScoresSummary: a.overallScoresSummary as string | null,
   recordedByUserId: a.recordedByUserId as string,
   createdAt: (a.createdAt as Date).toISOString(),
   updatedAt: (a.updatedAt as Date).toISOString(),
+  signaturesStatus: signatures
+    ? {
+        therapist: signatures.some((s) => s.signatoryType === 'therapist'),
+        guardian: signatures.some((s) => s.signatoryType === 'guardian'),
+      }
+    : null,
 });
 
 const verifyAssignment = async (childId: string, userId: string, role: string) => {
@@ -120,7 +127,12 @@ const getAssessment = async (
 
   await verifyAssignment(childId, callerId, callerRole);
 
-  return transformAssessment(assessment as unknown as Record<string, unknown>);
+  const signatures = await prisma.assessmentSignature.findMany({
+    where: { assessmentId },
+    select: { signatoryType: true },
+  });
+
+  return transformAssessment(assessment as unknown as Record<string, unknown>, signatures);
 };
 
 const updateAssessment = async (
@@ -149,6 +161,7 @@ const updateAssessment = async (
   if (body.notes !== undefined) updateData.notes = body.notes;
   if (body.primaryDiagnosisIds !== undefined) updateData.primaryDiagnosisIds = body.primaryDiagnosisIds;
   if (body.medicalHistorySnapshot !== undefined) updateData.medicalHistorySnapshot = body.medicalHistorySnapshot;
+  if (body.overallScoresSummary !== undefined) updateData.overallScoresSummary = body.overallScoresSummary;
 
   const updated = await prisma.assessment.update({ where: { id: assessmentId }, data: updateData });
   return transformAssessment(updated as unknown as Record<string, unknown>);
@@ -173,8 +186,36 @@ const finaliseAssessment = async (
   const sensoryCount = await prisma.assessmentSensoryRating.count({ where: { assessmentId } });
   if (sensoryCount < 7) throw new ApiError(httpStatus.UNPROCESSABLE_ENTITY, 'SENSORY_PROFILE_INCOMPLETE');
 
+  const signatures = await prisma.assessmentSignature.findMany({
+    where: { assessmentId },
+    select: { signatoryType: true },
+  });
+  const hasTherapistSig = signatures.some((s) => s.signatoryType === 'therapist');
+  const hasGuardianSig = signatures.some((s) => s.signatoryType === 'guardian');
+  const missing: string[] = [];
+  if (!hasTherapistSig) missing.push('therapist');
+  if (!hasGuardianSig) missing.push('guardian');
+  if (missing.length > 0) {
+    throw new ApiError(httpStatus.UNPROCESSABLE_ENTITY, 'SIGNATURES_REQUIRED', { missing });
+  }
+
+  const interventionPlan = await prisma.assessmentInterventionPlan.findUnique({
+    where: { assessmentId },
+    select: { shortTermGoals: true, longTermGoals: true },
+  });
+  const goalMissing: string[] = [];
+  if (!interventionPlan || (interventionPlan.shortTermGoals as unknown[]).length === 0) {
+    goalMissing.push('shortTermGoals');
+  }
+  if (!interventionPlan || (interventionPlan.longTermGoals as unknown[]).length === 0) {
+    goalMissing.push('longTermGoals');
+  }
+  if (goalMissing.length > 0) {
+    throw new ApiError(httpStatus.UNPROCESSABLE_ENTITY, 'GOALS_INCOMPLETE', { missing: goalMissing });
+  }
+
   const updated = await prisma.assessment.update({ where: { id: assessmentId }, data: { status: 'finalised' } });
-  return transformAssessment(updated as unknown as Record<string, unknown>);
+  return transformAssessment(updated as unknown as Record<string, unknown>, signatures);
 };
 
 export const assessmentService = {

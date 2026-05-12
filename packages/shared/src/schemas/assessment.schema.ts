@@ -22,8 +22,14 @@ export const UpdateAssessmentDtoSchema = z
     notes: z.string().nullable().optional(),
     primaryDiagnosisIds: z.array(z.string().uuid()).optional(),
     medicalHistorySnapshot: z.record(z.unknown()).nullable().optional(),
+    overallScoresSummary: z.string().nullable().optional(),
   })
   .refine((obj) => Object.keys(obj).length > 0, 'At least one field is required');
+
+export const SignaturesStatusSchema = z.object({
+  therapist: z.boolean(),
+  guardian: z.boolean(),
+});
 
 export const AssessmentDtoSchema = z.object({
   id: z.string().uuid(),
@@ -42,9 +48,11 @@ export const AssessmentDtoSchema = z.object({
   notes: z.string().nullable(),
   primaryDiagnosisIds: z.array(z.string().uuid()),
   medicalHistorySnapshot: z.record(z.unknown()).nullable(),
+  overallScoresSummary: z.string().nullable(),
   recordedByUserId: z.string().uuid(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
+  signaturesStatus: SignaturesStatusSchema.nullable(),
 });
 
 export const AssessmentCreatedDtoSchema = z.object({

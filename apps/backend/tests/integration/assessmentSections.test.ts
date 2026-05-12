@@ -95,7 +95,7 @@ const insertReadyChild = async (assignTherapistId?: string) => {
 
 const TODAY = new Date().toISOString().split('T')[0];
 
-const insertDraftAssessment = async (childId: string, therapistId: string) => {
+const insertDraftAssessment = async (childId: string, _therapistId: string) => {
   const token = getAccessToken(therapistOne);
   const res = await request(app)
     .post(`/v1/children/${childId}/assessments`)

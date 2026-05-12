@@ -2,13 +2,20 @@ import type {
   AssessmentCreatedDto,
   AssessmentDto,
   AssessmentFunctionalConcernDto,
+  AssessmentInterventionPlanDto,
   AssessmentMilestoneDto,
   AssessmentSensoryRatingDto,
+  AssessmentSignatureDto,
+  AssessmentToolResultDto,
   CreateAssessmentDto,
+  FinaliseAssessmentDto,
+  SignDto,
   UpdateAssessmentDto,
   UpsertFunctionalConcernsDto,
+  UpsertInterventionPlanDto,
   UpsertMilestonesDto,
   UpsertSensoryProfileDto,
+  UpsertToolResultsDto,
 } from '@haber/shared';
 import { apiClient } from './client';
 
@@ -31,8 +38,8 @@ export const assessmentsApi = {
   update: (childId: string, assessmentId: string, data: UpdateAssessmentDto) =>
     apiClient.patch<AssessmentDto>(`${BASE(childId)}/${assessmentId}`, data),
 
-  finalise: (childId: string, assessmentId: string) =>
-    apiClient.post<AssessmentDto>(`${BASE(childId)}/${assessmentId}/finalise`, {}),
+  finalise: (childId: string, assessmentId: string, data: FinaliseAssessmentDto) =>
+    apiClient.post<AssessmentDto>(`${BASE(childId)}/${assessmentId}/finalise`, data),
 
   getMilestones: (childId: string, assessmentId: string) =>
     apiClient.get<AssessmentMilestoneDto[]>(`${SECTION(childId, assessmentId)}/milestones`),
@@ -51,4 +58,22 @@ export const assessmentsApi = {
 
   upsertFunctionalConcerns: (childId: string, assessmentId: string, data: UpsertFunctionalConcernsDto) =>
     apiClient.put<FunctionalConcernsResponse>(`${SECTION(childId, assessmentId)}/functional-concerns`, data),
+
+  getToolResults: (childId: string, assessmentId: string) =>
+    apiClient.get<AssessmentToolResultDto[]>(`${SECTION(childId, assessmentId)}/tool-results`),
+
+  upsertToolResults: (childId: string, assessmentId: string, data: UpsertToolResultsDto) =>
+    apiClient.put<AssessmentToolResultDto[]>(`${SECTION(childId, assessmentId)}/tool-results`, data),
+
+  getInterventionPlan: (childId: string, assessmentId: string) =>
+    apiClient.get<AssessmentInterventionPlanDto>(`${SECTION(childId, assessmentId)}/intervention-plan`),
+
+  upsertInterventionPlan: (childId: string, assessmentId: string, data: UpsertInterventionPlanDto) =>
+    apiClient.put<AssessmentInterventionPlanDto>(`${SECTION(childId, assessmentId)}/intervention-plan`, data),
+
+  getSignatures: (childId: string, assessmentId: string) =>
+    apiClient.get<AssessmentSignatureDto[]>(`${SECTION(childId, assessmentId)}/signatures`),
+
+  sign: (childId: string, assessmentId: string, data: SignDto) =>
+    apiClient.post<AssessmentSignatureDto>(`${SECTION(childId, assessmentId)}/sign`, data),
 };

@@ -1,7 +1,7 @@
-import type { AssessmentDto, UpdateAssessmentDto } from '@haber/shared';
+import type { AssessmentDto, InterventionSetting } from '@haber/shared';
 import type { MilestoneDto, SensorySystemDto } from '@haber/shared/dtos';
 import { CheckCircle2, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ApiError } from '@/api/client';
@@ -21,12 +21,18 @@ import {
   useAssessment,
   useFinaliseAssessment,
   useFunctionalConcerns,
+  useInterventionPlan,
   useMilestones,
   useSensoryProfile,
+  useSignAssessment,
+  useSignatures,
+  useToolResults,
   useUpdateAssessment,
   useUpsertFunctionalConcerns,
+  useUpsertInterventionPlan,
   useUpsertMilestones,
   useUpsertSensoryProfile,
+  useUpsertToolResults,
 } from '@/hooks/useAssessments';
 import { useChild } from '@/hooks/useChildren';
 import { useTaxonomy } from '@/hooks/useTaxonomies';
@@ -40,6 +46,9 @@ const STEPS = [
   { number: 5, label: 'Milestones' },
   { number: 6, label: 'Sensory Profile' },
   { number: 7, label: 'Functional Concerns' },
+  { number: 8, label: 'Assessment Tools' },
+  { number: 9, label: 'Goals & Plan' },
+  { number: 10, label: 'Signatures' },
 ];
 
 interface S1 {
@@ -129,6 +138,9 @@ export function AssessmentWizardPage() {
   const s5InitRef = useRef(false);
   const s6InitRef = useRef(false);
   const s7InitRef = useRef(false);
+  const s8InitRef = useRef(false);
+  const s9InitRef = useRef(false);
+  const s10InitRef = useRef(false);
   const [step, setStep] = useState(1);
 
   const { data: child } = useChild(childId);
@@ -138,17 +150,24 @@ export function AssessmentWizardPage() {
   const upsertMilestonesMut = useUpsertMilestones();
   const upsertSensoryProfileMut = useUpsertSensoryProfile();
   const upsertFunctionalConcernsMut = useUpsertFunctionalConcerns();
+  const upsertToolResultsMut = useUpsertToolResults();
+  const upsertInterventionPlanMut = useUpsertInterventionPlan();
+  const signMut = useSignAssessment();
 
   // Taxonomy lists
   const { data: milestones = [] } = useTaxonomy('milestones');
   const { data: functionalConcerns = [] } = useTaxonomy('functional-concerns');
   const { data: sensorySystems = [] } = useTaxonomy('sensory-systems');
   const { data: diagnoses = [] } = useTaxonomy('diagnoses');
+  const { data: assessmentTools = [] } = useTaxonomy('assessment-tools');
 
   // Saved section data from backend
   const { data: milestonesData } = useMilestones(childId, assessmentId);
   const { data: sensoryProfileData } = useSensoryProfile(childId, assessmentId);
   const { data: functionalConcernsData } = useFunctionalConcerns(childId, assessmentId);
+  const { data: toolResultsData } = useToolResults(childId, assessmentId);
+  const { data: interventionPlanData } = useInterventionPlan(childId, assessmentId);
+  const { data: signaturesData } = useSignatures(childId, assessmentId);
 
   // Core assessment state (steps 1–4)
   const [s1, setS1] = useState<S1>({ assessmentDate: '', assessmentLocation: '', referringDoctor: '', referralSource: '' });
@@ -181,6 +200,29 @@ export function AssessmentWizardPage() {
   const [sensoryObservations, setSensoryObservations] = useState('');
   const [s7FunctionalConcernIds, setS7FunctionalConcernIds] = useState<string[]>([]);
   const [clinicalObservations, setClinicalObservations] = useState('');
+
+  // Section state (step 8 - Assessment Tools)
+  const [s8SelectedTools, setS8SelectedTools] = useState<Record<string, string>>({});
+  const [s8OverallSummary, setS8OverallSummary] = useState('');
+
+  // Section state (step 9 - Goals & Intervention Plan)
+  const [s9Frequency, setS9Frequency] = useState('');
+  const [s9Duration, setS9Duration] = useState('');
+  const [s9Setting, setS9Setting] = useState<InterventionSetting | ''>('');
+  const [s9ReviewPeriod, setS9ReviewPeriod] = useState('');
+  const [s9HomeProgram, setS9HomeProgram] = useState('');
+  const [s9Referrals, setS9Referrals] = useState('');
+  const [s9ShortTermGoals, setS9ShortTermGoals] = useState<string[]>(['', '', '', '']);
+  const [s9LongTermGoals, setS9LongTermGoals] = useState<string[]>(['', '', '', '']);
+
+  // Section state (step 10 - Signatures)
+  const [s10TherapistName, setS10TherapistName] = useState('');
+  const [s10TherapistCredentials, setS10TherapistCredentials] = useState('');
+  const [s10GuardianName, setS10GuardianName] = useState('');
+  const [s10GuardianConsent, setS10GuardianConsent] = useState(false);
+
+  const shortTermGoalIds = useMemo(() => Array.from({ length: 4 }, () => crypto.randomUUID()), []);
+  const longTermGoalIds = useMemo(() => Array.from({ length: 4 }, () => crypto.randomUUID()), []);
 
   // Hydrate core assessment state once
   useEffect(() => {
@@ -237,6 +279,59 @@ export function AssessmentWizardPage() {
     setS7FunctionalConcernIds(functionalConcernsData.concerns.map((c) => c.functionalConcernId));
     setClinicalObservations(functionalConcernsData.functionalConcernObservations ?? '');
   }, [functionalConcernsData]);
+
+  // Hydrate assessment tools section state once
+  useEffect(() => {
+    if (!toolResultsData || s8InitRef.current) return;
+    s8InitRef.current = true;
+    const record: Record<string, string> = {};
+    for (const tr of toolResultsData) {
+      record[tr.assessmentToolId] = tr.scoresSummary ?? '';
+    }
+    setS8SelectedTools(record);
+  }, [toolResultsData]);
+
+  // Hydrate goals & intervention plan section state once
+  useEffect(() => {
+    if (!interventionPlanData || s9InitRef.current) return;
+    s9InitRef.current = true;
+    setS9Frequency(String(interventionPlanData.frequencyPerWeek));
+    setS9Duration(String(interventionPlanData.sessionDurationMinutes));
+    setS9Setting(interventionPlanData.interventionSetting);
+    setS9ReviewPeriod(String(interventionPlanData.reviewPeriodWeeks));
+    setS9HomeProgram(interventionPlanData.homeProgramRecommendations ?? '');
+    setS9Referrals(interventionPlanData.referralsToSpecialists ?? '');
+    const shortGoals = (interventionPlanData.shortTermGoals as { description: string }[]) ?? [];
+    const longGoals = (interventionPlanData.longTermGoals as { description: string }[]) ?? [];
+    setS9ShortTermGoals([
+      shortGoals[0]?.description ?? '',
+      shortGoals[1]?.description ?? '',
+      shortGoals[2]?.description ?? '',
+      shortGoals[3]?.description ?? '',
+    ]);
+    setS9LongTermGoals([
+      longGoals[0]?.description ?? '',
+      longGoals[1]?.description ?? '',
+      longGoals[2]?.description ?? '',
+      longGoals[3]?.description ?? '',
+    ]);
+  }, [interventionPlanData]);
+
+  // Hydrate signatures section state once
+  useEffect(() => {
+    if (!signaturesData || s10InitRef.current) return;
+    s10InitRef.current = true;
+    const therapistSig = signaturesData.find((s) => s.signatoryType === 'therapist');
+    const guardianSig = signaturesData.find((s) => s.signatoryType === 'guardian');
+    if (therapistSig) {
+      setS10TherapistName(therapistSig.typedName);
+      setS10TherapistCredentials(therapistSig.credentials ?? '');
+    }
+    if (guardianSig) {
+      setS10GuardianName(guardianSig.typedName);
+      setS10GuardianConsent(guardianSig.consentCheckbox ?? false);
+    }
+  }, [signaturesData]);
 
   const isReadOnly = assessment?.status === 'finalised';
 
@@ -301,7 +396,7 @@ export function AssessmentWizardPage() {
                 const row = s5[m.id] ?? { achievedAtAgeMonths: '', delayed: false, notes: '' };
                 return {
                   milestoneId: m.id,
-                  achievedAtAgeMonths: row.achievedAtAgeMonths ? parseInt(row.achievedAtAgeMonths) : null,
+                  achievedAtAgeMonths: row.achievedAtAgeMonths ? parseInt(row.achievedAtAgeMonths, 10) : null,
                   delayed: row.delayed,
                   notes: row.notes || null,
                 };
@@ -314,14 +409,58 @@ export function AssessmentWizardPage() {
             childId,
             assessmentId,
             data: {
-              ratings: (sensorySystems as unknown as SensorySystemDto[])
-                .filter((sys) => s6[sys.id]?.rating != null)
-                .map((sys) => ({
-                  sensorySystemId: sys.id,
-                  rating: s6[sys.id].rating!,
-                  notes: s6[sys.id].notes || null,
+              ratings: Object.entries(s6)
+                .filter(([, row]) => row.rating != null)
+                .map(([sensorySystemId, row]) => ({
+                  sensorySystemId,
+                  rating: row.rating as number,
+                  notes: row.notes || null,
                 })),
               sensoryObservations: sensoryObservations || null,
+            },
+          });
+          break;
+        case 7:
+          await upsertFunctionalConcernsMut.mutateAsync({
+            childId,
+            assessmentId,
+            data: {
+              functionalConcernIds: s7FunctionalConcernIds,
+              clinicalObservations: clinicalObservations || null,
+            },
+          });
+          break;
+        case 8:
+          await upsertToolResultsMut.mutateAsync({
+            childId,
+            assessmentId,
+            data: {
+              toolResults: Object.entries(s8SelectedTools)
+                .filter(([, scoresSummary]) => scoresSummary.trim() !== '')
+                .map(([assessmentToolId, scoresSummary]) => ({ assessmentToolId, scoresSummary: scoresSummary.trim() })),
+              overallScoresSummary: s8OverallSummary.trim() || null,
+            },
+          });
+          break;
+        case 9:
+          await upsertInterventionPlanMut.mutateAsync({
+            childId,
+            assessmentId,
+            data: {
+              frequencyPerWeek: parseInt(s9Frequency, 10) || 0,
+              sessionDurationMinutes: parseInt(s9Duration, 10) || 0,
+              interventionSetting: s9Setting || 'clinic',
+              reviewPeriodWeeks: parseInt(s9ReviewPeriod, 10) || 0,
+              homeProgramRecommendations: s9HomeProgram.trim() || null,
+              referralsToSpecialists: s9Referrals.trim() || null,
+              shortTermGoals: s9ShortTermGoals
+                .map((g) => g.trim())
+                .filter((g) => g !== '')
+                .map((description) => ({ description })),
+              longTermGoals: s9LongTermGoals
+                .map((g) => g.trim())
+                .filter((g) => g !== '')
+                .map((description) => ({ description })),
             },
           });
           break;
@@ -336,12 +475,24 @@ export function AssessmentWizardPage() {
 
   const handleFinalise = async () => {
     try {
-      await upsertFunctionalConcernsMut.mutateAsync({
+      await upsertInterventionPlanMut.mutateAsync({
         childId,
         assessmentId,
         data: {
-          functionalConcernIds: s7FunctionalConcernIds,
-          clinicalObservations: clinicalObservations || null,
+          frequencyPerWeek: parseInt(s9Frequency, 10) || 0,
+          sessionDurationMinutes: parseInt(s9Duration, 10) || 0,
+          interventionSetting: s9Setting || 'clinic',
+          reviewPeriodWeeks: parseInt(s9ReviewPeriod, 10) || 0,
+          homeProgramRecommendations: s9HomeProgram.trim() || null,
+          referralsToSpecialists: s9Referrals.trim() || null,
+          shortTermGoals: s9ShortTermGoals
+            .map((g) => g.trim())
+            .filter((g) => g !== '')
+            .map((description) => ({ description })),
+          longTermGoals: s9LongTermGoals
+            .map((g) => g.trim())
+            .filter((g) => g !== '')
+            .map((description) => ({ description })),
         },
       });
       await finaliseMut.mutateAsync({ childId, assessmentId });
@@ -351,6 +502,14 @@ export function AssessmentWizardPage() {
           toast.error('Please rate at least one milestone before finalising.');
         } else if (err.message === 'SENSORY_PROFILE_INCOMPLETE') {
           toast.error('Please rate all 7 sensory systems before finalising.');
+        } else if (err.message === 'SIGNATURES_REQUIRED') {
+          const missing = (err as { missing?: string[] }).missing ?? [];
+          const parts: string[] = [];
+          if (missing.includes('therapist')) parts.push('therapist');
+          if (missing.includes('guardian')) parts.push('guardian');
+          toast.error(`Missing signature${parts.length > 1 ? 's' : ''}: ${parts.join(', ')}`);
+        } else if (err.message === 'GOALS_INCOMPLETE') {
+          toast.error('Please add at least one short-term and one long-term goal.');
         } else {
           toast.error('Failed to finalise. Please try again.');
         }
@@ -377,7 +536,10 @@ export function AssessmentWizardPage() {
     finaliseMut.isPending ||
     upsertMilestonesMut.isPending ||
     upsertSensoryProfileMut.isPending ||
-    upsertFunctionalConcernsMut.isPending;
+    upsertFunctionalConcernsMut.isPending ||
+    upsertToolResultsMut.isPending ||
+    upsertInterventionPlanMut.isPending ||
+    signMut.isPending;
 
   return (
     <div className="space-y-6">
@@ -1078,6 +1240,323 @@ export function AssessmentWizardPage() {
               rows={4}
               disabled={isReadOnly}
             />
+          </div>
+        </div>
+      )}
+
+      {/* ─── Section 8: Standardised Assessment Tools ─── */}
+      {step === 8 && (
+        <div className="space-y-6">
+          <div>
+            <Label>Standardised Assessment Tools</Label>
+            <p className="text-xs text-muted-foreground mb-3">Select tools administered and enter scores for each</p>
+            {assessmentTools.length === 0 ? (
+              <Skeleton className="h-48 w-full" />
+            ) : (
+              <div className="space-y-4">
+                {assessmentTools.map((tool) => {
+                  const isSelected = s8SelectedTools[tool.id] !== undefined;
+                  return (
+                    <div key={tool.id} className="rounded-lg border p-4 space-y-3">
+                      <div className="flex items-start gap-2">
+                        <Checkbox
+                          id={`s8-tool-${tool.id}`}
+                          checked={isSelected}
+                          onCheckedChange={(checked) => {
+                            setS8SelectedTools((prev) => {
+                              const next = { ...prev };
+                              if (checked) {
+                                next[tool.id] = '';
+                              } else {
+                                delete next[tool.id];
+                              }
+                              return next;
+                            });
+                          }}
+                          disabled={isReadOnly}
+                        />
+                        <Label htmlFor={`s8-tool-${tool.id}`} className="cursor-pointer font-normal text-sm leading-snug">
+                          {tool.name}
+                          {'fullName' in tool && tool.fullName && (
+                            <span className="ml-1.5 text-xs text-muted-foreground">({tool.fullName})</span>
+                          )}
+                        </Label>
+                      </div>
+                      {isSelected && (
+                        <Textarea
+                          value={s8SelectedTools[tool.id] ?? ''}
+                          onChange={(e) => setS8SelectedTools((prev) => ({ ...prev, [tool.id]: e.target.value }))}
+                          placeholder="Enter scores summary (e.g., Raw score 45, Percentile 72)..."
+                          rows={2}
+                          disabled={isReadOnly}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <Label htmlFor="s8OverallSummary">Overall Scores Summary</Label>
+            <Textarea
+              id="s8OverallSummary"
+              value={s8OverallSummary}
+              onChange={(e) => setS8OverallSummary(e.target.value)}
+              placeholder="Overall interpretation of scores and percentile rankings..."
+              rows={3}
+              disabled={isReadOnly}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ─── Section 9: Initial Goals & Intervention Plan ─── */}
+      {step === 9 && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="s9Frequency">Frequency (sessions per week)</Label>
+              <Input
+                id="s9Frequency"
+                type="number"
+                min={1}
+                value={s9Frequency}
+                onChange={(e) => setS9Frequency(e.target.value)}
+                disabled={isReadOnly}
+              />
+            </div>
+            <div>
+              <Label htmlFor="s9Duration">Session Duration (minutes)</Label>
+              <Input
+                id="s9Duration"
+                type="number"
+                min={1}
+                value={s9Duration}
+                onChange={(e) => setS9Duration(e.target.value)}
+                disabled={isReadOnly}
+              />
+            </div>
+            <div>
+              <Label htmlFor="s9Setting">Intervention Setting</Label>
+              <Select value={s9Setting} onValueChange={(v) => setS9Setting(v as InterventionSetting)} disabled={isReadOnly}>
+                <SelectTrigger id="s9Setting">
+                  <SelectValue placeholder="Select setting" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="clinic">Clinic</SelectItem>
+                  <SelectItem value="home">Home</SelectItem>
+                  <SelectItem value="school">School</SelectItem>
+                  <SelectItem value="early_intervention">Early Intervention</SelectItem>
+                  <SelectItem value="rehab">Rehab</SelectItem>
+                  <SelectItem value="hybrid">Hybrid</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="s9ReviewPeriod">Review Period (weeks)</Label>
+              <Input
+                id="s9ReviewPeriod"
+                type="number"
+                min={1}
+                value={s9ReviewPeriod}
+                onChange={(e) => setS9ReviewPeriod(e.target.value)}
+                disabled={isReadOnly}
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="s9HomeProgram">Home Program Recommendations</Label>
+            <Textarea
+              id="s9HomeProgram"
+              value={s9HomeProgram}
+              onChange={(e) => setS9HomeProgram(e.target.value)}
+              placeholder="Recommended home activities and exercises..."
+              rows={3}
+              disabled={isReadOnly}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="s9Referrals">Referrals to Other Specialists</Label>
+            <Textarea
+              id="s9Referrals"
+              value={s9Referrals}
+              onChange={(e) => setS9Referrals(e.target.value)}
+              placeholder="Any referrals to other professionals or specialists..."
+              rows={2}
+              disabled={isReadOnly}
+            />
+          </div>
+
+          <Separator />
+
+          <div>
+            <Label>Short-Term Goals (4–6 weeks)</Label>
+            <p className="text-xs text-muted-foreground mb-3">Enter up to 4 short-term goals</p>
+            <div className="space-y-2">
+              {s9ShortTermGoals.map((goal, i) => (
+                <Input
+                  key={shortTermGoalIds[i]}
+                  value={goal}
+                  onChange={(e) =>
+                    setS9ShortTermGoals((prev) => {
+                      const next = [...prev];
+                      next[i] = e.target.value;
+                      return next;
+                    })
+                  }
+                  placeholder={`Short-term goal ${i + 1}`}
+                  disabled={isReadOnly}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <Label>Long-Term Goals (3–6 months)</Label>
+            <p className="text-xs text-muted-foreground mb-3">Enter up to 4 long-term goals</p>
+            <div className="space-y-2">
+              {s9LongTermGoals.map((goal, i) => (
+                <Input
+                  key={longTermGoalIds[i]}
+                  value={goal}
+                  onChange={(e) =>
+                    setS9LongTermGoals((prev) => {
+                      const next = [...prev];
+                      next[i] = e.target.value;
+                      return next;
+                    })
+                  }
+                  placeholder={`Long-term goal ${i + 1}`}
+                  disabled={isReadOnly}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Section 10: Signatures ─── */}
+      {step === 10 && (
+        <div className="space-y-6">
+          <div className="rounded-lg border p-4 space-y-4">
+            <h3 className="text-sm font-semibold">Therapist Signature</h3>
+            {assessment?.signaturesStatus?.therapist ? (
+              <div className="flex items-center gap-2 text-green-600">
+                <CheckCircle2 className="size-5" />
+                <span className="text-sm font-medium">Therapist signature captured</span>
+              </div>
+            ) : (
+              <>
+                <div>
+                  <Label htmlFor="s10TherapistName">Typed Name</Label>
+                  <Input
+                    id="s10TherapistName"
+                    value={s10TherapistName}
+                    onChange={(e) => setS10TherapistName(e.target.value)}
+                    placeholder="Enter your full name"
+                    disabled={isReadOnly}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="s10TherapistCreds">Credentials</Label>
+                  <Input
+                    id="s10TherapistCreds"
+                    value={s10TherapistCredentials}
+                    onChange={(e) => setS10TherapistCredentials(e.target.value)}
+                    placeholder="BOT, MOT (Pediatrics)"
+                    disabled={isReadOnly}
+                  />
+                </div>
+                <Button
+                  onClick={async () => {
+                    if (!s10TherapistName.trim()) {
+                      toast.error('Please enter your typed name');
+                      return;
+                    }
+                    try {
+                      await signMut.mutateAsync({
+                        childId,
+                        assessmentId,
+                        data: {
+                          signatoryType: 'therapist',
+                          typedName: s10TherapistName,
+                          credentials: s10TherapistCredentials || null,
+                        },
+                      });
+                      toast.success('Therapist signature captured');
+                    } catch {
+                      toast.error('Failed to capture signature');
+                    }
+                  }}
+                  disabled={isReadOnly || signMut.isPending}
+                >
+                  Sign as Therapist
+                </Button>
+              </>
+            )}
+          </div>
+
+          <div className="rounded-lg border p-4 space-y-4">
+            <h3 className="text-sm font-semibold">Guardian Acknowledgment</h3>
+            {assessment?.signaturesStatus?.guardian ? (
+              <div className="flex items-center gap-2 text-green-600">
+                <CheckCircle2 className="size-5" />
+                <span className="text-sm font-medium">Guardian acknowledgment captured</span>
+              </div>
+            ) : (
+              <>
+                <div>
+                  <Label htmlFor="s10GuardianName">Typed Name</Label>
+                  <Input
+                    id="s10GuardianName"
+                    value={s10GuardianName}
+                    onChange={(e) => setS10GuardianName(e.target.value)}
+                    placeholder="Enter guardian's full name"
+                    disabled={isReadOnly}
+                  />
+                </div>
+                <div className="flex items-start gap-2">
+                  <Checkbox
+                    id="s10GuardianConsent"
+                    checked={s10GuardianConsent}
+                    onCheckedChange={(checked) => setS10GuardianConsent(!!checked)}
+                    disabled={isReadOnly}
+                  />
+                  <Label htmlFor="s10GuardianConsent" className="cursor-pointer font-normal text-sm leading-snug">
+                    Consent obtained for assessment and treatment
+                  </Label>
+                </div>
+                <Button
+                  onClick={async () => {
+                    if (!s10GuardianName.trim()) {
+                      toast.error('Please enter the guardian typed name');
+                      return;
+                    }
+                    if (!s10GuardianConsent) {
+                      toast.error('Please check the consent checkbox');
+                      return;
+                    }
+                    try {
+                      await signMut.mutateAsync({
+                        childId,
+                        assessmentId,
+                        data: { signatoryType: 'guardian', typedName: s10GuardianName, consentCheckbox: true },
+                      });
+                      toast.success('Guardian acknowledgment captured');
+                    } catch {
+                      toast.error('Failed to capture acknowledgment');
+                    }
+                  }}
+                  disabled={isReadOnly || signMut.isPending}
+                >
+                  Record Guardian Acknowledgment
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}
