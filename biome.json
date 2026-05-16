@@ -49,6 +49,11 @@
       }
     }
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -79,8 +84,41 @@
       "linter": {
         "rules": {
           "suspicious": {
-            "noUnknownAtRules": "off"
+            "noUnknownAtRules": "off",
+            "noArrayIndexKey": "off"
           }
+        }
+      }
+    },
+    {
+      "includes": ["**/components/ui/carousel.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": { "useSemanticElements": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["**/components/ui/chart.tsx"],
+      "linter": {
+        "rules": {
+          "security": { "noDangerouslySetInnerHtml": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["**/components/ui/sidebar.tsx"],
+      "linter": {
+        "rules": {
+          "suspicious": { "noDocumentCookie": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["**/components/ui/slider.tsx"],
+      "linter": {
+        "rules": {
+          "suspicious": { "noArrayIndexKey": "off" }
         }
       }
     }
