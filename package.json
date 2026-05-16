@@ -7,12 +7,11 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "lint": "turbo run lint",
+    "check": "turbo run check",
+    "check:fix": "turbo run check:fix",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",
-    "format": "turbo run format",
-    "format:check": "turbo run format:check",
     "db:generate": "turbo run db:generate",
     "db:push": "turbo run db:push",
     "db:migrate": "turbo run db:migrate",
@@ -30,7 +29,7 @@
     "typescript": "^5.5.4"
   },
   "lint-staged": {
-    "**/*": "biome check --staged"
+    "*.{ts,tsx,js,jsx,json,jsonc}": "biome check --write --files-ignore-unknown=true --no-errors-on-unmatched"
   },
   "engines": {
     "node": ">=20.0.0",

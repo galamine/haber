@@ -9,6 +9,8 @@
     ".": "./src/index.ts"
   },
   "scripts": {
+    "check": "biome check ./src",
+    "check:fix": "biome check --write ./src",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },

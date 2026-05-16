@@ -10,8 +10,11 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {
+    "check": {
       "dependsOn": ["^build"]
+    },
+    "check:fix": {
+      "cache": false
     },
     "typecheck": {
       "dependsOn": ["^build"]
@@ -32,9 +35,6 @@
       "cache": false
     },
     "db:studio": {
-      "cache": false
-    },
-    "format": {
       "cache": false
     }
   }
