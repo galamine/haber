@@ -1,0 +1,252 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Child Dashboard - Leo Martinez</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "brown-600": "#7a5a54",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e9e1df",
+                        "brown-900": "#3d2626",
+                        "secondary-fixed": "#ffdad9",
+                        "primary-fixed": "#ffdad2",
+                        "on-primary-fixed": "#2d1510",
+                        "outline-variant": "#d4c3bf",
+                        "on-secondary-fixed": "#2f1314",
+                        "tertiary-fixed-dim": "#b0cdc4",
+                        "on-secondary-container": "#7a5353",
+                        "surface-container-highest": "#e9e1df",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#324c46",
+                        "on-background": "#1e1b1a",
+                        "brown-800": "#4d3232",
+                        "on-primary-fixed-variant": "#5e3f38",
+                        "on-tertiary-fixed": "#05201b",
+                        "background": "#fff8f6",
+                        "tertiary": "#47615b",
+                        "inverse-surface": "#342f2f",
+                        "tertiary-fixed": "#cce9e0",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#78564f",
+                        "on-primary-container": "#fffbff",
+                        "surface-container-low": "#faf2f0",
+                        "on-surface": "#1e1b1a",
+                        "surface-dim": "#e0d8d7",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fff8f6",
+                        "brown-300": "#d1bfb6",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#f5ecea",
+                        "primary-container": "#906c64",
+                        "inverse-on-surface": "#f7efed",
+                        "info": "#3b82f6",
+                        "tertiary-container": "#5f7a73",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#613d3d",
+                        "secondary-fixed-dim": "#ecbaba",
+                        "brown-500": "#947068",
+                        "danger": "#ef4444",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#fff8f6",
+                        "brown-200": "#e2d6d0",
+                        "primary": "#75544d",
+                        "brown-100": "#f0ece9",
+                        "outline": "#827471",
+                        "warning": "#f59e0b",
+                        "surface-container-high": "#efe6e5",
+                        "success": "#22c55e",
+                        "secondary": "#7b5454",
+                        "on-primary": "#ffffff",
+                        "brown-50": "#f6f2f0",
+                        "on-surface-variant": "#504441",
+                        "on-tertiary-container": "#f4fffa",
+                        "brown-400": "#b5978c",
+                        "secondary-container": "#fecbca",
+                        "brown-700": "#664242",
+                        "primary-fixed-dim": "#e8bdb3",
+                        "inverse-primary": "#e8bdb3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "3xl": "64px",
+                        "lg": "24px",
+                        "base": "4px",
+                        "2xl": "48px",
+                        "xl": "32px"
+                    },
+                    "fontFamily": {
+                        "text-md": ["Inter"],
+                        "display-xs": ["Inter"],
+                        "display-sm": ["Inter"],
+                        "text-sm": ["Inter"],
+                        "text-lg": ["Inter"],
+                        "display-md": ["Inter"],
+                        "text-xs": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "display-xl": ["Inter"],
+                        "text-xl": ["Inter"],
+                        "display-2xl": ["Inter"]
+                    },
+                    "fontSize": {
+                        "text-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xs": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "display-sm": ["30px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "text-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "text-lg": ["18px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "display-md": ["36px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "text-xs": ["12px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "display-xl": ["60px", { "lineHeight": "1.1", "fontWeight": "500" }],
+                        "text-xl": ["20px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "display-2xl": ["72px", { "lineHeight": "1.1", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex w-full min-h-screen">
+<!-- SideNavBar Component -->
+<nav class="bg-brown-50 dark:bg-brown-900 shadow-sm h-screen w-64 fixed left-0 top-0 flex flex-col h-full py-lg px-md gap-md z-20">
+<div class="mb-xl px-sm">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-brown-600 text-[32px]" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+<div>
+<h1 class="text-display-xs font-display-xs font-bold text-brown-900 dark:text-brown-100 tracking-tight">GrowthPath</h1>
+<p class="font-text-xs text-text-xs text-brown-600 dark:text-brown-400">Clinical Dashboard</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-sm flex-grow">
+<!-- Dashboard -->
+<a class="flex items-center gap-md text-brown-600 dark:text-brown-300 px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-700 transition-colors rounded-lg font-text-md text-text-md" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="">Dashboard</span>
+</a>
+<!-- Children (Active) -->
+<a class="flex items-center gap-md bg-brown-200 dark:bg-brown-800 text-brown-900 dark:text-brown-50 rounded-lg px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-700 transition-colors scale-[0.98] transition-transform duration-200 font-text-md text-text-md font-medium" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">child_care</span>
+<span class="">Children</span>
+</a>
+<!-- Treatment Plans -->
+<a class="flex items-center gap-md text-brown-600 dark:text-brown-300 px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-700 transition-colors rounded-lg font-text-md text-text-md" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="">Treatment Plans</span>
+</a>
+<!-- Sessions -->
+<a class="flex items-center gap-md text-brown-600 dark:text-brown-300 px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-700 transition-colors rounded-lg font-text-md text-text-md" href="#">
+<span class="material-symbols-outlined">event_note</span>
+<span class="">Sessions</span>
+</a>
+<!-- Reporting -->
+<a class="flex items-center gap-md text-brown-600 dark:text-brown-300 px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-700 transition-colors rounded-lg font-text-md text-text-md" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="">Reporting</span>
+</a>
+</div>
+</nav>
+<!-- TopAppBar Component -->
+<header class="bg-surface dark:bg-surface-dim h-16 fixed top-0 right-0 left-64 z-10 flex items-center justify-between px-lg w-full h-full shadow-sm">
+<div class="flex items-center gap-md w-1/3">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-brown-400">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container rounded-full border-none focus:ring-2 focus:ring-brown-600 font-text-sm text-text-sm text-on-surface" placeholder="Search children, sessions..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 text-brown-600 dark:text-brown-400 hover:bg-surface-container dark:hover:bg-brown-800 rounded-full transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-brown-600 dark:text-brown-400 hover:bg-surface-container dark:hover:bg-brown-800 rounded-full transition-all">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 border border-outline-variant">
+<img alt="Dr. Julianne Moore" class="w-full h-full object-cover" data-alt="A professional headshot of Dr. Julianne Moore, a warm and approachable female clinician in her 40s. She is smiling softly against a neutral, light-mode background. The lighting is studio-quality and soft, enhancing the corporate modern, earthy aesthetic of the clinical dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApWmgSv1meos6aNvoYgP1A2lSGtXW0bsQ5ClZx_XiVpt1fKrbnRDAYb4VVPtYlKR-kyqiyXwK4dNe4OKy1bA4_OMUtswZf3S-hBaDyYTLFqJsgYmzuIBJpq96n21HOWAJBAwjQFfqFwy-sVO8a_bR-0FsOSrUFxUODKdwqzLEn7F7W1JCAXSYMqEb9g8t_ghLvseKzPIS61rAhWOXvur_rv_CNqjmbpTtiHKTVRqvCGYCjGR9_5BQ7dQYdbGWITBDtqbs7vkP--QvZ">
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 mt-16 p-lg w-full max-w-[1400px] mx-auto flex flex-col gap-lg">
+<!-- Breadcrumb & Header -->
+<div class="flex items-center justify-between mb-sm">
+<div class="flex items-center gap-2 text-brown-500 font-text-sm text-text-sm">
+<span class="">Children</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-brown-900 font-medium">Leo Martinez</span>
+</div>
+<button class="bg-surface-container-high hover:bg-surface-variant text-brown-900 px-md py-2 rounded-lg font-text-sm text-text-sm font-medium transition-colors flex items-center gap-2 border border-outline-variant" onclick="window.location.href='#'; // This would link to {{DATA:SCREEN:SCREEN_6}}"> <span class="material-symbols-outlined text-sm">picture_as_pdf</span> Export Report </button><button class="bg-brown-600 hover:bg-brown-700 text-on-primary px-md py-2 rounded-lg font-text-sm text-text-sm font-medium transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">edit</span> Edit Profile
+            </button>
+</div>
+<!-- Snapshot Card (Hero) -->
+<div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm border border-surface-variant flex flex-col md:flex-row gap-xl items-center md:items-stretch">
+<!-- Profile Info -->
+<div class="flex items-center gap-lg flex-1">
+<div class="w-24 h-24 rounded-full overflow-hidden border-4 border-surface shadow-sm">
+<img alt="Leo Martinez" class="w-full h-full object-cover" data-alt="A portrait of Leo Martinez, a cheerful 5-year-old boy with curly hair, smiling warmly. He is outdoors in a softly lit, natural setting with earthy tones. The image feels bright, hopeful, and clinical yet inviting, fitting a warm professional dashboard aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4n-wWlE6cRWTY3wah3dAktfwlYk_U50SNHCO8hhmLICdv_qA84CMp82KOAQOXEdFkvV8Y3_Ht17IgJuJ5-gOGWQp2cMS48jCa8K4IILwBASuTK8y4ltHU20uqV4DMpYLdtJGdQGewkNiV-QrHVA3nMfAp01elaVA8OUtGZ6hcsclULMJtOd0w2gJvU60vkI0Jk7hnCf61R8gdMUw7vqyBauVlFmrqEd_0u4K-3YnQfSSu1peDAz04Yk81KZsuogXCHtNBNwXUBir4">
+</div>
+<div>
+<h2 class="font-display-sm text-display-sm font-semibold text-brown-900 mb-1">Leo Martinez</h2>
+<div class="flex flex-wrap gap-3 font-text-sm text-text-sm text-brown-600 mb-3">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">cake</span> 5 y/o</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">tag</span> OP-8842</span>
+</div>
+<div class="inline-flex items-center gap-1.5 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-text-xs text-text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                        Active
+                    </div>
+</div>
+</div>
+<!-- Status & Next Session -->
+<div class="flex-1 flex flex-col justify-center border-l border-surface-variant pl-xl">
+<div class="mb-4">
+<p class="font-text-xs text-text-xs text-brown-500 uppercase tracking-wider mb-1">Active Plan</p>
+<p class="font-text-md text-text-md font-medium text-brown-900">Sensory Integration v2.0</p>
+<p class="font-text-sm text-text-sm text-brown-600">Ends Aug 15, 2024</p>
+</div>
+<div>
+<p class="font-text-xs text-text-xs text-brown-500 uppercase tracking-wider mb-1">Next Session</p>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-brown-600">event</span>
+<span class="font-text-md text-text-md font-medium text-brown-900">May 28, 10:00 AM</span>
+<span class="font-text-sm text-text-sm text-brown-500 px-2 bg-surface-container rounded-md">Sensory Room 1</span>
+</div>
+</div>
+</div>
+<!-- Attendance Stat -->
+<div class="flex-1 flex flex-col items-center justify-center border-l border-surface-variant pl-xl">
+<div class="relative w-24 h-24 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+<path class="text-surface-variant" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-success" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="92, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-display-xs text-display-xs font-bold text-brown-900">92%</span>
+</div>
+</div>
+<p class="font-text-sm text-text-sm text-brown-600 mt-2 font-medium">Attendance</p>
+</div>
+</div>
+</main>
+
+
+</body></html>

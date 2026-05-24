@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HaberApp - Initial Assessment</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#2d1510",
+                        "secondary-fixed": "#ffdad9",
+                        "brown-400": "#b5978c",
+                        "on-primary-fixed-variant": "#5e3f38",
+                        "error": "#ba1a1a",
+                        "outline": "#827471",
+                        "on-secondary-fixed-variant": "#613d3d",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#78564f",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e9e1df",
+                        "surface": "#fff8f6",
+                        "on-surface": "#1e1b1a",
+                        "surface-bright": "#fff8f6",
+                        "on-primary-container": "#fffbff",
+                        "on-secondary-fixed": "#2f1314",
+                        "surface-container": "#f5ecea",
+                        "danger": "#ef4444",
+                        "primary": "#75544d",
+                        "primary-fixed-dim": "#e8bdb3",
+                        "warning": "#f59e0b",
+                        "primary-container": "#906c64",
+                        "brown-50": "#f6f2f0",
+                        "tertiary-fixed-dim": "#b0cdc4",
+                        "brown-500": "#947068",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#e8bdb3",
+                        "brown-800": "#4d3232",
+                        "inverse-surface": "#342f2f",
+                        "tertiary-fixed": "#cce9e0",
+                        "inverse-on-surface": "#f7efed",
+                        "surface-container-low": "#faf2f0",
+                        "secondary": "#7b5454",
+                        "primary-fixed": "#ffdad2",
+                        "outline-variant": "#d4c3bf",
+                        "brown-700": "#664242",
+                        "brown-100": "#f0ece9",
+                        "tertiary-container": "#5f7a73",
+                        "background": "#fff8f6",
+                        "on-tertiary": "#ffffff",
+                        "brown-900": "#3d2626",
+                        "on-secondary-container": "#7a5353",
+                        "success": "#22c55e",
+                        "on-surface-variant": "#504441",
+                        "secondary-container": "#fecbca",
+                        "on-tertiary-container": "#f4fffa",
+                        "tertiary": "#47615b",
+                        "on-tertiary-fixed-variant": "#324c46",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e9e1df",
+                        "secondary-fixed-dim": "#ecbaba",
+                        "brown-600": "#7a5a54",
+                        "info": "#3b82f6",
+                        "surface-dim": "#e0d8d7",
+                        "brown-200": "#e2d6d0",
+                        "on-tertiary-fixed": "#05201b",
+                        "brown-300": "#d1bfb6",
+                        "surface-container-high": "#efe6e5",
+                        "on-background": "#1e1b1a",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "2xl": "48px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "3xl": "64px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "display-sm": ["Inter"],
+                        "text-xs": ["Inter"],
+                        "display-md": ["Inter"],
+                        "text-md": ["Inter"],
+                        "text-lg": ["Inter"],
+                        "display-xs": ["Inter"],
+                        "text-sm": ["Inter"],
+                        "text-xl": ["Inter"],
+                        "display-2xl": ["Inter"],
+                        "display-xl": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "display-sm": ["30px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "text-xs": ["12px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "display-md": ["36px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "text-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "text-lg": ["18px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "display-xs": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "text-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "text-xl": ["20px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "display-2xl": ["72px", { "lineHeight": "1.1", "fontWeight": "500" }],
+                        "display-xl": ["60px", { "lineHeight": "1.1", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: var(--color-background); color: var(--color-on-background); }
+    </style>
+</head>
+<body class="bg-background text-on-background flex h-screen overflow-hidden">
+<!-- SideNavBar (Suppressed as this is a linear task-focused wizard flow with clear progress) -->
+<!-- Although the user might be an admin, this specific view is a focused wizard. We'll include a minimal header but suppress the main nav to keep focus on the assessment. -->
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full overflow-hidden relative">
+<!-- Top Header for Wizard -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center h-16 w-full px-lg max-w-full z-10 shrink-0">
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant hover:bg-surface-container-low transition-colors p-sm rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<span class="font-display-xs text-display-xs font-bold text-brown-700">Initial Assessment</span>
+<span class="font-text-xs text-text-xs text-on-surface-variant">Aarav Sharma</span>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant hover:bg-surface-container-low transition-colors p-sm rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">close</span>
+</button>
+</div>
+</header>
+<!-- Progress Indicator -->
+<div class="bg-surface-container-lowest border-b border-outline-variant px-lg py-md shrink-0">
+<div class="flex items-center justify-between gap-sm w-full max-w-4xl mx-auto">
+<div class="flex flex-col flex-1 gap-xs">
+<div class="h-2 rounded-full bg-brown-600"></div>
+<span class="font-text-xs text-text-xs text-brown-700 font-medium text-center mt-1">1. Patient Info</span>
+</div>
+<div class="flex flex-col flex-1 gap-xs">
+<div class="h-2 rounded-full bg-brown-600"></div>
+<span class="font-text-xs text-text-xs text-brown-700 font-medium text-center mt-1">2. History</span>
+</div>
+<div class="flex flex-col flex-1 gap-xs">
+<div class="h-2 rounded-full bg-surface-dim"></div>
+<span class="font-text-xs text-text-xs text-on-surface-variant text-center mt-1">3. Vitals</span>
+</div>
+<div class="flex flex-col flex-1 gap-xs">
+<div class="h-2 rounded-full bg-surface-dim"></div>
+<span class="font-text-xs text-text-xs text-on-surface-variant text-center mt-1">4. Observations</span>
+</div>
+<div class="flex flex-col flex-1 gap-xs">
+<div class="h-2 rounded-full bg-surface-dim"></div>
+<span class="font-text-xs text-text-xs text-on-surface-variant text-center mt-1">5. Milestones</span>
+</div>
+<div class="flex flex-col flex-1 gap-xs">
+<div class="h-2 rounded-full bg-surface-dim"></div>
+<span class="font-text-xs text-text-xs text-on-surface-variant text-center mt-1">6. Concerns</span>
+</div>
+<div class="flex flex-col flex-1 gap-xs">
+<div class="h-2 rounded-full bg-surface-dim"></div>
+<span class="font-text-xs text-text-xs text-on-surface-variant text-center mt-1">7. Plan</span>
+</div>
+<div class="flex flex-col flex-1 gap-xs">
+<div class="h-2 rounded-full bg-surface-dim"></div>
+<span class="font-text-xs text-text-xs text-on-surface-variant text-center mt-1">8. Review</span>
+</div>
+</div>
+</div>
+<!-- Scrollable Form Area -->
+<div class="flex-1 overflow-y-auto p-lg lg:p-xl custom-scrollbar">
+<div class="max-w-4xl mx-auto space-y-xl pb-24">
+<!-- Section A: Patient & Referral Info -->
+<section class="bg-surface rounded-lg shadow-sm border border-outline-variant overflow-hidden">
+<div class="bg-surface-container-low px-lg py-md border-b border-outline-variant flex items-center gap-sm">
+<span class="material-symbols-outlined text-brown-600" style="font-variation-settings: 'FILL' 1;">person</span>
+<h2 class="font-text-lg text-text-lg font-medium text-on-surface">Section A: Patient &amp; Referral Info</h2>
+</div>
+<div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Auto-populated Read-only fields -->
+<div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-md bg-brown-50 p-md rounded-lg border border-brown-200">
+<div>
+<label class="block font-text-xs text-text-xs text-on-surface-variant mb-xs">Patient Name</label>
+<div class="font-text-sm text-text-sm font-medium text-on-surface">Aarav Sharma</div>
+</div>
+<div>
+<label class="block font-text-xs text-text-xs text-on-surface-variant mb-xs">DOB (Age)</label>
+<div class="font-text-sm text-text-sm font-medium text-on-surface">Oct 12, 2018 (5y 6m)</div>
+</div>
+<div>
+<label class="block font-text-xs text-text-xs text-on-surface-variant mb-xs">Sex</label>
+<div class="font-text-sm text-text-sm font-medium text-on-surface">Male</div>
+</div>
+</div>
+<!-- Editable Fields -->
+<div class="flex flex-col gap-xs">
+<label class="font-text-sm text-text-sm font-medium text-on-surface">Assessment Date</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-variation-settings: 'FILL' 0;">calendar_today</span>
+<input class="w-full pl-10 pr-3 py-2 bg-surface border border-brown-300 rounded-lg text-text-sm font-text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent placeholder-on-surface-variant" type="date" value="2024-04-18"/>
+</div>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-text-sm text-text-sm font-medium text-on-surface">Location</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-variation-settings: 'FILL' 0;">location_on</span>
+<select class="w-full pl-10 pr-10 py-2 bg-surface border border-brown-300 rounded-lg text-text-sm font-text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent appearance-none">
+<option>Main Clinic - Downtown</option>
+<option>North Branch</option>
+<option>Telehealth</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" style="font-variation-settings: 'FILL' 0;">arrow_drop_down</span>
+</div>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-text-sm text-text-sm font-medium text-on-surface">Referring Therapist / Physician</label>
+<input class="w-full px-3 py-2 bg-surface border border-brown-300 rounded-lg text-text-sm font-text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent" placeholder="e.g. Dr. Jane Smith" type="text"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-text-sm text-text-sm font-medium text-on-surface">Referral Source</label>
+<select class="w-full px-3 py-2 bg-surface border border-brown-300 rounded-lg text-text-sm font-text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23504441%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.5rem_center] bg-[size:1.5em_1.5em] pr-10">
+<option>Pediatrician</option>
+<option>School</option>
+<option>Parent/Self</option>
+<option>Other Specialist</option>
+</select>
+</div>
+<div class="md:col-span-2 flex flex-col gap-xs">
+<label class="font-text-sm text-text-sm font-medium text-on-surface">Caregiver Details (Name &amp; Relationship)</label>
+<input class="w-full px-3 py-2 bg-surface border border-brown-300 rounded-lg text-text-sm font-text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent" placeholder="e.g. Priya Sharma (Mother)" type="text"/>
+</div>
+<div class="md:col-span-2 flex flex-col gap-xs">
+<label class="font-text-sm text-text-sm font-medium text-on-surface">Chief Complaint / Reason for Referral</label>
+<textarea class="w-full px-3 py-2 bg-surface border border-brown-300 rounded-lg text-text-sm font-text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent placeholder-on-surface-variant resize-y" placeholder="Describe the primary reason for the assessment..." rows="3"></textarea>
+</div>
+</div>
+</section>
+<!-- Section B: Medical & Developmental History -->
+<section class="bg-surface rounded-lg shadow-sm border border-outline-variant overflow-hidden">
+<div class="bg-surface-container-low px-lg py-md border-b border-outline-variant flex items-center gap-sm">
+<span class="material-symbols-outlined text-brown-600" style="font-variation-settings: 'FILL' 1;">medical_information</span>
+<h2 class="font-text-lg text-text-lg font-medium text-on-surface">Section B: Medical &amp; Developmental History</h2>
+</div>
+<div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="md:col-span-2 flex flex-col gap-xs">
+<label class="font-text-sm text-text-sm font-medium text-on-surface">Primary Diagnoses</label>
+<div class="relative">
+<!-- Simulated Combobox -->
+<input class="w-full pl-3 pr-10 py-2 bg-surface border border-brown-300 rounded-lg text-text-sm font-text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent" placeholder="Search or select diagnoses..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" style="font-variation-settings: 'FILL' 0;">search</span>
+<!-- Selected Chips -->
+<div class="flex flex-wrap gap-sm mt-sm">
+<div class="bg-surface-container-high text-on-surface text-xs font-medium px-2 py-1 rounded-full flex items-center gap-1 border border-outline-variant">
+                                        Autism Spectrum Disorder (ASD)
+                                        <button class="hover:text-error transition-colors rounded-full"><span class="material-symbols-outlined text-[14px]">close</span></button>
+</div>
+<div class="bg-surface-container-high text-on-surface text-xs font-medium px-2 py-1 rounded-full flex items-center gap-1 border border-outline-variant">
+                                        Sensory Processing Disorder
+                                        <button class="hover:text-error transition-colors rounded-full"><span class="material-symbols-outlined text-[14px]">close</span></button>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-text-sm text-text-sm font-medium text-on-surface">Gestational Age (weeks)</label>
+<input class="w-full px-3 py-2 bg-surface border border-brown-300 rounded-lg text-text-sm font-text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent" max="45" min="20" placeholder="e.g. 39" type="number"/>
+</div>
+<div class="hidden md:block"></div> <!-- Spacer -->
+<div class="md:col-span-2 flex flex-col gap-xs">
+<label class="font-text-sm text-text-sm font-medium text-on-surface">Prenatal / Birth History</label>
+<textarea class="w-full px-3 py-2 bg-surface border border-brown-300 rounded-lg text-text-sm font-text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent placeholder-on-surface-variant resize-y" placeholder="Describe any complications during pregnancy or birth..." rows="2"></textarea>
+</div>
+<div class="md:col-span-2 flex flex-col gap-xs">
+<label class="font-text-sm text-text-sm font-medium text-on-surface">Past Medical History (Surgeries, Hospitalizations, Allergies)</label>
+<textarea class="w-full px-3 py-2 bg-surface border border-brown-300 rounded-lg text-text-sm font-text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent placeholder-on-surface-variant resize-y" placeholder="List relevant medical history..." rows="2"></textarea>
+</div>
+<!-- Previous Therapies Repeatable Table Area -->
+<div class="md:col-span-2 mt-md">
+<div class="flex items-center justify-between mb-sm">
+<label class="font-text-sm text-text-sm font-medium text-on-surface">Previous Therapies</label>
+<button class="text-brown-700 hover:text-brown-900 font-text-sm text-text-sm font-medium flex items-center gap-xs transition-colors">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+                                    Add Therapy
+                                </button>
+</div>
+<div class="border border-outline-variant rounded-lg overflow-hidden bg-surface-container-lowest">
+<table class="w-full text-left text-sm font-text-sm text-on-surface">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-md py-sm font-medium text-on-surface-variant w-1/3">Therapy Type</th>
+<th class="px-md py-sm font-medium text-on-surface-variant w-1/3">Duration / Frequency</th>
+<th class="px-md py-sm font-medium text-on-surface-variant w-1/3">Provider / Location</th>
+<th class="px-md py-sm w-10"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-md py-sm">
+<input class="w-full bg-transparent border-0 p-0 text-text-sm focus:ring-0" placeholder="e.g. Speech Therapy" type="text" value="Speech Therapy"/>
+</td>
+<td class="px-md py-sm">
+<input class="w-full bg-transparent border-0 p-0 text-text-sm focus:ring-0" placeholder="e.g. 6 months, 1x/wk" type="text" value="6 months, 1x/wk"/>
+</td>
+<td class="px-md py-sm">
+<input class="w-full bg-transparent border-0 p-0 text-text-sm focus:ring-0" placeholder="Provider name" type="text" value="Kids Comm Center"/>
+</td>
+<td class="px-md py-sm text-center">
+<button class="text-on-surface-variant hover:text-error transition-colors p-1 rounded-full">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</td>
+</tr>
+<tr class="bg-surface-container-lowest hover:bg-surface-container-low transition-colors">
+<td class="px-md py-sm">
+<input class="w-full bg-transparent border-0 p-0 text-text-sm focus:ring-0 placeholder-on-surface-variant opacity-60 focus:opacity-100" placeholder="e.g. Occupational Therapy" type="text"/>
+</td>
+<td class="px-md py-sm">
+<input class="w-full bg-transparent border-0 p-0 text-text-sm focus:ring-0 placeholder-on-surface-variant opacity-60 focus:opacity-100" placeholder="e.g. 1 year" type="text"/>
+</td>
+<td class="px-md py-sm">
+<input class="w-full bg-transparent border-0 p-0 text-text-sm focus:ring-0 placeholder-on-surface-variant opacity-60 focus:opacity-100" placeholder="Provider name" type="text"/>
+</td>
+<td class="px-md py-sm text-center">
+<button class="text-outline-variant hover:text-error transition-colors p-1 rounded-full">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Sticky Bottom Navigation -->
+<div class="bg-surface border-t border-outline-variant p-md absolute bottom-0 left-0 right-0 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+<div class="max-w-4xl mx-auto flex justify-between items-center">
+<button class="px-lg py-2 rounded-lg border border-brown-300 text-brown-700 font-text-sm text-text-sm font-medium hover:bg-brown-50 transition-colors opacity-50 cursor-not-allowed">
+                    Previous
+                </button>
+<div class="flex items-center gap-md">
+<span class="font-text-xs text-text-xs text-on-surface-variant">Step 1 &amp; 2 of 8</span>
+<button class="px-lg py-2 rounded-lg bg-brown-600 text-on-primary font-text-sm text-text-sm font-medium hover:bg-brown-700 transition-colors shadow-sm flex items-center gap-xs">
+                        Next
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

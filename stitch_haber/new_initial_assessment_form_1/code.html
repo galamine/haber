@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Initial Assessment (Form 1) - HaberApp</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "secondary-fixed-dim": "#ecbaba",
+                            "on-error": "#ffffff",
+                            "danger": "#ef4444",
+                            "primary": "#75544d",
+                            "surface-dim": "#e0d8d7",
+                            "on-background": "#1e1b1a",
+                            "brown-900": "#3d2626",
+                            "brown-300": "#d1bfb6",
+                            "brown-100": "#f0ece9",
+                            "surface-container-highest": "#e9e1df",
+                            "on-tertiary-fixed-variant": "#324c46",
+                            "on-primary-fixed": "#2d1510",
+                            "primary-container": "#906c64",
+                            "secondary-container": "#fecbca",
+                            "on-surface": "#1e1b1a",
+                            "brown-700": "#664242",
+                            "surface-container": "#f5ecea",
+                            "outline": "#827471",
+                            "success": "#22c55e",
+                            "brown-800": "#4d3232",
+                            "surface-tint": "#78564f",
+                            "secondary": "#7b5454",
+                            "error-container": "#ffdad6",
+                            "surface-variant": "#e9e1df",
+                            "on-tertiary": "#ffffff",
+                            "on-secondary-container": "#7a5353",
+                            "inverse-primary": "#e8bdb3",
+                            "on-primary-container": "#fffbff",
+                            "secondary-fixed": "#ffdad9",
+                            "primary-fixed-dim": "#e8bdb3",
+                            "surface-bright": "#fff8f6",
+                            "brown-200": "#e2d6d0",
+                            "surface-container-high": "#efe6e5",
+                            "on-error-container": "#93000a",
+                            "inverse-on-surface": "#f7efed",
+                            "surface": "#fff8f6",
+                            "surface-container-low": "#faf2f0",
+                            "tertiary-fixed": "#cce9e0",
+                            "brown-400": "#b5978c",
+                            "on-secondary": "#ffffff",
+                            "on-surface-variant": "#504441",
+                            "on-tertiary-fixed": "#05201b",
+                            "warning": "#f59e0b",
+                            "tertiary": "#47615b",
+                            "primary-fixed": "#ffdad2",
+                            "on-secondary-fixed-variant": "#613d3d",
+                            "on-tertiary-container": "#f4fffa",
+                            "brown-50": "#f6f2f0",
+                            "outline-variant": "#d4c3bf",
+                            "on-primary": "#ffffff",
+                            "background": "#fff8f6",
+                            "on-secondary-fixed": "#2f1314",
+                            "tertiary-container": "#5f7a73",
+                            "inverse-surface": "#342f2f",
+                            "brown-500": "#947068",
+                            "info": "#3b82f6",
+                            "surface-container-lowest": "#ffffff",
+                            "tertiary-fixed-dim": "#b0cdc4",
+                            "brown-600": "#7a5a54",
+                            "on-primary-fixed-variant": "#5e3f38",
+                            "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.25rem",
+                            "lg": "0.5rem",
+                            "xl": "0.75rem",
+                            "full": "9999px"
+                    },
+                    "spacing": {
+                            "sm": "8px",
+                            "base": "4px",
+                            "3xl": "64px",
+                            "md": "16px",
+                            "xs": "4px",
+                            "xl": "32px",
+                            "lg": "24px",
+                            "2xl": "48px"
+                    },
+                    "fontFamily": {
+                            "display-xs": ["Inter"],
+                            "display-md": ["Inter"],
+                            "text-sm": ["Inter"],
+                            "display-lg": ["Inter"],
+                            "display-2xl": ["Inter"],
+                            "text-xl": ["Inter"],
+                            "display-xl": ["Inter"],
+                            "text-xs": ["Inter"],
+                            "text-lg": ["Inter"],
+                            "text-md": ["Inter"],
+                            "display-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                            "display-xs": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                            "display-md": ["36px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                            "text-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                            "display-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                            "display-2xl": ["72px", {"lineHeight": "1.1", "fontWeight": "500"}],
+                            "text-xl": ["20px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                            "display-xl": ["60px", {"lineHeight": "1.1", "fontWeight": "500"}],
+                            "text-xs": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                            "text-lg": ["18px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                            "text-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                            "display-sm": ["30px", {"lineHeight": "1.3", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-text-md min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full py-xl px-md space-y-base bg-brown-50 dark:bg-brown-900 border-r border-outline-variant dark:border-brown-700 w-64 fixed left-0 top-0 z-20">
+<div class="mb-xl px-md">
+<h1 class="text-display-sm font-display-sm font-black text-brown-800 dark:text-brown-100 tracking-tight">HaberApp</h1>
+<p class="text-text-sm font-text-sm text-brown-500 mt-xs">Clinical Excellence</p>
+</div>
+<div class="flex-1 space-y-xs overflow-y-auto">
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-text-md font-text-md">Dashboard</span>
+</a>
+<a class="bg-primary-container text-on-primary-container dark:bg-brown-700 dark:text-brown-50 rounded-lg font-medium flex items-center gap-md px-md py-sm scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">child_care</span>
+<span class="text-text-md font-text-md font-medium">Children</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">event_note</span>
+<span class="text-text-md font-text-md">Sessions Today</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-text-md font-text-md">Assessments</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">clinical_notes</span>
+<span class="text-text-md font-text-md">Treatment Plans</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="text-text-md font-text-md">Staff</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+<span class="text-text-md font-text-md">Clinic Settings</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">insert_chart</span>
+<span class="text-text-md font-text-md">Reports</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+<span class="text-text-md font-text-md">Platform Overview</span>
+</a>
+</div>
+<div class="mt-auto border-t border-outline-variant dark:border-brown-700 pt-md space-y-xs">
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-text-md font-text-md">Profile Settings</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-text-md font-text-md">Sign Out</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 bg-surface min-h-screen">
+<!-- Top App Bar (Mobile) -->
+<header class="md:hidden flex justify-between items-center w-full px-md py-md bg-surface dark:bg-inverse-surface border-b border-outline-variant sticky top-0 z-20">
+<div class="flex items-center gap-sm">
+<button class="p-sm text-on-surface-variant">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="text-display-xs font-display-xs font-bold text-brown-900">HaberApp</span>
+</div>
+<div class="flex gap-sm">
+<button class="p-sm text-primary"><span class="material-symbols-outlined">notifications</span></button>
+</div>
+</header>
+<div class="p-lg max-w-7xl mx-auto pb-2xl">
+<!-- Header Section -->
+<div class="mb-xl flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<nav aria-label="Breadcrumb" class="flex text-text-sm font-text-sm text-on-surface-variant mb-sm">
+<ol class="inline-flex items-center space-x-1 md:space-x-2">
+<li class="inline-flex items-center">
+<a class="hover:text-primary transition-colors" href="#">Children</a>
+</li>
+<li>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-[16px] mx-1">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Leo Miller</a>
+</div>
+</li>
+<li>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-[16px] mx-1">chevron_right</span>
+<span class="text-on-surface font-medium">New Assessment</span>
+</div>
+</li>
+</ol>
+</nav>
+<h2 class="text-display-md font-display-md text-on-background">Initial Assessment (Form 1)</h2>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm rounded-lg border border-primary text-primary font-medium hover:bg-brown-50 transition-colors bg-surface">
+                        Save Draft
+                    </button>
+<button class="px-md py-sm rounded-lg bg-brown-600 text-on-primary font-medium hover:bg-brown-700 transition-colors shadow-sm">
+                        Submit Assessment
+                    </button>
+</div>
+</div>
+<!-- Tab Navigation -->
+<div class="border-b border-outline-variant mb-lg overflow-x-auto">
+<nav aria-label="Tabs" class="-mb-px flex space-x-md min-w-max">
+<button class="border-primary text-primary font-bold border-b-2 pb-sm px-sm text-text-md">Section A: Patient</button>
+<button class="border-transparent text-on-surface-variant hover:text-brown-700 hover:border-outline-variant border-b-2 pb-sm px-sm text-text-md font-medium transition-colors">Section B: History</button>
+<button class="border-transparent text-on-surface-variant hover:text-brown-700 hover:border-outline-variant border-b-2 pb-sm px-sm text-text-md font-medium transition-colors">Section C: Milestones</button>
+<button class="border-transparent text-on-surface-variant hover:text-brown-700 hover:border-outline-variant border-b-2 pb-sm px-sm text-text-md font-medium transition-colors">Section D: Sensory</button>
+<button class="border-transparent text-on-surface-variant hover:text-brown-700 hover:border-outline-variant border-b-2 pb-sm px-sm text-text-md font-medium transition-colors">Section E: Motor</button>
+<button class="border-transparent text-on-surface-variant hover:text-brown-700 hover:border-outline-variant border-b-2 pb-sm px-sm text-text-md font-medium transition-colors">Section F: Tools</button>
+<button class="border-transparent text-on-surface-variant hover:text-brown-700 hover:border-outline-variant border-b-2 pb-sm px-sm text-text-md font-medium transition-colors">Section G: Goals</button>
+<button class="border-transparent text-on-surface-variant hover:text-brown-700 hover:border-outline-variant border-b-2 pb-sm px-sm text-text-md font-medium transition-colors">Section H: Signatures</button>
+</nav>
+</div>
+<!-- Content Area - Section A -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant p-lg md:p-xl space-y-xl">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Read-only Patient Info -->
+<div class="bg-surface-container-low rounded-lg p-lg border border-outline-variant/50">
+<h3 class="text-text-lg font-text-lg font-medium text-brown-900 mb-md border-b border-outline-variant pb-sm">Patient Details</h3>
+<dl class="grid grid-cols-2 gap-md text-text-sm">
+<div>
+<dt class="text-on-surface-variant font-medium">Name</dt>
+<dd class="text-on-surface font-medium mt-base">Leo Miller</dd>
+</div>
+<div>
+<dt class="text-on-surface-variant font-medium">DOB</dt>
+<dd class="text-on-surface font-medium mt-base">14 May 2019</dd>
+</div>
+<div>
+<dt class="text-on-surface-variant font-medium">Age</dt>
+<dd class="text-on-surface font-medium mt-base">4y 6m</dd>
+</div>
+<div>
+<dt class="text-on-surface-variant font-medium">Sex</dt>
+<dd class="text-on-surface font-medium mt-base">Male</dd>
+</div>
+</dl>
+</div>
+<!-- Assessment Meta -->
+<div class="space-y-md">
+<div>
+<label class="block text-text-sm font-medium text-on-surface-variant mb-base">Assessment Date</label>
+<div class="relative">
+<input class="block w-full rounded-lg border-brown-300 bg-surface text-on-surface focus:border-brown-700 focus:ring-1 focus:ring-brown-700 sm:text-sm p-sm" type="date" value="2023-11-20"/>
+</div>
+</div>
+<div>
+<label class="block text-text-sm font-medium text-on-surface-variant mb-base">Location</label>
+<select class="block w-full rounded-lg border-brown-300 bg-surface text-on-surface focus:border-brown-700 focus:ring-1 focus:ring-brown-700 sm:text-sm p-sm">
+<option>Main Clinic - Room 3</option>
+<option>Main Clinic - Room 1</option>
+<option>Main Clinic - Gym</option>
+<option>Home Visit</option>
+</select>
+</div>
+</div>
+</div>
+<div class="border-t border-outline-variant pt-lg">
+<h3 class="text-text-lg font-text-lg font-medium text-brown-900 mb-md">Referral Information</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div>
+<label class="block text-text-sm font-medium text-on-surface-variant mb-base">Referring Therapist / Physician</label>
+<input class="block w-full rounded-lg border-brown-300 bg-surface text-on-surface focus:border-brown-700 focus:ring-1 focus:ring-brown-700 sm:text-sm p-sm placeholder-outline-variant" placeholder="Dr. Smith (Pediatrician)" type="text"/>
+</div>
+<div>
+<label class="block text-text-sm font-medium text-on-surface-variant mb-base">Referral Source</label>
+<select class="block w-full rounded-lg border-brown-300 bg-surface text-on-surface focus:border-brown-700 focus:ring-1 focus:ring-brown-700 sm:text-sm p-sm">
+<option>Internal Pediatrician</option>
+<option>External Pediatrician</option>
+<option>School/Teacher</option>
+<option>Parent/Self</option>
+</select>
+</div>
+<div>
+<label class="block text-text-sm font-medium text-on-surface-variant mb-base">Primary Caregiver Present</label>
+<input class="block w-full rounded-lg border-brown-300 bg-surface text-on-surface focus:border-brown-700 focus:ring-1 focus:ring-brown-700 sm:text-sm p-sm placeholder-outline-variant" placeholder="Sarah Miller (Mother)" type="text"/>
+</div>
+</div>
+</div>
+<div class="border-t border-outline-variant pt-lg">
+<label class="block text-text-lg font-text-lg font-medium text-brown-900 mb-base">Chief Complaint / Reason for Referral</label>
+<p class="text-text-sm text-on-surface-variant mb-sm">Describe the primary concerns noted by parents or referring provider in their own words if possible.</p>
+<textarea class="block w-full rounded-lg border-brown-300 bg-surface text-on-surface focus:border-brown-700 focus:ring-1 focus:ring-brown-700 sm:text-sm p-md placeholder-outline-variant" placeholder="e.g., 'Difficulty holding pencil, trips frequently during recess...'" rows="4"></textarea>
+</div>
+<!-- Footer Navigation -->
+<div class="border-t border-outline-variant pt-lg flex justify-end">
+<button class="flex items-center gap-sm px-lg py-sm rounded-lg bg-brown-100 text-brown-800 font-medium hover:bg-brown-200 transition-colors">
+                        Next: History Section
+                        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>
