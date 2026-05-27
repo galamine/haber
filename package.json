@@ -20,7 +20,8 @@
     "db:watch": "pnpm --filter @habe-final/db db:watch",
     "db:stop": "pnpm --filter @habe-final/db db:stop",
     "db:down": "pnpm --filter @habe-final/db db:down",
-    "check": "biome check --write ."
+    "check": "biome check --write .",
+    "prepare": "husky"
   },
   "dependencies": {
     "@habe-final/env": "workspace:*",
@@ -31,7 +32,12 @@
     "@biomejs/biome": "^2.2.0",
     "@habe-final/config": "workspace:*",
     "@types/node": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2"
   },
-  "packageManager": "pnpm@10.13.1"
+  "packageManager": "pnpm@10.13.1",
+  "lint-staged": {
+    "**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,vue,astro,svelte}": ""
+  }
 }

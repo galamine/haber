@@ -19,7 +19,11 @@
   "backend": "hono",
   "runtime": "node",
   "frontend": ["tanstack-router"],
-  "addons": ["biome", "skills"],
+  "addons": [
+		"biome",
+		"skills",
+		"husky"
+	],
   "examples": ["todo"],
   "auth": "none",
   "payments": "none",
