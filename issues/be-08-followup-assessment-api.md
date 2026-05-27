@@ -4,13 +4,13 @@
 
 Implement the *Haber Specialisto* follow-up assessment (Form 2). Conducted every 4–6 sessions or when clinically indicated. Linked to the initial assessment, active treatment plan, and previous follow-up. Append-only.
 
-**Packages:** `packages/api`, `packages/shared`
+**Packages:** `packages/api`, `packages/db`
 
 Reference file: `clinical-data/follow-up-assessment.example.json`
 
 ### tRPC procedures
 
-Add to `packages/api/src/router/assessment.ts`:
+Add to `packages/api/src/routers/assessment.ts`:
 
 ```
 assessment.createFollowUp  (assigned therapist) → FollowUpAssessment
@@ -76,7 +76,7 @@ Add:
 - [ ] `assessment.getFollowUpDelta` returns correct per-system delta vs initial baseline
 - [ ] Follow-up is linked to `previousFollowUpId` if supplied
 - [ ] Unassigned therapist receives `FORBIDDEN` on any follow-up procedure
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

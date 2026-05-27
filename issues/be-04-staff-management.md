@@ -4,7 +4,7 @@
 
 Implement staff invite, role/permission management, department assignment, and deactivation. Staff are users with role `THERAPIST` or `STAFF`, scoped to a clinic.
 
-**Packages:** `packages/api`, `packages/shared`
+**Packages:** `packages/api`, `packages/db`
 
 ### Data model additions (no new migration needed — extends `User` from BE-01a)
 
@@ -31,7 +31,7 @@ model UserDepartmentAssignment {
 
 ### tRPC procedures
 
-Add `packages/api/src/router/staff.ts`:
+Add `packages/api/src/routers/staff.ts`:
 
 ```
 staff.invite        (clinicAdmin) → { message: "OTP sent" }
@@ -67,7 +67,7 @@ Add `hasPermission(ctx, permission: string): boolean` utility to `packages/api/s
 
 ### Shared schemas
 
-Add to `packages/shared/src/schemas/`:
+Add to `packages/api/src/schemas/`:
 - `InviteStaffInput`, `UpdatePermissionsInput`, `UserWithPermissionsSchema`
 - Export `PERMISSIONS` constant: `{ CHILD_INTAKE: "child.intake", SESSION_RUN: "session.run", ... }`
 
@@ -81,7 +81,7 @@ Add to `packages/shared/src/schemas/`:
 - [ ] `staff.reactivate` re-enables login
 - [ ] `staff.updateCredentials` persists credential fields on User
 - [ ] Therapist calling `staff.invite` receives `FORBIDDEN`
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

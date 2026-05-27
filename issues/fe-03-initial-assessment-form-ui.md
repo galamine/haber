@@ -4,15 +4,21 @@
 
 Build the *Haber Specialisto* initial assessment form UI. All 8 sections must be implemented. Expected completion time: 45–60 min for the end user, so the form must be well-structured with clear section headers and progress indicators.
 
-**Package:** `packages/client`
+**Package:** `apps/web`
 
 Reference file: `clinical-data/initial-assessment.example.json` (field-by-field reference)
 
 ### Routes to add
 
+Add these files under `apps/web/src/routes/_authenticated/`:
+
 ```
-/dashboard/children/:id/assessment/new → NewAssessmentPage
-/dashboard/children/:id/assessment/:assessmentId → AssessmentDetailPage
+_authenticated/
+└── children/
+    └── $childId/
+        └── assessment/
+            ├── new.tsx              → /dashboard/children/:childId/assessment/new
+            └── $assessmentId.tsx    → /dashboard/children/:childId/assessment/:assessmentId
 ```
 
 ### Section breakdown
@@ -80,7 +86,7 @@ Implement as a tabbed or stepper form (recommend Tabs from ui/ — already avail
 - [ ] Section H requires both therapist name and guardian name + checkbox before submit
 - [ ] Form submits successfully and redirects to `AssessmentDetailPage`
 - [ ] `AssessmentDetailPage` shows all 8 sections in read-only mode
-- [ ] `pnpm --filter client typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

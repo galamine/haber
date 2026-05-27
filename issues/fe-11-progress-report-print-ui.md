@@ -4,15 +4,20 @@
 
 Build the client-side print-ready progress report. The API returns structured JSON; the client renders it as a print-formatted page with Haber branding.
 
-**Package:** `packages/client`
+**Package:** `apps/web`
 
 ### Routes to add
 
+Add this file under `apps/web/src/routes/_authenticated/`:
+
 ```
-/dashboard/children/:id/report → ProgressReportPage
+_authenticated/
+└── children/
+    └── $childId/
+        └── report.tsx               → /dashboard/children/:childId/report
 ```
 
-Link from `ChildDashboardPage` (FE-09) via "Export Report" button.
+Link from `ChildDashboardPage` (FE-09) via "Export Report" button using `<Link to="/dashboard/children/$childId/report" params={{ childId }} />`.
 
 ### ProgressReportPage
 
@@ -62,7 +67,7 @@ The page has two modes:
 
 ### Print CSS
 
-Add `@media print` styles to `packages/client/src/styles/globals.css`:
+Add `@media print` styles to `packages/ui/src/styles/globals.css` (global styles and design tokens live there per CLAUDE.md):
 - Hide sidebar, nav, action buttons
 - Force white background, black text
 - Page breaks between report sections
@@ -81,7 +86,7 @@ Add `@media print` styles to `packages/client/src/styles/globals.css`:
 - [ ] Cover section shows Haber logo, child info, and clinic name
 - [ ] Goal table shows correct current attainment % and status
 - [ ] Sensory change column is colour-coded (green=improvement, red=regression, grey=unchanged)
-- [ ] `pnpm --filter client typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

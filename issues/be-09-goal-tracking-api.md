@@ -4,11 +4,11 @@
 
 Implement first-class goal CRUD, attainment tracking, and the plan-modification goal lifecycle (continue / modify → new row + discontinue old / add / discontinue).
 
-**Packages:** `packages/api`, `packages/shared`
+**Packages:** `packages/api`, `packages/db`
 
 ### tRPC procedures
 
-Add `packages/api/src/router/goal.ts`:
+Add `packages/api/src/routers/goal.ts`:
 
 ```
 goal.list          (assigned therapist) → Goal[]
@@ -62,7 +62,7 @@ Add:
 - [ ] `applyPlanModificationDecisions` with `action = "discontinue"` sets `status = DISCONTINUED` without creating a new goal
 - [ ] After modification, `goal.list` for the new plan version shows only goals belonging to that plan
 - [ ] Unassigned therapist receives `FORBIDDEN`
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

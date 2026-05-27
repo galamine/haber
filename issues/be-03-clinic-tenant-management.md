@@ -4,11 +4,11 @@
 
 Implement the SuperAdmin-facing clinic CRUD and the ClinicAdmin-facing department and sensory room management. Also expose the SuperAdmin platform dashboard aggregation.
 
-**Packages:** `packages/api`, `packages/shared`
+**Packages:** `packages/api`, `packages/db`
 
 ### tRPC procedures
 
-Add `packages/api/src/router/clinic.ts`:
+Add `packages/api/src/routers/clinic.ts`:
 
 ```
 // SuperAdmin only
@@ -43,7 +43,7 @@ clinic.listEnabledGames    → Game[]
 
 ### Shared schemas
 
-Add to `packages/shared/src/schemas/`:
+Add to `packages/api/src/schemas/`:
 - `CreateClinicInput`, `UpdateClinicInput`, `ClinicSchema`
 - `CreateDepartmentInput`, `DepartmentSchema`
 - `CreateSensoryRoomInput`, `SensoryRoomSchema`
@@ -58,7 +58,7 @@ Add to `packages/shared/src/schemas/`:
 - [ ] Therapist calling a ClinicAdmin-only procedure receives `FORBIDDEN`
 - [ ] SuperAdmin can call `clinic.list` and see all clinics; ClinicAdmin cannot
 - [ ] All responses paginated where lists are returned
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

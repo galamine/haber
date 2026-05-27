@@ -4,14 +4,19 @@
 
 Build the ClinicAdmin operational dashboard and the SuperAdmin platform overview dashboard.
 
-**Package:** `packages/client`
+**Package:** `apps/web`
 
 ### Routes to add
 
+Add these files under `apps/web/src/routes/_authenticated/`:
+
 ```
-/dashboard → ClinicDashboardPage (ClinicAdmin/Therapist default landing)
-/dashboard/platform → PlatformDashboardPage (SuperAdmin only)
+_authenticated/
+├── dashboard.tsx                    → /dashboard (all authenticated roles)
+└── platform.tsx                     → /dashboard/platform (SuperAdmin only)
 ```
+
+`platform.tsx` adds a `beforeLoad` role check: `if (context.auth.role !== 'SUPER_ADMIN') throw redirect({ to: '/_authenticated/dashboard' })`.
 
 ### ClinicDashboardPage
 
@@ -71,7 +76,7 @@ Accessible to all authenticated users; data scoped to their clinic.
 - [ ] Therapist navigating to `/dashboard/platform` is redirected (no access)
 - [ ] All stat cards update on page reload
 - [ ] Charts use the existing Tailwind chart colour variables
-- [ ] `pnpm --filter client typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

@@ -4,9 +4,11 @@
 
 Add TherapySession, SessionGameAssignment, and GameResult Prisma models. Note: `Session` already exists for auth/refresh token management — the new therapy session model must have a distinct name (`TherapySession`) to avoid conflicts.
 
-**Packages:** `packages/api`
+**Packages:** `packages/db`
 
 ### New Prisma models
+
+Create `packages/db/prisma/schema/sessions.prisma` with the following models:
 
 ```prisma
 model TherapySession {
@@ -92,7 +94,7 @@ The existing `Session` model in the schema is for auth refresh tokens. Do NOT re
 
 ### Migration
 
-`pnpm --filter api db:migrate -- --name sessions_results_domain`
+`pnpm db:migrate -- --name sessions_results_domain`
 
 ## Acceptance criteria
 
@@ -102,7 +104,7 @@ The existing `Session` model in the schema is for auth refresh tokens. Do NOT re
 - [ ] `GameResult.sessionId` has a unique constraint (idempotency key)
 - [ ] Existing `Session` auth table untouched
 - [ ] Prisma client regenerated
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

@@ -4,11 +4,11 @@
 
 Complete the authentication layer to match the PRD spec. The current schema has a `password` field and basic OTP flow but is missing multi-tenant JWT claims, rate limiting, reuse detection, and several security controls.
 
-**Packages:** `packages/api`, `packages/shared`
+**Packages:** `packages/api`, `packages/db`
 
 ### Changes required
 
-**Prisma schema (`packages/api/prisma/schema.prisma`):**
+**Prisma schema (`packages/db/prisma/schema/auth.prisma`):**
 - Remove `password` field from `User`
 - Add `loginEnabled Boolean @default(true)` to `User`
 - Add `clinicId String?` FK on `User` (null = SuperAdmin, populated for all others)
@@ -17,7 +17,7 @@ Complete the authentication layer to match the PRD spec. The current schema has 
 - Add `lastActivity DateTime @default(now())` to `Session` (for 24h idle expiry)
 - Add `reuseDetected Boolean @default(false)` to `Session`
 
-**Auth service (`packages/api/src/router/auth.ts`):**
+**Auth service (`packages/api/src/routers/auth.ts`):**
 - `auth.requestOtp` — rate-limit: 3 requests per email per 10 min (in-memory or Redis-backed middleware); return generic success even if email not found
 - `auth.verifyOtp` — increment `attemptCount` on wrong code; invalidate OTP after 5 failed attempts; set `User.emailVerified = true` on first success
 - `auth.verifyOtp` → JWT access token (15 min expiry) with claims: `{ sub: userId, role, tenantId: clinicId | null }`
@@ -26,7 +26,7 @@ Complete the authentication layer to match the PRD spec. The current schema has 
 - `auth.logoutAll` — revoke all refresh tokens for the user
 - 24h idle session detection: update `lastActivity` on each protected procedure call; `refreshToken` rejects if `lastActivity` is >24h ago
 
-**Shared schemas (`packages/shared/src/schemas/index.ts`):**
+**Shared schemas (`packages/api/src/schemas/index.ts`):**
 - Export `UserRole` enum
 - Export `JwtPayload` type: `{ sub, role, tenantId }`
 - Export `RequestOtpInput`, `VerifyOtpInput` Zod schemas
@@ -36,7 +36,7 @@ Complete the authentication layer to match the PRD spec. The current schema has 
 - Export `protectedProcedure` and `adminProcedure` helpers that check role
 
 **Super Admin bootstrap:**
-- CLI seed script (`packages/api/prisma/seed-super-admin.ts`) that inserts a SuperAdmin user directly with `loginEnabled = true`, `clinicId = null`, `role = SUPER_ADMIN`
+- CLI seed script (`packages/db/prisma/seed-super-admin.ts`) that inserts a SuperAdmin user directly with `loginEnabled = true`, `clinicId = null`, `role = SUPER_ADMIN`
 
 ## Acceptance criteria
 

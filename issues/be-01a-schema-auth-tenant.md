@@ -4,9 +4,11 @@
 
 Extend the Prisma schema with Clinic, Department, and SensoryRoom models and update `User` to support multi-tenancy and role-based access. This is the first of four sequential schema migrations; all subsequent schema and feature work depends on it.
 
-**Packages:** `packages/api`
+**Packages:** `packages/db`
 
 ### New Prisma models
+
+Create `packages/db/prisma/schema/auth.prisma` with the following models (alongside the existing `schema.prisma` and `todo.prisma`):
 
 ```prisma
 model Clinic {
@@ -71,7 +73,7 @@ Remove: `password String` (breaking change — drop column after removing from a
 
 ### Migration
 
-Generate and apply a Prisma migration: `pnpm --filter api db:migrate -- --name auth_tenant_domain`
+Generate and apply a Prisma migration: `pnpm db:migrate -- --name auth_tenant_domain`
 
 ## Acceptance criteria
 
@@ -79,9 +81,9 @@ Generate and apply a Prisma migration: `pnpm --filter api db:migrate -- --name a
 - [ ] `User` table has `clinicId`, `role`, `loginEnabled`, `credentialsQualifications`, `credentialsRegistrationNumber` columns
 - [ ] `User.password` column removed (migration is destructive — only safe after BE-00 removes password-based login)
 - [ ] `UserRole` and `RoomStatus` enums created
-- [ ] Prisma client regenerated (`pnpm --filter api db:generate`)
-- [ ] `pnpm typecheck` passes across all packages
-- [ ] Migration file committed to `packages/api/prisma/migrations/`
+- [ ] Prisma client regenerated (`pnpm db:generate`)
+- [ ] `pnpm check-types` passes across all packages
+- [ ] Migration file committed to `packages/db/prisma/migrations/`
 
 ## Blocked by
 

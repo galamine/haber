@@ -4,11 +4,11 @@
 
 Implement child profile CRUD, guardian registration (with `loginEnabled = false`), and intake completeness validation. Staff with the `child.intake` permission can create and update child profiles.
 
-**Packages:** `packages/api`, `packages/shared`
+**Packages:** `packages/api`, `packages/db`
 
 ### tRPC procedures
 
-Add `packages/api/src/router/child.ts`:
+Add `packages/api/src/routers/child.ts`:
 
 ```
 child.create       (child.intake permission) → Child
@@ -66,7 +66,7 @@ Add `medicalHistory Json @default("{}")` to the `Child` model via a small migrat
 - [ ] `child.updateMedicalHistory` persists all history fields on the child record
 - [ ] Assigning a therapist creates a `ChildTherapistAssignment` record; calling `child.listAssignedChildren` returns that child for the therapist
 - [ ] All queries scoped to `tenantId`; no cross-clinic access
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

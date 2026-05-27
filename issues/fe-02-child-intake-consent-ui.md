@@ -4,16 +4,21 @@
 
 Build the child intake wizard (profile, medical history, guardian registration, consent capture) and the child list/search page. Intake completeness is displayed as a checklist before allowing assessment.
 
-**Package:** `packages/client`
+**Package:** `apps/web`
 
 ### Routes to add
 
+Add these files under `apps/web/src/routes/_authenticated/`:
+
 ```
-/dashboard/children                    → ChildrenListPage
-/dashboard/children/new                → NewChildPage (multi-step wizard)
-/dashboard/children/:id                → ChildProfilePage (read + tabs)
-/dashboard/children/:id/edit           → EditChildPage
-/dashboard/children/:id/consent        → ConsentPage
+_authenticated/
+└── children/
+    ├── index.tsx                  → /dashboard/children
+    ├── new.tsx                    → /dashboard/children/new
+    └── $childId/
+        ├── index.tsx              → /dashboard/children/:childId
+        ├── edit.tsx               → /dashboard/children/:childId/edit
+        └── consent.tsx            → /dashboard/children/:childId/consent
 ```
 
 ### Key components
@@ -59,7 +64,7 @@ Build the child intake wizard (profile, medical history, guardian registration, 
 - [ ] ClinicAdmin can withdraw consent; badge updates to `WITHDRAWN`
 - [ ] Soft-deleted children do not appear in the list for non-admin users
 - [ ] All wizard steps validate with react-hook-form + Zod before allowing progress
-- [ ] `pnpm --filter client typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

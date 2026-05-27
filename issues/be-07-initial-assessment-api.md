@@ -4,13 +4,13 @@
 
 Implement the *Haber Specialisto* initial assessment (Form 1). All 8 sections must be captured and stored. Assessment records are versioned append-only (never overwritten). Therapist credentials are snapshotted at signing time.
 
-**Packages:** `packages/api`, `packages/shared`
+**Packages:** `packages/api`, `packages/db`
 
 Reference files: `clinical-data/initial-assessment.example.json` (full shape), `clinical-data/clinical-taxonomies.seed.json` (valid enum values).
 
 ### tRPC procedures
 
-Add `packages/api/src/router/assessment.ts`:
+Add `packages/api/src/routers/assessment.ts`:
 
 ```
 assessment.create  (assigned therapist with implicit permission) → InitialAssessment
@@ -67,7 +67,7 @@ When an `InitialAssessment` is created, also create 7 `SensoryProfile` rows (one
 - [ ] `assessment.review` creates a new version row; prior version still exists in the database
 - [ ] Unassigned therapist cannot call `assessment.get` for a child they don't cover — receives `FORBIDDEN`
 - [ ] All assessment records scoped to tenant
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

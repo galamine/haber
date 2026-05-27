@@ -4,13 +4,17 @@
 
 Build the game library browser for therapists (filter + browse games when building a plan) and the ClinicAdmin game management panel (enable/disable games, add sub-categories).
 
-**Package:** `packages/client`
+**Package:** `apps/web`
 
 ### Routes to add
 
+Add these files under `apps/web/src/routes/_authenticated/`:
+
 ```
-/dashboard/library                          → GameLibraryPage (therapist browse)
-/dashboard/settings/library                 → ClinicLibrarySettingsPage (ClinicAdmin enable/disable)
+_authenticated/
+├── library.tsx                      → /dashboard/library
+└── settings/
+    └── library.tsx                  → /dashboard/settings/library
 ```
 
 ### Key components
@@ -47,7 +51,7 @@ Build the game library browser for therapists (filter + browse games when buildi
 - [ ] `GameLibraryBrowserSheet` can be opened from `PlanDetailPage` and a selected game is added to the plan
 - [ ] `ClinicLibrarySettingsPage` toggle persists; page reload reflects the toggled state
 - [ ] ClinicAdmin can add a sub-category; it appears in the filter list
-- [ ] `pnpm --filter client typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

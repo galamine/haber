@@ -4,13 +4,13 @@
 
 Implement the full treatment plan lifecycle: creation, per-game configuration, versioned modifications, preset cloning, and lifecycle transitions (activate, pause, resume, extend, close).
 
-**Packages:** `packages/api`, `packages/shared`
+**Packages:** `packages/api`, `packages/db`
 
 Reference file: `clinical-data/treatment-plan-presets.json` (5 clinical presets loaded at API boot).
 
 ### tRPC procedures
 
-Add `packages/api/src/router/plan.ts`:
+Add `packages/api/src/routers/plan.ts`:
 
 ```
 plan.create        (assigned therapist) → TreatmentPlan
@@ -79,7 +79,7 @@ Add:
 - [ ] `plan.list` for a child returns all versions; `plan.listActive` returns only one
 - [ ] `plan.close` sets status to `CLOSED` and persists `closureReason`
 - [ ] `plan.listPresets` returns all 5 presets without a database query
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

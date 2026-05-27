@@ -4,16 +4,21 @@
 
 Build the goal tracking views: goal list per plan, attainment progress bars with history, and the follow-up review integration (attainment update during follow-up sessions).
 
-**Package:** `packages/client`
+**Package:** `apps/web`
 
 ### Routes to add
 
-Goal tracking is embedded within plan and follow-up pages rather than having standalone routes. Add a dedicated tab on `PlanDetailPage`:
+Goal tracking is embedded within plan and follow-up pages rather than having standalone routes. Add a dedicated tab to `PlanDetailPage` (fe-05), plus one new file:
 
 ```
-/dashboard/children/:id/plans/:planId → PlanDetailPage (add "Goals" tab)
-/dashboard/children/:id/goals/:goalId → GoalDetailPage (standalone history view)
+_authenticated/
+└── children/
+    └── $childId/
+        └── goals/
+            └── $goalId.tsx          → /dashboard/children/:childId/goals/:goalId
 ```
+
+The "Goals" tab lives inside `$planId/index.tsx` (PlanDetailPage from fe-05) — no new route needed for the tab itself.
 
 ### Key components
 
@@ -50,7 +55,7 @@ Goal tracking is embedded within plan and follow-up pages rather than having sta
 - [ ] Recharts line chart renders attainment history correctly
 - [ ] "Superseded by" link is shown when `supersededByGoalId` is set
 - [ ] After a follow-up is submitted, goal attainment % updates without page reload (React Query invalidation)
-- [ ] `pnpm --filter client typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

@@ -30,7 +30,7 @@ regenerateFutureSessions(oldPlanId: string, newPlanId: string, fromDate: Date): 
 
 ### tRPC procedures
 
-Add to `packages/api/src/router/session.ts`:
+Add to `packages/api/src/routers/session.ts`:
 
 ```
 session.listForPlan     (assigned therapist) → TherapySession[]
@@ -63,7 +63,7 @@ Add: `TherapySessionSchema`, `SessionGameAssignmentSchema`
 - [ ] `plan.modify` triggers regeneration; PENDING future sessions from old plan are deleted; new sessions created for the new plan
 - [ ] `IN_PROGRESS` / `COMPLETED` sessions are NOT deleted during regeneration
 - [ ] `session.listForToday` returns only today's sessions for the calling therapist
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

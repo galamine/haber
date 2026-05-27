@@ -4,15 +4,21 @@
 
 Build the therapist's daily session workflow: today's session list, session detail with game launch, room assignment, absent marking, manual close, and coverage claim for uncovered sessions.
 
-**Package:** `packages/client`
+**Package:** `apps/web`
 
 ### Routes to add
 
+Add these files under `apps/web/src/routes/_authenticated/`:
+
 ```
-/dashboard/sessions                     → TodaySessionsPage
-/dashboard/sessions/:sessionId          → SessionDetailPage
-/dashboard/sessions/uncovered           → UncoveredSessionsPage
+_authenticated/
+└── sessions/
+    ├── index.tsx                    → /dashboard/sessions
+    ├── uncovered.tsx                → /dashboard/sessions/uncovered
+    └── $sessionId.tsx               → /dashboard/sessions/:sessionId
 ```
+
+TanStack Router matches static segments before dynamic ones, so `/sessions/uncovered` correctly hits `uncovered.tsx` rather than `$sessionId.tsx`.
 
 ### Key components
 
@@ -72,7 +78,7 @@ window.open(gameUrl, '_blank')
 - [ ] "Mark Absent" is disabled for non-PENDING sessions
 - [ ] "Close Session" sheet captures notes and quality tag; submits via `session.manualClose`
 - [ ] Uncovered sessions page shows claimable sessions; clicking "Claim" moves them to today's list
-- [ ] `pnpm --filter client typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

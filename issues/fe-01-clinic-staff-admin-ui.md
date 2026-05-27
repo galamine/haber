@@ -4,19 +4,28 @@
 
 Build the ClinicAdmin settings area: department management, sensory room management, staff list with invite, and per-staff permission editing. Also build the SuperAdmin clinic list and onboarding form.
 
-**Package:** `packages/client`
+**Package:** `apps/web`
 
 ### Routes to add
 
+Add these files under `apps/web/src/routes/_authenticated/` (TanStack Router uses `$param` in file names for dynamic segments):
+
 ```
-/dashboard/settings/departments        → DepartmentsPage
-/dashboard/settings/rooms              → SensoryRoomsPage
-/dashboard/settings/staff              → StaffListPage
-/dashboard/settings/staff/:id          → StaffDetailPage
-/dashboard/settings/staff/invite       → InviteStaffPage
-/dashboard/platform/clinics            → ClinicsListPage (SuperAdmin only)
-/dashboard/platform/clinics/new        → CreateClinicPage (SuperAdmin only)
+_authenticated/
+├── settings/
+│   ├── departments.tsx            → /dashboard/settings/departments
+│   ├── rooms.tsx                  → /dashboard/settings/rooms
+│   └── staff/
+│       ├── index.tsx              → /dashboard/settings/staff
+│       ├── invite.tsx             → /dashboard/settings/staff/invite
+│       └── $staffId.tsx           → /dashboard/settings/staff/:staffId
+└── platform/
+    └── clinics/
+        ├── index.tsx              → /dashboard/platform/clinics
+        └── new.tsx                → /dashboard/platform/clinics/new
 ```
+
+SuperAdmin-only routes add a role check in `beforeLoad`: `if (context.auth.role !== 'SUPER_ADMIN') throw redirect({ to: '/_authenticated/dashboard' })`.
 
 ### Key components
 
@@ -26,7 +35,7 @@ Build the ClinicAdmin settings area: department management, sensory room managem
 - Deactivate/reactivate toggle per staff row (calls `staff.deactivate` / `staff.reactivate`)
 
 **InviteStaffPage:**
-- Form: email, role selector (THERAPIST / STAFF), permission checkboxes (using `PERMISSIONS` constants from shared), department multi-select
+- Form: email, role selector (THERAPIST / STAFF), permission checkboxes (using `PERMISSIONS` constants from `@habe-final/api`), department multi-select
 - Submit calls `staff.invite`
 
 **StaffDetailPage:**
@@ -72,7 +81,7 @@ Build the ClinicAdmin settings area: department management, sensory room managem
 - [ ] SuperAdmin sees the clinic list with correct aggregate counts
 - [ ] Therapist navigating to `/dashboard/settings/staff` is redirected (no access)
 - [ ] All forms use react-hook-form + Zod (same pattern as existing login form)
-- [ ] `pnpm --filter client typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

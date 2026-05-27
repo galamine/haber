@@ -4,17 +4,22 @@
 
 Build the per-child longitudinal dashboard: snapshot card, milestone radar chart, sensory system trend charts, per-game score trend lines, session calendar, and notes timeline.
 
-**Package:** `packages/client`
+**Package:** `apps/web`
 
 Uses Recharts (already installed) for all data visualisation.
 
 ### Routes to add
 
+Add this file under `apps/web/src/routes/_authenticated/`:
+
 ```
-/dashboard/children/:id/dashboard → ChildDashboardPage
+_authenticated/
+└── children/
+    └── $childId/
+        └── dashboard.tsx            → /dashboard/children/:childId/dashboard
 ```
 
-Link from `ChildProfilePage` (FE-02) Overview tab.
+Link from `ChildProfilePage` (FE-02) Overview tab using TanStack Router's `<Link to="/dashboard/children/$childId/dashboard" params={{ childId }} />`.
 
 ### Key components
 
@@ -74,7 +79,7 @@ Link from `ChildProfilePage` (FE-02) Overview tab.
 - [ ] Session calendar colours days correctly by status
 - [ ] Notes timeline entries are in chronological order (newest first)
 - [ ] All charts use the existing Tailwind brown colour palette (chart CSS variables from `globals.css`)
-- [ ] `pnpm --filter client typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

@@ -4,9 +4,11 @@
 
 Add TreatmentPlan, PlanGameAssignment, Goal, GoalProgressEntry, Game, GameVersion, and GameCategory Prisma models. Also add FollowUpAssessment, which is structurally tied to both assessments and plans.
 
-**Packages:** `packages/api`
+**Packages:** `packages/db`
 
 ### New Prisma models
+
+Create `packages/db/prisma/schema/plans.prisma` with the following models:
 
 ```prisma
 model TreatmentPlan {
@@ -168,7 +170,7 @@ model ClinicGameEnable {
 
 ### Migration
 
-`pnpm --filter api db:migrate -- --name plans_goals_domain`
+`pnpm db:migrate -- --name plans_goals_domain`
 
 ## Acceptance criteria
 
@@ -177,7 +179,7 @@ model ClinicGameEnable {
 - [ ] `PlanStatus`, `GoalHorizon`, `GoalStatus` enums created
 - [ ] Self-referential FKs work: `TreatmentPlan.parentPlanId`, `Goal.supersededByGoalId`, `GameCategory.parentId`
 - [ ] Prisma client regenerated
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

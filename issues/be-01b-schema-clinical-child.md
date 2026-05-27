@@ -4,9 +4,11 @@
 
 Add all child, guardian, consent, initial assessment, sensory profile, milestone, and clinical taxonomy Prisma models. This migration unlocks child intake, assessment, and consent feature work.
 
-**Packages:** `packages/api`
+**Packages:** `packages/db`
 
 ### New Prisma models
+
+Create `packages/db/prisma/schema/clinical.prisma` with the following models:
 
 ```prisma
 model Child {
@@ -169,7 +171,7 @@ model ChildTherapistAssignment {
 
 ### Migration
 
-`pnpm --filter api db:migrate -- --name clinical_child_domain`
+`pnpm db:migrate -- --name clinical_child_domain`
 
 ## Acceptance criteria
 
@@ -178,7 +180,7 @@ model ChildTherapistAssignment {
 - [ ] All taxonomy tables exist: `Diagnosis`, `FunctionalConcern`, `AssessmentTool`, `Equipment`, `InterventionApproach`, `SensorySystem`
 - [ ] `ChildTherapistAssignment` table exists for multi-therapist co-assignment
 - [ ] Prisma client regenerated
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 - [ ] Migration file committed
 
 ## Blocked by

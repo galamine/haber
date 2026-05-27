@@ -4,15 +4,21 @@
 
 Build the follow-up assessment (Form 2) UI. Conducted every 4–6 sessions or when clinically indicated. Pre-populates from the initial assessment baseline for sensory and goal sections.
 
-**Package:** `packages/client`
+**Package:** `apps/web`
 
 Reference file: `clinical-data/follow-up-assessment.example.json`
 
 ### Routes to add
 
+Add these files under `apps/web/src/routes/_authenticated/`:
+
 ```
-/dashboard/children/:id/followup/new            → NewFollowUpPage
-/dashboard/children/:id/followup/:followUpId    → FollowUpDetailPage
+_authenticated/
+└── children/
+    └── $childId/
+        └── followup/
+            ├── new.tsx              → /dashboard/children/:childId/followup/new
+            └── $followUpId.tsx      → /dashboard/children/:childId/followup/:followUpId
 ```
 
 ### Section breakdown
@@ -71,7 +77,7 @@ When `NewFollowUpPage` loads:
 - [ ] Section D radio groups render correctly; selection is stored
 - [ ] Section F requires both signatures before submission
 - [ ] Submitted follow-up appears in `FollowUpDetailPage` in read-only mode with sensory delta visible
-- [ ] `pnpm --filter client typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

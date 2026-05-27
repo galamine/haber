@@ -4,11 +4,11 @@
 
 Implement guardian consent capture, unanimous consent validation, withdrawal handling, and automatic session blocking/unblocking. Consent is a hard gate: no assessment can start without it.
 
-**Packages:** `packages/api`, `packages/shared`
+**Packages:** `packages/api`, `packages/db`
 
 ### tRPC procedures
 
-Add `packages/api/src/router/consent.ts`:
+Add `packages/api/src/routers/consent.ts`:
 
 ```
 consent.record     (child.intake permission) → ConsentRecord
@@ -60,7 +60,7 @@ Add:
 - [ ] Therapist cannot call `consent.withdraw` — receives `FORBIDDEN`
 - [ ] IP address is captured in `ConsentRecord` from request context
 - [ ] Attempting to create an assessment for a child with `consentStatus !== GRANTED` returns `PRECONDITION_FAILED` (tested in BE-07)
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

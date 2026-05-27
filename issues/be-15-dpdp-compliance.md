@@ -14,7 +14,7 @@ Override is available for `SUPER_ADMIN` and `CLINIC_ADMIN` who pass `includeDele
 
 ### tRPC procedures
 
-Add to `packages/api/src/router/child.ts`:
+Add to `packages/api/src/routers/child.ts`:
 
 ```
 child.softDelete   (CLINIC_ADMIN | SUPER_ADMIN) → void
@@ -31,7 +31,7 @@ child.permanentDelete (SUPER_ADMIN) → void
   — Cascades deletion via Prisma (Child → Guardian → ConsentRecord, etc.)
 ```
 
-Add `packages/api/src/router/dpdp.ts`:
+Add `packages/api/src/routers/dpdp.ts`:
 
 ```
 dpdp.retentionReport (SUPER_ADMIN | CLINIC_ADMIN) → RetentionReportEntry[]
@@ -70,7 +70,7 @@ prisma.$use(async (params, next) => {
 - [ ] Prisma middleware correctly excludes `deletedAt IS NOT NULL` rows from all standard Child/Guardian queries
 - [ ] Admin passing `includeDeleted: true` receives soft-deleted records
 - [ ] Startup logs a warning if `DATA_REGION` is not set to `"india"`
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

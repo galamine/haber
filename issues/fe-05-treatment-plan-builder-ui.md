@@ -4,15 +4,22 @@
 
 Build the treatment plan builder: preset selection, game assignment with duration/rep overrides, plan lifecycle controls (activate, pause, close), and plan modification with goal lifecycle decisions.
 
-**Package:** `packages/client`
+**Package:** `apps/web`
 
 ### Routes to add
 
+Add these files under `apps/web/src/routes/_authenticated/`:
+
 ```
-/dashboard/children/:id/plans              → PlansListPage
-/dashboard/children/:id/plans/new          → NewPlanPage
-/dashboard/children/:id/plans/:planId      → PlanDetailPage
-/dashboard/children/:id/plans/:planId/edit → EditPlanPage
+_authenticated/
+└── children/
+    └── $childId/
+        └── plans/
+            ├── index.tsx            → /dashboard/children/:childId/plans
+            ├── new.tsx              → /dashboard/children/:childId/plans/new
+            └── $planId/
+                ├── index.tsx        → /dashboard/children/:childId/plans/:planId
+                └── edit.tsx         → /dashboard/children/:childId/plans/:planId/edit
 ```
 
 ### Key components
@@ -72,7 +79,7 @@ Show a non-blocking `Alert` component when `plan.checkSessionDuration` returns `
 - [ ] "Activate" transitions plan to ACTIVE status; generates sessions (visible in session view)
 - [ ] "Modify Plan" creates a new plan version; old version appears as inactive in the list
 - [ ] Per-goal decisions in Modify sheet: "Modify" shows inline description editor; "Discontinue" removes goal from new version
-- [ ] `pnpm --filter client typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

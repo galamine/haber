@@ -4,11 +4,11 @@
 
 Implement game catalog CRUD, category management (10 global categories + tenant sub-categories), game versioning, and per-clinic enable/disable toggling. The 10 global categories are seeded at startup.
 
-**Packages:** `packages/api`, `packages/shared`
+**Packages:** `packages/api`, `packages/db`
 
 ### tRPC procedures
 
-Add `packages/api/src/router/game.ts`:
+Add `packages/api/src/routers/game.ts`:
 
 ```
 // Game catalog (SuperAdmin for globals; ClinicAdmin for clinic-scoped)
@@ -44,7 +44,7 @@ game.listEnabledForClinic (protected) → Game[]
 
 ### Seed global categories
 
-In `packages/api/prisma/seed-clinical.ts` (from BE-02), also seed the 10 global `GameCategory` rows:
+In `packages/db/prisma/seed-clinical.ts` (from BE-02), also seed the 10 global `GameCategory` rows:
 `Gross Motor, Fine Motor, Sensory Integration, Visual-Motor, Cognitive, Speech & Language, Social, Self-Care, Balance, Coordination`
 
 ### Shared schemas
@@ -60,7 +60,7 @@ Add:
 - [ ] `game.createVersion` sets `isLatest=true` on the new version and `isLatest=false` on the previous
 - [ ] `game.createSubCategory` creates a category with `clinicId` set to the caller's clinic
 - [ ] A Therapist calling `game.create` receives `FORBIDDEN`
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

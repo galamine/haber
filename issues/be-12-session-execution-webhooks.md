@@ -4,7 +4,7 @@
 
 Implement session execution controls (room assignment, absent marking, manual close, quality tagging) and the two game webhook endpoints that the externally-hosted game calls back to.
 
-**Packages:** `packages/api`, `packages/shared`
+**Packages:** `packages/api`, `packages/db`
 
 ### Webhook endpoints (plain Hono HTTP — NOT tRPC)
 
@@ -34,7 +34,7 @@ POST /api/sessions/:id/complete
 
 ### tRPC procedures
 
-Add to `packages/api/src/router/session.ts`:
+Add to `packages/api/src/routers/session.ts`:
 
 ```
 session.assignRoom     (assigned therapist) → TherapySession
@@ -87,7 +87,7 @@ Add:
 - [ ] `session.markAbsent` only transitions from `PENDING`; calling on `COMPLETED` returns `BAD_REQUEST`
 - [ ] `session.manualClose` closes the session regardless of game webhook state
 - [ ] `session.claimCoverage` assigns the therapist; a second call by a different therapist returns `CONFLICT`
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 

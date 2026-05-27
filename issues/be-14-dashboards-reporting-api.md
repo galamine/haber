@@ -4,11 +4,11 @@
 
 Implement aggregation procedures for the per-child dashboard, per-clinic dashboard, and super admin platform dashboard, plus the structured JSON export for progress reports.
 
-**Packages:** `packages/api`, `packages/shared`
+**Packages:** `packages/api`, `packages/db`
 
 ### tRPC procedures
 
-Add `packages/api/src/router/dashboard.ts`:
+Add `packages/api/src/routers/dashboard.ts`:
 
 ```
 // Per-child dashboard (assigned therapist)
@@ -48,7 +48,7 @@ dashboard.platformSummary  (SUPER_ADMIN) → PlatformSummary
   — Extended with: total children across all clinics, total sessions this month, new clinics this month
 ```
 
-Add `packages/api/src/router/report.ts`:
+Add `packages/api/src/routers/report.ts`:
 
 ```
 report.childProgress       (assigned therapist) → ChildProgressReport
@@ -72,7 +72,7 @@ Add:
 - [ ] `dashboard.platformSummary` returns correct counts across multiple clinics (SuperAdmin only)
 - [ ] `report.childProgress` returns all assessment, follow-up, goal, and session data in one call
 - [ ] Therapist calling `dashboard.clinicSummary` receives `FORBIDDEN`
-- [ ] `pnpm typecheck` passes
+- [ ] `pnpm check-types` passes
 
 ## Blocked by
 
