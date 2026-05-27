@@ -4,24 +4,29 @@ import { Collapsible as CollapsiblePrimitive } from "@base-ui/react/collapsible"
 import { cn } from "@habe-final/ui/lib/utils";
 
 function Collapsible({ ...props }: CollapsiblePrimitive.Root.Props) {
-  return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
+	return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
 }
 
 function CollapsibleTrigger({ ...props }: CollapsiblePrimitive.Trigger.Props) {
-  return <CollapsiblePrimitive.Trigger data-slot="collapsible-trigger" {...props} />;
+	return (
+		<CollapsiblePrimitive.Trigger data-slot="collapsible-trigger" {...props} />
+	);
 }
 
-function CollapsibleContent({ className, ...props }: CollapsiblePrimitive.Panel.Props) {
-  return (
-    <CollapsiblePrimitive.Panel
-      data-slot="collapsible-content"
-      className={cn(
-        "overflow-hidden data-[open]:animate-in data-[open]:fade-in-0 data-[closed]:animate-out data-[closed]:fade-out-0",
-        className,
-      )}
-      {...props}
-    />
-  );
+function CollapsibleContent({
+	className,
+	...props
+}: CollapsiblePrimitive.Panel.Props) {
+	return (
+		<CollapsiblePrimitive.Panel
+			data-slot="collapsible-content"
+			className={cn(
+				"data-[open]:fade-in-0 data-[closed]:fade-out-0 overflow-hidden data-[closed]:animate-out data-[open]:animate-in",
+				className,
+			)}
+			{...props}
+		/>
+	);
 }
 
-export { Collapsible, CollapsibleTrigger, CollapsibleContent };
+export { Collapsible, CollapsibleContent, CollapsibleTrigger };

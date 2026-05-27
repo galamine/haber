@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -9,8 +9,12 @@
 
 :root {
 	/* Base Font Family */
-	--font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-	--font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+	--font-family-sans:
+		"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+		"Helvetica Neue", Arial, sans-serif;
+	--font-family-mono:
+		ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono",
+		monospace;
 
 	/* Base Spacing Unit */
 	--spacing: 4px;
@@ -295,8 +299,12 @@
 }
 
 @theme inline {
-	--font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-	--font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+	--font-sans:
+		"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+		"Helvetica Neue", Arial, sans-serif;
+	--font-mono:
+		ui-monospace, SFMono-Regular, "SF Mono", Monaco, Inconsolata, "Roboto Mono",
+		monospace;
 
 	/* Shadcn Semantic Color Utilities */
 	--color-background: var(--background);
@@ -411,7 +419,7 @@
 
 	body {
 		@apply bg-background text-foreground font-sans;
-		font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+		font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 		font-variation-settings: normal;
 	}
 
@@ -656,7 +664,9 @@
 		background: var(--color-bg-primary) !important;
 		border: 1px solid var(--color-border-primary) !important;
 		border-radius: var(--radius) !important;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+		box-shadow:
+			0 4px 6px -1px rgba(0, 0, 0, 0.1),
+			0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
 		font-size: var(--text-sm) !important;
 		color: var(--color-text-primary) !important;
 		min-width: 300px !important;

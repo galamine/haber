@@ -1,0 +1,59 @@
+enum UserRole {
+  SUPER_ADMIN
+  CLINIC_ADMIN
+  THERAPIST
+  STAFF
+}
+
+model Clinic {
+  id    String @id @default(cuid())
+  name  String
+  users User[]
+
+  @@map("clinic")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  loginEnabled  Boolean   @default(true)
+  role          UserRole
+  clinicId      String?
+  clinic        Clinic?   @relation(fields: [clinicId], references: [id])
+  sessions      Session[]
+  otps          Otp[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("user")
+}
+
+model Otp {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  codeHash      String
+  expiresAt     DateTime
+  usedAt        DateTime?
+  attemptCount  Int       @default(0)
+  invalidatedAt DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@map("otp")
+}
+
+model Session {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  tokenHash     String    @unique
+  familyId      String
+  reuseDetected Boolean   @default(false)
+  revokedAt     DateTime?
+  lastActivity  DateTime  @default(now())
+  expiresAt     DateTime
+  createdAt     DateTime  @default(now())
+
+  @@map("session")
+}
