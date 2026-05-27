@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UiTestRouteImport } from './routes/ui-test'
 import { Route as TodosRouteImport } from './routes/todos'
 import { Route as IndexRouteImport } from './routes/index'
 
+const UiTestRoute = UiTestRouteImport.update({
+  id: '/ui-test',
+  path: '/ui-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TodosRoute = TodosRouteImport.update({
   id: '/todos',
   path: '/todos',
@@ -26,31 +32,42 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/todos': typeof TodosRoute
+  '/ui-test': typeof UiTestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/todos': typeof TodosRoute
+  '/ui-test': typeof UiTestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/todos': typeof TodosRoute
+  '/ui-test': typeof UiTestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/todos'
+  fullPaths: '/' | '/todos' | '/ui-test'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/todos'
-  id: '__root__' | '/' | '/todos'
+  to: '/' | '/todos' | '/ui-test'
+  id: '__root__' | '/' | '/todos' | '/ui-test'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   TodosRoute: typeof TodosRoute
+  UiTestRoute: typeof UiTestRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/ui-test': {
+      id: '/ui-test'
+      path: '/ui-test'
+      fullPath: '/ui-test'
+      preLoaderRoute: typeof UiTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/todos': {
       id: '/todos'
       path: '/todos'
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   TodosRoute: TodosRoute,
+  UiTestRoute: UiTestRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
