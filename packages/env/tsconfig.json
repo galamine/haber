@@ -1,0 +1,3 @@
+{
+  "extends": "@habe-final/config/tsconfig.base.json"
+}
