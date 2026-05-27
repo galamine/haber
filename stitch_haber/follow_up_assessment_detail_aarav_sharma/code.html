@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Follow-Up Assessment Detail View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface": "#fff8f6",
+                      "on-tertiary-fixed": "#05201b",
+                      "inverse-on-surface": "#f7efed",
+                      "info": "#3b82f6",
+                      "outline-variant": "#d4c3bf",
+                      "on-error": "#ffffff",
+                      "on-primary-fixed-variant": "#5e3f38",
+                      "surface-container-high": "#efe6e5",
+                      "brown-900": "#3d2626",
+                      "primary-fixed": "#ffdad2",
+                      "on-primary-fixed": "#2d1510",
+                      "brown-200": "#e2d6d0",
+                      "danger": "#ef4444",
+                      "on-surface": "#1e1b1a",
+                      "on-surface-variant": "#504441",
+                      "primary-fixed-dim": "#e8bdb3",
+                      "brown-500": "#947068",
+                      "error": "#ba1a1a",
+                      "on-error-container": "#93000a",
+                      "on-secondary-fixed-variant": "#613d3d",
+                      "background": "#fff8f6",
+                      "secondary-container": "#fecbca",
+                      "on-primary-container": "#fffbff",
+                      "on-tertiary": "#ffffff",
+                      "brown-300": "#d1bfb6",
+                      "primary": "#75544d",
+                      "brown-50": "#f6f2f0",
+                      "on-secondary-container": "#7a5353",
+                      "on-secondary-fixed": "#2f1314",
+                      "on-tertiary-fixed-variant": "#324c46",
+                      "brown-100": "#f0ece9",
+                      "tertiary": "#47615b",
+                      "primary-container": "#906c64",
+                      "inverse-surface": "#342f2f",
+                      "surface-tint": "#78564f",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-dim": "#e0d8d7",
+                      "secondary-fixed": "#ffdad9",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed-dim": "#b0cdc4",
+                      "tertiary-container": "#5f7a73",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-container": "#f4fffa",
+                      "surface-variant": "#e9e1df",
+                      "secondary": "#7b5454",
+                      "success": "#22c55e",
+                      "brown-700": "#664242",
+                      "brown-800": "#4d3232",
+                      "surface-container-highest": "#e9e1df",
+                      "brown-400": "#b5978c",
+                      "surface-container": "#f5ecea",
+                      "secondary-fixed-dim": "#ecbaba",
+                      "warning": "#f59e0b",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed": "#cce9e0",
+                      "on-background": "#1e1b1a",
+                      "outline": "#827471",
+                      "surface-bright": "#fff8f6",
+                      "inverse-primary": "#e8bdb3",
+                      "brown-600": "#7a5a54",
+                      "surface-container-low": "#faf2f0"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "md": "16px",
+                      "xs": "4px",
+                      "sm": "8px",
+                      "base": "4px",
+                      "3xl": "64px",
+                      "xl": "32px",
+                      "lg": "24px",
+                      "2xl": "48px"
+              },
+              "fontFamily": {
+                      "text-sm": [
+                              "Inter"
+                      ],
+                      "text-xs": [
+                              "Inter"
+                      ],
+                      "text-xl": [
+                              "Inter"
+                      ],
+                      "text-md": [
+                              "Inter"
+                      ],
+                      "display-sm": [
+                              "Inter"
+                      ],
+                      "display-2xl": [
+                              "Inter"
+                      ],
+                      "text-lg": [
+                              "Inter"
+                      ],
+                      "display-xl": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "display-xs": [
+                              "Inter"
+                      ],
+                      "display-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "text-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "text-xs": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "text-xl": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "text-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-sm": [
+                              "30px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-2xl": [
+                              "72px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "text-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-xl": [
+                              "60px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-xs": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-md": [
+                              "36px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-text-md antialiased min-h-screen flex flex-col md:flex-row">
+<!-- Side Navigation (Desktop) -->
+<nav class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-brown-50 border-r border-outline-variant py-xl px-md space-y-base z-40">
+<div class="mb-lg px-sm">
+<h1 class="text-display-sm font-display-sm font-black text-brown-800">HaberApp</h1>
+<p class="text-text-sm font-text-sm text-on-surface-variant">Clinical Excellence</p>
+</div>
+<div class="flex-1 space-y-sm">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-brown-100 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-brown-100 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="child_care">child_care</span>
+<span>Children</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-brown-100 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="event_note">event_note</span>
+<span>Sessions Today</span>
+</a>
+<a class="bg-primary-container text-on-primary-container rounded-lg font-medium flex items-center gap-md px-md py-sm scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span>Assessments</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-brown-100 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="clinical_notes">clinical_notes</span>
+<span>Treatment Plans</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-brown-100 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span>Staff</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-brown-100 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings_applications">settings_applications</span>
+<span>Clinic Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-brown-100 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="insert_chart">insert_chart</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-brown-100 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span>Platform Overview</span>
+</a>
+</div>
+<div class="pt-md border-t border-outline-variant space-y-sm">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-brown-100 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Profile Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-brown-100 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</nav>
+<!-- Top Navigation (Mobile/Tablet) -->
+<header class="md:hidden flex justify-between items-center w-full px-lg py-md bg-surface border-b border-outline-variant sticky top-0 z-40">
+<div class="text-display-xs font-display-xs font-bold text-brown-900">
+            HaberApp
+        </div>
+<div class="flex gap-md">
+<button class="text-on-surface-variant hover:bg-brown-50 p-sm rounded-full transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-brown-50 p-sm rounded-full transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<button class="text-on-surface-variant hover:bg-brown-50 p-sm rounded-full transition-colors duration-200 ml-sm border border-outline-variant">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 p-md md:p-lg lg:p-xl max-w-7xl mx-auto w-full">
+<!-- Header Section -->
+<header class="mb-xl flex flex-col md:flex-row md:items-end justify-between gap-md border-b border-outline-variant pb-md">
+<div>
+<div class="flex items-center gap-sm mb-xs text-on-surface-variant text-text-sm font-text-sm">
+<span class="material-symbols-outlined text-[18px]">folder_shared</span>
+<a class="hover:underline" href="#">Children</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:underline" href="#">Aarav Sharma</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span>Assessments</span>
+</div>
+<h2 class="text-display-md font-display-md text-on-surface flex items-center gap-md">
+                    Follow-Up Assessment
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-text-xs font-text-xs font-medium bg-[#DCFCE7] text-[#15803D] align-middle mt-1">
+                        Completed
+                    </span>
+</h2>
+<p class="text-text-md font-text-md text-on-surface-variant mt-sm">Form 2 • Conducted on October 24, 2023</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm bg-surface border border-primary text-primary rounded-lg text-text-sm font-text-sm font-medium hover:bg-brown-50 transition-colors flex items-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">print</span>
+                    Print
+                </button>
+<button class="px-md py-sm bg-surface border border-primary text-primary rounded-lg text-text-sm font-text-sm font-medium hover:bg-brown-50 transition-colors flex items-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                    Export PDF
+                </button>
+</div>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<!-- Left Column: Details & Progress -->
+<div class="lg:col-span-2 space-y-lg">
+<!-- Patient Details Card -->
+<section class="bg-surface-container-low rounded-lg p-lg border border-outline-variant">
+<h3 class="text-text-lg font-text-lg font-semibold text-on-surface mb-md flex items-center gap-sm border-b border-outline-variant pb-sm">
+<span class="material-symbols-outlined text-primary">person</span>
+                        Assessment Context
+                    </h3>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-md">
+<div>
+<p class="text-text-xs font-text-xs text-on-surface-variant mb-xs">Patient</p>
+<p class="text-text-sm font-text-sm font-medium text-on-surface">Aarav Sharma</p>
+</div>
+<div>
+<p class="text-text-xs font-text-xs text-on-surface-variant mb-xs">Therapist</p>
+<p class="text-text-sm font-text-sm font-medium text-on-surface">Dr. Emily Chen</p>
+</div>
+<div>
+<p class="text-text-xs font-text-xs text-on-surface-variant mb-xs">Session ID</p>
+<p class="text-text-sm font-text-sm font-medium text-on-surface">S-8492-F</p>
+</div>
+<div>
+<p class="text-text-xs font-text-xs text-on-surface-variant mb-xs">Duration</p>
+<p class="text-text-sm font-text-sm font-medium text-on-surface">45 Mins</p>
+</div>
+</div>
+</section>
+<!-- Goal Progress Section (Bento Style) -->
+<section class="space-y-md">
+<h3 class="text-display-xs font-display-xs text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">flag</span>
+                        Goal Progress
+                    </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Goal 1 -->
+<div class="bg-surface rounded-lg p-lg border border-outline-variant shadow-sm flex flex-col h-full">
+<div class="flex justify-between items-start mb-md">
+<h4 class="text-text-md font-text-md font-semibold text-on-surface leading-snug pr-sm">Increase expressive language output</h4>
+<span class="shrink-0 inline-flex items-center px-2 py-1 rounded-md text-text-xs font-text-xs font-medium bg-[#FEF3C7] text-[#B45309]">
+                                    In Progress
+                                </span>
+</div>
+<div class="mt-auto">
+<div class="flex justify-between text-text-sm font-text-sm mb-xs">
+<span class="text-on-surface-variant">Attainment</span>
+<span class="font-semibold text-on-surface">65%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2.5">
+<div class="bg-primary h-2.5 rounded-full" style="width: 65%"></div>
+</div>
+<p class="text-text-xs font-text-xs text-on-surface-variant mt-sm">Baseline: 30% | Target: 80%</p>
+</div>
+</div>
+<!-- Goal 2 -->
+<div class="bg-surface rounded-lg p-lg border border-outline-variant shadow-sm flex flex-col h-full">
+<div class="flex justify-between items-start mb-md">
+<h4 class="text-text-md font-text-md font-semibold text-on-surface leading-snug pr-sm">Improve joint attention duration</h4>
+<span class="shrink-0 inline-flex items-center px-2 py-1 rounded-md text-text-xs font-text-xs font-medium bg-[#DCFCE7] text-[#15803D]">
+                                    Achieved
+                                </span>
+</div>
+<div class="mt-auto">
+<div class="flex justify-between text-text-sm font-text-sm mb-xs">
+<span class="text-on-surface-variant">Attainment</span>
+<span class="font-semibold text-on-surface">90%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2.5">
+<div class="bg-success h-2.5 rounded-full" style="width: 90%"></div>
+</div>
+<p class="text-text-xs font-text-xs text-on-surface-variant mt-sm">Baseline: 40% | Target: 85%</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Sensory Progress Table -->
+<section class="bg-surface rounded-lg border border-outline-variant overflow-hidden shadow-sm">
+<div class="px-lg py-md border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+<h3 class="text-text-lg font-text-lg font-semibold text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">psychology</span>
+                            Sensory Processing Review
+                        </h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-lowest border-b border-outline-variant">
+<th class="py-sm px-lg text-text-xs font-text-xs font-medium text-on-surface-variant uppercase tracking-wider">Domain</th>
+<th class="py-sm px-lg text-text-xs font-text-xs font-medium text-on-surface-variant uppercase tracking-wider">Initial Rating</th>
+<th class="py-sm px-lg text-text-xs font-text-xs font-medium text-on-surface-variant uppercase tracking-wider">Current Rating</th>
+<th class="py-sm px-lg text-text-xs font-text-xs font-medium text-on-surface-variant uppercase tracking-wider">Delta</th>
+</tr>
+</thead>
+<tbody class="text-text-sm font-text-sm divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-md px-lg font-medium text-on-surface">Auditory Processing</td>
+<td class="py-md px-lg text-on-surface-variant">Significant Difficulty (4)</td>
+<td class="py-md px-lg text-on-surface">Moderate Difficulty (3)</td>
+<td class="py-md px-lg">
+<span class="inline-flex items-center gap-xs text-success bg-green-50 px-2 py-1 rounded text-text-xs font-text-xs font-medium border border-green-200">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+                                            Improved (-1)
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-md px-lg font-medium text-on-surface">Tactile Sensitivity</td>
+<td class="py-md px-lg text-on-surface-variant">Moderate Difficulty (3)</td>
+<td class="py-md px-lg text-on-surface">Mild Difficulty (2)</td>
+<td class="py-md px-lg">
+<span class="inline-flex items-center gap-xs text-success bg-green-50 px-2 py-1 rounded text-text-xs font-text-xs font-medium border border-green-200">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+                                            Improved (-1)
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-md px-lg font-medium text-on-surface">Vestibular Processing</td>
+<td class="py-md px-lg text-on-surface-variant">Mild Difficulty (2)</td>
+<td class="py-md px-lg text-on-surface">Mild Difficulty (2)</td>
+<td class="py-md px-lg">
+<span class="inline-flex items-center gap-xs text-on-surface-variant bg-surface-variant px-2 py-1 rounded text-text-xs font-text-xs font-medium border border-outline-variant">
+<span class="material-symbols-outlined text-[14px]">horizontal_rule</span>
+                                            Unchanged (0)
+                                        </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Narrative Sections -->
+<section class="space-y-md">
+<div class="bg-surface rounded-lg p-lg border border-outline-variant shadow-sm relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+<h3 class="text-text-lg font-text-lg font-semibold text-on-surface mb-sm">Clinical Observations</h3>
+<p class="text-text-md font-text-md text-on-surface-variant leading-relaxed">
+                            Aarav demonstrated increased engagement during floor play today. He spontaneously initiated interaction twice using a one-word utterance ("car", "go"). Transitioning away from preferred activities remains challenging, requiring visual timers and verbal warnings. Auditory sensitivity to sudden loud noises is still present but recovery time has decreased significantly.
+                        </p>
+</div>
+<div class="bg-surface rounded-lg p-lg border border-outline-variant shadow-sm relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
+<h3 class="text-text-lg font-text-lg font-semibold text-on-surface mb-sm">Plan Adjustments</h3>
+<p class="text-text-md font-text-md text-on-surface-variant leading-relaxed">
+                            Will introduce a 'first/then' board to support transitions. Continuing sensory diet emphasizing heavy work prior to seated tasks. Goal #2 (joint attention) will be upgraded to target 3-minute intervals with structured tabletop activities next month.
+                        </p>
+</div>
+</section>
+</div>
+<!-- Right Column: Meta & Signatures -->
+<div class="space-y-lg">
+<!-- Signatures Card -->
+<section class="bg-surface-container-low rounded-lg p-lg border border-outline-variant sticky top-xl">
+<h3 class="text-text-lg font-text-lg font-semibold text-on-surface mb-md border-b border-outline-variant pb-sm flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">draw</span>
+                        Signatures
+                    </h3>
+<div class="space-y-lg">
+<!-- Therapist Auth -->
+<div>
+<p class="text-text-sm font-text-sm font-medium text-on-surface mb-xs">Therapist Authorization</p>
+<div class="border-2 border-dashed border-outline-variant rounded-lg p-md bg-surface text-center mb-xs h-24 flex items-center justify-center">
+<span class="font-[cursive] text-display-xs text-brown-800 opacity-80">Dr. Emily Chen, OTR/L</span>
+</div>
+<div class="flex justify-between text-text-xs font-text-xs text-on-surface-variant">
+<span>Signed Electronically</span>
+<span>Oct 24, 2023 - 14:30 EST</span>
+</div>
+</div>
+<!-- Guardian Auth -->
+<div>
+<p class="text-text-sm font-text-sm font-medium text-on-surface mb-xs">Guardian Acknowledgment</p>
+<div class="border-2 border-dashed border-outline-variant rounded-lg p-md bg-surface text-center mb-xs h-24 flex items-center justify-center">
+<span class="font-[cursive] text-text-xl text-brown-800 opacity-80">Priya Sharma</span>
+</div>
+<div class="flex justify-between text-text-xs font-text-xs text-on-surface-variant">
+<span>Signed in Clinic</span>
+<span>Oct 24, 2023 - 14:45 EST</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+</body></html>

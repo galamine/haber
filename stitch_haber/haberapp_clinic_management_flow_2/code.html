@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - HaberApp</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#906c64",
+                        "error": "#ba1a1a",
+                        "background": "#fff8f6",
+                        "inverse-surface": "#342f2f",
+                        "surface-container-lowest": "#ffffff",
+                        "brown-100": "#f0ece9",
+                        "on-secondary-fixed-variant": "#613d3d",
+                        "surface-container-highest": "#e9e1df",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "brown-400": "#b5978c",
+                        "on-primary-fixed": "#2d1510",
+                        "primary": "#75544d",
+                        "secondary-container": "#fecbca",
+                        "inverse-on-surface": "#f7efed",
+                        "info": "#3b82f6",
+                        "tertiary-container": "#5f7a73",
+                        "on-error": "#ffffff",
+                        "tertiary": "#47615b",
+                        "primary-fixed": "#ffdad2",
+                        "secondary-fixed": "#ffdad9",
+                        "on-primary-fixed-variant": "#5e3f38",
+                        "brown-300": "#d1bfb6",
+                        "brown-900": "#3d2626",
+                        "danger": "#ef4444",
+                        "brown-800": "#4d3232",
+                        "surface-bright": "#fff8f6",
+                        "brown-600": "#7a5a54",
+                        "surface-variant": "#e9e1df",
+                        "tertiary-fixed": "#cce9e0",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#fffbff",
+                        "surface-container-low": "#faf2f0",
+                        "surface": "#fff8f6",
+                        "secondary": "#7b5454",
+                        "on-secondary-container": "#7a5353",
+                        "primary-fixed-dim": "#e8bdb3",
+                        "outline-variant": "#d4c3bf",
+                        "on-secondary-fixed": "#2f1314",
+                        "brown-500": "#947068",
+                        "surface-tint": "#78564f",
+                        "secondary-fixed-dim": "#ecbaba",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#1e1b1a",
+                        "on-tertiary-fixed": "#05201b",
+                        "brown-200": "#e2d6d0",
+                        "on-primary": "#ffffff",
+                        "brown-700": "#664242",
+                        "success": "#22c55e",
+                        "brown-50": "#f6f2f0",
+                        "tertiary-fixed-dim": "#b0cdc4",
+                        "surface-dim": "#e0d8d7",
+                        "inverse-primary": "#e8bdb3",
+                        "on-tertiary-container": "#f4fffa",
+                        "on-surface-variant": "#504441",
+                        "surface-container-high": "#efe6e5",
+                        "on-tertiary-fixed-variant": "#324c46",
+                        "on-surface": "#1e1b1a",
+                        "surface-container": "#f5ecea",
+                        "warning": "#f59e0b",
+                        "outline": "#827471"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "2xl": "48px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "3xl": "64px"
+                    },
+                    "fontFamily": {
+                        "text-lg": ["Inter"],
+                        "display-sm": ["Inter"],
+                        "text-xl": ["Inter"],
+                        "display-2xl": ["Inter"],
+                        "display-xl": ["Inter"],
+                        "display-md": ["Inter"],
+                        "text-xs": ["Inter"],
+                        "display-xs": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "text-sm": ["Inter"],
+                        "text-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "text-lg": ["18px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "display-sm": ["30px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "text-xl": ["20px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "display-2xl": ["72px", {"lineHeight": "1.1", "fontWeight": "500"}],
+                        "display-xl": ["60px", {"lineHeight": "1.1", "fontWeight": "500"}],
+                        "display-md": ["36px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "text-xs": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "display-xs": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "text-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "text-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center p-md">
+<!-- Auth Container -->
+<main class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant p-xl flex flex-col gap-lg relative overflow-hidden">
+<!-- Subtle Top Accent -->
+<div class="absolute top-0 left-0 w-full h-1 bg-brown-600"></div>
+<!-- Header Section -->
+<div class="flex flex-col items-center text-center">
+<!-- Brand Logo -->
+<div class="w-16 h-16 bg-brown-50 rounded-xl flex items-center justify-center mb-md border border-brown-200">
+<span class="material-symbols-outlined text-brown-800 text-3xl" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+</div>
+<h1 class="text-display-sm font-display-sm font-black text-brown-800 mb-xs">HaberApp</h1>
+<h2 class="text-display-xs font-display-xs text-on-surface mt-sm">Welcome to HaberApp</h2>
+<p class="text-text-md font-text-md text-on-surface-variant mt-xs">Enter your clinic email to receive a login code</p>
+</div>
+<!-- Form Section -->
+<form action="#" class="flex flex-col gap-md w-full mt-sm" method="POST">
+<!-- Email Input Group -->
+<div class="flex flex-col gap-xs">
+<label class="text-text-sm font-text-sm font-medium text-on-surface" for="email">Email Address</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-md text-brown-400">mail</span>
+<input class="w-full pl-2xl pr-md py-sm rounded-lg border border-brown-300 bg-surface-bright focus:outline-none focus:ring-2 focus:ring-brown-700 text-text-md font-text-md text-on-surface caret-[#947068] transition-colors" id="email" name="email" placeholder="doctor@clinic.com" required="" type="email"/>
+</div>
+</div>
+<!-- Submit Action -->
+<button class="w-full mt-sm py-sm px-lg bg-brown-600 hover:bg-brown-700 text-on-primary text-text-md font-text-md font-medium rounded-lg transition-colors flex items-center justify-center gap-sm" type="submit">
+                Send OTP
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</form>
+<!-- Support Footer -->
+<div class="mt-md text-center">
+<p class="text-text-sm font-text-sm text-on-surface-variant">
+                Need help? <a class="text-brown-600 font-medium hover:underline" href="#">Contact IT Support</a>
+</p>
+</div>
+</main>
+</body></html>

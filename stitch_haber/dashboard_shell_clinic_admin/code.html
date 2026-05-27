@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HaberApp - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#906c64",
+                        "error": "#ba1a1a",
+                        "background": "#fff8f6",
+                        "inverse-surface": "#342f2f",
+                        "surface-container-lowest": "#ffffff",
+                        "brown-100": "#f0ece9",
+                        "on-secondary-fixed-variant": "#613d3d",
+                        "surface-container-highest": "#e9e1df",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "brown-400": "#b5978c",
+                        "on-primary-fixed": "#2d1510",
+                        "primary": "#75544d",
+                        "secondary-container": "#fecbca",
+                        "inverse-on-surface": "#f7efed",
+                        "info": "#3b82f6",
+                        "tertiary-container": "#5f7a73",
+                        "on-error": "#ffffff",
+                        "tertiary": "#47615b",
+                        "primary-fixed": "#ffdad2",
+                        "secondary-fixed": "#ffdad9",
+                        "on-primary-fixed-variant": "#5e3f38",
+                        "brown-300": "#d1bfb6",
+                        "brown-900": "#3d2626",
+                        "danger": "#ef4444",
+                        "brown-800": "#4d3232",
+                        "surface-bright": "#fff8f6",
+                        "brown-600": "#7a5a54",
+                        "surface-variant": "#e9e1df",
+                        "tertiary-fixed": "#cce9e0",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#fffbff",
+                        "surface-container-low": "#faf2f0",
+                        "surface": "#fff8f6",
+                        "secondary": "#7b5454",
+                        "on-secondary-container": "#7a5353",
+                        "primary-fixed-dim": "#e8bdb3",
+                        "outline-variant": "#d4c3bf",
+                        "on-secondary-fixed": "#2f1314",
+                        "brown-500": "#947068",
+                        "surface-tint": "#78564f",
+                        "secondary-fixed-dim": "#ecbaba",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#1e1b1a",
+                        "on-tertiary-fixed": "#05201b",
+                        "brown-200": "#e2d6d0",
+                        "on-primary": "#ffffff",
+                        "brown-700": "#664242",
+                        "success": "#22c55e",
+                        "brown-50": "#f6f2f0",
+                        "tertiary-fixed-dim": "#b0cdc4",
+                        "surface-dim": "#e0d8d7",
+                        "inverse-primary": "#e8bdb3",
+                        "on-tertiary-container": "#f4fffa",
+                        "on-surface-variant": "#504441",
+                        "surface-container-high": "#efe6e5",
+                        "on-tertiary-fixed-variant": "#324c46",
+                        "on-surface": "#1e1b1a",
+                        "surface-container": "#f5ecea",
+                        "warning": "#f59e0b",
+                        "outline": "#827471"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "2xl": "48px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "3xl": "64px"
+                    },
+                    "fontFamily": {
+                        "text-lg": ["Inter", "sans-serif"],
+                        "display-sm": ["Inter", "sans-serif"],
+                        "text-xl": ["Inter", "sans-serif"],
+                        "display-2xl": ["Inter", "sans-serif"],
+                        "display-xl": ["Inter", "sans-serif"],
+                        "display-md": ["Inter", "sans-serif"],
+                        "text-xs": ["Inter", "sans-serif"],
+                        "display-xs": ["Inter", "sans-serif"],
+                        "display-lg": ["Inter", "sans-serif"],
+                        "text-sm": ["Inter", "sans-serif"],
+                        "text-md": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "text-lg": ["18px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "display-sm": ["30px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "text-xl": ["20px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "display-2xl": ["72px", {"lineHeight": "1.1", "fontWeight": "500"}],
+                        "display-xl": ["60px", {"lineHeight": "1.1", "fontWeight": "500"}],
+                        "display-md": ["36px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "text-xs": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "display-xs": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "text-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "text-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-text-md text-text-md h-screen flex overflow-hidden antialiased">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col shrink-0 docked left-0 h-full w-64 bg-brown-50 dark:bg-brown-900 border-r border-outline-variant dark:border-brown-700 py-xl px-md space-y-base flat no shadows z-40">
+<!-- Header -->
+<div class="flex items-center gap-md px-md mb-lg">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]" data-icon="medical_services">medical_services</span>
+</div>
+<div class="flex flex-col">
+<span class="text-display-sm font-display-sm font-black text-brown-800 dark:text-brown-100">HaberApp</span>
+<span class="text-text-xs font-text-xs text-on-surface-variant tracking-wide">Clinical Excellence</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 flex flex-col space-y-xs overflow-y-auto pr-sm pb-xl">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-md px-md py-sm bg-primary-container text-on-primary-container dark:bg-brown-700 dark:text-brown-50 rounded-lg font-medium scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard" data-weight="fill">dashboard</span>
+<span class="text-text-sm font-text-sm">Dashboard</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="child_care">child_care</span>
+<span class="text-text-sm font-text-sm">Children</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="event_note">event_note</span>
+<span class="text-text-sm font-text-sm">Sessions Today</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="analytics">analytics</span>
+<span class="text-text-sm font-text-sm">Assessments</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="clinical_notes">clinical_notes</span>
+<span class="text-text-sm font-text-sm">Treatment Plans</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="groups">groups</span>
+<span class="text-text-sm font-text-sm">Staff</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="settings_applications">settings_applications</span>
+<span class="text-text-sm font-text-sm">Clinic Settings</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="insert_chart">insert_chart</span>
+<span class="text-text-sm font-text-sm">Reports</span>
+</a>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-md py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg group mt-lg" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span class="text-text-sm font-text-sm">Platform Overview</span>
+</a>
+</div>
+<!-- Footer Profile & Actions -->
+<div class="mt-auto border-t border-outline-variant pt-md px-md flex flex-col gap-sm">
+<div class="flex items-center gap-sm mb-sm bg-surface-container rounded-lg p-sm">
+<div class="w-8 h-8 rounded-full bg-tertiary-container overflow-hidden shrink-0">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of Dr. Sarah Chen, a clinical administrator, set against a soft, earthy brown background. She has a warm, welcoming expression, lit by natural, bright office lighting. The overall mood is approachable, competent, and modern, reflecting a high-end clinical environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAw_VdE6KnF4dq4H9a7FcxJ_eV-l79Fi2J8BJpYBII4Re4orQPH5QyZmk7lBpF0FurjI6W__VF3WKv6d8-spZ3UXp4fy58Lsosx0ULa5r_OPZrmZjgJluBb9JbFxug29qlYpnb-LbSEoo7uyzJHkrARiWH6BWO_ODfWiP2tyZjbntrxpPx8k-ioda2pbKqCymrmKzPZqZnf2yhHSGtK762Wfmqr7mZ_oPxCBiytVIa9tiujTOJkMrLGhz2JqpUYYkef8bglZVmtSElt"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-text-sm font-text-sm font-medium text-on-surface truncate">Dr. Sarah Chen</span>
+<span class="text-text-xs font-text-xs text-on-surface-variant truncate">Clinic Admin</span>
+</div>
+</div>
+<a class="text-on-surface-variant dark:text-brown-300 flex items-center gap-md px-sm py-sm hover:bg-brown-100 dark:hover:bg-brown-800 transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="person">person</span>
+<span class="text-text-sm font-text-sm">Profile Settings</span>
+</a>
+<a class="text-error flex items-center gap-md px-sm py-sm hover:bg-error-container transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
+<span class="text-text-sm font-text-sm font-medium">Sign Out</span>
+</a>
+<button class="text-text-xs font-text-xs text-on-surface-variant underline hover:text-on-surface text-left px-sm pt-xs pb-sm">
+                Log out everywhere
+            </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 h-full overflow-y-auto bg-surface flex flex-col relative">
+<!-- Header Section -->
+<header class="px-lg md:px-2xl py-xl border-b border-surface-container flex flex-col md:flex-row md:items-end justify-between gap-md sticky top-0 bg-surface/90 backdrop-blur-md z-30">
+<div>
+<h1 class="text-display-md font-display-md text-on-background tracking-tight">Welcome back, Dr. Chen</h1>
+<p class="text-text-lg font-text-lg text-on-surface-variant mt-xs">Here is an overview of clinic operations for today.</p>
+</div>
+<div class="flex items-center gap-sm">
+<div class="bg-surface-container px-md py-sm rounded-lg flex items-center gap-sm border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="calendar_today">calendar_today</span>
+<span class="text-text-sm font-text-sm font-medium text-on-surface">Oct 24, 2023</span>
+</div>
+</div>
+</header>
+<!-- Dashboard Canvas (Bento Grid) -->
+<div class="p-lg md:p-2xl flex-1 flex flex-col gap-lg max-w-[1400px] w-full mx-auto">
+<!-- Top Metrics Row -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Metric Card 1: Active Children -->
+<div class="bg-surface-container-low border border-surface-dim rounded-xl p-lg flex flex-col justify-between hover:shadow-sm transition-shadow">
+<div class="flex justify-between items-start mb-lg">
+<div class="w-12 h-12 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]" data-icon="diversity_1">diversity_1</span>
+</div>
+<span class="text-text-xs font-text-xs font-medium px-2 py-1 rounded-full bg-success/10 text-success flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span> 4%
+                        </span>
+</div>
+<div>
+<h3 class="text-text-sm font-text-sm text-on-surface-variant mb-xs">Active Children</h3>
+<p class="text-display-sm font-display-sm font-medium text-on-surface">142</p>
+</div>
+</div>
+<!-- Metric Card 2: Sessions Today -->
+<div class="bg-primary-container text-on-primary-container rounded-xl p-lg flex flex-col justify-between relative overflow-hidden shadow-sm">
+<!-- Decorative abstract pattern using gradient -->
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+<div class="flex justify-between items-start mb-lg relative z-10">
+<div class="w-12 h-12 rounded-lg bg-white/20 text-white flex items-center justify-center backdrop-blur-sm">
+<span class="material-symbols-outlined text-[28px]" data-icon="schedule">schedule</span>
+</div>
+</div>
+<div class="relative z-10">
+<h3 class="text-text-sm font-text-sm text-white/80 mb-xs">Sessions Today</h3>
+<div class="flex items-baseline gap-sm">
+<p class="text-display-sm font-display-sm font-medium text-white">48</p>
+<span class="text-text-xs font-text-xs text-white/70">/ 52 Scheduled</span>
+</div>
+</div>
+</div>
+<!-- Metric Card 3: Pending Assessments -->
+<div class="bg-surface-container-low border border-surface-dim rounded-xl p-lg flex flex-col justify-between hover:shadow-sm transition-shadow">
+<div class="flex justify-between items-start mb-lg">
+<div class="w-12 h-12 rounded-lg bg-error-container text-on-error-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]" data-icon="assignment_late">assignment_late</span>
+</div>
+<span class="text-text-xs font-text-xs font-medium px-2 py-1 rounded-full bg-warning/20 text-warning flex items-center gap-xs">
+                            Action Needed
+                        </span>
+</div>
+<div>
+<h3 class="text-text-sm font-text-sm text-on-surface-variant mb-xs">Pending Assessments</h3>
+<p class="text-display-sm font-display-sm font-medium text-on-surface">12</p>
+</div>
+</div>
+</section>
+<!-- Asymmetric Lower Section -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-md flex-1 min-h-[400px]">
+<!-- Main Activity Area (Spans 2 columns) -->
+<div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col">
+<div class="flex items-center justify-between mb-lg">
+<h2 class="text-text-xl font-text-xl font-medium text-on-surface">Upcoming Sessions</h2>
+<button class="text-text-sm font-text-sm text-primary hover:text-brown-800 font-medium flex items-center gap-xs">
+                            View Schedule <span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="flex-1 flex flex-col gap-sm">
+<!-- Session Row -->
+<div class="flex items-center gap-md p-md rounded-lg hover:bg-surface-container transition-colors border border-transparent hover:border-surface-dim">
+<div class="w-12 h-12 rounded-full bg-brown-100 flex items-center justify-center shrink-0 text-brown-800 font-medium">LM</div>
+<div class="flex-1 min-w-0">
+<h4 class="text-text-md font-text-md font-medium text-on-surface truncate">Leo Miller</h4>
+<p class="text-text-sm font-text-sm text-on-surface-variant truncate">Occupational Therapy • Room 2</p>
+</div>
+<div class="text-right">
+<span class="block text-text-md font-text-md font-medium text-on-surface">10:00 AM</span>
+<span class="text-text-xs font-text-xs text-on-surface-variant">45 min</span>
+</div>
+<button class="ml-sm w-8 h-8 rounded-full hover:bg-brown-200 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<!-- Session Row -->
+<div class="flex items-center gap-md p-md rounded-lg hover:bg-surface-container transition-colors border border-transparent hover:border-surface-dim">
+<div class="w-12 h-12 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center shrink-0 font-medium">AJ</div>
+<div class="flex-1 min-w-0">
+<h4 class="text-text-md font-text-md font-medium text-on-surface truncate">Aria Jenkins</h4>
+<p class="text-text-sm font-text-sm text-on-surface-variant truncate">Speech Therapy • Room 1</p>
+</div>
+<div class="text-right">
+<span class="block text-text-md font-text-md font-medium text-on-surface">11:15 AM</span>
+<span class="text-text-xs font-text-xs text-on-surface-variant">30 min</span>
+</div>
+<button class="ml-sm w-8 h-8 rounded-full hover:bg-brown-200 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Right Sidebar Widget (Spans 1 column) -->
+<div class="bg-brown-50 border border-outline-variant rounded-xl p-lg flex flex-col gap-md">
+<h2 class="text-text-xl font-text-xl font-medium text-on-surface mb-xs">Clinic Status</h2>
+<div class="bg-surface-container-lowest rounded-lg p-md border border-surface-dim flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center text-success">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+</div>
+<div>
+<p class="text-text-sm font-text-sm font-medium text-on-surface">System Status</p>
+<p class="text-text-xs font-text-xs text-on-surface-variant">All services operational</p>
+</div>
+</div>
+<div class="mt-auto pt-md border-t border-outline-variant">
+<p class="text-text-sm font-text-sm font-medium text-on-surface mb-sm">Quick Actions</p>
+<div class="flex flex-col gap-sm">
+<button class="w-full bg-surface-container-lowest border border-outline-variant text-on-surface hover:bg-surface-container px-md py-sm rounded-lg text-text-sm font-text-sm font-medium flex items-center justify-center gap-sm transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span> New Assessment
+                            </button>
+<button class="w-full bg-primary text-on-primary hover:bg-brown-800 px-md py-sm rounded-lg text-text-sm font-text-sm font-medium flex items-center justify-center gap-sm transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="person_add">person_add</span> Register Child
+                            </button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>
