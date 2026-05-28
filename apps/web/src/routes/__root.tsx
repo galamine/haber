@@ -8,8 +8,8 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
+import type { useAuthStore } from "@/stores/auth";
 import type { trpc } from "@/utils/trpc";
 
 import "../index.css";
@@ -17,26 +17,17 @@ import "../index.css";
 export interface RouterAppContext {
 	trpc: typeof trpc;
 	queryClient: QueryClient;
+	auth: ReturnType<typeof useAuthStore.getState>;
 }
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
 	component: RootComponent,
 	head: () => ({
 		meta: [
-			{
-				title: "habe-final",
-			},
-			{
-				name: "description",
-				content: "habe-final is a web application",
-			},
+			{ title: "HaberApp" },
+			{ name: "description", content: "HaberApp Clinical Platform" },
 		],
-		links: [
-			{
-				rel: "icon",
-				href: "/favicon.ico",
-			},
-		],
+		links: [{ rel: "icon", href: "/favicon.ico" }],
 	}),
 });
 
@@ -46,14 +37,11 @@ function RootComponent() {
 			<HeadContent />
 			<ThemeProvider
 				attribute="class"
-				defaultTheme="dark"
+				defaultTheme="light"
 				disableTransitionOnChange
 				storageKey="vite-ui-theme"
 			>
-				<div className="grid h-svh grid-rows-[auto_1fr]">
-					<Header />
-					<Outlet />
-				</div>
+				<Outlet />
 				<Toaster richColors />
 			</ThemeProvider>
 			<TanStackRouterDevtools position="bottom-left" />

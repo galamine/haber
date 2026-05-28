@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
+import { useAuthStore } from "./stores/auth";
 import { queryClient, trpc } from "./utils/trpc";
 
 const router = createRouter({
@@ -11,7 +12,7 @@ const router = createRouter({
 	defaultPreload: "intent",
 	scrollRestoration: true,
 	defaultPendingComponent: () => <Loader />,
-	context: { trpc, queryClient },
+	context: { trpc, queryClient, auth: useAuthStore.getState() },
 	Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
 		return (
 			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

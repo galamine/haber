@@ -1,7 +1,6 @@
+import type { UserRole } from "@habe-final/api/schemas";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
-import type { UserRole } from "@habe-final/api/schemas";
 
 type AuthState = {
 	accessToken: string | null;
@@ -39,7 +38,9 @@ function scheduleRefresh(accessToken: string, refreshToken: string) {
 			const result = await trpcClient.auth.refreshToken.mutate({
 				refreshToken,
 			});
-			useAuthStore.getState().setTokens(result.accessToken, result.refreshToken);
+			useAuthStore
+				.getState()
+				.setTokens(result.accessToken, result.refreshToken);
 		} catch {
 			useAuthStore.getState().clearTokens();
 		}
