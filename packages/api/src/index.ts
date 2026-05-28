@@ -2,12 +2,40 @@ import prisma from "@habe-final/db";
 import { initTRPC, TRPCError } from "@trpc/server";
 
 import type { AuthUser, Context } from "./context";
+import { logger } from "./lib/logger";
 
 export const t = initTRPC.context<Context>().create();
 
 export const router = t.router;
 
-export const publicProcedure = t.procedure;
+const SENSITIVE_KEYS = new Set(["code", "password", "refreshToken", "token"]);
+
+function sanitizeInput(input: unknown): unknown {
+	if (!input || typeof input !== "object") return input;
+	return Object.fromEntries(
+		Object.entries(input as Record<string, unknown>).map(([k, v]) => [
+			k,
+			SENSITIVE_KEYS.has(k) ? "[redacted]" : v,
+		]),
+	);
+}
+
+const loggingMiddleware = t.middleware(async ({ path, type, input, next }) => {
+	const start = Date.now();
+	const result = await next();
+	const ms = Date.now() - start;
+	if (result.ok) {
+		logger.info({ path, type, input: sanitizeInput(input), ms }, "trpc ok");
+	} else {
+		logger.error(
+			{ path, type, input: sanitizeInput(input), ms, err: result.error },
+			"trpc error",
+		);
+	}
+	return result;
+});
+
+export const publicProcedure = t.procedure.use(loggingMiddleware);
 
 const enforceAuth = t.middleware(async ({ ctx, next }) => {
 	if (ctx.auth === null) {

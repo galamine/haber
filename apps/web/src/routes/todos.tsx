@@ -12,6 +12,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Loader2, Trash2 } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import { toast } from "sonner";
 
 import { trpc } from "@/utils/trpc";
 
@@ -30,7 +31,9 @@ function TodosRoute() {
 			onSuccess: () => {
 				todos.refetch();
 				setNewTodoText("");
+				toast.success("Task added");
 			},
+			onError: (err) => toast.error(err.message),
 		}),
 	);
 	const toggleMutation = useMutation(
@@ -38,13 +41,16 @@ function TodosRoute() {
 			onSuccess: () => {
 				todos.refetch();
 			},
+			onError: (err) => toast.error(err.message),
 		}),
 	);
 	const deleteMutation = useMutation(
 		trpc.todo.delete.mutationOptions({
 			onSuccess: () => {
 				todos.refetch();
+				toast.success("Task deleted");
 			},
+			onError: (err) => toast.error(err.message),
 		}),
 	);
 

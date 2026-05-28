@@ -4,9 +4,9 @@ import { env } from "@habe-final/env/server";
 import { TRPCError } from "@trpc/server";
 import { Resend } from "resend";
 import { z } from "zod";
-
 import { protectedProcedure, publicProcedure, router } from "../index";
 import { signAccessToken } from "../lib/jwt";
+import { logger } from "../lib/logger";
 import { generateOtp, hashValue } from "../lib/otp";
 import { checkRateLimit } from "../lib/rate-limit";
 import { RequestOtpInput, VerifyOtpInput } from "../schemas/index";
@@ -20,6 +20,10 @@ const OTP_MAX_ATTEMPTS = 5;
 const SESSION_EXPIRY_MS = 30 * 24 * 60 * 60 * 1000;
 const IDLE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
+function maskEmail(email: string): string {
+	return email.replace(/(.{2}).*(@.*)/, "$1***$2");
+}
+
 export const authRouter = router({
 	requestOtp: publicProcedure
 		.input(RequestOtpInput)
@@ -30,6 +34,7 @@ export const authRouter = router({
 				OTP_WINDOW_MS,
 			);
 			if (!allowed) {
+				logger.warn({ email: maskEmail(input.email) }, "auth: rate limit hit");
 				throw new TRPCError({
 					code: "TOO_MANY_REQUESTS",
 					message: "Too many OTP requests. Try again later.",
@@ -43,6 +48,8 @@ export const authRouter = router({
 			if (!user?.loginEnabled) {
 				return { success: true };
 			}
+
+			logger.info({ email: maskEmail(input.email) }, "auth: OTP requested");
 
 			await prisma.otp.updateMany({
 				where: {
@@ -104,6 +111,7 @@ export const authRouter = router({
 			});
 
 			if (updated.attemptCount > OTP_MAX_ATTEMPTS) {
+				logger.warn({ userId: user.id }, "auth: OTP max attempts exceeded");
 				await prisma.otp.update({
 					where: { id: otp.id },
 					data: { invalidatedAt: new Date() },
@@ -112,6 +120,10 @@ export const authRouter = router({
 			}
 
 			if (updated.codeHash !== hashValue(input.code)) {
+				logger.warn(
+					{ userId: user.id, attemptCount: updated.attemptCount },
+					"auth: OTP invalid attempt",
+				);
 				if (updated.attemptCount >= OTP_MAX_ATTEMPTS) {
 					await prisma.otp.update({
 						where: { id: otp.id },
@@ -154,6 +166,8 @@ export const authRouter = router({
 				familyId,
 			});
 
+			logger.info({ userId: user.id }, "auth: login success");
+
 			return { accessToken, refreshToken };
 		}),
 
@@ -168,6 +182,10 @@ export const authRouter = router({
 
 			if (!session || session.revokedAt !== null) {
 				if (session) {
+					logger.warn(
+						{ familyId: session.familyId },
+						"auth: refresh token reuse detected",
+					);
 					await prisma.session.updateMany({
 						where: { familyId: session.familyId },
 						data: { reuseDetected: true, revokedAt: new Date() },
@@ -178,6 +196,7 @@ export const authRouter = router({
 
 			const idleMs = Date.now() - session.lastActivity.getTime();
 			if (idleMs > IDLE_EXPIRY_MS) {
+				logger.info({ sessionId: session.id }, "auth: refresh idle expired");
 				await prisma.session.update({
 					where: { id: session.id },
 					data: { revokedAt: new Date() },
@@ -189,6 +208,8 @@ export const authRouter = router({
 				where: { id: session.id },
 				data: { revokedAt: new Date() },
 			});
+
+			logger.debug({ userId: session.userId }, "auth: refresh success");
 
 			const newRefreshToken = randomUUID();
 			const now = new Date();
@@ -221,6 +242,7 @@ export const authRouter = router({
 				where: { tokenHash, userId: ctx.auth.userId, revokedAt: null },
 				data: { revokedAt: new Date() },
 			});
+			logger.info({ userId: ctx.auth.userId }, "auth: logout");
 			return { success: true };
 		}),
 
@@ -229,6 +251,7 @@ export const authRouter = router({
 			where: { userId: ctx.auth.userId, revokedAt: null },
 			data: { revokedAt: new Date() },
 		});
+		logger.info({ userId: ctx.auth.userId }, "auth: logout all");
 		return { success: true };
 	}),
 });

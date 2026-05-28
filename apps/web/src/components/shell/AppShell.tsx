@@ -26,6 +26,7 @@ import {
 	Stethoscope,
 	Users,
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
@@ -100,14 +101,20 @@ export function AppShell() {
 
 	async function handleLogout() {
 		if (refreshToken) {
-			await logoutMutation.mutateAsync({ refreshToken }).catch(() => null);
+			await logoutMutation
+				.mutateAsync({ refreshToken })
+				.catch((err) => toast.error(err.message));
 		}
+		toast.success("Logged out");
 		clearTokens();
 		router.navigate({ to: "/login" });
 	}
 
 	async function handleLogoutAll() {
-		await logoutAllMutation.mutateAsync().catch(() => null);
+		await logoutAllMutation
+			.mutateAsync()
+			.catch((err) => toast.error(err.message));
+		toast.success("Logged out everywhere");
 		clearTokens();
 		router.navigate({ to: "/login" });
 	}

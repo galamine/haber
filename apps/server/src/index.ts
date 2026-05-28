@@ -1,14 +1,26 @@
 import { createContext } from "@habe-final/api/context";
+import { logger } from "@habe-final/api/lib/logger";
 import { appRouter } from "@habe-final/api/routers/index";
 import { env } from "@habe-final/env/server";
 import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { logger } from "hono/logger";
 
 const app = new Hono();
 
-app.use(logger());
+app.use(async (c, next) => {
+	const start = Date.now();
+	await next();
+	logger.info(
+		{
+			method: c.req.method,
+			path: c.req.path,
+			status: c.res.status,
+			ms: Date.now() - start,
+		},
+		"http",
+	);
+});
 app.use(
 	"/*",
 	cors({
