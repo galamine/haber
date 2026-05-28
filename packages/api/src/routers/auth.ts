@@ -51,23 +51,26 @@ export const authRouter = router({
 
 			logger.info({ email: maskEmail(input.email) }, "auth: OTP requested");
 
-			await prisma.otp.updateMany({
-				where: {
-					userId: user.id,
-					usedAt: null,
-					invalidatedAt: null,
-					expiresAt: { gt: new Date() },
-				},
-				data: { invalidatedAt: new Date() },
-			});
-
 			const code = generateOtp();
-			await prisma.otp.create({
-				data: {
-					userId: user.id,
-					codeHash: hashValue(code),
-					expiresAt: new Date(Date.now() + OTP_EXPIRY_MS),
-				},
+
+			await prisma.$transaction(async (tx) => {
+				await tx.otp.updateMany({
+					where: {
+						userId: user.id,
+						usedAt: null,
+						invalidatedAt: null,
+						expiresAt: { gt: new Date() },
+					},
+					data: { invalidatedAt: new Date() },
+				});
+
+				await tx.otp.create({
+					data: {
+						userId: user.id,
+						codeHash: hashValue(code),
+						expiresAt: new Date(Date.now() + OTP_EXPIRY_MS),
+					},
+				});
 			});
 
 			await resend.emails.send({
@@ -133,30 +136,32 @@ export const authRouter = router({
 				throw new TRPCError({ code: "UNAUTHORIZED" });
 			}
 
-			await prisma.otp.update({
-				where: { id: otp.id },
-				data: { usedAt: new Date() },
-			});
-
-			if (!user.emailVerified) {
-				await prisma.user.update({
-					where: { id: user.id },
-					data: { emailVerified: true },
-				});
-			}
-
 			const refreshToken = randomUUID();
 			const familyId = randomUUID();
 			const now = new Date();
 
-			await prisma.session.create({
-				data: {
-					userId: user.id,
-					tokenHash: hashValue(refreshToken),
-					familyId,
-					expiresAt: new Date(now.getTime() + SESSION_EXPIRY_MS),
-					lastActivity: now,
-				},
+			await prisma.$transaction(async (tx) => {
+				await tx.otp.update({
+					where: { id: otp.id },
+					data: { usedAt: new Date() },
+				});
+
+				if (!user.emailVerified) {
+					await tx.user.update({
+						where: { id: user.id },
+						data: { emailVerified: true },
+					});
+				}
+
+				await tx.session.create({
+					data: {
+						userId: user.id,
+						tokenHash: hashValue(refreshToken),
+						familyId,
+						expiresAt: new Date(now.getTime() + SESSION_EXPIRY_MS),
+						lastActivity: now,
+					},
+				});
 			});
 
 			const accessToken = await signAccessToken({
@@ -204,24 +209,26 @@ export const authRouter = router({
 				throw new TRPCError({ code: "UNAUTHORIZED" });
 			}
 
-			await prisma.session.update({
-				where: { id: session.id },
-				data: { revokedAt: new Date() },
-			});
-
 			logger.debug({ userId: session.userId }, "auth: refresh success");
 
 			const newRefreshToken = randomUUID();
 			const now = new Date();
 
-			await prisma.session.create({
-				data: {
-					userId: session.userId,
-					tokenHash: hashValue(newRefreshToken),
-					familyId: session.familyId,
-					expiresAt: new Date(now.getTime() + SESSION_EXPIRY_MS),
-					lastActivity: now,
-				},
+			await prisma.$transaction(async (tx) => {
+				await tx.session.update({
+					where: { id: session.id },
+					data: { revokedAt: new Date() },
+				});
+
+				await tx.session.create({
+					data: {
+						userId: session.userId,
+						tokenHash: hashValue(newRefreshToken),
+						familyId: session.familyId,
+						expiresAt: new Date(now.getTime() + SESSION_EXPIRY_MS),
+						lastActivity: now,
+					},
+				});
 			});
 
 			const accessToken = await signAccessToken({

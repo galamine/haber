@@ -14,8 +14,8 @@ type SidebarContextValue = {
 
 const SidebarContext = React.createContext<SidebarContextValue>({
 	open: true,
-	setOpen: () => { },
-	toggle: () => { },
+	setOpen: () => {},
+	toggle: () => {},
 });
 
 function useSidebar() {

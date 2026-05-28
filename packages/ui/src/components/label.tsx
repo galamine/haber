@@ -3,6 +3,7 @@ import type * as React from "react";
 
 function Label({ className, ...props }: React.ComponentProps<"label">) {
 	return (
+		/* biome-ignore lint/a11y/noLabelWithoutControl: shadcn label pattern - htmlFor passed via spread */
 		<label
 			data-slot="label"
 			className={cn(

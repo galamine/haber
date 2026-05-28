@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 interface InputOTPProps {
 	maxLength: number;
 	value: string;
@@ -48,6 +46,6 @@ export function InputOTPGroup({ children }: { children: React.ReactNode }) {
 	return <div className="flex items-center">{children}</div>;
 }
 
-export function InputOTPSlot({ index }: { index: number }) {
+export function InputOTPSlot(_: { index: number }) {
 	return null;
 }

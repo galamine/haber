@@ -38,6 +38,6 @@
 	},
 	"packageManager": "pnpm@10.13.1",
 	"lint-staged": {
-		"**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,vue,astro,svelte}": ""
+		"**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,vue,astro,svelte}": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true"
 	}
 }

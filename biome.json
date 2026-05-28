@@ -26,7 +26,11 @@
 			"!**/.svelte-kit",
 			"!**/wrangler.jsonc",
 			"!**/.source",
-			"!**/convex/_generated"
+			"!**/convex/_generated",
+			"!**/clinical-data",
+			"!**/stitch_haber",
+			"!**/plans",
+			"!**/issues"
 		]
 	},
 	"formatter": {
