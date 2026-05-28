@@ -5,26 +5,20 @@ enum UserRole {
   STAFF
 }
 
-model Clinic {
-  id    String @id @default(cuid())
-  name  String
-  users User[]
-
-  @@map("clinic")
-}
-
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  emailVerified Boolean   @default(false)
-  loginEnabled  Boolean   @default(true)
-  role          UserRole
-  clinicId      String?
-  clinic        Clinic?   @relation(fields: [clinicId], references: [id])
-  sessions      Session[]
-  otps          Otp[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                              String    @id @default(cuid())
+  email                           String    @unique
+  emailVerified                   Boolean   @default(false)
+  loginEnabled                    Boolean   @default(true)
+  role                            UserRole  @default(STAFF)
+  clinicId                        String?
+  clinic                          Clinic?   @relation(fields: [clinicId], references: [id])
+  credentialsQualifications       String?
+  credentialsRegistrationNumber   String?
+  sessions                        Session[]
+  otps                            Otp[]
+  createdAt                       DateTime  @default(now())
+  updatedAt                       DateTime  @updatedAt
 
   @@map("user")
 }

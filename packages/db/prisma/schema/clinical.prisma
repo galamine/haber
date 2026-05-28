@@ -1,0 +1,179 @@
+enum ConsentStatus {
+  PENDING
+  GRANTED
+  WITHDRAWN
+}
+
+enum ConsentType {
+  TREATMENT
+  DATA_PROCESSING
+  IMAGE_VIDEO_CAPTURE
+}
+
+model Child {
+  id                  String        @id @default(cuid())
+  clinicId            String
+  opNumber            String
+  fullName            String
+  dob                 DateTime
+  sex                 String
+  photoUrl            String?
+  address             String?
+  heightCm            Float?
+  weightKg            Float?
+  weightMeasuredAt    DateTime?
+  spokenLanguages     String[]
+  school              String?
+  preferredTherapistId String?
+  consentStatus       ConsentStatus @default(PENDING)
+  latestPlanId        String?
+  deletedAt           DateTime?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  clinic        Clinic              @relation(fields: [clinicId], references: [id])
+  guards        Guardian[]
+  consents      ConsentRecord[]
+  assessments   InitialAssessment[]
+
+  @@map("child")
+}
+
+model Guardian {
+  id       String  @id @default(cuid())
+  childId  String
+  userId   String?
+  name     String
+  relation String
+  phone    String
+  email    String?
+
+  child          Child           @relation(fields: [childId], references: [id])
+  consentRecords ConsentRecord[]
+
+  @@map("guardian")
+}
+
+model ConsentRecord {
+  id          String      @id @default(cuid())
+  childId     String
+  guardianId  String
+  consentType ConsentType
+  typedName   String
+  checkbox    Boolean
+  timestamp   DateTime    @default(now())
+  ip          String
+
+  child    Child    @relation(fields: [childId], references: [id])
+  guardian Guardian @relation(fields: [guardianId], references: [id])
+
+  @@map("consent_record")
+}
+
+model InitialAssessment {
+  id            String   @id @default(cuid())
+  childId       String
+  therapistId   String
+  versionNumber Int      @default(1)
+  sectionA      Json
+  sectionB      Json
+  sectionC      Json
+  sectionD      Json
+  sectionE      Json
+  sectionF      Json
+  sectionG      Json
+  sectionH      Json
+  createdAt     DateTime @default(now())
+
+  child            Child            @relation(fields: [childId], references: [id])
+  sensoryProfiles  SensoryProfile[]
+
+  @@map("initial_assessment")
+}
+
+model SensoryProfile {
+  id           String   @id @default(cuid())
+  assessmentId String?
+  systemId     String
+  rating       Int
+  notes        String?
+  recordedAt   DateTime @default(now())
+
+  assessment InitialAssessment? @relation(fields: [assessmentId], references: [id])
+
+  @@map("sensory_profile")
+}
+
+model Milestone {
+  id                String  @id @default(cuid())
+  frameworkId       String  @default("global")
+  ageMinMonths      Int?
+  ageMaxMonths      Int?
+  scoringScaleMin   Int?
+  scoringScaleMax   Int?
+  description       String
+  parentMilestoneId String?
+  extensions        Json    @default("{}")
+
+  @@map("milestone")
+}
+
+model Diagnosis {
+  id       String  @id @default(cuid())
+  label    String
+  clinicId String?
+
+  @@map("diagnosis")
+}
+
+model FunctionalConcern {
+  id       String  @id @default(cuid())
+  label    String
+  clinicId String?
+
+  @@map("functional_concern")
+}
+
+model AssessmentTool {
+  id       String  @id @default(cuid())
+  label    String
+  clinicId String?
+
+  @@map("assessment_tool")
+}
+
+model Equipment {
+  id       String  @id @default(cuid())
+  label    String
+  clinicId String?
+
+  @@map("equipment")
+}
+
+model InterventionApproach {
+  id       String  @id @default(cuid())
+  label    String
+  clinicId String?
+
+  @@map("intervention_approach")
+}
+
+model SensorySystem {
+  id    String @id @default(cuid())
+  label String
+  order Int
+
+  @@map("sensory_system")
+}
+
+model ChildTherapistAssignment {
+  id              String    @id @default(cuid())
+  childId         String
+  therapistId     String
+  assignedAt      DateTime  @default(now())
+  reviewDueAt     DateTime?
+  reviewClaimed   Boolean   @default(false)
+  reviewClaimedBy String?
+
+  @@map("child_therapist_assignment")
+}

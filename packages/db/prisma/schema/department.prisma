@@ -1,0 +1,12 @@
+model Department {
+  id          String   @id @default(cuid())
+  clinicId    String
+  name        String
+  headUserId  String?
+  description String?
+  createdAt   DateTime @default(now())
+
+  clinic Clinic @relation(fields: [clinicId], references: [id])
+
+  @@map("department")
+}

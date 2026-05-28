@@ -1,0 +1,80 @@
+enum SessionStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  ABSENT
+  MANUALLY_CLOSED
+}
+
+model TherapySession {
+  id                  String        @id @default(cuid())
+  planId              String
+  childId             String
+  assignedTherapistId String?
+  roomId              String?
+  scheduledDate       DateTime
+  startedAt           DateTime?
+  completedAt         DateTime?
+  status              SessionStatus @default(PENDING)
+  webhookSecret       String        @default(uuid())
+  webhookSecretUsed   Boolean       @default(false)
+  notes               String?
+  qualityTag          String?
+  blockedByConsent    Boolean       @default(false)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  plan            TreatmentPlan          @relation(fields: [planId], references: [id])
+  gameAssignments SessionGameAssignment[]
+  result          GameResult?
+
+  @@index([planId])
+  @@index([childId])
+  @@index([scheduledDate])
+  @@map("therapy_session")
+}
+
+model SessionGameAssignment {
+  id              String  @id @default(cuid())
+  sessionId       String
+  gameVersionId   String
+  durationSeconds Int?
+  repetitions     Int?
+  instructions    String?
+  rubricVersion   String?
+  order           Int     @default(0)
+
+  session     TherapySession @relation(fields: [sessionId], references: [id])
+  gameVersion GameVersion    @relation(fields: [gameVersionId], references: [id])
+  result      GameResult?
+
+  @@map("session_game_assignment")
+}
+
+model GameResult {
+  id                  String   @id @default(cuid())
+  sessionId           String   @unique
+  sessionAssignmentId String?  @unique
+  scored              Json
+  rubricVersion       String
+  rawMetrics          Json     @default("{}")
+  events              Json     @default("[]")
+  recordedAt          DateTime @default(now())
+
+  session    TherapySession         @relation(fields: [sessionId], references: [id])
+  assignment SessionGameAssignment? @relation(fields: [sessionAssignmentId], references: [id])
+
+  @@map("game_result")
+}
+
+model RoomBooking {
+  id            String   @id @default(cuid())
+  sessionId     String   @unique
+  roomId        String
+  scheduledDate DateTime
+  claimedAt     DateTime @default(now())
+  claimedById   String
+
+  @@index([roomId, scheduledDate])
+  @@map("room_booking")
+}

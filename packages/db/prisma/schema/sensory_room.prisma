@@ -1,0 +1,19 @@
+enum RoomStatus {
+  ACTIVE
+  MAINTENANCE
+}
+
+model SensoryRoom {
+  id            String     @id @default(cuid())
+  clinicId      String
+  departmentId  String?
+  code          String
+  name          String
+  equipmentList Json       @default("[]")
+  status        RoomStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+
+  clinic Clinic @relation(fields: [clinicId], references: [id])
+
+  @@map("sensory_room")
+}

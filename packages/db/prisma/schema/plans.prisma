@@ -1,0 +1,174 @@
+enum PlanStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CLOSED
+}
+
+enum GoalHorizon {
+  SHORT_TERM
+  LONG_TERM
+}
+
+enum GoalStatus {
+  MET
+  IN_PROGRESS
+  NOT_MET
+  DISCONTINUED
+}
+
+model TreatmentPlan {
+  id                     String     @id @default(cuid())
+  childId                String
+  clinicId               String
+  createdById            String
+  name                   String
+  programLengthWeeks     Int
+  phases                 Json       @default("[]")
+  startDate              DateTime?
+  projectedEndDate       DateTime?
+  targetMilestones       String[]
+  status                 PlanStatus @default(DRAFT)
+  isActive               Boolean    @default(false)
+  versionNumber          Int        @default(1)
+  parentPlanId           String?
+  sourcePresetId         String?
+  sessionDurationMinutes Int        @default(60)
+  closureReason          String?
+  outcomeSummary         String?
+  createdAt              DateTime   @default(now())
+  updatedAt              DateTime   @updatedAt
+
+  gameAssignments PlanGameAssignment[]
+  goals           Goal[]
+  sessions        TherapySession[]
+
+  @@map("treatment_plan")
+}
+
+model PlanGameAssignment {
+  id               String  @id @default(cuid())
+  planId           String
+  gameVersionId    String
+  durationSeconds  Int?
+  repetitions      Int?
+  frequencyPerWeek Int?
+  instructions     String?
+  appliesToPhase   String?
+  order            Int     @default(0)
+
+  plan        TreatmentPlan @relation(fields: [planId], references: [id])
+  gameVersion GameVersion   @relation(fields: [gameVersionId], references: [id])
+
+  @@map("plan_game_assignment")
+}
+
+model Goal {
+  id                   String      @id @default(cuid())
+  treatmentPlanId      String
+  description          String
+  horizon              GoalHorizon
+  targetAttainmentPct  Int         @default(100)
+  currentAttainmentPct Int         @default(0)
+  status               GoalStatus  @default(IN_PROGRESS)
+  supersededByGoalId   String?
+  createdAt            DateTime    @default(now())
+
+  plan            TreatmentPlan       @relation(fields: [treatmentPlanId], references: [id])
+  progressEntries GoalProgressEntry[]
+
+  @@map("goal")
+}
+
+model GoalProgressEntry {
+  id            String     @id @default(cuid())
+  goalId        String
+  followUpId    String
+  attainmentPct Int
+  status        GoalStatus
+  evidenceNotes String?
+  recordedAt    DateTime   @default(now())
+
+  goal Goal @relation(fields: [goalId], references: [id])
+
+  @@map("goal_progress_entry")
+}
+
+model FollowUpAssessment {
+  id                  String   @id @default(cuid())
+  childId             String
+  initialAssessmentId String
+  treatmentPlanId     String
+  previousFollowUpId  String?
+  therapistId         String
+  versionNumber       Int      @default(1)
+  sectionA            Json
+  sectionB            Json
+  sectionC            Json
+  sectionD            Json
+  sectionE            Json
+  sectionF            Json
+  createdAt           DateTime @default(now())
+
+  @@map("follow_up_assessment")
+}
+
+model GameCategory {
+  id       String  @id @default(cuid())
+  name     String
+  clinicId String?
+  parentId String?
+
+  games Game[]
+
+  @@map("game_category")
+}
+
+model Game {
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  categoryId   String
+  subCategory  String?
+  targetIssues String[]
+  difficulty   String?
+  ageRangeMin  Int?
+  ageRangeMax  Int?
+  isGlobal     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  category      GameCategory       @relation(fields: [categoryId], references: [id])
+  versions      GameVersion[]
+  clinicEnables ClinicGameEnable[]
+
+  @@map("game")
+}
+
+model GameVersion {
+  id            String   @id @default(cuid())
+  gameId        String
+  versionNumber String
+  isLatest      Boolean  @default(false)
+  rubricVersion String
+  scoringSchema Json     @default("{}")
+  createdAt     DateTime @default(now())
+
+  game            Game                 @relation(fields: [gameId], references: [id])
+  planAssignments PlanGameAssignment[]
+  sessionAssignments SessionGameAssignment[]
+
+  @@map("game_version")
+}
+
+model ClinicGameEnable {
+  id       String  @id @default(cuid())
+  clinicId String
+  gameId   String
+  enabled  Boolean @default(true)
+
+  game Game @relation(fields: [gameId], references: [id])
+
+  @@unique([clinicId, gameId])
+  @@map("clinic_game_enable")
+}
