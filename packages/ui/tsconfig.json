@@ -1,11 +1,11 @@
 {
-	"extends": "@habe-final/config/tsconfig.base.json",
+	"extends": "@haber-final/config/tsconfig.base.json",
 	"compilerOptions": {
 		"jsx": "react-jsx",
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 		"types": [],
 		"paths": {
-			"@habe-final/ui/*": ["./src/*"]
+			"@haber-final/ui/*": ["./src/*"]
 		}
 	},
 	"include": ["src/**/*.ts", "src/**/*.tsx"],

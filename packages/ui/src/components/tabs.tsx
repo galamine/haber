@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
-import { cn } from "@habe-final/ui/lib/utils";
+import { cn } from "@haber-final/ui/lib/utils";
 
 function Tabs({ className, ...props }: TabsPrimitive.Root.Props) {
 	return (

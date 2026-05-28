@@ -1,7 +1,7 @@
 "use client";
 
 import { Progress as ProgressPrimitive } from "@base-ui/react/progress";
-import { cn } from "@habe-final/ui/lib/utils";
+import { cn } from "@haber-final/ui/lib/utils";
 
 function Progress({
 	className,

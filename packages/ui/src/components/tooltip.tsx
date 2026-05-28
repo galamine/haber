@@ -1,7 +1,7 @@
 "use client";
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
-import { cn } from "@habe-final/ui/lib/utils";
+import { cn } from "@haber-final/ui/lib/utils";
 
 function TooltipProvider({ ...props }: TooltipPrimitive.Provider.Props) {
 	return <TooltipPrimitive.Provider data-slot="tooltip-provider" {...props} />;

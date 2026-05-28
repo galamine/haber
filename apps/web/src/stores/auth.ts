@@ -1,4 +1,4 @@
-import type { UserRole } from "@habe-final/api/schemas";
+import type { UserRole } from "@haber-final/api/schemas";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

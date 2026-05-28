@@ -1,4 +1,4 @@
-import { env } from "@habe-final/env/server";
+import { env } from "@haber-final/env/server";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 import { PrismaClient } from "../prisma/generated/client";

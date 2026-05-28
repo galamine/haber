@@ -6,15 +6,15 @@ import {
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from "@habe-final/ui/components/accordion";
+} from "@haber-final/ui/components/accordion";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@habe-final/ui/components/avatar";
+} from "@haber-final/ui/components/avatar";
 
 // Wave 1 — Atomic
-import { Badge } from "@habe-final/ui/components/badge";
+import { Badge } from "@haber-final/ui/components/badge";
 import {
 	Breadcrumb,
 	BreadcrumbEllipsis,
@@ -23,9 +23,9 @@ import {
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-} from "@habe-final/ui/components/breadcrumb";
+} from "@haber-final/ui/components/breadcrumb";
 // Existing components (for context / combos)
-import { Button } from "@habe-final/ui/components/button";
+import { Button } from "@haber-final/ui/components/button";
 import {
 	Card,
 	CardContent,
@@ -33,13 +33,13 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "@habe-final/ui/components/card";
-import { Checkbox } from "@habe-final/ui/components/checkbox";
+} from "@haber-final/ui/components/card";
+import { Checkbox } from "@haber-final/ui/components/checkbox";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@habe-final/ui/components/collapsible";
+} from "@haber-final/ui/components/collapsible";
 import {
 	Command,
 	CommandEmpty,
@@ -49,7 +49,7 @@ import {
 	CommandList,
 	CommandSeparator,
 	CommandShortcut,
-} from "@habe-final/ui/components/command";
+} from "@haber-final/ui/components/command";
 // Wave 3 — Floating / Overlay
 import {
 	Dialog,
@@ -60,7 +60,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@habe-final/ui/components/dialog";
+} from "@haber-final/ui/components/dialog";
 import {
 	Drawer,
 	DrawerClose,
@@ -70,14 +70,14 @@ import {
 	DrawerHeader,
 	DrawerTitle,
 	DrawerTrigger,
-} from "@habe-final/ui/components/drawer";
+} from "@haber-final/ui/components/drawer";
 import {
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
-} from "@habe-final/ui/components/hover-card";
-import { Input } from "@habe-final/ui/components/input";
-import { Label } from "@habe-final/ui/components/label";
+} from "@haber-final/ui/components/hover-card";
+import { Input } from "@haber-final/ui/components/input";
+import { Label } from "@haber-final/ui/components/label";
 import {
 	Pagination,
 	PaginationContent,
@@ -86,32 +86,32 @@ import {
 	PaginationLink,
 	PaginationNext,
 	PaginationPrevious,
-} from "@habe-final/ui/components/pagination";
+} from "@haber-final/ui/components/pagination";
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-} from "@habe-final/ui/components/popover";
-import { Progress } from "@habe-final/ui/components/progress";
+} from "@haber-final/ui/components/popover";
+import { Progress } from "@haber-final/ui/components/progress";
 // Wave 4 — Complex
 import {
 	RadioGroup,
 	RadioGroupItem,
-} from "@habe-final/ui/components/radio-group";
+} from "@haber-final/ui/components/radio-group";
 import {
 	ResizableHandle,
 	ResizablePanel,
 	ResizablePanelGroup,
-} from "@habe-final/ui/components/resizable";
-import { ScrollArea } from "@habe-final/ui/components/scroll-area";
+} from "@haber-final/ui/components/resizable";
+import { ScrollArea } from "@haber-final/ui/components/scroll-area";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@habe-final/ui/components/select";
-import { Separator } from "@habe-final/ui/components/separator";
+} from "@haber-final/ui/components/select";
+import { Separator } from "@haber-final/ui/components/separator";
 import {
 	Sheet,
 	SheetClose,
@@ -121,7 +121,7 @@ import {
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger,
-} from "@habe-final/ui/components/sheet";
+} from "@haber-final/ui/components/sheet";
 import {
 	Sidebar,
 	SidebarContent,
@@ -135,17 +135,17 @@ import {
 	SidebarMenuItem,
 	SidebarProvider,
 	SidebarTrigger,
-} from "@habe-final/ui/components/sidebar";
+} from "@haber-final/ui/components/sidebar";
 import {
 	SimpleDropdown,
 	SimpleDropdownContent,
 	SimpleDropdownItem,
 	SimpleDropdownSeparator,
 	SimpleDropdownTrigger,
-} from "@habe-final/ui/components/simple-dropdown";
-import { Skeleton } from "@habe-final/ui/components/skeleton";
-import { Slider } from "@habe-final/ui/components/slider";
-import { Switch } from "@habe-final/ui/components/switch";
+} from "@haber-final/ui/components/simple-dropdown";
+import { Skeleton } from "@haber-final/ui/components/skeleton";
+import { Slider } from "@haber-final/ui/components/slider";
+import { Switch } from "@haber-final/ui/components/switch";
 import {
 	Table,
 	TableBody,
@@ -155,25 +155,25 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@habe-final/ui/components/table";
+} from "@haber-final/ui/components/table";
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
-} from "@habe-final/ui/components/tabs";
-import { Textarea } from "@habe-final/ui/components/textarea";
-import { Toggle } from "@habe-final/ui/components/toggle";
+} from "@haber-final/ui/components/tabs";
+import { Textarea } from "@haber-final/ui/components/textarea";
+import { Toggle } from "@haber-final/ui/components/toggle";
 import {
 	ToggleGroup,
 	ToggleGroupItem,
-} from "@habe-final/ui/components/toggle-group";
+} from "@haber-final/ui/components/toggle-group";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
-} from "@habe-final/ui/components/tooltip";
+} from "@haber-final/ui/components/tooltip";
 import { createFileRoute } from "@tanstack/react-router";
 import {
 	BoldIcon,

@@ -1,7 +1,7 @@
 "use client";
 
 import { OTPFieldPreview as InputOTPPrimitive } from "@base-ui/react/otp-field";
-import { cn } from "@habe-final/ui/lib/utils";
+import { cn } from "@haber-final/ui/lib/utils";
 import { MinusIcon } from "lucide-react";
 import type * as React from "react";
 

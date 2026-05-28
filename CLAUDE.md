@@ -43,20 +43,20 @@ Browser → tRPC `httpBatchLink` (`/trpc/*`) → Hono server → `packages/api` 
 ### Adding a database model
 Prisma uses a multi-file schema. Add a new `<model>.prisma` file in `packages/db/prisma/schema/` alongside `schema.prisma` and `todo.prisma`. Then run `pnpm db:push` (dev) or `pnpm db:migrate` (production-style).
 
-The Prisma client is generated into `packages/db/prisma/generated/` — never edit those files manually. Import the singleton client from `@habe-final/db`.
+The Prisma client is generated into `packages/db/prisma/generated/` — never edit those files manually. Import the singleton client from `@haber-final/db`.
 
 ### Adding a frontend route
 TanStack Router uses file-based routing. Add a file to `apps/web/src/routes/` — the router plugin auto-regenerates `routeTree.gen.ts`. Never manually edit `routeTree.gen.ts`.
 
 ### Environment variables
 `packages/env` exports two separate validated env objects:
-- `@habe-final/env/server` — `DATABASE_URL`, `CORS_ORIGIN`, `NODE_ENV`
-- `@habe-final/env/web` — `VITE_SERVER_URL` (must be prefixed `VITE_`)
+- `@haber-final/env/server` — `DATABASE_URL`, `CORS_ORIGIN`, `NODE_ENV`
+- `@haber-final/env/web` — `VITE_SERVER_URL` (must be prefixed `VITE_`)
 
 Add new vars to the appropriate file and the corresponding `.env` (`apps/server/.env` or `apps/web/.env`).
 
 ### UI components
-- **Shared primitives** (used across apps): add to `packages/ui` via `npx shadcn@latest add <component> -c packages/ui`, import as `@habe-final/ui/components/<name>`
+- **Shared primitives** (used across apps): add to `packages/ui` via `npx shadcn@latest add <component> -c packages/ui`, import as `@haber-final/ui/components/<name>`
 - **App-specific blocks**: add inside `apps/web` directly
 
 Global styles and design tokens live in `packages/ui/src/styles/globals.css`.

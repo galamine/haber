@@ -24,13 +24,13 @@ apps/web/src/routes/
 Replace the current email+password form with the OTP flow:
 
 1. **Step 1 — Email entry:** email input + "Send OTP" button → calls `api.auth.requestOtp`; shows success message
-2. **Step 2 — Code entry:** 6-digit OTP input (use the existing `InputOtp` component from `@habe-final/ui/components/input-otp.tsx`) + "Verify" button → calls `api.auth.verifyOtp`; on success stores tokens and redirects to `/dashboard`
+2. **Step 2 — Code entry:** 6-digit OTP input (use the existing `InputOtp` component from `@haber-final/ui/components/input-otp.tsx`) + "Verify" button → calls `api.auth.verifyOtp`; on success stores tokens and redirects to `/dashboard`
 3. Error states: wrong code (with attempt counter display), OTP expired, rate-limited message
 
 ### App shell (`apps/web/src/components/shell/`)
 
 Create `AppShell.tsx` — the authenticated layout used by all `/dashboard` routes:
-- Uses the existing `Sidebar` component from `@habe-final/ui/components/sidebar.tsx`
+- Uses the existing `Sidebar` component from `@haber-final/ui/components/sidebar.tsx`
 - Role-based nav items (hidden if role doesn't match):
   - All roles: Dashboard, Children (coming soon), Sessions Today
   - Therapist+: Assessments, Treatment Plans

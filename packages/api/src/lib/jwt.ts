@@ -1,4 +1,4 @@
-import { env } from "@habe-final/env/server";
+import { env } from "@haber-final/env/server";
 import { jwtVerify, SignJWT } from "jose";
 
 import type { JwtPayload } from "../schemas/index";

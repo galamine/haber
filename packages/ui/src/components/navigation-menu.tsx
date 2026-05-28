@@ -1,7 +1,7 @@
 "use client";
 
 import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/navigation-menu";
-import { cn } from "@habe-final/ui/lib/utils";
+import { cn } from "@haber-final/ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 import type * as React from "react";
 

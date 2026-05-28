@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { env } from "@habe-final/env/server";
+import { env } from "@haber-final/env/server";
 import { createPrismaClient } from "../src/index";
 
 const email = env.SUPER_ADMIN_EMAIL ?? process.argv[2];

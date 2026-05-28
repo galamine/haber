@@ -1,4 +1,4 @@
-# habe-final
+# haber-final
 
 This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, TanStack Router, Hono, TRPC, and more.
 
@@ -64,7 +64,7 @@ npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
 Import shared components like this:
 
 ```tsx
-import { Button } from "@habe-final/ui/components/button";
+import { Button } from "@haber-final/ui/components/button";
 ```
 
 ### Add app-specific blocks
@@ -78,7 +78,7 @@ If you want to add app-specific blocks instead of shared primitives, run the sha
 ## Project Structure
 
 ```
-habe-final/
+haber-final/
 ├── apps/
 │   ├── web/         # Frontend application (React + TanStack Router)
 │   └── server/      # Backend API (Hono, TRPC)

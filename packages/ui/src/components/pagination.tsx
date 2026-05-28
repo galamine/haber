@@ -1,7 +1,7 @@
 "use client";
 
-import { buttonVariants } from "@habe-final/ui/components/button";
-import { cn } from "@habe-final/ui/lib/utils";
+import { buttonVariants } from "@haber-final/ui/components/button";
+import { cn } from "@haber-final/ui/lib/utils";
 import {
 	ChevronLeftIcon,
 	ChevronRightIcon,

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import prisma from "@habe-final/db";
-import { env } from "@habe-final/env/server";
+import prisma from "@haber-final/db";
+import { env } from "@haber-final/env/server";
 import { TRPCError } from "@trpc/server";
 import { Resend } from "resend";
 import { z } from "zod";

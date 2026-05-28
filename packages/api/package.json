@@ -1,5 +1,5 @@
 {
-	"name": "@habe-final/api",
+	"name": "@haber-final/api",
 	"type": "module",
 	"exports": {
 		".": {
@@ -11,8 +11,8 @@
 	},
 	"scripts": {},
 	"dependencies": {
-		"@habe-final/db": "workspace:*",
-		"@habe-final/env": "workspace:*",
+		"@haber-final/db": "workspace:*",
+		"@haber-final/env": "workspace:*",
 		"@prisma/client": "catalog:",
 		"@trpc/client": "catalog:",
 		"@trpc/server": "catalog:",
@@ -23,7 +23,7 @@
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@habe-final/config": "workspace:*",
+		"@haber-final/config": "workspace:*",
 		"hono": "catalog:",
 		"pino-pretty": "^13.0.0",
 		"typescript": "catalog:"

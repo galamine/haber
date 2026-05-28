@@ -12,11 +12,11 @@
 	},
 	"iconLibrary": "lucide",
 	"aliases": {
-		"components": "@habe-final/ui/components",
-		"utils": "@habe-final/ui/lib/utils",
-		"hooks": "@habe-final/ui/hooks",
-		"lib": "@habe-final/ui/lib",
-		"ui": "@habe-final/ui/components"
+		"components": "@haber-final/ui/components",
+		"utils": "@haber-final/ui/lib/utils",
+		"hooks": "@haber-final/ui/hooks",
+		"lib": "@haber-final/ui/lib",
+		"ui": "@haber-final/ui/components"
 	},
 	"menuColor": "default",
 	"menuAccent": "subtle",

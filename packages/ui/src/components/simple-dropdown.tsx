@@ -1,7 +1,7 @@
 "use client";
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
-import { cn } from "@habe-final/ui/lib/utils";
+import { cn } from "@haber-final/ui/lib/utils";
 
 function SimpleDropdown({ ...props }: MenuPrimitive.Root.Props) {
 	return <MenuPrimitive.Root data-slot="simple-dropdown" {...props} />;

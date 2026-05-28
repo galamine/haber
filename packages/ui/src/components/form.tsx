@@ -1,7 +1,7 @@
 "use client";
 
 import { Field as FieldPrimitive } from "@base-ui/react/field";
-import { cn } from "@habe-final/ui/lib/utils";
+import { cn } from "@haber-final/ui/lib/utils";
 import * as React from "react";
 import {
 	Controller,

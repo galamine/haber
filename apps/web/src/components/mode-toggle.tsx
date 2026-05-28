@@ -1,10 +1,10 @@
-import { Button } from "@habe-final/ui/components/button";
+import { Button } from "@haber-final/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@habe-final/ui/components/dropdown-menu";
+} from "@haber-final/ui/components/dropdown-menu";
 import { Moon, Sun } from "lucide-react";
 
 import { useTheme } from "@/components/theme-provider";

@@ -6,7 +6,7 @@
 
 **Architecture:** Zustand auth store (persisted to localStorage) holds tokens, role, and last-activity timestamp. The store is passed into TanStack Router's context; `beforeLoad` on `_authenticated.tsx` gate-checks `isAuthenticated`. The root layout is stripped of its Header; authenticated routes render a full-height `SidebarProvider` shell (`AppShell`); the login page renders a centered card. `httpBatchLink` reads the access token dynamically per request for `protectedProcedure` calls. A `setTimeout` in the auth store schedules a token refresh 1 minute before the 15-min access token expires.
 
-**Tech Stack:** React 18, TanStack Router v1 (file-based), Zustand 5 + `persist` middleware, tRPC v11 + `httpBatchLink`, `@habe-final/ui` (Sidebar, InputOTP), Lucide React icons, Tailwind CSS v4 with the project's warm brown design tokens.
+**Tech Stack:** React 18, TanStack Router v1 (file-based), Zustand 5 + `persist` middleware, tRPC v11 + `httpBatchLink`, `@haber-final/ui` (Sidebar, InputOTP), Lucide React icons, Tailwind CSS v4 with the project's warm brown design tokens.
 
 ---
 
@@ -64,7 +64,7 @@ Create `apps/web/src/stores/auth.ts` with the following content:
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import type { UserRole } from "@habe-final/db";
+import type { UserRole } from "@haber-final/db";
 
 type AuthState = {
 	accessToken: string | null;
@@ -189,8 +189,8 @@ The `httpBatchLink` needs a `headers` function that reads the current access tok
 Replace the contents of `apps/web/src/utils/trpc.ts`:
 
 ```ts
-import type { AppRouter } from "@habe-final/api/routers/index";
-import { env } from "@habe-final/env/web";
+import type { AppRouter } from "@haber-final/api/routers/index";
+import { env } from "@haber-final/env/web";
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
@@ -258,7 +258,7 @@ Remove the `Header` import and the `grid h-svh grid-rows-[auto_1fr]` wrapper. Au
 Replace `apps/web/src/routes/__root.tsx` with:
 
 ```tsx
-import { Toaster } from "@habe-final/ui/components/sonner";
+import { Toaster } from "@haber-final/ui/components/sonner";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
@@ -413,7 +413,7 @@ import {
 	InputOTP,
 	InputOTPGroup,
 	InputOTPSlot,
-} from "@habe-final/ui/components/input-otp";
+} from "@haber-final/ui/components/input-otp";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { Stethoscope } from "lucide-react";
 import { useState } from "react";
@@ -624,7 +624,7 @@ git commit -m "feat(web): add two-step OTP login page with error states"
 **Files:**
 - Create: `apps/web/src/components/shell/AppShell.tsx`
 
-Uses the `Sidebar`, `SidebarProvider`, `SidebarHeader`, `SidebarContent`, `SidebarFooter`, `SidebarMenu`, `SidebarMenuItem`, `SidebarMenuButton`, `SidebarInset` primitives from `@habe-final/ui/components/sidebar`.
+Uses the `Sidebar`, `SidebarProvider`, `SidebarHeader`, `SidebarContent`, `SidebarFooter`, `SidebarMenu`, `SidebarMenuItem`, `SidebarMenuButton`, `SidebarInset` primitives from `@haber-final/ui/components/sidebar`.
 
 Role-based nav visibility:
 - All roles: Dashboard, Children, Sessions Today
@@ -649,7 +649,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarProvider,
-} from "@habe-final/ui/components/sidebar";
+} from "@haber-final/ui/components/sidebar";
 import { Link, Outlet, useRouter } from "@tanstack/react-router";
 import {
 	BarChart2,

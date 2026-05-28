@@ -1,4 +1,4 @@
-import { Toaster } from "@habe-final/ui/components/sonner";
+import { Toaster } from "@haber-final/ui/components/sonner";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {

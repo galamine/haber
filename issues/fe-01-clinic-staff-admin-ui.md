@@ -35,7 +35,7 @@ SuperAdmin-only routes add a role check in `beforeLoad`: `if (context.auth.role 
 - Deactivate/reactivate toggle per staff row (calls `staff.deactivate` / `staff.reactivate`)
 
 **InviteStaffPage:**
-- Form: email, role selector (THERAPIST / STAFF), permission checkboxes (using `PERMISSIONS` constants from `@habe-final/api`), department multi-select
+- Form: email, role selector (THERAPIST / STAFF), permission checkboxes (using `PERMISSIONS` constants from `@haber-final/api`), department multi-select
 - Submit calls `staff.invite`
 
 **StaffDetailPage:**

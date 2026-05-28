@@ -1,7 +1,7 @@
 "use client";
 
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
-import { cn } from "@habe-final/ui/lib/utils";
+import { cn } from "@haber-final/ui/lib/utils";
 
 function Drawer({ ...props }: DrawerPrimitive.Root.Props) {
 	return <DrawerPrimitive.Root data-slot="drawer" {...props} />;

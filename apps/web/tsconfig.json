@@ -11,8 +11,8 @@
 		"rootDirs": ["."],
 		"paths": {
 			"@/*": ["./src/*"],
-			"@habe-final/ui/*": ["../../packages/ui/src/*"],
-			"@habe-final/api/*": ["../../packages/api/src/*"]
+			"@haber-final/ui/*": ["../../packages/ui/src/*"],
+			"@haber-final/api/*": ["../../packages/api/src/*"]
 		}
 	}
 }

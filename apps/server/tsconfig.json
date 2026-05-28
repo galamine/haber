@@ -1,5 +1,5 @@
 {
-	"extends": "@habe-final/config/tsconfig.base.json",
+	"extends": "@haber-final/config/tsconfig.base.json",
 	"compilerOptions": {
 		"composite": true,
 		"outDir": "dist",

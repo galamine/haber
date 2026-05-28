@@ -13,8 +13,8 @@
 	"iconLibrary": "lucide",
 	"aliases": {
 		"components": "@/components",
-		"utils": "@habe-final/ui/lib/utils",
-		"ui": "@habe-final/ui/components",
+		"utils": "@haber-final/ui/lib/utils",
+		"ui": "@haber-final/ui/components",
 		"lib": "@/lib",
 		"hooks": "@/hooks"
 	},

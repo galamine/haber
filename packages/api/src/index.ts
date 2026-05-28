@@ -1,4 +1,4 @@
-import prisma from "@habe-final/db";
+import prisma from "@haber-final/db";
 import { initTRPC, TRPCError } from "@trpc/server";
 
 import type { AuthUser, Context } from "./context";

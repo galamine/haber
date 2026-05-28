@@ -1,5 +1,5 @@
 {
-	"name": "@habe-final/env",
+	"name": "@haber-final/env",
 	"version": "0.0.0",
 	"private": true,
 	"type": "module",
@@ -13,7 +13,7 @@
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@habe-final/config": "workspace:*",
+		"@haber-final/config": "workspace:*",
 		"@types/node": "catalog:",
 		"typescript": "catalog:"
 	}

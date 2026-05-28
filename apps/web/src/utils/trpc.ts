@@ -1,5 +1,5 @@
-import type { AppRouter } from "@habe-final/api/routers/index";
-import { env } from "@habe-final/env/web";
+import type { AppRouter } from "@haber-final/api/routers/index";
+import { env } from "@haber-final/env/web";
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";

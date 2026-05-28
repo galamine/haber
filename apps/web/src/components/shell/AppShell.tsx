@@ -10,7 +10,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarProvider,
-} from "@habe-final/ui/components/sidebar";
+} from "@haber-final/ui/components/sidebar";
 import { useMutation } from "@tanstack/react-query";
 import { Outlet, useRouter } from "@tanstack/react-router";
 import {

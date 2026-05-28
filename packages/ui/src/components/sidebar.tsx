@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@habe-final/ui/lib/utils";
+import { cn } from "@haber-final/ui/lib/utils";
 import { PanelLeftIcon } from "lucide-react";
 import * as React from "react";
 
@@ -14,8 +14,8 @@ type SidebarContextValue = {
 
 const SidebarContext = React.createContext<SidebarContextValue>({
 	open: true,
-	setOpen: () => {},
-	toggle: () => {},
+	setOpen: () => { },
+	toggle: () => { },
 });
 
 function useSidebar() {

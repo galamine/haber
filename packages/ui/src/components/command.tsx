@@ -1,7 +1,7 @@
 "use client";
 
-import { Dialog, DialogContent } from "@habe-final/ui/components/dialog";
-import { cn } from "@habe-final/ui/lib/utils";
+import { Dialog, DialogContent } from "@haber-final/ui/components/dialog";
+import { cn } from "@haber-final/ui/lib/utils";
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
 import type * as React from "react";

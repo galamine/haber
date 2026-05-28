@@ -13,7 +13,7 @@
   "$schema": "https://r2.better-t-stack.dev/schema.json",
   "version": "3.30.3",
   "createdAt": "2026-05-27T09:40:08.988Z",
-  "reproducibleCommand": "pnpm create better-t-stack@latest habe-final --frontend tanstack-router --backend hono --runtime node --database postgres --orm prisma --api trpc --auth none --payments none --addons biome skills --examples todo --db-setup docker --web-deploy none --server-deploy none --git --package-manager pnpm --install",
+  "reproducibleCommand": "pnpm create better-t-stack@latest haber-final --frontend tanstack-router --backend hono --runtime node --database postgres --orm prisma --api trpc --auth none --payments none --addons biome skills --examples todo --db-setup docker --web-deploy none --server-deploy none --git --package-manager pnpm --install",
   "database": "postgres",
   "orm": "prisma",
   "backend": "hono",

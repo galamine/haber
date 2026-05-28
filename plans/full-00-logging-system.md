@@ -87,7 +87,7 @@ export const publicProcedure = t.procedure.use(loggingMiddleware);
 Replace `app.use(logger())` with a custom middleware using the Pino instance:
 
 ```ts
-import { logger } from "@habe-final/api/lib/logger";
+import { logger } from "@haber-final/api/lib/logger";
 
 // replace: app.use(logger());
 app.use(async (c, next) => {
