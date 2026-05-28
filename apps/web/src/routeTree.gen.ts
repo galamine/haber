@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UiTestRouteImport } from './routes/ui-test'
-import { Route as TodosRouteImport } from './routes/todos'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -19,11 +18,6 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 const UiTestRoute = UiTestRouteImport.update({
   id: '/ui-test',
   path: '/ui-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TodosRoute = TodosRouteImport.update({
-  id: '/todos',
-  path: '/todos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -49,14 +43,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/todos': typeof TodosRoute
   '/ui-test': typeof UiTestRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/todos': typeof TodosRoute
   '/ui-test': typeof UiTestRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
 }
@@ -65,21 +57,19 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
-  '/todos': typeof TodosRoute
   '/ui-test': typeof UiTestRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/todos' | '/ui-test' | '/dashboard'
+  fullPaths: '/' | '/login' | '/ui-test' | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/todos' | '/ui-test' | '/dashboard'
+  to: '/' | '/login' | '/ui-test' | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/login'
-    | '/todos'
     | '/ui-test'
     | '/_authenticated/dashboard'
   fileRoutesById: FileRoutesById
@@ -88,7 +78,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
-  TodosRoute: typeof TodosRoute
   UiTestRoute: typeof UiTestRoute
 }
 
@@ -99,13 +88,6 @@ declare module '@tanstack/react-router' {
       path: '/ui-test'
       fullPath: '/ui-test'
       preLoaderRoute: typeof UiTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/todos': {
-      id: '/todos'
-      path: '/todos'
-      fullPath: '/todos'
-      preLoaderRoute: typeof TodosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -155,7 +137,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
-  TodosRoute: TodosRoute,
   UiTestRoute: UiTestRoute,
 }
 export const routeTree = rootRouteImport
