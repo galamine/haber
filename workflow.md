@@ -18,8 +18,6 @@ Steps for building pages from Stitch exports into production-ready React compone
 ## 3. Map to the design system
 
 - Cross-reference `stitch_haber/design.md` for token values (colors, spacing, radii, typography).
-- Cross-reference `packages/client/DESIGN_SYSTEM_COMPONENTS.md` to find existing primitives and blocks that cover each identified component.
-- Cross-reference `packages/client/DESIGN.md` for import patterns and architectural conventions.
 - Prefer existing components over building new ones.
 
 ## 4. Generate React component code
@@ -32,8 +30,7 @@ Steps for building pages from Stitch exports into production-ready React compone
 
 ## 5. Complete event handlers, state, and API logic
 
-- Wire tRPC queries and mutations via the `trpc` hooks from `@/lib/trpc.ts`.
+- Wire tRPC queries and mutations.
 - Manage client state (auth tokens, UI state) through the Zustand stores in `@/stores/`.
-- Add form validation with React Hook Form + Zod schemas from `@haber-full/shared`.
 - Handle loading, error, and empty states for every async operation.
 - Complete all event handlers so the feature is fully functional end-to-end.

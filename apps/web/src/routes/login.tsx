@@ -7,8 +7,8 @@ import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/login")({
-	beforeLoad: ({ context }) => {
-		if (context.auth.isAuthenticated) {
+	beforeLoad: () => {
+		if (useAuthStore.getState().isAuthenticated) {
 			throw redirect({ to: "/dashboard" });
 		}
 	},
