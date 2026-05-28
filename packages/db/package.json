@@ -19,7 +19,8 @@
 		"db:watch": "docker compose up",
 		"db:stop": "docker compose stop",
 		"db:down": "docker compose down",
-		"seed:superadmin": "DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-super-admin.ts"
+		"seed:superadmin": "DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-super-admin.ts",
+		"seed:clinical": "DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-clinical.ts"
 	},
 	"dependencies": {
 		"@haber-final/env": "workspace:*",

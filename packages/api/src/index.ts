@@ -61,3 +61,12 @@ const enforceAdmin = enforceAuth.unstable_pipe(async ({ ctx, next }) => {
 });
 
 export const adminProcedure = t.procedure.use(enforceAdmin);
+
+const enforceClinicAdmin = enforceAuth.unstable_pipe(async ({ ctx, next }) => {
+	if (ctx.auth.role !== "CLINIC_ADMIN" || ctx.auth.tenantId === null) {
+		throw new TRPCError({ code: "FORBIDDEN" });
+	}
+	return next({ ctx });
+});
+
+export const clinicAdminProcedure = t.procedure.use(enforceClinicAdmin);
