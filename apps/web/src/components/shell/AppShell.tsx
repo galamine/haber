@@ -16,6 +16,7 @@ import { Outlet, useRouter } from "@tanstack/react-router";
 import {
 	Baby,
 	BarChart2,
+	Building2,
 	CalendarDays,
 	ClipboardList,
 	LayoutDashboard,
@@ -64,14 +65,20 @@ const NAV_ITEMS: NavItem[] = [
 	},
 	{
 		label: "Staff",
-		to: "/dashboard",
+		to: "/settings/staff",
 		icon: <Users className="h-4 w-4" />,
 		roles: ["CLINIC_ADMIN", "SUPER_ADMIN"],
 	},
 	{
 		label: "Clinic Settings",
-		to: "/dashboard",
+		to: "/settings/departments",
 		icon: <Settings className="h-4 w-4" />,
+		roles: ["CLINIC_ADMIN", "SUPER_ADMIN"],
+	},
+	{
+		label: "Sensory Rooms",
+		to: "/settings/rooms",
+		icon: <Building2 className="h-4 w-4" />,
 		roles: ["CLINIC_ADMIN", "SUPER_ADMIN"],
 	},
 	{
@@ -82,7 +89,7 @@ const NAV_ITEMS: NavItem[] = [
 	},
 	{
 		label: "Platform Overview",
-		to: "/dashboard",
+		to: "/platform/clinics",
 		icon: <Shield className="h-4 w-4" />,
 		roles: ["SUPER_ADMIN"],
 	},
