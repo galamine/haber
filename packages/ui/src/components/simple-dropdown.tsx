@@ -1,99 +1,158 @@
-"use client";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import { cn } from "../lib/utils";
 
-import { Menu as MenuPrimitive } from "@base-ui/react/menu";
-import { cn } from "@haber-final/ui/lib/utils";
-
-function SimpleDropdown({ ...props }: MenuPrimitive.Root.Props) {
-	return <MenuPrimitive.Root data-slot="simple-dropdown" {...props} />;
+interface SimpleDropdownProps {
+	trigger: React.ReactNode;
+	children: React.ReactNode;
+	align?: "start" | "end";
+	className?: string;
 }
 
-function SimpleDropdownTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
-	return (
-		<MenuPrimitive.Trigger data-slot="simple-dropdown-trigger" {...props} />
-	);
+interface SimpleDropdownItemProps {
+	children: React.ReactNode;
+	onClick?: () => void;
+	className?: string;
+	destructive?: boolean;
 }
 
-function SimpleDropdownContent({
+interface SimpleDropdownSeparatorProps {
+	className?: string;
+}
+
+export function SimpleDropdown({
+	trigger,
+	children,
 	align = "start",
-	side = "bottom",
-	sideOffset = 4,
 	className,
-	...props
-}: MenuPrimitive.Popup.Props &
-	Pick<MenuPrimitive.Positioner.Props, "align" | "side" | "sideOffset">) {
+}: SimpleDropdownProps) {
+	const [isOpen, setIsOpen] = useState(false);
+	const dropdownRef = useRef<HTMLDivElement>(null);
+	const triggerRef = useRef<HTMLButtonElement>(null);
+
+	useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			if (
+				dropdownRef.current &&
+				!dropdownRef.current.contains(event.target as Node) &&
+				triggerRef.current &&
+				!triggerRef.current.contains(event.target as Node)
+			) {
+				setIsOpen(false);
+			}
+		}
+
+		if (isOpen) {
+			document.addEventListener("mousedown", handleClickOutside);
+			return () =>
+				document.removeEventListener("mousedown", handleClickOutside);
+		}
+	}, [isOpen]);
+
+	useEffect(() => {
+		function handleEscape(event: KeyboardEvent) {
+			if (event.key === "Escape") {
+				setIsOpen(false);
+			}
+		}
+
+		if (isOpen) {
+			document.addEventListener("keydown", handleEscape);
+			return () => document.removeEventListener("keydown", handleEscape);
+		}
+	}, [isOpen]);
+
+	const handleTriggerClick = (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setIsOpen(!isOpen);
+	};
+
+	const handleContentKeyDown = (e: React.KeyboardEvent) => {
+		if (e.key === "Enter" || e.key === " ") {
+			setIsOpen(false);
+		}
+	};
+
 	return (
-		<MenuPrimitive.Portal>
-			<MenuPrimitive.Positioner
-				className="isolate z-50 outline-none"
-				align={align}
-				side={side}
-				sideOffset={sideOffset}
+		<div className="relative inline-block">
+			<button
+				ref={triggerRef}
+				type="button"
+				onClick={handleTriggerClick}
+				className="cursor-pointer"
 			>
-				<MenuPrimitive.Popup
-					data-slot="simple-dropdown-content"
+				{trigger}
+			</button>
+
+			{isOpen && (
+				<div
+					ref={dropdownRef}
 					className={cn(
-						"data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 z-50 min-w-32 origin-(--transform-origin) overflow-hidden rounded-none bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 data-closed:animate-out data-open:animate-in data-closed:overflow-hidden",
+						"absolute top-full z-[99999] mt-1 min-w-[160px] rounded-lg border border-brown-200 bg-white py-1 shadow-lg",
+						align === "end" ? "right-0" : "left-0",
 						className,
 					)}
-					{...props}
-				/>
-			</MenuPrimitive.Positioner>
-		</MenuPrimitive.Portal>
+					style={{
+						position: "absolute",
+						zIndex: 99999,
+					}}
+				>
+					<div
+						role="menu"
+						onClick={() => setIsOpen(false)}
+						onKeyDown={handleContentKeyDown}
+					>
+						{children}
+					</div>
+				</div>
+			)}
+		</div>
 	);
 }
 
-function SimpleDropdownItem({ className, ...props }: MenuPrimitive.Item.Props) {
+export function SimpleDropdownItem({
+	children,
+	onClick,
+	className,
+	destructive,
+}: SimpleDropdownItemProps) {
+	const handleClick = (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		if (onClick) {
+			onClick();
+		}
+	};
+
+	const handleKeyDown = (e: React.KeyboardEvent) => {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault();
+			if (onClick) {
+				onClick();
+			}
+		}
+	};
+
 	return (
-		<MenuPrimitive.Item
-			data-slot="simple-dropdown-item"
+		<div
+			role="menuitem"
+			tabIndex={0}
+			onClick={handleClick}
+			onKeyDown={handleKeyDown}
 			className={cn(
-				"relative flex cursor-default select-none items-center gap-2 px-2 py-2 text-xs outline-hidden focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-brown-50",
+				destructive && "text-red-600 hover:bg-red-50",
 				className,
 			)}
-			{...props}
-		/>
+		>
+			{children}
+		</div>
 	);
 }
 
-function SimpleDropdownSeparator({
+export function SimpleDropdownSeparator({
 	className,
-	...props
-}: MenuPrimitive.Separator.Props) {
-	return (
-		<MenuPrimitive.Separator
-			data-slot="simple-dropdown-separator"
-			className={cn("-mx-1 h-px bg-border", className)}
-			{...props}
-		/>
-	);
+}: SimpleDropdownSeparatorProps) {
+	return <div className={cn("mx-1 my-1 h-px bg-brown-200", className)} />;
 }
-
-function SimpleDropdownLabel({
-	className,
-	...props
-}: MenuPrimitive.GroupLabel.Props) {
-	return (
-		<MenuPrimitive.GroupLabel
-			data-slot="simple-dropdown-label"
-			className={cn(
-				"px-2 py-1.5 font-medium text-muted-foreground text-xs",
-				className,
-			)}
-			{...props}
-		/>
-	);
-}
-
-function SimpleDropdownGroup({ ...props }: MenuPrimitive.Group.Props) {
-	return <MenuPrimitive.Group data-slot="simple-dropdown-group" {...props} />;
-}
-
-export {
-	SimpleDropdown,
-	SimpleDropdownContent,
-	SimpleDropdownGroup,
-	SimpleDropdownItem,
-	SimpleDropdownLabel,
-	SimpleDropdownSeparator,
-	SimpleDropdownTrigger,
-};

@@ -1,9 +1,12 @@
-"use client";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
+import type * as React from "react";
 
-import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
-import { cn } from "@haber-final/ui/lib/utils";
+import { cn } from "../lib/utils";
 
-function Tabs({ className, ...props }: TabsPrimitive.Root.Props) {
+function Tabs({
+	className,
+	...props
+}: React.ComponentProps<typeof TabsPrimitive.Root>) {
 	return (
 		<TabsPrimitive.Root
 			data-slot="tabs"
@@ -13,12 +16,15 @@ function Tabs({ className, ...props }: TabsPrimitive.Root.Props) {
 	);
 }
 
-function TabsList({ className, ...props }: TabsPrimitive.List.Props) {
+function TabsList({
+	className,
+	...props
+}: React.ComponentProps<typeof TabsPrimitive.List>) {
 	return (
 		<TabsPrimitive.List
 			data-slot="tabs-list"
 			className={cn(
-				"inline-flex h-8 items-center justify-center rounded-none bg-muted p-0.5 text-muted-foreground",
+				"flex inline-flex h-9 w-fit items-center justify-center rounded-xl bg-muted p-[3px] text-muted-foreground",
 				className,
 			)}
 			{...props}
@@ -26,12 +32,15 @@ function TabsList({ className, ...props }: TabsPrimitive.List.Props) {
 	);
 }
 
-function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
+function TabsTrigger({
+	className,
+	...props
+}: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
 	return (
-		<TabsPrimitive.Tab
+		<TabsPrimitive.Trigger
 			data-slot="tabs-trigger"
 			className={cn(
-				"inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-none border border-transparent px-3 py-1 font-medium text-xs outline-none transition-all focus-visible:ring-1 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 data-[selected]:bg-background data-[selected]:text-foreground data-[selected]:shadow-sm [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-transparent px-2 py-1 font-medium text-foreground text-sm transition-[color,box-shadow] focus-visible:border-ring focus-visible:outline-1 focus-visible:outline-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-card dark:text-muted-foreground dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 dark:data-[state=active]:text-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 				className,
 			)}
 			{...props}
@@ -39,14 +48,14 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
 	);
 }
 
-function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
+function TabsContent({
+	className,
+	...props
+}: React.ComponentProps<typeof TabsPrimitive.Content>) {
 	return (
-		<TabsPrimitive.Panel
+		<TabsPrimitive.Content
 			data-slot="tabs-content"
-			className={cn(
-				"flex-1 outline-none focus-visible:ring-1 focus-visible:ring-ring/50",
-				className,
-			)}
+			className={cn("flex-1 outline-none", className)}
 			{...props}
 		/>
 	);

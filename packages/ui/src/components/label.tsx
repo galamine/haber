@@ -1,13 +1,17 @@
-import { cn } from "@haber-final/ui/lib/utils";
+import * as LabelPrimitive from "@radix-ui/react-label";
 import type * as React from "react";
 
-function Label({ className, ...props }: React.ComponentProps<"label">) {
+import { cn } from "../lib/utils";
+
+function Label({
+	className,
+	...props
+}: React.ComponentProps<typeof LabelPrimitive.Root>) {
 	return (
-		/* biome-ignore lint/a11y/noLabelWithoutControl: shadcn label pattern - htmlFor passed via spread */
-		<label
+		<LabelPrimitive.Root
 			data-slot="label"
 			className={cn(
-				"flex select-none items-center gap-2 text-xs leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50 group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50",
+				"mb-2 block select-none font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50 group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50",
 				className,
 			)}
 			{...props}

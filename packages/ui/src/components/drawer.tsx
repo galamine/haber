@@ -1,82 +1,133 @@
-"use client";
+import * as React from "react";
+import { Drawer as DrawerPrimitive } from "vaul";
 
-import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
-import { cn } from "@haber-final/ui/lib/utils";
+import { cn } from "../lib/utils";
 
-function Drawer({ ...props }: DrawerPrimitive.Root.Props) {
-	return <DrawerPrimitive.Root data-slot="drawer" {...props} />;
-}
+const Drawer = React.forwardRef<
+	React.ElementRef<typeof DrawerPrimitive.Root>,
+	React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Root>
+>(({ ...props }, _ref) => (
+	<DrawerPrimitive.Root data-slot="drawer" {...props} />
+));
+Drawer.displayName = "Drawer";
 
-function DrawerTrigger({ ...props }: DrawerPrimitive.Trigger.Props) {
-	return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
-}
+const DrawerTrigger = React.forwardRef<
+	React.ElementRef<typeof DrawerPrimitive.Trigger>,
+	React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Trigger>
+>(({ ...props }, ref) => (
+	<DrawerPrimitive.Trigger ref={ref} data-slot="drawer-trigger" {...props} />
+));
+DrawerTrigger.displayName = DrawerPrimitive.Trigger.displayName;
 
-function DrawerClose({ ...props }: DrawerPrimitive.Close.Props) {
-	return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />;
-}
+const DrawerPortal = React.forwardRef<
+	React.ElementRef<typeof DrawerPrimitive.Portal>,
+	React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Portal>
+>(({ ...props }, _ref) => (
+	<DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />
+));
+DrawerPortal.displayName = "DrawerPortal";
 
-function DrawerContent({
-	className,
-	children,
-	...props
-}: DrawerPrimitive.Popup.Props) {
-	return (
-		<DrawerPrimitive.Portal>
-			<DrawerPrimitive.Backdrop className="data-open:fade-in-0 data-closed:fade-out-0 fixed inset-0 z-50 bg-black/50 data-closed:animate-out data-open:animate-in" />
-			<DrawerPrimitive.Popup
-				data-slot="drawer-content"
-				className={cn(
-					"data-open:slide-in-from-bottom data-closed:slide-out-to-bottom fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto max-h-[80vh] flex-col rounded-t-none bg-background ring-1 ring-foreground/10 data-closed:animate-out data-open:animate-in",
-					className,
-				)}
-				{...props}
-			>
-				<div className="mx-auto mt-4 h-1.5 w-24 shrink-0 rounded-full bg-muted" />
-				{children}
-			</DrawerPrimitive.Popup>
-		</DrawerPrimitive.Portal>
-	);
-}
+const DrawerClose = React.forwardRef<
+	React.ElementRef<typeof DrawerPrimitive.Close>,
+	React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Close>
+>(({ ...props }, ref) => (
+	<DrawerPrimitive.Close ref={ref} data-slot="drawer-close" {...props} />
+));
+DrawerClose.displayName = DrawerPrimitive.Close.displayName;
 
-function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
-	return (
-		<div
-			data-slot="drawer-header"
-			className={cn("flex flex-col gap-1.5 p-4", className)}
+const DrawerOverlay = React.forwardRef<
+	React.ElementRef<typeof DrawerPrimitive.Overlay>,
+	React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Overlay>
+>(({ className, ...props }, ref) => (
+	<DrawerPrimitive.Overlay
+		ref={ref}
+		data-slot="drawer-overlay"
+		className={cn(
+			"data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=open]:animate-in",
+			className,
+		)}
+		{...props}
+	/>
+));
+DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName;
+
+const DrawerContent = React.forwardRef<
+	React.ElementRef<typeof DrawerPrimitive.Content>,
+	React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+	<DrawerPortal data-slot="drawer-portal">
+		<DrawerOverlay />
+		<DrawerPrimitive.Content
+			ref={ref}
+			data-slot="drawer-content"
+			className={cn(
+				"group/drawer-content fixed z-50 flex h-auto flex-col bg-background",
+				"data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:mb-24 data-[vaul-drawer-direction=top]:max-h-[80vh] data-[vaul-drawer-direction=top]:rounded-b-lg data-[vaul-drawer-direction=top]:border-b",
+				"data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh] data-[vaul-drawer-direction=bottom]:rounded-t-lg data-[vaul-drawer-direction=bottom]:border-t",
+				"data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-3/4 data-[vaul-drawer-direction=right]:border-l data-[vaul-drawer-direction=right]:sm:max-w-sm",
+				"data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-3/4 data-[vaul-drawer-direction=left]:border-r data-[vaul-drawer-direction=left]:sm:max-w-sm",
+				className,
+			)}
 			{...props}
-		/>
-	);
-}
+		>
+			<div className="mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full bg-muted group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
+			{children}
+		</DrawerPrimitive.Content>
+	</DrawerPortal>
+));
+DrawerContent.displayName = DrawerPrimitive.Content.displayName;
 
-function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
-	return (
-		<div
-			data-slot="drawer-footer"
-			className={cn("mt-auto flex flex-col gap-2 p-4", className)}
-			{...props}
-		/>
-	);
-}
+const DrawerHeader = React.forwardRef<
+	HTMLDivElement,
+	React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+	<div
+		ref={ref}
+		data-slot="drawer-header"
+		className={cn("flex flex-col gap-1.5 p-4", className)}
+		{...props}
+	/>
+));
+DrawerHeader.displayName = "DrawerHeader";
 
-function DrawerTitle({ className, ...props }: React.ComponentProps<"div">) {
-	return (
-		<div
-			data-slot="drawer-title"
-			className={cn("font-medium text-sm leading-none", className)}
-			{...props}
-		/>
-	);
-}
+const DrawerFooter = React.forwardRef<
+	HTMLDivElement,
+	React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+	<div
+		ref={ref}
+		data-slot="drawer-footer"
+		className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+		{...props}
+	/>
+));
+DrawerFooter.displayName = "DrawerFooter";
 
-function DrawerDescription({ className, ...props }: React.ComponentProps<"p">) {
-	return (
-		<p
-			data-slot="drawer-description"
-			className={cn("text-muted-foreground text-xs", className)}
-			{...props}
-		/>
-	);
-}
+const DrawerTitle = React.forwardRef<
+	React.ElementRef<typeof DrawerPrimitive.Title>,
+	React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Title>
+>(({ className, ...props }, ref) => (
+	<DrawerPrimitive.Title
+		ref={ref}
+		data-slot="drawer-title"
+		className={cn("font-semibold text-foreground", className)}
+		{...props}
+	/>
+));
+DrawerTitle.displayName = DrawerPrimitive.Title.displayName;
+
+const DrawerDescription = React.forwardRef<
+	React.ElementRef<typeof DrawerPrimitive.Description>,
+	React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Description>
+>(({ className, ...props }, ref) => (
+	<DrawerPrimitive.Description
+		ref={ref}
+		data-slot="drawer-description"
+		className={cn("text-muted-foreground text-sm", className)}
+		{...props}
+	/>
+));
+DrawerDescription.displayName = DrawerPrimitive.Description.displayName;
 
 export {
 	Drawer,
@@ -85,6 +136,8 @@ export {
 	DrawerDescription,
 	DrawerFooter,
 	DrawerHeader,
+	DrawerOverlay,
+	DrawerPortal,
 	DrawerTitle,
 	DrawerTrigger,
 };

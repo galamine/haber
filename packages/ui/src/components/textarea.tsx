@@ -1,12 +1,14 @@
-import { cn } from "@haber-final/ui/lib/utils";
 import type * as React from "react";
+
+import { cn } from "../lib/utils";
 
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
 	return (
 		<textarea
 			data-slot="textarea"
 			className={cn(
-				"flex min-h-[80px] w-full rounded-none border border-input bg-background px-2.5 py-1.5 text-xs outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-destructive/20 dark:bg-input/30",
+				"field-sizing-content flex min-h-20 w-full resize-none rounded-lg border border-brown-300 bg-input-background px-3 py-3 text-base outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus:border-ring focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 md:text-sm dark:aria-invalid:ring-destructive/40",
+				"hover:border-brown-400",
 				className,
 			)}
 			{...props}
