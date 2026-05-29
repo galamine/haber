@@ -2,13 +2,19 @@ import { Avatar, AvatarFallback } from "@haber-final/ui/components/avatar";
 import { Button } from "@haber-final/ui/components/button";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { useState } from "react";
 
+import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/_authenticated/settings/staff/")({
+	beforeLoad: () => {
+		if (useAuthStore.getState().role !== "CLINIC_ADMIN") {
+			throw redirect({ to: "/dashboard" });
+		}
+	},
 	component: StaffListPage,
 });
 

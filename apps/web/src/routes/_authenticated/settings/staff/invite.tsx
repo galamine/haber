@@ -19,14 +19,20 @@ import {
 } from "@haber-final/ui/components/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/_authenticated/settings/staff/invite")({
+	beforeLoad: () => {
+		if (useAuthStore.getState().role !== "CLINIC_ADMIN") {
+			throw redirect({ to: "/dashboard" });
+		}
+	},
 	component: InviteStaffPage,
 });
 

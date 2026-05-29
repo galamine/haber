@@ -1,8 +1,14 @@
 import prisma from "@haber-final/db";
+import { env } from "@haber-final/env/server";
 import { TRPCError } from "@trpc/server";
+import { Resend } from "resend";
 import { z } from "zod";
 
 import { adminProcedure, clinicAdminProcedure, router } from "../index";
+import { generateOtp, hashValue } from "../lib/otp";
+
+const resend = new Resend(env.RESEND_API_KEY);
+
 import {
 	ClinicListInput,
 	CreateClinicInput,
@@ -20,6 +26,56 @@ export const clinicRouter = router({
 		.input(CreateClinicInput)
 		.mutation(async ({ input }) => {
 			return prisma.clinic.create({ data: input });
+		}),
+
+	inviteAdmin: adminProcedure
+		.input(z.object({ clinicId: z.string(), email: z.string().email() }))
+		.mutation(async ({ input }) => {
+			const clinic = await prisma.clinic.findFirst({
+				where: { id: input.clinicId, deletedAt: null },
+			});
+			if (!clinic) throw new TRPCError({ code: "NOT_FOUND" });
+
+			const existing = await prisma.user.findUnique({
+				where: { email: input.email },
+			});
+			if (existing) {
+				throw new TRPCError({
+					code: "CONFLICT",
+					message: "Email already registered",
+				});
+			}
+
+			const code = generateOtp();
+			const codeHash = hashValue(code);
+
+			await prisma.$transaction(async (tx) => {
+				const user = await tx.user.create({
+					data: {
+						email: input.email,
+						role: "CLINIC_ADMIN",
+						clinicId: input.clinicId,
+						loginEnabled: true,
+					},
+				});
+				await tx.otp.create({
+					data: {
+						userId: user.id,
+						codeHash,
+						expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+					},
+				});
+			});
+
+			await resend.emails.send({
+				from: env.RESEND_FROM_EMAIL,
+				to: input.email,
+				subject:
+					"You've been invited as Clinic Admin — here is your login code",
+				text: `You've been invited to manage ${clinic.name}.\n\nYour login code is: ${code}\n\nIt expires in 10 minutes.`,
+			});
+
+			return { message: "Invite sent" };
 		}),
 
 	list: adminProcedure.input(ClinicListInput).query(async ({ input }) => {

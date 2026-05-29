@@ -21,15 +21,26 @@ import {
 } from "@haber-final/ui/components/select";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	Link,
+	redirect,
+	useRouter,
+} from "@tanstack/react-router";
 import { ChevronRight, Mail, Shield } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/_authenticated/settings/staff/$staffId")(
 	{
+		beforeLoad: () => {
+			if (useAuthStore.getState().role !== "CLINIC_ADMIN") {
+				throw redirect({ to: "/dashboard" });
+			}
+		},
 		component: StaffDetailPage,
 	},
 );

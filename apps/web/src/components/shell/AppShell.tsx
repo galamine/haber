@@ -14,13 +14,8 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { Outlet, useRouter } from "@tanstack/react-router";
 import {
-	Baby,
-	BarChart2,
 	Building2,
-	CalendarDays,
-	ClipboardList,
 	LayoutDashboard,
-	LineChart,
 	LogOut,
 	Settings,
 	Shield,
@@ -41,57 +36,34 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
 	{
+		label: "Clinics",
+		to: "/platform/clinics",
+		icon: <Shield className="h-4 w-4" />,
+		roles: ["SUPER_ADMIN"],
+	},
+	{
 		label: "Dashboard",
 		to: "/dashboard",
 		icon: <LayoutDashboard className="h-4 w-4" />,
-	},
-	{ label: "Children", to: "/dashboard", icon: <Baby className="h-4 w-4" /> },
-	{
-		label: "Sessions Today",
-		to: "/dashboard",
-		icon: <CalendarDays className="h-4 w-4" />,
-	},
-	{
-		label: "Assessments",
-		to: "/dashboard",
-		icon: <BarChart2 className="h-4 w-4" />,
-		roles: ["THERAPIST", "CLINIC_ADMIN", "SUPER_ADMIN"],
-	},
-	{
-		label: "Treatment Plans",
-		to: "/dashboard",
-		icon: <ClipboardList className="h-4 w-4" />,
-		roles: ["THERAPIST", "CLINIC_ADMIN", "SUPER_ADMIN"],
+		roles: ["CLINIC_ADMIN", "THERAPIST", "STAFF"],
 	},
 	{
 		label: "Staff",
 		to: "/settings/staff",
 		icon: <Users className="h-4 w-4" />,
-		roles: ["CLINIC_ADMIN", "SUPER_ADMIN"],
+		roles: ["CLINIC_ADMIN"],
 	},
 	{
-		label: "Clinic Settings",
+		label: "Departments",
 		to: "/settings/departments",
 		icon: <Settings className="h-4 w-4" />,
-		roles: ["CLINIC_ADMIN", "SUPER_ADMIN"],
+		roles: ["CLINIC_ADMIN"],
 	},
 	{
 		label: "Sensory Rooms",
 		to: "/settings/rooms",
 		icon: <Building2 className="h-4 w-4" />,
-		roles: ["CLINIC_ADMIN", "SUPER_ADMIN"],
-	},
-	{
-		label: "Reports",
-		to: "/dashboard",
-		icon: <LineChart className="h-4 w-4" />,
-		roles: ["CLINIC_ADMIN", "SUPER_ADMIN"],
-	},
-	{
-		label: "Platform Overview",
-		to: "/platform/clinics",
-		icon: <Shield className="h-4 w-4" />,
-		roles: ["SUPER_ADMIN"],
+		roles: ["CLINIC_ADMIN"],
 	},
 ];
 

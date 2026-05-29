@@ -50,7 +50,7 @@ function SidebarProvider({
 	const toggle = React.useCallback(() => setOpen(!open), [open, setOpen]);
 	return (
 		<SidebarContext.Provider value={{ open, setOpen, toggle }}>
-			{children}
+			<div className="flex min-h-svh w-full">{children}</div>
 		</SidebarContext.Provider>
 	);
 }

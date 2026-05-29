@@ -1,6 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+
+import { useAuthStore } from "@/stores/auth";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
+	beforeLoad: () => {
+		if (useAuthStore.getState().role === "SUPER_ADMIN") {
+			throw redirect({ to: "/platform/clinics" });
+		}
+	},
 	component: DashboardPage,
 });
 

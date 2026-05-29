@@ -34,16 +34,22 @@ import { Skeleton } from "@haber-final/ui/components/skeleton";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Building2, Pencil, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/_authenticated/settings/departments")({
+	beforeLoad: () => {
+		if (useAuthStore.getState().role !== "CLINIC_ADMIN") {
+			throw redirect({ to: "/dashboard" });
+		}
+	},
 	component: DepartmentsPage,
 });
 
