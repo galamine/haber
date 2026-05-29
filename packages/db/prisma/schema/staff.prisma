@@ -1,0 +1,21 @@
+model UserPermission {
+  id         String @id @default(uuid())
+  userId     String
+  permission String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, permission])
+  @@map("user_permission")
+}
+
+model UserDepartmentAssignment {
+  userId       String
+  departmentId String
+  assignedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, departmentId])
+  @@map("user_department_assignment")
+}

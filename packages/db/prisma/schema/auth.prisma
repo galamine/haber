@@ -17,6 +17,8 @@ model User {
   credentialsRegistrationNumber   String?
   sessions                        Session[]
   otps                            Otp[]
+  permissions                     UserPermission[]
+  departmentAssignments           UserDepartmentAssignment[]
   createdAt                       DateTime  @default(now())
   updatedAt                       DateTime  @updatedAt
 

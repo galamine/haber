@@ -70,3 +70,13 @@ const enforceClinicAdmin = enforceAuth.unstable_pipe(async ({ ctx, next }) => {
 });
 
 export const clinicAdminProcedure = t.procedure.use(enforceClinicAdmin);
+
+export async function hasPermission(
+	ctx: { auth: AuthUser },
+	permission: string,
+): Promise<boolean> {
+	const record = await prisma.userPermission.findUnique({
+		where: { userId_permission: { userId: ctx.auth.userId, permission } },
+	});
+	return record !== null;
+}
