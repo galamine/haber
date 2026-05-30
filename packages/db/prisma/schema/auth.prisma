@@ -25,10 +25,16 @@ model User {
   @@map("user")
 }
 
+enum OtpType {
+  LOGIN
+  INVITE
+}
+
 model Otp {
   id            String    @id @default(cuid())
   userId        String
   user          User      @relation(fields: [userId], references: [id])
+  type          OtpType   @default(LOGIN)
   codeHash      String
   expiresAt     DateTime
   usedAt        DateTime?

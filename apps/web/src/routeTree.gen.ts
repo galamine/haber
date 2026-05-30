@@ -11,15 +11,20 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UiTestRouteImport } from './routes/ui-test'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AcceptInviteRouteImport } from './routes/accept-invite'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedSettingsRoomsRouteImport } from './routes/_authenticated/settings/rooms'
-import { Route as AuthenticatedSettingsDepartmentsRouteImport } from './routes/_authenticated/settings/departments'
 import { Route as AuthenticatedSettingsStaffIndexRouteImport } from './routes/_authenticated/settings/staff/index'
+import { Route as AuthenticatedSettingsRoomsIndexRouteImport } from './routes/_authenticated/settings/rooms/index'
+import { Route as AuthenticatedSettingsDepartmentsIndexRouteImport } from './routes/_authenticated/settings/departments/index'
 import { Route as AuthenticatedPlatformClinicsIndexRouteImport } from './routes/_authenticated/platform/clinics/index'
 import { Route as AuthenticatedSettingsStaffInviteRouteImport } from './routes/_authenticated/settings/staff/invite'
 import { Route as AuthenticatedSettingsStaffStaffIdRouteImport } from './routes/_authenticated/settings/staff/$staffId'
+import { Route as AuthenticatedSettingsRoomsNewRouteImport } from './routes/_authenticated/settings/rooms/new'
+import { Route as AuthenticatedSettingsRoomsRoomIdRouteImport } from './routes/_authenticated/settings/rooms/$roomId'
+import { Route as AuthenticatedSettingsDepartmentsNewRouteImport } from './routes/_authenticated/settings/departments/new'
+import { Route as AuthenticatedSettingsDepartmentsDepartmentIdRouteImport } from './routes/_authenticated/settings/departments/$departmentId'
 import { Route as AuthenticatedPlatformClinicsNewRouteImport } from './routes/_authenticated/platform/clinics/new'
 
 const UiTestRoute = UiTestRouteImport.update({
@@ -30,6 +35,11 @@ const UiTestRoute = UiTestRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcceptInviteRoute = AcceptInviteRouteImport.update({
+  id: '/accept-invite',
+  path: '/accept-invite',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -46,22 +56,22 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedSettingsRoomsRoute =
-  AuthenticatedSettingsRoomsRouteImport.update({
-    id: '/settings/rooms',
-    path: '/settings/rooms',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedSettingsDepartmentsRoute =
-  AuthenticatedSettingsDepartmentsRouteImport.update({
-    id: '/settings/departments',
-    path: '/settings/departments',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedSettingsStaffIndexRoute =
   AuthenticatedSettingsStaffIndexRouteImport.update({
     id: '/settings/staff/',
     path: '/settings/staff/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsRoomsIndexRoute =
+  AuthenticatedSettingsRoomsIndexRouteImport.update({
+    id: '/settings/rooms/',
+    path: '/settings/rooms/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsDepartmentsIndexRoute =
+  AuthenticatedSettingsDepartmentsIndexRouteImport.update({
+    id: '/settings/departments/',
+    path: '/settings/departments/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedPlatformClinicsIndexRoute =
@@ -82,6 +92,30 @@ const AuthenticatedSettingsStaffStaffIdRoute =
     path: '/settings/staff/$staffId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedSettingsRoomsNewRoute =
+  AuthenticatedSettingsRoomsNewRouteImport.update({
+    id: '/settings/rooms/new',
+    path: '/settings/rooms/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsRoomsRoomIdRoute =
+  AuthenticatedSettingsRoomsRoomIdRouteImport.update({
+    id: '/settings/rooms/$roomId',
+    path: '/settings/rooms/$roomId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsDepartmentsNewRoute =
+  AuthenticatedSettingsDepartmentsNewRouteImport.update({
+    id: '/settings/departments/new',
+    path: '/settings/departments/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsDepartmentsDepartmentIdRoute =
+  AuthenticatedSettingsDepartmentsDepartmentIdRouteImport.update({
+    id: '/settings/departments/$departmentId',
+    path: '/settings/departments/$departmentId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedPlatformClinicsNewRoute =
   AuthenticatedPlatformClinicsNewRouteImport.update({
     id: '/platform/clinics/new',
@@ -91,91 +125,122 @@ const AuthenticatedPlatformClinicsNewRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/accept-invite': typeof AcceptInviteRoute
   '/login': typeof LoginRoute
   '/ui-test': typeof UiTestRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/settings/departments': typeof AuthenticatedSettingsDepartmentsRoute
-  '/settings/rooms': typeof AuthenticatedSettingsRoomsRoute
   '/platform/clinics/new': typeof AuthenticatedPlatformClinicsNewRoute
+  '/settings/departments/$departmentId': typeof AuthenticatedSettingsDepartmentsDepartmentIdRoute
+  '/settings/departments/new': typeof AuthenticatedSettingsDepartmentsNewRoute
+  '/settings/rooms/$roomId': typeof AuthenticatedSettingsRoomsRoomIdRoute
+  '/settings/rooms/new': typeof AuthenticatedSettingsRoomsNewRoute
   '/settings/staff/$staffId': typeof AuthenticatedSettingsStaffStaffIdRoute
   '/settings/staff/invite': typeof AuthenticatedSettingsStaffInviteRoute
   '/platform/clinics/': typeof AuthenticatedPlatformClinicsIndexRoute
+  '/settings/departments/': typeof AuthenticatedSettingsDepartmentsIndexRoute
+  '/settings/rooms/': typeof AuthenticatedSettingsRoomsIndexRoute
   '/settings/staff/': typeof AuthenticatedSettingsStaffIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/accept-invite': typeof AcceptInviteRoute
   '/login': typeof LoginRoute
   '/ui-test': typeof UiTestRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/settings/departments': typeof AuthenticatedSettingsDepartmentsRoute
-  '/settings/rooms': typeof AuthenticatedSettingsRoomsRoute
   '/platform/clinics/new': typeof AuthenticatedPlatformClinicsNewRoute
+  '/settings/departments/$departmentId': typeof AuthenticatedSettingsDepartmentsDepartmentIdRoute
+  '/settings/departments/new': typeof AuthenticatedSettingsDepartmentsNewRoute
+  '/settings/rooms/$roomId': typeof AuthenticatedSettingsRoomsRoomIdRoute
+  '/settings/rooms/new': typeof AuthenticatedSettingsRoomsNewRoute
   '/settings/staff/$staffId': typeof AuthenticatedSettingsStaffStaffIdRoute
   '/settings/staff/invite': typeof AuthenticatedSettingsStaffInviteRoute
   '/platform/clinics': typeof AuthenticatedPlatformClinicsIndexRoute
+  '/settings/departments': typeof AuthenticatedSettingsDepartmentsIndexRoute
+  '/settings/rooms': typeof AuthenticatedSettingsRoomsIndexRoute
   '/settings/staff': typeof AuthenticatedSettingsStaffIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/accept-invite': typeof AcceptInviteRoute
   '/login': typeof LoginRoute
   '/ui-test': typeof UiTestRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/settings/departments': typeof AuthenticatedSettingsDepartmentsRoute
-  '/_authenticated/settings/rooms': typeof AuthenticatedSettingsRoomsRoute
   '/_authenticated/platform/clinics/new': typeof AuthenticatedPlatformClinicsNewRoute
+  '/_authenticated/settings/departments/$departmentId': typeof AuthenticatedSettingsDepartmentsDepartmentIdRoute
+  '/_authenticated/settings/departments/new': typeof AuthenticatedSettingsDepartmentsNewRoute
+  '/_authenticated/settings/rooms/$roomId': typeof AuthenticatedSettingsRoomsRoomIdRoute
+  '/_authenticated/settings/rooms/new': typeof AuthenticatedSettingsRoomsNewRoute
   '/_authenticated/settings/staff/$staffId': typeof AuthenticatedSettingsStaffStaffIdRoute
   '/_authenticated/settings/staff/invite': typeof AuthenticatedSettingsStaffInviteRoute
   '/_authenticated/platform/clinics/': typeof AuthenticatedPlatformClinicsIndexRoute
+  '/_authenticated/settings/departments/': typeof AuthenticatedSettingsDepartmentsIndexRoute
+  '/_authenticated/settings/rooms/': typeof AuthenticatedSettingsRoomsIndexRoute
   '/_authenticated/settings/staff/': typeof AuthenticatedSettingsStaffIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/accept-invite'
     | '/login'
     | '/ui-test'
     | '/dashboard'
-    | '/settings/departments'
-    | '/settings/rooms'
     | '/platform/clinics/new'
+    | '/settings/departments/$departmentId'
+    | '/settings/departments/new'
+    | '/settings/rooms/$roomId'
+    | '/settings/rooms/new'
     | '/settings/staff/$staffId'
     | '/settings/staff/invite'
     | '/platform/clinics/'
+    | '/settings/departments/'
+    | '/settings/rooms/'
     | '/settings/staff/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/accept-invite'
     | '/login'
     | '/ui-test'
     | '/dashboard'
-    | '/settings/departments'
-    | '/settings/rooms'
     | '/platform/clinics/new'
+    | '/settings/departments/$departmentId'
+    | '/settings/departments/new'
+    | '/settings/rooms/$roomId'
+    | '/settings/rooms/new'
     | '/settings/staff/$staffId'
     | '/settings/staff/invite'
     | '/platform/clinics'
+    | '/settings/departments'
+    | '/settings/rooms'
     | '/settings/staff'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/accept-invite'
     | '/login'
     | '/ui-test'
     | '/_authenticated/dashboard'
-    | '/_authenticated/settings/departments'
-    | '/_authenticated/settings/rooms'
     | '/_authenticated/platform/clinics/new'
+    | '/_authenticated/settings/departments/$departmentId'
+    | '/_authenticated/settings/departments/new'
+    | '/_authenticated/settings/rooms/$roomId'
+    | '/_authenticated/settings/rooms/new'
     | '/_authenticated/settings/staff/$staffId'
     | '/_authenticated/settings/staff/invite'
     | '/_authenticated/platform/clinics/'
+    | '/_authenticated/settings/departments/'
+    | '/_authenticated/settings/rooms/'
     | '/_authenticated/settings/staff/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AcceptInviteRoute: typeof AcceptInviteRoute
   LoginRoute: typeof LoginRoute
   UiTestRoute: typeof UiTestRoute
 }
@@ -194,6 +259,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accept-invite': {
+      id: '/accept-invite'
+      path: '/accept-invite'
+      fullPath: '/accept-invite'
+      preLoaderRoute: typeof AcceptInviteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -217,25 +289,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/settings/rooms': {
-      id: '/_authenticated/settings/rooms'
-      path: '/settings/rooms'
-      fullPath: '/settings/rooms'
-      preLoaderRoute: typeof AuthenticatedSettingsRoomsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/settings/departments': {
-      id: '/_authenticated/settings/departments'
-      path: '/settings/departments'
-      fullPath: '/settings/departments'
-      preLoaderRoute: typeof AuthenticatedSettingsDepartmentsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/settings/staff/': {
       id: '/_authenticated/settings/staff/'
       path: '/settings/staff'
       fullPath: '/settings/staff/'
       preLoaderRoute: typeof AuthenticatedSettingsStaffIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/rooms/': {
+      id: '/_authenticated/settings/rooms/'
+      path: '/settings/rooms'
+      fullPath: '/settings/rooms/'
+      preLoaderRoute: typeof AuthenticatedSettingsRoomsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/departments/': {
+      id: '/_authenticated/settings/departments/'
+      path: '/settings/departments'
+      fullPath: '/settings/departments/'
+      preLoaderRoute: typeof AuthenticatedSettingsDepartmentsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/platform/clinics/': {
@@ -259,6 +331,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsStaffStaffIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/settings/rooms/new': {
+      id: '/_authenticated/settings/rooms/new'
+      path: '/settings/rooms/new'
+      fullPath: '/settings/rooms/new'
+      preLoaderRoute: typeof AuthenticatedSettingsRoomsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/rooms/$roomId': {
+      id: '/_authenticated/settings/rooms/$roomId'
+      path: '/settings/rooms/$roomId'
+      fullPath: '/settings/rooms/$roomId'
+      preLoaderRoute: typeof AuthenticatedSettingsRoomsRoomIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/departments/new': {
+      id: '/_authenticated/settings/departments/new'
+      path: '/settings/departments/new'
+      fullPath: '/settings/departments/new'
+      preLoaderRoute: typeof AuthenticatedSettingsDepartmentsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/departments/$departmentId': {
+      id: '/_authenticated/settings/departments/$departmentId'
+      path: '/settings/departments/$departmentId'
+      fullPath: '/settings/departments/$departmentId'
+      preLoaderRoute: typeof AuthenticatedSettingsDepartmentsDepartmentIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/platform/clinics/new': {
       id: '/_authenticated/platform/clinics/new'
       path: '/platform/clinics/new'
@@ -271,25 +371,36 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedSettingsDepartmentsRoute: typeof AuthenticatedSettingsDepartmentsRoute
-  AuthenticatedSettingsRoomsRoute: typeof AuthenticatedSettingsRoomsRoute
   AuthenticatedPlatformClinicsNewRoute: typeof AuthenticatedPlatformClinicsNewRoute
+  AuthenticatedSettingsDepartmentsDepartmentIdRoute: typeof AuthenticatedSettingsDepartmentsDepartmentIdRoute
+  AuthenticatedSettingsDepartmentsNewRoute: typeof AuthenticatedSettingsDepartmentsNewRoute
+  AuthenticatedSettingsRoomsRoomIdRoute: typeof AuthenticatedSettingsRoomsRoomIdRoute
+  AuthenticatedSettingsRoomsNewRoute: typeof AuthenticatedSettingsRoomsNewRoute
   AuthenticatedSettingsStaffStaffIdRoute: typeof AuthenticatedSettingsStaffStaffIdRoute
   AuthenticatedSettingsStaffInviteRoute: typeof AuthenticatedSettingsStaffInviteRoute
   AuthenticatedPlatformClinicsIndexRoute: typeof AuthenticatedPlatformClinicsIndexRoute
+  AuthenticatedSettingsDepartmentsIndexRoute: typeof AuthenticatedSettingsDepartmentsIndexRoute
+  AuthenticatedSettingsRoomsIndexRoute: typeof AuthenticatedSettingsRoomsIndexRoute
   AuthenticatedSettingsStaffIndexRoute: typeof AuthenticatedSettingsStaffIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedSettingsDepartmentsRoute: AuthenticatedSettingsDepartmentsRoute,
-  AuthenticatedSettingsRoomsRoute: AuthenticatedSettingsRoomsRoute,
   AuthenticatedPlatformClinicsNewRoute: AuthenticatedPlatformClinicsNewRoute,
+  AuthenticatedSettingsDepartmentsDepartmentIdRoute:
+    AuthenticatedSettingsDepartmentsDepartmentIdRoute,
+  AuthenticatedSettingsDepartmentsNewRoute:
+    AuthenticatedSettingsDepartmentsNewRoute,
+  AuthenticatedSettingsRoomsRoomIdRoute: AuthenticatedSettingsRoomsRoomIdRoute,
+  AuthenticatedSettingsRoomsNewRoute: AuthenticatedSettingsRoomsNewRoute,
   AuthenticatedSettingsStaffStaffIdRoute:
     AuthenticatedSettingsStaffStaffIdRoute,
   AuthenticatedSettingsStaffInviteRoute: AuthenticatedSettingsStaffInviteRoute,
   AuthenticatedPlatformClinicsIndexRoute:
     AuthenticatedPlatformClinicsIndexRoute,
+  AuthenticatedSettingsDepartmentsIndexRoute:
+    AuthenticatedSettingsDepartmentsIndexRoute,
+  AuthenticatedSettingsRoomsIndexRoute: AuthenticatedSettingsRoomsIndexRoute,
   AuthenticatedSettingsStaffIndexRoute: AuthenticatedSettingsStaffIndexRoute,
 }
 
@@ -300,6 +411,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AcceptInviteRoute: AcceptInviteRoute,
   LoginRoute: LoginRoute,
   UiTestRoute: UiTestRoute,
 }

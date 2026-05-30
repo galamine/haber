@@ -16,7 +16,7 @@ import {
 
 const resend = new Resend(env.RESEND_API_KEY);
 
-const OTP_EXPIRY_MS = 10 * 60 * 1000;
+const INVITE_OTP_EXPIRY_MS = 48 * 60 * 60 * 1000;
 
 async function getStaffOrThrow(userId: string, clinicId: string) {
 	const user = await prisma.user.findFirst({
@@ -75,17 +75,20 @@ export const staffRouter = router({
 				await tx.otp.create({
 					data: {
 						userId: user.id,
+						type: "INVITE",
 						codeHash,
-						expiresAt: new Date(Date.now() + OTP_EXPIRY_MS),
+						expiresAt: new Date(Date.now() + INVITE_OTP_EXPIRY_MS),
 					},
 				});
 			});
 
+			const inviteUrl = `${env.CORS_ORIGIN}/accept-invite?email=${encodeURIComponent(input.email)}&code=${code}`;
+
 			await resend.emails.send({
 				from: env.RESEND_FROM_EMAIL,
 				to: input.email,
-				subject: "You've been invited — here is your login code",
-				text: `You've been invited to join the clinic.\n\nYour login code is: ${code}\n\nIt expires in 10 minutes.`,
+				subject: "You've been invited to join the clinic",
+				text: `You've been invited to join the clinic.\n\nClick the link below to accept your invitation and log in. It expires in 48 hours.\n\n${inviteUrl}`,
 			});
 
 			return { message: "OTP sent" };

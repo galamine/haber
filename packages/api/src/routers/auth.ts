@@ -57,6 +57,7 @@ export const authRouter = router({
 				await tx.otp.updateMany({
 					where: {
 						userId: user.id,
+						type: "LOGIN",
 						usedAt: null,
 						invalidatedAt: null,
 						expiresAt: { gt: new Date() },

@@ -61,18 +61,20 @@ export const clinicRouter = router({
 				await tx.otp.create({
 					data: {
 						userId: user.id,
+						type: "INVITE",
 						codeHash,
-						expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+						expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
 					},
 				});
 			});
 
+			const inviteUrl = `${env.CORS_ORIGIN}/accept-invite?email=${encodeURIComponent(input.email)}&code=${code}`;
+
 			await resend.emails.send({
 				from: env.RESEND_FROM_EMAIL,
 				to: input.email,
-				subject:
-					"You've been invited as Clinic Admin — here is your login code",
-				text: `You've been invited to manage ${clinic.name}.\n\nYour login code is: ${code}\n\nIt expires in 10 minutes.`,
+				subject: "You've been invited as Clinic Admin",
+				text: `You've been invited to manage ${clinic.name}.\n\nClick the link below to accept your invitation and log in. It expires in 48 hours.\n\n${inviteUrl}`,
 			});
 
 			return { message: "Invite sent" };
