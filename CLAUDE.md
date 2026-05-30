@@ -28,6 +28,7 @@ pnpm db:migrate           # create and run a migration
 pnpm db:generate          # regenerate Prisma client
 pnpm db:studio            # open Prisma Studio UI
 pnpm db:stop              # stop container
+pnpm db:clear             # drop all data and re-apply migrations (destructive)
 ```
 
 ## Architecture

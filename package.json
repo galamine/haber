@@ -20,6 +20,7 @@
 		"db:watch": "pnpm --filter @haber-final/db db:watch",
 		"db:stop": "pnpm --filter @haber-final/db db:stop",
 		"db:down": "pnpm --filter @haber-final/db db:down",
+		"db:clear": "pnpm --filter @haber-final/db db:clear",
 		"check": "biome check --write .",
 		"prepare": "husky"
 	},
