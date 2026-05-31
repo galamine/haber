@@ -26,6 +26,7 @@ model Child {
   school              String?
   preferredTherapistId String?
   consentStatus       ConsentStatus @default(PENDING)
+  medicalHistory      Json          @default("{}")
   latestPlanId        String?
   deletedAt           DateTime?
   createdAt           DateTime      @default(now())
