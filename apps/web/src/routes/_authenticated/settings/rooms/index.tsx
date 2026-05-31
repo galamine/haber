@@ -90,10 +90,10 @@ function RoomCard({
 			)}
 
 			<div className="flex items-center gap-2 border-outline-variant border-t pt-4">
-				<Button size="icon-sm" variant="ghost" onClick={onEdit}>
+				<Button size="sm" variant="ghost" onClick={onEdit}>
 					<Pencil className="h-3.5 w-3.5" />
 				</Button>
-				<Button size="icon-sm" variant="ghost" onClick={onToggle}>
+				<Button size="sm" variant="ghost" onClick={onToggle}>
 					<Power className="h-3.5 w-3.5" />
 				</Button>
 			</div>

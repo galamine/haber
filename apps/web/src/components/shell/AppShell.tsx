@@ -14,6 +14,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { Outlet, useRouter } from "@tanstack/react-router";
 import {
+	Baby,
 	Building2,
 	LayoutDashboard,
 	LogOut,
@@ -45,6 +46,12 @@ const NAV_ITEMS: NavItem[] = [
 		label: "Dashboard",
 		to: "/dashboard",
 		icon: <LayoutDashboard className="h-4 w-4" />,
+		roles: ["CLINIC_ADMIN", "THERAPIST", "STAFF"],
+	},
+	{
+		label: "Children",
+		to: "/children",
+		icon: <Baby className="h-4 w-4" />,
 		roles: ["CLINIC_ADMIN", "THERAPIST", "STAFF"],
 	},
 	{

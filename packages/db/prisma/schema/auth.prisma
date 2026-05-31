@@ -3,6 +3,7 @@ enum UserRole {
   CLINIC_ADMIN
   THERAPIST
   STAFF
+  GUARDIAN
 }
 
 model User {

@@ -138,10 +138,8 @@ import {
 } from "@haber-final/ui/components/sidebar";
 import {
 	SimpleDropdown,
-	SimpleDropdownContent,
 	SimpleDropdownItem,
 	SimpleDropdownSeparator,
-	SimpleDropdownTrigger,
 } from "@haber-final/ui/components/simple-dropdown";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
 import { Slider } from "@haber-final/ui/components/slider";
@@ -300,8 +298,8 @@ function UITestPage() {
 						<p className="font-mono text-muted-foreground text-xs">Slider</p>
 						<div className="w-64">
 							<Slider
-								value={sliderVal}
-								onValueChange={(val) => setSliderVal(val as number)}
+								value={[sliderVal]}
+								onValueChange={(val) => setSliderVal(val[0])}
 								min={0}
 								max={100}
 								step={1}
@@ -348,7 +346,11 @@ function UITestPage() {
 						<p className="font-mono text-muted-foreground text-xs">
 							ToggleGroup
 						</p>
-						<ToggleGroup defaultValue={["center"]} aria-label="Text alignment">
+						<ToggleGroup
+							type="multiple"
+							defaultValue={["center"]}
+							aria-label="Text alignment"
+						>
 							<ToggleGroupItem value="left">Left</ToggleGroupItem>
 							<ToggleGroupItem value="center">Center</ToggleGroupItem>
 							<ToggleGroupItem value="right">Right</ToggleGroupItem>
@@ -451,7 +453,7 @@ function UITestPage() {
 					{/* Accordion */}
 					<div className="space-y-2">
 						<p className="font-mono text-muted-foreground text-xs">Accordion</p>
-						<Accordion className="w-full max-w-md">
+						<Accordion type="single" collapsible className="w-full max-w-md">
 							<AccordionItem value="item-1">
 								<AccordionTrigger>Is it accessible?</AccordionTrigger>
 								<AccordionContent>
@@ -481,13 +483,11 @@ function UITestPage() {
 						>
 							<div className="flex items-center justify-between">
 								<span className="font-medium text-sm">Starred repos</span>
-								<CollapsibleTrigger
-									render={
-										<Button variant="ghost" size="sm">
-											<ChevronsUpDownIcon className="size-4" />
-										</Button>
-									}
-								/>
+								<CollapsibleTrigger asChild>
+									<Button variant="ghost" size="sm">
+										<ChevronsUpDownIcon className="size-4" />
+									</Button>
+								</CollapsibleTrigger>
 							</div>
 							<div className="mt-2 rounded border px-3 py-2 text-sm">
 								@radix-ui/primitives
@@ -615,9 +615,9 @@ function UITestPage() {
 					<Row>
 						{/* Dialog */}
 						<Dialog>
-							<DialogTrigger
-								render={<Button variant="outline">Open Dialog</Button>}
-							/>
+							<DialogTrigger asChild>
+								<Button variant="outline">Open Dialog</Button>
+							</DialogTrigger>
 							<DialogContent className="sm:max-w-md">
 								<DialogHeader>
 									<DialogTitle>Edit profile</DialogTitle>
@@ -632,9 +632,9 @@ function UITestPage() {
 									</div>
 								</div>
 								<DialogFooter>
-									<DialogClose
-										render={<Button variant="outline">Cancel</Button>}
-									/>
+									<DialogClose asChild>
+										<Button variant="outline">Cancel</Button>
+									</DialogClose>
 									<Button>Save</Button>
 								</DialogFooter>
 							</DialogContent>
@@ -642,9 +642,9 @@ function UITestPage() {
 
 						{/* Drawer */}
 						<Drawer>
-							<DrawerTrigger
-								render={<Button variant="outline">Open Drawer</Button>}
-							/>
+							<DrawerTrigger asChild>
+								<Button variant="outline">Open Drawer</Button>
+							</DrawerTrigger>
 							<DrawerContent>
 								<DrawerHeader>
 									<DrawerTitle>Move Goal</DrawerTitle>
@@ -657,18 +657,18 @@ function UITestPage() {
 								</div>
 								<DrawerFooter>
 									<Button>Submit</Button>
-									<DrawerClose
-										render={<Button variant="outline">Cancel</Button>}
-									/>
+									<DrawerClose asChild>
+										<Button variant="outline">Cancel</Button>
+									</DrawerClose>
 								</DrawerFooter>
 							</DrawerContent>
 						</Drawer>
 
 						{/* Sheet */}
 						<Sheet>
-							<SheetTrigger
-								render={<Button variant="outline">Open Sheet</Button>}
-							/>
+							<SheetTrigger asChild>
+								<Button variant="outline">Open Sheet</Button>
+							</SheetTrigger>
 							<SheetContent side="right">
 								<SheetHeader>
 									<SheetTitle>Edit Profile</SheetTitle>
@@ -680,22 +680,20 @@ function UITestPage() {
 									Sheet content here.
 								</div>
 								<SheetFooter>
-									<SheetClose
-										render={<Button variant="outline">Close</Button>}
-									/>
+									<SheetClose asChild>
+										<Button variant="outline">Close</Button>
+									</SheetClose>
 								</SheetFooter>
 							</SheetContent>
 						</Sheet>
 
 						{/* Popover */}
 						<Popover>
-							<PopoverTrigger
-								render={
-									<Button variant="outline">
-										<CalendarIcon className="mr-1 size-4" /> Popover
-									</Button>
-								}
-							/>
+							<PopoverTrigger asChild>
+								<Button variant="outline">
+									<CalendarIcon className="mr-1 size-4" /> Popover
+								</Button>
+							</PopoverTrigger>
 							<PopoverContent className="w-60 p-3">
 								<p className="font-medium text-sm">Dimensions</p>
 								<p className="mt-1 text-muted-foreground text-xs">
@@ -712,9 +710,9 @@ function UITestPage() {
 
 						{/* HoverCard */}
 						<HoverCard>
-							<HoverCardTrigger
-								render={<Button variant="link">@faiyaz</Button>}
-							/>
+							<HoverCardTrigger asChild>
+								<Button variant="link">@faiyaz</Button>
+							</HoverCardTrigger>
 							<HoverCardContent className="w-60">
 								<div className="flex gap-3">
 									<Avatar>
@@ -732,9 +730,9 @@ function UITestPage() {
 
 						{/* Tooltip */}
 						<Tooltip>
-							<TooltipTrigger
-								render={<Button variant="outline">Hover me</Button>}
-							/>
+							<TooltipTrigger asChild>
+								<Button variant="outline">Hover me</Button>
+							</TooltipTrigger>
 							<TooltipContent>
 								<p>This is a tooltip!</p>
 							</TooltipContent>
@@ -768,16 +766,13 @@ function UITestPage() {
 						<p className="font-mono text-muted-foreground text-xs">
 							SimpleDropdown
 						</p>
-						<SimpleDropdown>
-							<SimpleDropdownTrigger
-								render={<Button variant="outline">Open Menu</Button>}
-							/>
-							<SimpleDropdownContent>
-								<SimpleDropdownItem>Profile</SimpleDropdownItem>
-								<SimpleDropdownItem>Settings</SimpleDropdownItem>
-								<SimpleDropdownSeparator />
-								<SimpleDropdownItem>Log out</SimpleDropdownItem>
-							</SimpleDropdownContent>
+						<SimpleDropdown
+							trigger={<Button variant="outline">Open Menu</Button>}
+						>
+							<SimpleDropdownItem>Profile</SimpleDropdownItem>
+							<SimpleDropdownItem>Settings</SimpleDropdownItem>
+							<SimpleDropdownSeparator />
+							<SimpleDropdownItem>Log out</SimpleDropdownItem>
 						</SimpleDropdown>
 					</div>
 				</Section>
