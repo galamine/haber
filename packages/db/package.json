@@ -20,8 +20,8 @@
 		"db:stop": "docker compose stop",
 		"db:down": "docker compose down",
 		"db:clear": "prisma migrate reset --force",
-		"seed:superadmin": "DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-super-admin.ts",
-		"seed:clinical": "DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-clinical.ts"
+		"seed:superadmin": "cross-env DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-super-admin.ts",
+		"seed:clinical": "cross-env DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-clinical.ts"
 	},
 	"dependencies": {
 		"@haber-final/env": "workspace:*",
@@ -34,6 +34,7 @@
 	"devDependencies": {
 		"@haber-final/config": "workspace:*",
 		"@types/pg": "^8.16.0",
+		"cross-env": "^7.0.3",
 		"prisma": "^7.8.0",
 		"tsx": "^4.19.2",
 		"typescript": "catalog:"
