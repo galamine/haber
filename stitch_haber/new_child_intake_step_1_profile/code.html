@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>New Child Intake - HaberApp</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed": "#ffdad2",
+                    "outline-variant": "#d4c3bf",
+                    "surface-container-low": "#faf2f0",
+                    "secondary": "#7b5454",
+                    "brown-700": "#664242",
+                    "brown-100": "#f0ece9",
+                    "tertiary-container": "#5f7a73",
+                    "on-tertiary": "#ffffff",
+                    "brown-900": "#3d2626",
+                    "background": "#fff8f6",
+                    "on-secondary-container": "#7a5353",
+                    "on-tertiary-container": "#f4fffa",
+                    "success": "#22c55e",
+                    "on-surface-variant": "#504441",
+                    "secondary-container": "#fecbca",
+                    "tertiary": "#47615b",
+                    "on-tertiary-fixed-variant": "#324c46",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e9e1df",
+                    "secondary-fixed-dim": "#ecbaba",
+                    "brown-600": "#7a5a54",
+                    "surface-dim": "#e0d8d7",
+                    "brown-200": "#e2d6d0",
+                    "info": "#3b82f6",
+                    "brown-300": "#d1bfb6",
+                    "on-tertiary-fixed": "#05201b",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#efe6e5",
+                    "on-background": "#1e1b1a",
+                    "on-primary-fixed": "#2d1510",
+                    "secondary-fixed": "#ffdad9",
+                    "brown-400": "#b5978c",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed-variant": "#5e3f38",
+                    "error": "#ba1a1a",
+                    "outline": "#827471",
+                    "on-secondary-fixed-variant": "#613d3d",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#78564f",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#e9e1df",
+                    "surface": "#fff8f6",
+                    "on-surface": "#1e1b1a",
+                    "surface-bright": "#fff8f6",
+                    "on-primary-container": "#fffbff",
+                    "on-secondary-fixed": "#2f1314",
+                    "surface-container": "#f5ecea",
+                    "primary": "#75544d",
+                    "danger": "#ef4444",
+                    "warning": "#f59e0b",
+                    "primary-container": "#906c64",
+                    "brown-50": "#f6f2f0",
+                    "primary-fixed-dim": "#e8bdb3",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed-dim": "#b0cdc4",
+                    "brown-500": "#947068",
+                    "inverse-primary": "#e8bdb3",
+                    "brown-800": "#4d3232",
+                    "inverse-surface": "#342f2f",
+                    "inverse-on-surface": "#f7efed",
+                    "tertiary-fixed": "#cce9e0"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "2xl": "48px",
+                    "base": "4px",
+                    "xl": "32px",
+                    "sm": "8px",
+                    "md": "16px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "3xl": "64px"
+            },
+            "fontFamily": {
+                    "display-sm": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "text-sm": ["Inter"],
+                    "text-lg": ["Inter"],
+                    "display-xs": ["Inter"],
+                    "text-md": ["Inter"],
+                    "text-xs": ["Inter"],
+                    "display-md": ["Inter"],
+                    "display-2xl": ["Inter"],
+                    "text-xl": ["Inter"],
+                    "display-xl": ["Inter"]
+            },
+            "fontSize": {
+                    "display-sm": ["30px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                    "text-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "text-lg": ["18px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "display-xs": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "text-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "text-xs": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "display-md": ["36px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                    "display-2xl": ["72px", {"lineHeight": "1.1", "fontWeight": "500"}],
+                    "text-xl": ["20px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "display-xl": ["60px", {"lineHeight": "1.1", "fontWeight": "500"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-brown-50 min-h-screen text-on-surface antialiased flex flex-col">
+<!-- Focused Task Header (Navigation Suppressed as per logic for linear flows) -->
+<header class="w-full bg-surface-container-lowest border-b border-outline-variant px-lg py-md flex justify-between items-center sticky top-0 z-50">
+<button class="flex items-center gap-sm text-brown-600 hover:text-brown-800 transition-colors">
+<span class="material-symbols-outlined text-xl">close</span>
+<span class="text-text-md font-text-md font-medium">Cancel Intake</span>
+</button>
+<div class="text-display-xs font-display-xs font-bold text-brown-900 hidden md:block">
+            HaberApp
+        </div>
+<button class="text-text-sm font-text-sm text-on-surface-variant hover:text-brown-700 transition-colors font-medium border border-outline-variant rounded-lg px-md py-sm bg-surface">
+            Save as Draft
+        </button>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 w-full max-w-4xl mx-auto px-md py-xl md:py-2xl flex flex-col items-center">
+<!-- Page Title & Stepper -->
+<div class="w-full mb-xl">
+<h1 class="text-display-md font-display-md text-on-surface text-center mb-md">New Child Intake</h1>
+<!-- Stepper -->
+<div class="w-full max-w-2xl mx-auto mt-xl">
+<div class="flex items-center justify-between relative">
+<!-- Progress Line Background -->
+<div class="absolute top-1/2 left-0 w-full h-[2px] bg-surface-variant -z-10 -translate-y-1/2"></div>
+<!-- Progress Line Active (Width 0% currently as we are on step 1) -->
+<div class="absolute top-1/2 left-0 w-[0%] h-[2px] bg-brown-600 -z-10 -translate-y-1/2 transition-all duration-300"></div>
+<!-- Step 1: Profile (Active) -->
+<div class="flex flex-col items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-brown-600 text-on-primary flex items-center justify-center ring-4 ring-brown-50 shadow-sm transition-transform duration-200">
+<span class="text-text-md font-text-md font-bold">1</span>
+</div>
+<span class="text-text-sm font-text-sm font-medium text-brown-800">Profile</span>
+</div>
+<!-- Step 2: Medical -->
+<div class="flex flex-col items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center ring-4 ring-brown-50 transition-colors duration-200">
+<span class="text-text-md font-text-md font-medium">2</span>
+</div>
+<span class="text-text-sm font-text-sm text-on-surface-variant">Medical</span>
+</div>
+<!-- Step 3: Guardians -->
+<div class="flex flex-col items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center ring-4 ring-brown-50 transition-colors duration-200">
+<span class="text-text-md font-text-md font-medium">3</span>
+</div>
+<span class="text-text-sm font-text-sm text-on-surface-variant">Guardians</span>
+</div>
+<!-- Step 4: Consent -->
+<div class="flex flex-col items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center ring-4 ring-brown-50 transition-colors duration-200">
+<span class="text-text-md font-text-md font-medium">4</span>
+</div>
+<span class="text-text-sm font-text-sm text-on-surface-variant">Consent</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Form Canvas -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+<div class="p-lg md:p-2xl">
+<h2 class="text-display-xs font-display-xs text-on-surface mb-lg pb-md border-b border-surface-variant">Basic Information</h2>
+<form class="space-y-xl">
+<!-- Photo Upload Zone -->
+<div class="w-full flex flex-col md:flex-row gap-lg items-start">
+<div class="w-full md:w-auto flex-shrink-0">
+<div class="w-32 h-32 rounded-full bg-brown-100 border-2 border-dashed border-brown-300 flex flex-col items-center justify-center text-brown-600 cursor-pointer hover:bg-brown-200 transition-colors overflow-hidden relative group">
+<span class="material-symbols-outlined text-display-md mb-xs group-hover:scale-110 transition-transform">add_a_photo</span>
+<span class="text-text-xs font-text-xs font-medium">Upload</span>
+</div>
+</div>
+<div class="flex-1 pt-sm">
+<h3 class="text-text-lg font-text-lg text-on-surface font-medium mb-xs">Profile Photo</h3>
+<p class="text-text-sm font-text-sm text-on-surface-variant mb-md">Upload a clear, recent frontal photo of the child. This helps clinical staff with quick identification. Max size 5MB.</p>
+<button class="text-text-sm font-text-sm font-medium text-brown-700 bg-surface border border-brown-300 rounded-lg px-md py-sm hover:bg-brown-50 transition-colors" type="button">
+                                Browse Files
+                            </button>
+</div>
+</div>
+<!-- Grid Fields -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-lg gap-y-md">
+<!-- First Name -->
+<div class="flex flex-col gap-base">
+<label class="text-text-sm font-text-sm font-medium text-on-surface-variant" for="firstName">First Name <span class="text-danger">*</span></label>
+<input class="w-full bg-surface-container-lowest border border-brown-300 rounded-lg px-md py-sm text-text-md font-text-md text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-brown-700 transition-shadow placeholder:text-outline" id="firstName" placeholder="Legal first name" type="text"/>
+</div>
+<!-- Last Name -->
+<div class="flex flex-col gap-base">
+<label class="text-text-sm font-text-sm font-medium text-on-surface-variant" for="lastName">Last Name <span class="text-danger">*</span></label>
+<input class="w-full bg-surface-container-lowest border border-brown-300 rounded-lg px-md py-sm text-text-md font-text-md text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-brown-700 transition-shadow placeholder:text-outline" id="lastName" placeholder="Legal last name" type="text"/>
+</div>
+<!-- Date of Birth -->
+<div class="flex flex-col gap-base">
+<label class="text-text-sm font-text-sm font-medium text-on-surface-variant" for="dob">Date of Birth <span class="text-danger">*</span></label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-brown-300 rounded-lg px-md py-sm text-text-md font-text-md text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-brown-700 transition-shadow" id="dob" type="date"/>
+</div>
+</div>
+<!-- Legal Sex -->
+<div class="flex flex-col gap-base">
+<label class="text-text-sm font-text-sm font-medium text-on-surface-variant" for="sex">Legal Sex <span class="text-danger">*</span></label>
+<select class="w-full bg-surface-container-lowest border border-brown-300 rounded-lg px-md py-sm text-text-md font-text-md text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-brown-700 transition-shadow appearance-none" id="sex">
+<option disabled="" selected="" value="">Select option</option>
+<option value="male">Male</option>
+<option value="female">Female</option>
+<option value="other">Other / Prefer not to say</option>
+</select>
+</div>
+<!-- OP Number -->
+<div class="flex flex-col gap-base md:col-span-2 mt-sm">
+<label class="text-text-sm font-text-sm font-medium text-on-surface-variant" for="opNumber">Outpatient (OP) Number</label>
+<input class="w-full bg-surface-container-lowest border border-brown-300 rounded-lg px-md py-sm text-text-md font-text-md text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-brown-700 transition-shadow placeholder:text-outline" id="opNumber" placeholder="e.g. OP-2023-8492" type="text"/>
+<p class="text-text-xs font-text-xs text-on-surface-variant mt-xs">Leave blank to auto-generate upon saving.</p>
+</div>
+<!-- Divider for Section -->
+<div class="col-span-1 md:col-span-2 border-t border-surface-variant my-md"></div>
+<!-- Address - Full Width -->
+<div class="flex flex-col gap-base md:col-span-2">
+<label class="text-text-sm font-text-sm font-medium text-on-surface-variant" for="address">Primary Residential Address <span class="text-danger">*</span></label>
+<input class="w-full bg-surface-container-lowest border border-brown-300 rounded-lg px-md py-sm text-text-md font-text-md text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-brown-700 transition-shadow placeholder:text-outline mb-sm" id="address" placeholder="Street address" type="text"/>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-md">
+<input class="col-span-2 md:col-span-1 bg-surface-container-lowest border border-brown-300 rounded-lg px-md py-sm text-text-md font-text-md text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-brown-700 transition-shadow placeholder:text-outline" placeholder="City" type="text"/>
+<select class="bg-surface-container-lowest border border-brown-300 rounded-lg px-md py-sm text-text-md font-text-md text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-brown-700 transition-shadow appearance-none">
+<option disabled="" selected="" value="">State</option>
+<option>CA</option>
+<option>NY</option>
+<option>TX</option>
+</select>
+<input class="bg-surface-container-lowest border border-brown-300 rounded-lg px-md py-sm text-text-md font-text-md text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-brown-700 transition-shadow placeholder:text-outline" placeholder="ZIP Code" type="text"/>
+</div>
+</div>
+<!-- Primary Languages -->
+<div class="flex flex-col gap-base mt-sm">
+<label class="text-text-sm font-text-sm font-medium text-on-surface-variant" for="language">Primary Language(s) Spoken</label>
+<input class="w-full bg-surface-container-lowest border border-brown-300 rounded-lg px-md py-sm text-text-md font-text-md text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-brown-700 transition-shadow placeholder:text-outline" id="language" placeholder="e.g. English, Spanish" type="text"/>
+</div>
+<!-- School -->
+<div class="flex flex-col gap-base mt-sm">
+<label class="text-text-sm font-text-sm font-medium text-on-surface-variant" for="school">Current School / Daycare</label>
+<input class="w-full bg-surface-container-lowest border border-brown-300 rounded-lg px-md py-sm text-text-md font-text-md text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-brown-700 transition-shadow placeholder:text-outline" id="school" placeholder="Institution name" type="text"/>
+</div>
+<!-- Preferred Therapist -->
+<div class="flex flex-col gap-base md:col-span-2 mt-sm">
+<label class="text-text-sm font-text-sm font-medium text-on-surface-variant" for="therapist">Preferred Primary Therapist (Optional)</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-xl bg-surface-container-lowest border border-brown-300 rounded-lg px-md py-sm text-text-md font-text-md text-on-surface focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-brown-700 transition-shadow placeholder:text-outline" id="therapist" placeholder="Search staff directory..." type="text"/>
+</div>
+</div>
+</div>
+</form>
+</div>
+<!-- Footer Actions -->
+<div class="bg-surface-container-low px-lg py-md border-t border-outline-variant flex justify-between items-center">
+<button class="text-text-sm font-text-sm font-medium text-on-surface-variant hover:text-brown-700 transition-colors px-md py-sm">
+                    Back
+                </button>
+<button class="bg-brown-600 hover:bg-brown-700 text-on-primary rounded-lg px-lg py-sm text-text-md font-text-md font-medium transition-colors shadow-sm flex items-center gap-sm">
+                    Continue to Medical
+                    <span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+</div>
+</main>
+</body></html>

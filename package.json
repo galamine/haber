@@ -1,0 +1,44 @@
+{
+	"name": "haber-final",
+	"private": true,
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
+	"type": "module",
+	"scripts": {
+		"dev": "pnpm -r dev",
+		"build": "pnpm -r build",
+		"check-types": "pnpm -r check-types",
+		"dev:web": "pnpm --filter web dev",
+		"dev:server": "pnpm --filter server dev",
+		"db:push": "pnpm --filter @haber-final/db db:push",
+		"db:studio": "pnpm --filter @haber-final/db db:studio",
+		"db:generate": "pnpm --filter @haber-final/db db:generate",
+		"db:migrate": "pnpm --filter @haber-final/db db:migrate",
+		"db:start": "pnpm --filter @haber-final/db db:start",
+		"db:watch": "pnpm --filter @haber-final/db db:watch",
+		"db:stop": "pnpm --filter @haber-final/db db:stop",
+		"db:down": "pnpm --filter @haber-final/db db:down",
+		"db:clear": "pnpm --filter @haber-final/db db:clear",
+		"check": "biome check --write .",
+		"prepare": "husky"
+	},
+	"dependencies": {
+		"@haber-final/env": "workspace:*",
+		"dotenv": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.2.0",
+		"@haber-final/config": "workspace:*",
+		"@types/node": "catalog:",
+		"typescript": "catalog:",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.1.2"
+	},
+	"packageManager": "pnpm@10.13.1",
+	"lint-staged": {
+		"**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,vue,astro,svelte}": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true"
+	}
+}

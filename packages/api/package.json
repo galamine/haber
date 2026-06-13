@@ -1,0 +1,31 @@
+{
+	"name": "@haber-final/api",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {},
+	"dependencies": {
+		"@haber-final/db": "workspace:*",
+		"@haber-final/env": "workspace:*",
+		"@prisma/client": "catalog:",
+		"@trpc/client": "catalog:",
+		"@trpc/server": "catalog:",
+		"dotenv": "catalog:",
+		"jose": "^6.2.3",
+		"pino": "^9.0.0",
+		"resend": "^6.12.4",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@haber-final/config": "workspace:*",
+		"hono": "catalog:",
+		"pino-pretty": "^13.0.0",
+		"typescript": "catalog:"
+	}
+}

@@ -1,0 +1,18 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"esModuleInterop": true,
+		"jsx": "react-jsx",
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"skipLibCheck": true,
+		"types": ["vite/client"],
+		"rootDirs": ["."],
+		"paths": {
+			"@/*": ["./src/*"],
+			"@haber-final/ui/*": ["../../packages/ui/src/*"],
+			"@haber-final/api/*": ["../../packages/api/src/*"]
+		}
+	}
+}
