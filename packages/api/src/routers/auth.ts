@@ -74,12 +74,16 @@ export const authRouter = router({
 				});
 			});
 
-			await resend.emails.send({
-				from: env.RESEND_FROM_EMAIL,
-				to: input.email,
-				subject: "Your login code",
-				text: `Your login code is: ${code}\n\nIt expires in 10 minutes.`,
-			});
+			if (env.NODE_ENV === "production") {
+				await resend.emails.send({
+					from: env.RESEND_FROM_EMAIL,
+					to: input.email,
+					subject: "Your login code",
+					text: `Your login code is: ${code}\n\nIt expires in 10 minutes.`,
+				});
+			} else {
+				console.log(`[DEV OTP] ${input.email}: ${code}`);
+			}
 
 			return { success: true };
 		}),
