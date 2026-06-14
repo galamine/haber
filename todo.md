@@ -11,6 +11,9 @@
 ## 🏥 Clinic Admin
 - [ ] **Data Entry Forms**
   - [ ] Add functional "Save" buttons and ensure data persistence across all Add/Edit sections.
+- [ ] **Staff & Department Relations**
+  - [ ] Restrict department assignment to Therapist roles only.
+  - [ ] Remove department selection from the general staff member edit page, as general staff members do not require a department relation.
 
 ## 🧭 Sidebar Navigation
 - [ ] **Dynamic Authentication Header**
