@@ -31,6 +31,8 @@ import { Route as AuthenticatedSettingsDepartmentsDepartmentIdRouteImport } from
 import { Route as AuthenticatedPlatformClinicsNewRouteImport } from './routes/_authenticated/platform/clinics/new'
 import { Route as AuthenticatedChildrenChildIdEditRouteImport } from './routes/_authenticated/children/$childId/edit'
 import { Route as AuthenticatedChildrenChildIdConsentRouteImport } from './routes/_authenticated/children/$childId/consent'
+import { Route as AuthenticatedChildrenChildIdAssessmentNewRouteImport } from './routes/_authenticated/children/$childId/assessment/new'
+import { Route as AuthenticatedChildrenChildIdAssessmentAssessmentIdRouteImport } from './routes/_authenticated/children/$childId/assessment/$assessmentId'
 
 const UiTestRoute = UiTestRouteImport.update({
   id: '/ui-test',
@@ -157,6 +159,18 @@ const AuthenticatedChildrenChildIdConsentRoute =
     path: '/children/$childId/consent',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedChildrenChildIdAssessmentNewRoute =
+  AuthenticatedChildrenChildIdAssessmentNewRouteImport.update({
+    id: '/children/$childId/assessment/new',
+    path: '/children/$childId/assessment/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute =
+  AuthenticatedChildrenChildIdAssessmentAssessmentIdRouteImport.update({
+    id: '/children/$childId/assessment/$assessmentId',
+    path: '/children/$childId/assessment/$assessmentId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -180,6 +194,8 @@ export interface FileRoutesByFullPath {
   '/settings/departments/': typeof AuthenticatedSettingsDepartmentsIndexRoute
   '/settings/rooms/': typeof AuthenticatedSettingsRoomsIndexRoute
   '/settings/staff/': typeof AuthenticatedSettingsStaffIndexRoute
+  '/children/$childId/assessment/$assessmentId': typeof AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute
+  '/children/$childId/assessment/new': typeof AuthenticatedChildrenChildIdAssessmentNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -203,6 +219,8 @@ export interface FileRoutesByTo {
   '/settings/departments': typeof AuthenticatedSettingsDepartmentsIndexRoute
   '/settings/rooms': typeof AuthenticatedSettingsRoomsIndexRoute
   '/settings/staff': typeof AuthenticatedSettingsStaffIndexRoute
+  '/children/$childId/assessment/$assessmentId': typeof AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute
+  '/children/$childId/assessment/new': typeof AuthenticatedChildrenChildIdAssessmentNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -228,6 +246,8 @@ export interface FileRoutesById {
   '/_authenticated/settings/departments/': typeof AuthenticatedSettingsDepartmentsIndexRoute
   '/_authenticated/settings/rooms/': typeof AuthenticatedSettingsRoomsIndexRoute
   '/_authenticated/settings/staff/': typeof AuthenticatedSettingsStaffIndexRoute
+  '/_authenticated/children/$childId/assessment/$assessmentId': typeof AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute
+  '/_authenticated/children/$childId/assessment/new': typeof AuthenticatedChildrenChildIdAssessmentNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -253,6 +273,8 @@ export interface FileRouteTypes {
     | '/settings/departments/'
     | '/settings/rooms/'
     | '/settings/staff/'
+    | '/children/$childId/assessment/$assessmentId'
+    | '/children/$childId/assessment/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -276,6 +298,8 @@ export interface FileRouteTypes {
     | '/settings/departments'
     | '/settings/rooms'
     | '/settings/staff'
+    | '/children/$childId/assessment/$assessmentId'
+    | '/children/$childId/assessment/new'
   id:
     | '__root__'
     | '/'
@@ -300,6 +324,8 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/departments/'
     | '/_authenticated/settings/rooms/'
     | '/_authenticated/settings/staff/'
+    | '/_authenticated/children/$childId/assessment/$assessmentId'
+    | '/_authenticated/children/$childId/assessment/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -466,6 +492,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChildrenChildIdConsentRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/children/$childId/assessment/new': {
+      id: '/_authenticated/children/$childId/assessment/new'
+      path: '/children/$childId/assessment/new'
+      fullPath: '/children/$childId/assessment/new'
+      preLoaderRoute: typeof AuthenticatedChildrenChildIdAssessmentNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/children/$childId/assessment/$assessmentId': {
+      id: '/_authenticated/children/$childId/assessment/$assessmentId'
+      path: '/children/$childId/assessment/$assessmentId'
+      fullPath: '/children/$childId/assessment/$assessmentId'
+      preLoaderRoute: typeof AuthenticatedChildrenChildIdAssessmentAssessmentIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -487,6 +527,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedSettingsDepartmentsIndexRoute: typeof AuthenticatedSettingsDepartmentsIndexRoute
   AuthenticatedSettingsRoomsIndexRoute: typeof AuthenticatedSettingsRoomsIndexRoute
   AuthenticatedSettingsStaffIndexRoute: typeof AuthenticatedSettingsStaffIndexRoute
+  AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute: typeof AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute
+  AuthenticatedChildrenChildIdAssessmentNewRoute: typeof AuthenticatedChildrenChildIdAssessmentNewRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -514,6 +556,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedSettingsDepartmentsIndexRoute,
   AuthenticatedSettingsRoomsIndexRoute: AuthenticatedSettingsRoomsIndexRoute,
   AuthenticatedSettingsStaffIndexRoute: AuthenticatedSettingsStaffIndexRoute,
+  AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute:
+    AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute,
+  AuthenticatedChildrenChildIdAssessmentNewRoute:
+    AuthenticatedChildrenChildIdAssessmentNewRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

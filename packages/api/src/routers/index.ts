@@ -1,4 +1,5 @@
 import { publicProcedure, router } from "../index";
+import { assessmentRouter } from "./assessment";
 import { authRouter } from "./auth";
 import { childRouter } from "./child";
 import { clinicRouter } from "./clinic";
@@ -18,5 +19,6 @@ export const appRouter = router({
 	staff: staffRouter,
 	child: childRouter,
 	consent: consentRouter,
+	assessment: assessmentRouter,
 });
 export type AppRouter = typeof appRouter;

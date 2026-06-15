@@ -266,4 +266,15 @@ export const authRouter = router({
 		logger.info({ userId: ctx.auth.userId }, "auth: logout all");
 		return { success: true };
 	}),
+
+	me: protectedProcedure.query(async ({ ctx }) => {
+		return prisma.user.findUniqueOrThrow({
+			where: { id: ctx.auth.userId },
+			select: {
+				email: true,
+				credentialsQualifications: true,
+				credentialsRegistrationNumber: true,
+			},
+		});
+	}),
 });

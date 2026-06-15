@@ -10,6 +10,7 @@ import { useAuthStore } from "@/stores/auth";
 export const queryClient = new QueryClient({
 	queryCache: new QueryCache({
 		onError: (error, query) => {
+			if (query.meta?.suppressErrorToast) return;
 			toast.error(error.message, {
 				action: {
 					label: "retry",
