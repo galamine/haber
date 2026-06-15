@@ -75,6 +75,7 @@ function LoginPage() {
 		index: number,
 	) {
 		const val = e.target.value.replace(/\D/g, "").slice(-1);
+
 		if (val) {
 			const newOtp = otp.split("");
 			newOtp[index] = val;
@@ -84,18 +85,41 @@ function LoginPage() {
 					.querySelectorAll<HTMLInputElement>("[data-otp-input]")
 					[index + 1]?.focus();
 			}
+		} else if (!val && !e.target.value && index > 0) {
+			const newOtp = otp.split("");
+			newOtp[index] = "";
+			setOtp(newOtp.join(""));
+			document
+				.querySelectorAll<HTMLInputElement>("[data-otp-input]")
+				[index - 1]?.focus();
+		} else if (!val && !e.target.value) {
+			const newOtp = otp.split("");
+			newOtp[index] = "";
+			setOtp(newOtp.join(""));
 		}
 	}
 
 	function handleOtpKeyDown(
-		e: React.KeyboardEvent<HTMLInputElement>,
-		index: number,
-	) {
-		if (e.key === "Backspace" && !otp[index] && index > 0) {
-			document
-				.querySelectorAll<HTMLInputElement>("[data-otp-input]")
-				[index - 1]?.focus();
+		_e: React.KeyboardEvent<HTMLInputElement>,
+		_index: number,
+	) {}
+
+	function handleOtpPaste(e: React.ClipboardEvent<HTMLInputElement>) {
+		e.preventDefault();
+		const pastedData = e.clipboardData.getData("text");
+		const digits = pastedData.replace(/\D/g, "").slice(0, 6);
+		if (!digits) return;
+
+		const newOtp = otp.split("");
+		let focusIndex = 0;
+		for (let i = 0; i < digits.length && focusIndex < 6; i++) {
+			newOtp[focusIndex] = digits[i];
+			focusIndex++;
 		}
+		setOtp(newOtp.join(""));
+		document
+			.querySelectorAll<HTMLInputElement>("[data-otp-input]")
+			[Math.min(digits.length, 5)]?.focus();
 	}
 
 	async function handleRequestOtp(e: React.FormEvent) {
@@ -180,7 +204,7 @@ function LoginPage() {
 							onSubmit={handleVerifyOtp}
 							className="flex flex-col items-center gap-4"
 						>
-							<div className="flex items-center gap-2">
+							<div className="flex items-center gap-2" onPaste={handleOtpPaste}>
 								{Array.from({ length: 6 }).map((_, i) => (
 									<input
 										key={i}
