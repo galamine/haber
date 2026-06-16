@@ -31,6 +31,8 @@ import { Route as AuthenticatedSettingsDepartmentsDepartmentIdRouteImport } from
 import { Route as AuthenticatedPlatformClinicsNewRouteImport } from './routes/_authenticated/platform/clinics/new'
 import { Route as AuthenticatedChildrenChildIdEditRouteImport } from './routes/_authenticated/children/$childId/edit'
 import { Route as AuthenticatedChildrenChildIdConsentRouteImport } from './routes/_authenticated/children/$childId/consent'
+import { Route as AuthenticatedChildrenChildIdFollowupNewRouteImport } from './routes/_authenticated/children/$childId/followup/new'
+import { Route as AuthenticatedChildrenChildIdFollowupFollowUpIdRouteImport } from './routes/_authenticated/children/$childId/followup/$followUpId'
 import { Route as AuthenticatedChildrenChildIdAssessmentNewRouteImport } from './routes/_authenticated/children/$childId/assessment/new'
 import { Route as AuthenticatedChildrenChildIdAssessmentAssessmentIdRouteImport } from './routes/_authenticated/children/$childId/assessment/$assessmentId'
 
@@ -159,6 +161,18 @@ const AuthenticatedChildrenChildIdConsentRoute =
     path: '/children/$childId/consent',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedChildrenChildIdFollowupNewRoute =
+  AuthenticatedChildrenChildIdFollowupNewRouteImport.update({
+    id: '/children/$childId/followup/new',
+    path: '/children/$childId/followup/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedChildrenChildIdFollowupFollowUpIdRoute =
+  AuthenticatedChildrenChildIdFollowupFollowUpIdRouteImport.update({
+    id: '/children/$childId/followup/$followUpId',
+    path: '/children/$childId/followup/$followUpId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedChildrenChildIdAssessmentNewRoute =
   AuthenticatedChildrenChildIdAssessmentNewRouteImport.update({
     id: '/children/$childId/assessment/new',
@@ -196,6 +210,8 @@ export interface FileRoutesByFullPath {
   '/settings/staff/': typeof AuthenticatedSettingsStaffIndexRoute
   '/children/$childId/assessment/$assessmentId': typeof AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute
   '/children/$childId/assessment/new': typeof AuthenticatedChildrenChildIdAssessmentNewRoute
+  '/children/$childId/followup/$followUpId': typeof AuthenticatedChildrenChildIdFollowupFollowUpIdRoute
+  '/children/$childId/followup/new': typeof AuthenticatedChildrenChildIdFollowupNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -221,6 +237,8 @@ export interface FileRoutesByTo {
   '/settings/staff': typeof AuthenticatedSettingsStaffIndexRoute
   '/children/$childId/assessment/$assessmentId': typeof AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute
   '/children/$childId/assessment/new': typeof AuthenticatedChildrenChildIdAssessmentNewRoute
+  '/children/$childId/followup/$followUpId': typeof AuthenticatedChildrenChildIdFollowupFollowUpIdRoute
+  '/children/$childId/followup/new': typeof AuthenticatedChildrenChildIdFollowupNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -248,6 +266,8 @@ export interface FileRoutesById {
   '/_authenticated/settings/staff/': typeof AuthenticatedSettingsStaffIndexRoute
   '/_authenticated/children/$childId/assessment/$assessmentId': typeof AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute
   '/_authenticated/children/$childId/assessment/new': typeof AuthenticatedChildrenChildIdAssessmentNewRoute
+  '/_authenticated/children/$childId/followup/$followUpId': typeof AuthenticatedChildrenChildIdFollowupFollowUpIdRoute
+  '/_authenticated/children/$childId/followup/new': typeof AuthenticatedChildrenChildIdFollowupNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -275,6 +295,8 @@ export interface FileRouteTypes {
     | '/settings/staff/'
     | '/children/$childId/assessment/$assessmentId'
     | '/children/$childId/assessment/new'
+    | '/children/$childId/followup/$followUpId'
+    | '/children/$childId/followup/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -300,6 +322,8 @@ export interface FileRouteTypes {
     | '/settings/staff'
     | '/children/$childId/assessment/$assessmentId'
     | '/children/$childId/assessment/new'
+    | '/children/$childId/followup/$followUpId'
+    | '/children/$childId/followup/new'
   id:
     | '__root__'
     | '/'
@@ -326,6 +350,8 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/staff/'
     | '/_authenticated/children/$childId/assessment/$assessmentId'
     | '/_authenticated/children/$childId/assessment/new'
+    | '/_authenticated/children/$childId/followup/$followUpId'
+    | '/_authenticated/children/$childId/followup/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -492,6 +518,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChildrenChildIdConsentRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/children/$childId/followup/new': {
+      id: '/_authenticated/children/$childId/followup/new'
+      path: '/children/$childId/followup/new'
+      fullPath: '/children/$childId/followup/new'
+      preLoaderRoute: typeof AuthenticatedChildrenChildIdFollowupNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/children/$childId/followup/$followUpId': {
+      id: '/_authenticated/children/$childId/followup/$followUpId'
+      path: '/children/$childId/followup/$followUpId'
+      fullPath: '/children/$childId/followup/$followUpId'
+      preLoaderRoute: typeof AuthenticatedChildrenChildIdFollowupFollowUpIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/children/$childId/assessment/new': {
       id: '/_authenticated/children/$childId/assessment/new'
       path: '/children/$childId/assessment/new'
@@ -529,6 +569,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedSettingsStaffIndexRoute: typeof AuthenticatedSettingsStaffIndexRoute
   AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute: typeof AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute
   AuthenticatedChildrenChildIdAssessmentNewRoute: typeof AuthenticatedChildrenChildIdAssessmentNewRoute
+  AuthenticatedChildrenChildIdFollowupFollowUpIdRoute: typeof AuthenticatedChildrenChildIdFollowupFollowUpIdRoute
+  AuthenticatedChildrenChildIdFollowupNewRoute: typeof AuthenticatedChildrenChildIdFollowupNewRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -560,6 +602,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute,
   AuthenticatedChildrenChildIdAssessmentNewRoute:
     AuthenticatedChildrenChildIdAssessmentNewRoute,
+  AuthenticatedChildrenChildIdFollowupFollowUpIdRoute:
+    AuthenticatedChildrenChildIdFollowupFollowUpIdRoute,
+  AuthenticatedChildrenChildIdFollowupNewRoute:
+    AuthenticatedChildrenChildIdFollowupNewRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

@@ -95,12 +95,14 @@ model InitialAssessment {
 model SensoryProfile {
   id           String   @id @default(cuid())
   assessmentId String?
+  followUpId   String?
   systemId     String
   rating       Int
   notes        String?
   recordedAt   DateTime @default(now())
 
-  assessment InitialAssessment? @relation(fields: [assessmentId], references: [id])
+  assessment InitialAssessment?  @relation(fields: [assessmentId], references: [id])
+  followUp   FollowUpAssessment? @relation(fields: [followUpId], references: [id])
 
   @@map("sensory_profile")
 }

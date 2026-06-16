@@ -90,7 +90,8 @@ model GoalProgressEntry {
   evidenceNotes String?
   recordedAt    DateTime   @default(now())
 
-  goal Goal @relation(fields: [goalId], references: [id])
+  goal     Goal               @relation(fields: [goalId], references: [id])
+  followUp FollowUpAssessment @relation(fields: [followUpId], references: [id])
 
   @@map("goal_progress_entry")
 }
@@ -110,6 +111,9 @@ model FollowUpAssessment {
   sectionE            Json
   sectionF            Json
   createdAt           DateTime @default(now())
+
+  sensoryProfiles SensoryProfile[]
+  progressEntries GoalProgressEntry[]
 
   @@map("follow_up_assessment")
 }

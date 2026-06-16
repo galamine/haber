@@ -122,3 +122,107 @@ export const InitialAssessmentSchema = z.object({
 	sectionH: SectionHSchema,
 	createdAt: z.date(),
 });
+
+export const GoalStatusSchema = z.enum([
+	"MET",
+	"IN_PROGRESS",
+	"NOT_MET",
+	"DISCONTINUED",
+]);
+
+export const GoalProgressInputSchema = z.object({
+	goalId: z.string(),
+	attainmentPct: z.number().int().min(0).max(100),
+	status: GoalStatusSchema,
+	evidenceNotes: z.string(),
+});
+
+export const SensoryCheckInputSchema = SensoryRatingSchema;
+
+export const SensoryCheckResultSchema = SensoryCheckInputSchema.extend({
+	baseline: z.number().int(),
+	change: z.number().int(),
+});
+
+export const FollowUpSectionASchema = z.object({
+	date: z.string(),
+	therapistId: z.string(),
+	sessionNumber: z.number().int(),
+	weeksSinceInitial: z.number().int(),
+	parentPresent: z.boolean(),
+});
+
+export const FollowUpSectionBSchema = z.object({
+	goalProgress: z.array(GoalProgressInputSchema).min(1),
+});
+
+export const FollowUpSectionCSchema = z.object({
+	sensoryCheck: z.array(SensoryCheckInputSchema).length(7),
+});
+
+export const FollowUpSectionDSchema = z.object({
+	improvementsAtHome: z.string(),
+	improvementsAtSchool: z.string(),
+	regressions: z.string().optional(),
+	homeProgramCompliance: z.string(),
+	sessionEngagement: z.string(),
+	schoolPerformanceChanges: z.string(),
+	behaviourChanges: z.string(),
+	newSkillsObserved: z.string(),
+	equipmentEffectivelyUsed: z.string(),
+	therapistObservations: z.string(),
+});
+
+export const FollowUpSectionESchema = z.object({
+	goalStatusDecisions: z.array(z.string()),
+	updatedGoals: z.array(GoalTemplateSchema),
+	updatedHomeProgram: z.string(),
+	nextFollowUpDate: z.string(),
+	nextAssessmentType: z.string(),
+	clinicalNotes: z.string(),
+});
+
+export const FollowUpSectionFSchema = z.object({
+	therapistName: z.string(),
+	therapistCredentials: z.string().optional(),
+	therapistIp: z.string().optional(),
+	guardianName: z.string(),
+	guardianIp: z.string().optional(),
+});
+
+export const CreateFollowUpInput = z.object({
+	childId: z.string(),
+	initialAssessmentId: z.string(),
+	treatmentPlanId: z.string(),
+	previousFollowUpId: z.string().optional(),
+	sectionA: FollowUpSectionASchema,
+	sectionB: FollowUpSectionBSchema,
+	sectionC: FollowUpSectionCSchema,
+	sectionD: FollowUpSectionDSchema,
+	sectionE: FollowUpSectionESchema,
+	sectionF: FollowUpSectionFSchema,
+});
+
+export const SensoryDeltaSchema = z.object({
+	system: z.string(),
+	baseline: z.number().int(),
+	current: z.number().int(),
+	change: z.number().int(),
+});
+
+export const FollowUpAssessmentSchema = z.object({
+	id: z.string(),
+	childId: z.string(),
+	initialAssessmentId: z.string(),
+	treatmentPlanId: z.string(),
+	previousFollowUpId: z.string().nullable(),
+	therapistId: z.string(),
+	versionNumber: z.number().int(),
+	sectionA: FollowUpSectionASchema,
+	sectionB: FollowUpSectionBSchema,
+	sectionC: z.object({ sensoryCheck: z.array(SensoryCheckResultSchema) }),
+	sectionD: FollowUpSectionDSchema,
+	sectionE: FollowUpSectionESchema,
+	sectionF: FollowUpSectionFSchema,
+	createdAt: z.date(),
+});
