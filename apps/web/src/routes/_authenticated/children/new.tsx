@@ -140,10 +140,9 @@ function Step1Profile({
 	initial: ProfileValues | null;
 	onNext: (data: ProfileValues) => void;
 }) {
-	const { data: therapistsData } = useQuery(
-		trpc.staff.list.queryOptions({ role: "THERAPIST", pageSize: 100 }),
+	const { data: therapists = [] } = useQuery(
+		trpc.staff.listTherapists.queryOptions(),
 	);
-	const therapists = therapistsData?.items ?? [];
 
 	const {
 		register,

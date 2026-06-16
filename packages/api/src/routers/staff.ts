@@ -4,11 +4,17 @@ import { TRPCError } from "@trpc/server";
 import { Resend } from "resend";
 import { z } from "zod";
 
-import { clinicAdminProcedure, protectedProcedure, router } from "../index";
+import {
+	clinicAdminProcedure,
+	hasPermission,
+	protectedProcedure,
+	router,
+} from "../index";
 import { generateOtp, hashValue } from "../lib/otp";
 import {
 	AssignDepartmentsInput,
 	InviteStaffInput,
+	PERMISSIONS,
 	StaffListInput,
 	UpdateCredentialsInput,
 	UpdatePermissionsInput,
@@ -133,6 +139,23 @@ export const staffRouter = router({
 				totalPages: Math.ceil(total / input.pageSize),
 			};
 		}),
+
+	listTherapists: protectedProcedure.query(async ({ ctx }) => {
+		const hasIntake = await hasPermission(ctx, PERMISSIONS.CHILD_INTAKE);
+		const isAdmin = ["CLINIC_ADMIN", "SUPER_ADMIN"].includes(ctx.auth.role);
+
+		if (!hasIntake && !isAdmin) throw new TRPCError({ code: "FORBIDDEN" });
+
+		return prisma.user.findMany({
+			where: {
+				clinicId: ctx.auth.tenantId!,
+				role: "THERAPIST",
+				loginEnabled: true,
+			},
+			select: { id: true, email: true, credentialsQualifications: true },
+			orderBy: { email: "asc" },
+		});
+	}),
 
 	get: clinicAdminProcedure
 		.input(z.object({ userId: z.string() }))

@@ -11,6 +11,8 @@
 ## 🏥 Clinic Admin
 - [ ] **Data Entry Forms**
   - [ ] Add functional "Save" buttons and ensure data persistence across all Add/Edit sections.
+- [ ] **Register New Child**
+  - [ ] Allow clinic admins to create "New Child" in the clinic .
 
 ## 🧭 Sidebar Navigation
 - [ ] **Dynamic Authentication Header**

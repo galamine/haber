@@ -38,12 +38,15 @@ export async function getChildForRead(
 	if (!child) throw new TRPCError({ code: "NOT_FOUND" });
 
 	if (role === "THERAPIST" || role === "STAFF") {
-		const isAssigned =
-			child.preferredTherapistId === userId ||
-			(await prisma.childTherapistAssignment.findFirst({
-				where: { childId, therapistId: userId },
-			})) !== null;
-		if (!isAssigned) throw new TRPCError({ code: "FORBIDDEN" });
+		const hasIntake = await hasPermission(ctx, PERMISSIONS.CHILD_INTAKE);
+		if (!hasIntake) {
+			const isAssigned =
+				child.preferredTherapistId === userId ||
+				(await prisma.childTherapistAssignment.findFirst({
+					where: { childId, therapistId: userId },
+				})) !== null;
+			if (!isAssigned) throw new TRPCError({ code: "FORBIDDEN" });
+		}
 	}
 
 	return child;
@@ -143,17 +146,20 @@ export const childRouter = router({
 			const extraAnd: { OR: Record<string, unknown>[] }[] = [];
 
 			if (role === "THERAPIST" || role === "STAFF") {
-				const assignments = await prisma.childTherapistAssignment.findMany({
-					where: { therapistId: userId },
-					select: { childId: true },
-				});
-				const assignedChildIds = assignments.map((a) => a.childId);
-				extraAnd.push({
-					OR: [
-						{ preferredTherapistId: userId },
-						{ id: { in: assignedChildIds } },
-					],
-				});
+				const hasIntake = await hasPermission(ctx, PERMISSIONS.CHILD_INTAKE);
+				if (!hasIntake) {
+					const assignments = await prisma.childTherapistAssignment.findMany({
+						where: { therapistId: userId },
+						select: { childId: true },
+					});
+					const assignedChildIds = assignments.map((a) => a.childId);
+					extraAnd.push({
+						OR: [
+							{ preferredTherapistId: userId },
+							{ id: { in: assignedChildIds } },
+						],
+					});
+				}
 			}
 
 			if (input.search) {
@@ -268,7 +274,7 @@ export const childRouter = router({
 	assignTherapist: protectedProcedure
 		.input(AssignTherapistInput)
 		.mutation(async ({ input, ctx }) => {
-			const { role, tenantId, userId } = ctx.auth;
+			const { role, tenantId } = ctx.auth;
 			const isClinicAdmin = role === "CLINIC_ADMIN";
 			const hasIntake = await hasPermission(ctx, PERMISSIONS.CHILD_INTAKE);
 			if (!isClinicAdmin && !hasIntake) {
