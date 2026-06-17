@@ -26,7 +26,12 @@ export async function createContext({ context }: CreateContextOptions) {
 		}
 	}
 
-	return { auth, session: null };
+	const ip =
+		context.req.header("x-forwarded-for")?.split(",")[0].trim() ??
+		context.req.header("x-real-ip") ??
+		"unknown";
+
+	return { auth, session: null, ip };
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>;

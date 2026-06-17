@@ -113,6 +113,7 @@ function NewRoomPage() {
 	});
 
 	const mutation = useMutation(
+		// @ts-expect-error TS2589 -- TanStack Router route tree type recursion
 		trpc.clinic.createSensoryRoom.mutationOptions({
 			onSuccess: () => {
 				toast.success("Room created");

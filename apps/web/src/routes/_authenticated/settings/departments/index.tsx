@@ -101,10 +101,10 @@ function DepartmentCard({
 	return (
 		<div className="group relative rounded-xl border border-outline-variant bg-surface-container-lowest p-6">
 			<div className="absolute top-4 right-4 hidden items-center gap-1 group-hover:flex">
-				<Button size="icon-sm" variant="ghost" onClick={onEdit}>
+				<Button size="sm" variant="ghost" onClick={onEdit}>
 					<Pencil className="h-3.5 w-3.5" />
 				</Button>
-				<Button size="icon-sm" variant="ghost" onClick={onDelete}>
+				<Button size="sm" variant="ghost" onClick={onDelete}>
 					<Trash2 className="h-3.5 w-3.5 text-destructive" />
 				</Button>
 			</div>
