@@ -1,4 +1,5 @@
-import { InviteStaffInput, PERMISSIONS } from "@haber-final/api/schemas/staff";
+import { InviteStaffInput } from "@haber-final/api/schemas/staff";
+import { PERMISSIONS } from "@haber-final/db/permissions";
 import { Button } from "@haber-final/ui/components/button";
 import { Checkbox } from "@haber-final/ui/components/checkbox";
 import {
@@ -23,7 +24,6 @@ import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
 import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 

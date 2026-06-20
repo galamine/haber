@@ -266,6 +266,12 @@ function ChildProfilePage() {
 											? "Complete intake before starting an assessment"
 											: undefined
 									}
+									onClick={() =>
+										router.navigate({
+											to: "/children/$childId/assessment/new",
+											params: { childId },
+										})
+									}
 								>
 									Start Assessment
 								</Button>

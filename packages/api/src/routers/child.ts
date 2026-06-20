@@ -1,7 +1,7 @@
 import prisma from "@haber-final/db";
+import { PERMISSIONS } from "@haber-final/db/permissions";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-
 import type { AuthUser } from "../context";
 import { hasPermission, protectedProcedure, router } from "../index";
 import {
@@ -13,7 +13,6 @@ import {
 	UnassignTherapistInput,
 	UpdateChildInput,
 } from "../schemas/child";
-import { PERMISSIONS } from "../schemas/staff";
 
 async function requireIntakePermission(ctx: { auth: AuthUser }) {
 	const allowed = await hasPermission(ctx, PERMISSIONS.CHILD_INTAKE);
@@ -36,15 +35,6 @@ export async function getChildForRead(
 	});
 
 	if (!child) throw new TRPCError({ code: "NOT_FOUND" });
-
-	if (role === "THERAPIST" || role === "STAFF") {
-		const isAssigned =
-			child.preferredTherapistId === userId ||
-			(await prisma.childTherapistAssignment.findFirst({
-				where: { childId, therapistId: userId },
-			})) !== null;
-		if (!isAssigned) throw new TRPCError({ code: "FORBIDDEN" });
-	}
 
 	return child;
 }

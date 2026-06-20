@@ -27,7 +27,7 @@ async function getStaffOrThrow(userId: string, clinicId: string) {
 	return user;
 }
 
-export const staffRouter = router({
+export const staffRouter: ReturnType<typeof router> = router({
 	invite: clinicAdminProcedure
 		.input(InviteStaffInput)
 		.mutation(async ({ input, ctx }) => {

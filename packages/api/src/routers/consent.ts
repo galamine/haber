@@ -1,7 +1,7 @@
 import prisma from "@haber-final/db";
+import { PERMISSIONS } from "@haber-final/db/permissions";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-
 import type { AuthUser } from "../context";
 import { hasPermission, protectedProcedure, router } from "../index";
 import {
@@ -9,7 +9,6 @@ import {
 	RestoreConsentInput,
 	WithdrawConsentInput,
 } from "../schemas/consent";
-import { PERMISSIONS } from "../schemas/staff";
 import { assertChildInClinic, getChildForRead } from "./child";
 
 async function requireIntakePermission(ctx: { auth: AuthUser }) {
@@ -72,7 +71,7 @@ export async function assertConsentGranted(childId: string) {
 	}
 }
 
-export const consentRouter = router({
+export const consentRouter: ReturnType<typeof router> = router({
 	record: protectedProcedure
 		.input(RecordConsentInput)
 		.mutation(async ({ input, ctx }) => {

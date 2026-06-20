@@ -130,6 +130,9 @@ importers:
       '@haber-final/api':
         specifier: workspace:*
         version: link:../../packages/api
+      '@haber-final/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@haber-final/env':
         specifier: workspace:*
         version: link:../../packages/env

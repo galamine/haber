@@ -8,7 +8,7 @@ import { milestoneRouter } from "./milestone";
 import { staffRouter } from "./staff";
 import { taxonomyRouter } from "./taxonomy";
 
-export const appRouter = router({
+export const appRouter: ReturnType<typeof router> = router({
 	healthCheck: publicProcedure.query(() => {
 		return "OK";
 	}),
