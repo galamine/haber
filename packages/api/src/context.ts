@@ -27,7 +27,7 @@ export async function createContext({ context }: CreateContextOptions) {
 	}
 
 	const ip =
-		context.req.header("x-forwarded-for")?.split(",")[0].trim() ??
+		context.req.header("x-forwarded-for")?.split(",")[0]?.trim() ??
 		context.req.header("x-real-ip") ??
 		"unknown";
 

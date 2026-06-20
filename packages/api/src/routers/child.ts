@@ -23,7 +23,7 @@ export async function getChildForRead(
 	childId: string,
 	ctx: { auth: AuthUser },
 ) {
-	const { role, tenantId, userId } = ctx.auth;
+	const { role, tenantId } = ctx.auth;
 
 	const child = await prisma.child.findFirst({
 		where: {
@@ -31,7 +31,7 @@ export async function getChildForRead(
 			deletedAt: null,
 			...(role !== "SUPER_ADMIN" ? { clinicId: tenantId ?? undefined } : {}),
 		},
-		include: { guards: true },
+		include: { guardian: true },
 	});
 
 	if (!child) throw new TRPCError({ code: "NOT_FOUND" });
@@ -233,9 +233,23 @@ export const childRouter = router({
 
 			const child = await prisma.child.findFirst({
 				where: { id: input.childId, deletedAt: null },
-				include: { guards: { include: { consentRecords: true } } },
 			});
 			if (!child) throw new TRPCError({ code: "NOT_FOUND" });
+
+			const guardian = await prisma.guardian.findUnique({
+				where: { childId: input.childId },
+			});
+			const consentRecords = await prisma.consentRecord.findMany({
+				where: { childId: input.childId },
+			});
+			const requiredConsents = [
+				"TREATMENT",
+				"DATA_PROCESSING",
+				"IMAGE_VIDEO_CAPTURE",
+			] as const;
+			const hasAllConsents = requiredConsents.every((type) =>
+				consentRecords.some((r) => r.consentType === type && r.checkbox),
+			);
 
 			const missingFields: string[] = [];
 			if (!child.opNumber) missingFields.push("opNumber");
@@ -244,11 +258,8 @@ export const childRouter = router({
 			if (!child.sex) missingFields.push("sex");
 			if (child.spokenLanguages.length === 0)
 				missingFields.push("spokenLanguages");
-			if (child.guards.length === 0) missingFields.push("guardians");
-			if (
-				child.consentStatus !== "GRANTED" ||
-				child.guards.some((g) => g.consentRecords.length === 0)
-			) {
+			if (!guardian) missingFields.push("guardian");
+			if (!hasAllConsents) {
 				missingFields.push("consent");
 			}
 
@@ -258,7 +269,7 @@ export const childRouter = router({
 	assignTherapist: protectedProcedure
 		.input(AssignTherapistInput)
 		.mutation(async ({ input, ctx }) => {
-			const { role, tenantId, userId } = ctx.auth;
+			const { role, tenantId } = ctx.auth;
 			const isClinicAdmin = role === "CLINIC_ADMIN";
 			const hasIntake = await hasPermission(ctx, PERMISSIONS.CHILD_INTAKE);
 			if (!isClinicAdmin && !hasIntake) {
