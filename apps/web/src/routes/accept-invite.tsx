@@ -39,7 +39,7 @@ function AcceptInvitePage() {
 		trpc.auth.verifyOtp.mutationOptions({
 			onSuccess: (result) => {
 				setTokens(result.accessToken, result.refreshToken);
-				router.navigate({ to: "/dashboard" });
+				router.navigate({ to: "/user-profile" });
 			},
 		}),
 	);

@@ -6,6 +6,7 @@ import { clinicRouter } from "./clinic";
 import { consentRouter } from "./consent";
 import { consentInvitationRouter } from "./consentInvitation";
 import { milestoneRouter } from "./milestone";
+import { profileRouter } from "./profile";
 import { staffRouter } from "./staff";
 import { taxonomyRouter } from "./taxonomy";
 
@@ -22,5 +23,6 @@ export const appRouter: ReturnType<typeof router> = router({
 	consent: consentRouter,
 	consentInvitation: consentInvitationRouter,
 	assessment: assessmentRouter,
+	profile: profileRouter,
 });
 export type AppRouter = typeof appRouter;
