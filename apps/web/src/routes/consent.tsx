@@ -53,13 +53,11 @@ function ConsentPage() {
 	});
 	const [submitted, setSubmitted] = useState(false);
 
-	const { data: validation, isLoading: isValidating } = useQuery(
-		trpc.consentInvitation.validate.queryOptions({ token }),
-		{
-			enabled: !!token,
-			retry: false,
-		},
-	);
+	const { data: validation, isLoading: isValidating } = useQuery({
+		...trpc.consentInvitation.validate.queryOptions({ token }),
+		enabled: !!token,
+		retry: false,
+	});
 
 	const submitMutation = useMutation(
 		trpc.consentInvitation.submit.mutationOptions({
