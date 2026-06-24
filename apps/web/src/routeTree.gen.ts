@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UiTestRouteImport } from './routes/ui-test'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as AcceptInviteRouteImport } from './routes/accept-invite'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -42,6 +43,11 @@ const UiTestRoute = UiTestRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConsentRoute = ConsentRouteImport.update({
+  id: '/consent',
+  path: '/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AcceptInviteRoute = AcceptInviteRouteImport.update({
@@ -175,6 +181,7 @@ const AuthenticatedChildrenChildIdAssessmentAssessmentIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accept-invite': typeof AcceptInviteRoute
+  '/consent': typeof ConsentRoute
   '/login': typeof LoginRoute
   '/ui-test': typeof UiTestRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -200,6 +207,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accept-invite': typeof AcceptInviteRoute
+  '/consent': typeof ConsentRoute
   '/login': typeof LoginRoute
   '/ui-test': typeof UiTestRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/accept-invite': typeof AcceptInviteRoute
+  '/consent': typeof ConsentRoute
   '/login': typeof LoginRoute
   '/ui-test': typeof UiTestRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -254,6 +263,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/accept-invite'
+    | '/consent'
     | '/login'
     | '/ui-test'
     | '/dashboard'
@@ -279,6 +289,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/accept-invite'
+    | '/consent'
     | '/login'
     | '/ui-test'
     | '/dashboard'
@@ -305,6 +316,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/accept-invite'
+    | '/consent'
     | '/login'
     | '/ui-test'
     | '/_authenticated/dashboard'
@@ -332,6 +344,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AcceptInviteRoute: typeof AcceptInviteRoute
+  ConsentRoute: typeof ConsentRoute
   LoginRoute: typeof LoginRoute
   UiTestRoute: typeof UiTestRoute
 }
@@ -350,6 +363,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/consent': {
+      id: '/consent'
+      path: '/consent'
+      fullPath: '/consent'
+      preLoaderRoute: typeof ConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/accept-invite': {
@@ -570,6 +590,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AcceptInviteRoute: AcceptInviteRoute,
+  ConsentRoute: ConsentRoute,
   LoginRoute: LoginRoute,
   UiTestRoute: UiTestRoute,
 }

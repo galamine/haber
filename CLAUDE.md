@@ -50,6 +50,9 @@ The Prisma client is generated into `packages/db/prisma/generated/` — never ed
 
 Wrap multiple Prisma writes in `prisma.$transaction(async (tx) => { ... })` whenever partial failure would leave data inconsistent — e.g., revoke-then-create session rotation, OTP invalidation + creation, or any sequence where a later write must not succeed without an earlier one. Use the `tx` proxy inside the callback instead of the bare `prisma` client. External I/O (HTTP calls, email sends) must stay outside the transaction.
 
+### Adding permissions
+All permission strings must be defined in `packages/db/src/permissions.ts` using the `PERMISSIONS` constant. Import from `@haber-final/db/permissions` in routers and seed files. This ensures the seed script can grant all permissions via `Object.values(PERMISSIONS)` without manual updates.
+
 ### Adding a frontend route
 TanStack Router uses file-based routing. Add a file to `apps/web/src/routes/` — the router plugin auto-regenerates `routeTree.gen.ts`. Never manually edit `routeTree.gen.ts`.
 

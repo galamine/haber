@@ -18,6 +18,9 @@ import { Check, ChevronRight, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
+
+type ConsentType = "TREATMENT" | "DATA_PROCESSING" | "IMAGE_VIDEO_CAPTURE";
+
 import { z } from "zod";
 
 import { trpc } from "@/utils/trpc";
@@ -70,16 +73,7 @@ type GuardianData = {
 
 type CreatedChild = {
 	id: string;
-	guards: GuardianData[];
-};
-
-type ConsentType = "TREATMENT" | "DATA_PROCESSING" | "IMAGE_VIDEO_CAPTURE";
-
-type ConsentCardState = {
-	typedName: string;
-	TREATMENT: boolean;
-	DATA_PROCESSING: boolean;
-	IMAGE_VIDEO_CAPTURE: boolean;
+	guardian: GuardianData;
 };
 
 // ─── Stepper ─────────────────────────────────────────────────────────────────
@@ -581,123 +575,34 @@ function Step3Guardians({
 	);
 }
 
-// ─── Step 4: Consent ──────────────────────────────────────────────────────────
+// ─── Step 4: Send Consent Link ────────────────────────────────────────────────
 
-const CONSENT_TYPES: {
-	type: ConsentType;
-	label: string;
-	description: string;
-}[] = [
-	{
-		type: "TREATMENT",
-		label: "Treatment Consent",
-		description:
-			"I consent to my child receiving therapeutic assessment and treatment services.",
-	},
-	{
-		type: "DATA_PROCESSING",
-		label: "Data Processing",
-		description:
-			"I consent to my child's personal and clinical data being collected and processed.",
-	},
-	{
-		type: "IMAGE_VIDEO_CAPTURE",
-		label: "Image & Video Capture",
-		description:
-			"I consent to photos or videos being taken of my child for clinical or educational purposes.",
-	},
-];
-
-function Step4Consent({
+function Step4SendConsentLink({
 	childId,
-	guards,
+	guardianName,
+	guardianEmail,
 	onBack,
+	onComplete,
 }: {
 	childId: string;
-	guards: GuardianData[];
+	guardianName: string;
+	guardianEmail: string | null;
 	onBack: () => void;
+	onComplete: () => void;
 }) {
-	const router = useRouter();
 	const queryClient = useQueryClient();
-	const [isSubmitting, setIsSubmitting] = useState(false);
-
-	const [states, setStates] = useState<Record<string, ConsentCardState>>(() =>
-		Object.fromEntries(
-			guards.map((g) => [
-				g.id,
-				{
-					typedName: "",
-					TREATMENT: false,
-					DATA_PROCESSING: false,
-					IMAGE_VIDEO_CAPTURE: false,
-				},
-			]),
-		),
+	const sendMutation = useMutation(
+		trpc.consentInvitation.send.mutationOptions({
+			onSuccess: () => {
+				toast.success("Consent link sent!");
+				queryClient.invalidateQueries({
+					queryKey: trpc.child.list.queryOptions({}).queryKey,
+				});
+				onComplete();
+			},
+			onError: (err) => toast.error(err.message),
+		}),
 	);
-
-	const recordMutation = useMutation(trpc.consent.record.mutationOptions());
-
-	function updateState(guardianId: string, patch: Partial<ConsentCardState>) {
-		setStates((prev) => ({
-			...prev,
-			[guardianId]: { ...prev[guardianId], ...patch },
-		}));
-	}
-
-	async function handleComplete() {
-		for (const guard of guards) {
-			const state = states[guard.id];
-			if (!state.typedName.trim()) {
-				toast.error(`Please provide a signed name for ${guard.name}`);
-				return;
-			}
-			if (!state.TREATMENT) {
-				toast.error(`Treatment consent is required for ${guard.name}`);
-				return;
-			}
-		}
-
-		setIsSubmitting(true);
-		try {
-			const calls: Promise<unknown>[] = [];
-			for (const guard of guards) {
-				const state = states[guard.id];
-				const types = (
-					[
-						"TREATMENT",
-						"DATA_PROCESSING",
-						"IMAGE_VIDEO_CAPTURE",
-					] as ConsentType[]
-				).filter((t) => state[t]);
-				for (const consentType of types) {
-					calls.push(
-						recordMutation.mutateAsync({
-							childId,
-							guardianId: guard.id,
-							consentType,
-							typedName: state.typedName.trim(),
-							checkbox: true,
-						}),
-					);
-				}
-			}
-			await Promise.all(calls);
-			await queryClient.invalidateQueries({
-				queryKey: trpc.child.list.queryOptions({}).queryKey,
-			});
-			toast.success("Intake complete!");
-			router.navigate({
-				to: "/children/$childId",
-				params: { childId },
-			});
-		} catch (err: unknown) {
-			const message =
-				err instanceof Error ? err.message : "Failed to record consent";
-			toast.error(message);
-		} finally {
-			setIsSubmitting(false);
-		}
-	}
 
 	return (
 		<div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
@@ -706,98 +611,47 @@ function Step4Consent({
 					Guardian Consent
 				</h2>
 				<p className="mt-1 text-on-surface-variant text-sm">
-					Each guardian must provide a signed name and consent to treatment
+					Send a magic link to the guardian to collect consent remotely
 				</p>
 			</div>
-
-			<div className="space-y-6 p-6">
-				{guards.map((guard) => {
-					const state = states[guard.id];
-					return (
-						<div
-							key={guard.id}
-							className="overflow-hidden rounded-xl border border-outline-variant"
-						>
-							<div className="flex items-center gap-3 border-outline-variant border-b bg-surface px-5 py-4">
-								<div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-container font-semibold text-on-primary-container text-sm">
-									{guard.name
-										.split(" ")
-										.map((n) => n[0])
-										.join("")
-										.slice(0, 2)
-										.toUpperCase()}
-								</div>
-								<div>
-									<p className="font-medium text-on-surface text-sm">
-										{guard.name}
-									</p>
-									<p className="text-on-surface-variant text-xs capitalize">
-										{guard.relation}
-									</p>
-								</div>
-							</div>
-
-							<div className="space-y-3 p-5">
-								<p className="font-medium text-on-surface-variant text-xs uppercase tracking-wider">
-									Consent Types
-								</p>
-								{CONSENT_TYPES.map(({ type, label, description }) => (
-									<label
-										key={type}
-										className="flex cursor-pointer items-start gap-3"
-									>
-										<input
-											type="checkbox"
-											checked={state[type]}
-											onChange={(e) =>
-												updateState(guard.id, { [type]: e.target.checked })
-											}
-											className="mt-0.5 h-4 w-4 rounded border-outline-variant text-brown-600 focus:ring-brown-600"
-										/>
-										<div>
-											<p className="font-medium text-on-surface text-sm">
-												{label}
-											</p>
-											<p className="mt-0.5 text-on-surface-variant text-xs">
-												{description}
-											</p>
-										</div>
-									</label>
-								))}
-
-								<div className="mt-4 flex flex-col gap-1.5 border-outline-variant border-t pt-4">
-									<Label>
-										Typed Signature <span className="text-red-500">*</span>
-									</Label>
-									<Input
-										placeholder="Type full name to sign"
-										value={state.typedName}
-										onChange={(e) =>
-											updateState(guard.id, { typedName: e.target.value })
-										}
-										className="font-serif italic"
-									/>
-									<p className="text-on-surface-variant text-xs">
-										Type your full name as your digital signature
-									</p>
-								</div>
-							</div>
-						</div>
-					);
-				})}
+			<div className="space-y-4 p-6">
+				<div className="rounded-lg border border-outline-variant bg-surface p-4">
+					<p className="text-on-surface-variant text-sm">Sending to:</p>
+					<p className="font-medium text-on-surface">{guardianName}</p>
+					{guardianEmail ? (
+						<p className="text-on-surface-variant text-sm">{guardianEmail}</p>
+					) : (
+						<p className="text-red-500 text-sm">No email on file</p>
+					)}
+				</div>
+				<Button
+					className="w-full"
+					disabled={sendMutation.isPending || !guardianEmail}
+					onClick={() => sendMutation.mutate({ childId })}
+				>
+					{sendMutation.isPending ? "Sending…" : "Send Consent Link"}
+				</Button>
+				<p className="text-center text-on-surface-variant text-xs">
+					The link expires in 7 days and can only be used once.
+				</p>
 			</div>
-
 			<div className="flex justify-between border-outline-variant border-t px-6 py-4">
 				<Button type="button" variant="outline" onClick={onBack}>
 					Back
 				</Button>
 				<Button
-					onClick={handleComplete}
-					disabled={isSubmitting}
+					disabled={sendMutation.isPending}
+					onClick={() => {
+						if (guardianEmail) {
+							sendMutation.mutate({ childId });
+						} else {
+							onComplete();
+						}
+					}}
 					className="gap-2"
 				>
-					{isSubmitting ? "Submitting…" : "Complete Intake"}
-					{!isSubmitting && <Check className="h-4 w-4" />}
+					{sendMutation.isPending ? "Sending…" : "Complete Intake"}
+					{!sendMutation.isPending && <Check className="h-4 w-4" />}
 				</Button>
 			</div>
 		</div>
@@ -858,11 +712,21 @@ function NewChildPage() {
 				});
 			}
 
-			const fullChild = await queryClient.fetchQuery(
-				trpc.child.get.queryOptions({ childId: child.id }),
-			);
+			const guardianData = await trpc.child.get.queryOptions({
+				childId: child.id,
+			});
+			// With single guardian per child, access the first guardian
+			const firstGuardian = (
+				guardianData as unknown as { guards: GuardianData[] }
+			).guards?.[0];
 
-			setCreatedChild({ id: child.id, guards: fullChild.guards });
+			if (!firstGuardian) {
+				toast.error("Failed to create guardian record");
+				setIsCreating(false);
+				return;
+			}
+
+			setCreatedChild({ id: child.id, guardian: firstGuardian });
 			setStep(4);
 		} catch (err: unknown) {
 			const message =
@@ -921,10 +785,17 @@ function NewChildPage() {
 						/>
 					)}
 					{step === 4 && createdChild && (
-						<Step4Consent
+						<Step4SendConsentLink
 							childId={createdChild.id}
-							guards={createdChild.guards}
+							guardianName={createdChild.guardian.name}
+							guardianEmail={createdChild.guardian.email}
 							onBack={() => setStep(3)}
+							onComplete={() =>
+								router.navigate({
+									to: "/children/$childId",
+									params: { childId: createdChild.id },
+								})
+							}
 						/>
 					)}
 				</div>

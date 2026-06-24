@@ -60,7 +60,7 @@ type ChildProfile = {
 	opNumber: string;
 	consentStatus: string;
 	medicalHistory: Record<string, string | undefined>;
-	guards: ChildGuard[];
+	guardian: ChildGuard | null;
 };
 
 const MEDICAL_FIELDS: { key: string; label: string }[] = [
@@ -79,7 +79,7 @@ const INTAKE_FIELD_LABELS: Record<string, string> = {
 	dob: "Date of Birth",
 	sex: "Legal Sex",
 	spokenLanguages: "Languages Spoken",
-	guardians: "Guardians Added",
+	guardian: "Guardian Added",
 	consent: "Consent Granted",
 };
 
@@ -266,6 +266,12 @@ function ChildProfilePage() {
 											? "Complete intake before starting an assessment"
 											: undefined
 									}
+									onClick={() =>
+										router.navigate({
+											to: "/children/$childId/assessment/new",
+											params: { childId },
+										})
+									}
 								>
 									Start Assessment
 								</Button>
@@ -321,53 +327,45 @@ function ChildProfilePage() {
 				{/* Guardians */}
 				<TabsContent value="guardians">
 					<div className="space-y-4">
-						{c.guards.length === 0 ? (
+						{!c.guardian ? (
 							<div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center text-on-surface-variant text-sm">
-								No guardians on file.
+								No guardian on file.
 							</div>
 						) : (
-							c.guards.map((g, idx) => (
-								<div
-									key={g.id}
-									className="rounded-xl border border-outline-variant bg-surface-container-lowest p-5"
-								>
-									<div className="flex items-center gap-3">
-										<Avatar className="h-10 w-10">
-											<AvatarFallback className="bg-brown-100 text-brown-700 text-sm">
-												{g.name
-													.split(" ")
-													.map((n) => n[0])
-													.join("")
-													.slice(0, 2)
-													.toUpperCase()}
-											</AvatarFallback>
-										</Avatar>
-										<div>
-											<p className="font-medium text-on-surface text-sm">
-												{g.name}
-											</p>
-											<p className="text-on-surface-variant text-xs capitalize">
-												{g.relation}{" "}
-												{idx === 0 && (
-													<span className="ml-1 rounded-full bg-brown-100 px-1.5 py-0.5 text-brown-700 text-xs">
-														Primary
-													</span>
-												)}
-											</p>
-										</div>
-									</div>
-									<div className="mt-3 grid gap-2 text-sm md:grid-cols-2">
-										<p className="text-on-surface-variant">
-											<span className="font-medium">Phone:</span> {g.phone}
+							<div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-5">
+								<div className="flex items-center gap-3">
+									<Avatar className="h-10 w-10">
+										<AvatarFallback className="bg-brown-100 text-brown-700 text-sm">
+											{c.guardian.name
+												.split(" ")
+												.map((n) => n[0])
+												.join("")
+												.slice(0, 2)
+												.toUpperCase()}
+										</AvatarFallback>
+									</Avatar>
+									<div>
+										<p className="font-medium text-on-surface text-sm">
+											{c.guardian.name}
 										</p>
-										{g.email && (
-											<p className="text-on-surface-variant">
-												<span className="font-medium">Email:</span> {g.email}
-											</p>
-										)}
+										<p className="text-on-surface-variant text-xs capitalize">
+											{c.guardian.relation}
+										</p>
 									</div>
 								</div>
-							))
+								<div className="mt-3 grid gap-2 text-sm md:grid-cols-2">
+									<p className="text-on-surface-variant">
+										<span className="font-medium">Phone:</span>{" "}
+										{c.guardian.phone}
+									</p>
+									{c.guardian.email && (
+										<p className="text-on-surface-variant">
+											<span className="font-medium">Email:</span>{" "}
+											{c.guardian.email}
+										</p>
+									)}
+								</div>
+							</div>
 						)}
 					</div>
 				</TabsContent>
@@ -380,19 +378,8 @@ function ChildProfilePage() {
 								<Button
 									variant="outline"
 									className="gap-2 border-red-300 text-red-600 hover:bg-red-50"
-									disabled={
-										withdrawMutation.isPending ||
-										!consentStatus?.guardians.length
-									}
-									onClick={() => {
-										const firstGuardian = consentStatus?.guardians[0];
-										if (firstGuardian) {
-											withdrawMutation.mutate({
-												childId,
-												guardianId: firstGuardian.guardianId,
-											});
-										}
-									}}
+									disabled={withdrawMutation.isPending}
+									onClick={() => withdrawMutation.mutate({ childId })}
 								>
 									<Shield className="h-4 w-4" />
 									Withdraw Consent
@@ -400,64 +387,45 @@ function ChildProfilePage() {
 							</div>
 						)}
 
-						{consentStatus?.guardians.map((g) => (
-							<div
-								key={g.guardianId}
-								className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest"
-							>
-								<div className="border-outline-variant border-b bg-surface px-5 py-3">
-									<p className="font-medium text-on-surface text-sm">
-										{g.name}
-									</p>
-									<p className="text-on-surface-variant text-xs capitalize">
-										{g.relation}
-									</p>
-								</div>
-								<div className="divide-y divide-outline-variant">
-									{(
-										[
-											"TREATMENT",
-											"DATA_PROCESSING",
-											"IMAGE_VIDEO_CAPTURE",
-										] as const
-									).map((type) => {
-										const entry = g.consents[type];
-										return (
-											<div
-												key={type}
-												className="flex items-center justify-between px-5 py-3"
-											>
-												<div>
-													<p className="text-on-surface text-sm">
-														{type
-															.replace(/_/g, " ")
-															.toLowerCase()
-															.replace(/\b\w/g, (c) => c.toUpperCase())}
+						<div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
+							<div className="divide-y divide-outline-variant">
+								{(
+									[
+										"TREATMENT",
+										"DATA_PROCESSING",
+										"IMAGE_VIDEO_CAPTURE",
+									] as const
+								).map((type) => {
+									const entry = consentStatus?.consents[type];
+									return (
+										<div
+											key={type}
+											className="flex items-center justify-between px-5 py-3"
+										>
+											<div>
+												<p className="text-on-surface text-sm">
+													{type
+														.replace(/_/g, " ")
+														.toLowerCase()
+														.replace(/\b\w/g, (c) => c.toUpperCase())}
+												</p>
+												{entry?.consented && entry?.timestamp && (
+													<p className="text-on-surface-variant text-xs">
+														Signed: {entry.typedName} •{" "}
+														{new Date(entry.timestamp).toLocaleDateString()}
 													</p>
-													{entry.consented && entry.timestamp && (
-														<p className="text-on-surface-variant text-xs">
-															Signed: {entry.typedName} •{" "}
-															{new Date(entry.timestamp).toLocaleDateString()}
-														</p>
-													)}
-												</div>
-												{entry.consented ? (
-													<CheckCircle2 className="h-4 w-4 text-green-600" />
-												) : (
-													<XCircle className="h-4 w-4 text-on-surface-variant" />
 												)}
 											</div>
-										);
-									})}
-								</div>
+											{entry?.consented ? (
+												<CheckCircle2 className="h-4 w-4 text-green-600" />
+											) : (
+												<XCircle className="h-4 w-4 text-on-surface-variant" />
+											)}
+										</div>
+									);
+								})}
 							</div>
-						))}
-
-						{!consentStatus?.guardians.length && (
-							<div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center text-on-surface-variant text-sm">
-								No consent records yet.
-							</div>
-						)}
+						</div>
 					</div>
 				</TabsContent>
 

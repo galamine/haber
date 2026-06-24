@@ -1,8 +1,12 @@
+import {
+	InputOTP,
+	InputOTPGroup,
+	InputOTPSlot,
+} from "@haber-final/ui/components/input-otp";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { Stethoscope } from "lucide-react";
 import { useState } from "react";
-
 import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 
@@ -69,34 +73,6 @@ function LoginPage() {
 			},
 		}),
 	);
-
-	function handleOtpChange(
-		e: React.ChangeEvent<HTMLInputElement>,
-		index: number,
-	) {
-		const val = e.target.value.replace(/\D/g, "").slice(-1);
-		if (val) {
-			const newOtp = otp.split("");
-			newOtp[index] = val;
-			setOtp(newOtp.join(""));
-			if (index < 5) {
-				document
-					.querySelectorAll<HTMLInputElement>("[data-otp-input]")
-					[index + 1]?.focus();
-			}
-		}
-	}
-
-	function handleOtpKeyDown(
-		e: React.KeyboardEvent<HTMLInputElement>,
-		index: number,
-	) {
-		if (e.key === "Backspace" && !otp[index] && index > 0) {
-			document
-				.querySelectorAll<HTMLInputElement>("[data-otp-input]")
-				[index - 1]?.focus();
-		}
-	}
 
 	async function handleRequestOtp(e: React.FormEvent) {
 		e.preventDefault();
@@ -180,21 +156,17 @@ function LoginPage() {
 							onSubmit={handleVerifyOtp}
 							className="flex flex-col items-center gap-4"
 						>
-							<div className="flex items-center gap-2">
-								{Array.from({ length: 6 }).map((_, i) => (
-									<input
-										key={i}
-										type="text"
-										inputMode="numeric"
-										maxLength={1}
-										value={otp[i] ?? ""}
-										onChange={(e) => handleOtpChange(e, i)}
-										onKeyDown={(e) => handleOtpKeyDown(e, i)}
-										className="h-9 w-9 rounded-lg border border-brown-300 bg-white text-center font-medium text-sm focus:outline-none focus:ring-2 focus:ring-brown-700"
-										data-otp-input
-									/>
-								))}
-							</div>
+							<InputOTP maxLength={6} value={otp} onChange={setOtp}>
+								<InputOTPGroup className="gap-2">
+									{Array.from({ length: 6 }).map((_, i) => (
+										<InputOTPSlot
+											key={i}
+											index={i}
+											className="h-9 w-9 rounded-lg border border-brown-300 border-l bg-white text-center font-medium text-sm data-[active=true]:z-10 data-[active=true]:outline-none data-[active=true]:ring-2 data-[active=true]:ring-brown-700"
+										/>
+									))}
+								</InputOTPGroup>
+							</InputOTP>
 
 							{error && (
 								<p className="text-center text-danger text-sm">{error}</p>

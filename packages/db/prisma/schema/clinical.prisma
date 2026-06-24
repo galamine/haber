@@ -33,24 +33,24 @@ model Child {
   updatedAt           DateTime      @updatedAt
 
   clinic        Clinic              @relation(fields: [clinicId], references: [id])
-  guards        Guardian[]
-  consents      ConsentRecord[]
-  assessments   InitialAssessment[]
+  guardian       Guardian?
+  consents       ConsentRecord[]
+  invitations    ConsentInvitation[]
+  assessments    InitialAssessment[]
 
   @@map("child")
 }
 
 model Guardian {
   id       String  @id @default(cuid())
-  childId  String
+  childId  String  @unique
   userId   String?
   name     String
   relation String
   phone    String
   email    String?
 
-  child          Child           @relation(fields: [childId], references: [id])
-  consentRecords ConsentRecord[]
+  child Child @relation(fields: [childId], references: [id])
 
   @@map("guardian")
 }
@@ -58,7 +58,6 @@ model Guardian {
 model ConsentRecord {
   id          String      @id @default(cuid())
   childId     String
-  guardianId  String
   consentType ConsentType
   typedName   String
   checkbox    Boolean
@@ -66,9 +65,23 @@ model ConsentRecord {
   ip          String
 
   child    Child    @relation(fields: [childId], references: [id])
-  guardian Guardian @relation(fields: [guardianId], references: [id])
 
+  @@unique([childId, consentType])
   @@map("consent_record")
+}
+
+model ConsentInvitation {
+  id         String    @id @default(cuid())
+  childId    String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdBy  String
+  createdAt  DateTime  @default(now())
+
+  child Child @relation(fields: [childId], references: [id])
+
+  @@map("consent_invitation")
 }
 
 model InitialAssessment {

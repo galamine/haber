@@ -4,11 +4,12 @@ import { authRouter } from "./auth";
 import { childRouter } from "./child";
 import { clinicRouter } from "./clinic";
 import { consentRouter } from "./consent";
+import { consentInvitationRouter } from "./consentInvitation";
 import { milestoneRouter } from "./milestone";
 import { staffRouter } from "./staff";
 import { taxonomyRouter } from "./taxonomy";
 
-export const appRouter = router({
+export const appRouter: ReturnType<typeof router> = router({
 	healthCheck: publicProcedure.query(() => {
 		return "OK";
 	}),
@@ -19,6 +20,7 @@ export const appRouter = router({
 	staff: staffRouter,
 	child: childRouter,
 	consent: consentRouter,
+	consentInvitation: consentInvitationRouter,
 	assessment: assessmentRouter,
 });
 export type AppRouter = typeof appRouter;
