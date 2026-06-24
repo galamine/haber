@@ -15,7 +15,9 @@ type AssessmentTabsShellProps = {
 	activeTab: SectionTabValue;
 	onTabChange: (value: SectionTabValue) => void;
 	errorTabs?: Set<string>;
+	lockedTabs?: Set<SectionTabValue>;
 	sections: Record<SectionTabValue, ReactNode>;
+	onNext?: () => Promise<boolean>;
 	onSubmit?: () => void;
 	isSubmitting?: boolean;
 };
@@ -24,13 +26,27 @@ export function AssessmentTabsShell({
 	activeTab,
 	onTabChange,
 	errorTabs = new Set(),
+	lockedTabs = new Set(),
 	sections,
+	onNext,
 	onSubmit,
 	isSubmitting,
 }: AssessmentTabsShellProps) {
 	const currentIdx = SECTION_TABS.findIndex((tab) => tab.value === activeTab);
 	const progress = ((currentIdx + 1) / SECTION_TABS.length) * 100;
 	const isLast = currentIdx === SECTION_TABS.length - 1;
+	const isActive = (value: SectionTabValue) => value === activeTab;
+	const isLocked = (value: SectionTabValue) => lockedTabs.has(value);
+
+	const handleNext = async () => {
+		if (onNext) {
+			const canAdvance = await onNext();
+			if (!canAdvance) return;
+		}
+		if (!isLast) {
+			onTabChange(SECTION_TABS[currentIdx + 1].value);
+		}
+	};
 
 	return (
 		<div className="flex flex-col gap-4">
@@ -41,19 +57,17 @@ export function AssessmentTabsShell({
 				</p>
 			</div>
 
-			<Tabs
-				value={activeTab}
-				onValueChange={(value) => onTabChange(value as SectionTabValue)}
-			>
+			<Tabs value={activeTab}>
 				<TabsList className="h-auto w-full flex-wrap justify-start gap-1 bg-transparent p-0">
 					{SECTION_TABS.map((tab) => (
 						<TabsTrigger
 							key={tab.value}
 							value={tab.value}
-							className="relative border border-outline-variant data-[state=active]:bg-brown-100 data-[state=active]:text-brown-800"
+							disabled={isLocked(tab.value)}
+							className="relative border border-outline-variant disabled:cursor-not-allowed disabled:opacity-40 data-[state=active]:border-brown-300 data-[state=active]:bg-brown-100 data-[state=active]:text-brown-800"
 						>
 							{tab.label}
-							{errorTabs.has(tab.value) && (
+							{isActive(tab.value) && errorTabs.has(tab.value) && (
 								<span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
 							)}
 						</TabsTrigger>
@@ -86,11 +100,7 @@ export function AssessmentTabsShell({
 						</Button>
 					)
 				) : (
-					<Button
-						type="button"
-						onClick={() => onTabChange(SECTION_TABS[currentIdx + 1].value)}
-						className="gap-2"
-					>
+					<Button type="button" onClick={handleNext} className="gap-2">
 						Next
 						<ChevronRight className="h-4 w-4" />
 					</Button>
