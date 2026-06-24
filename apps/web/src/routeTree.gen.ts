@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UserProfileRouteImport } from './routes/user-profile'
 import { Route as UiTestRouteImport } from './routes/ui-test'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ConsentRouteImport } from './routes/consent'
@@ -35,6 +36,11 @@ import { Route as AuthenticatedChildrenChildIdConsentRouteImport } from './route
 import { Route as AuthenticatedChildrenChildIdAssessmentNewRouteImport } from './routes/_authenticated/children/$childId/assessment/new'
 import { Route as AuthenticatedChildrenChildIdAssessmentAssessmentIdRouteImport } from './routes/_authenticated/children/$childId/assessment/$assessmentId'
 
+const UserProfileRoute = UserProfileRouteImport.update({
+  id: '/user-profile',
+  path: '/user-profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UiTestRoute = UiTestRouteImport.update({
   id: '/ui-test',
   path: '/ui-test',
@@ -184,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/consent': typeof ConsentRoute
   '/login': typeof LoginRoute
   '/ui-test': typeof UiTestRoute
+  '/user-profile': typeof UserProfileRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/children/new': typeof AuthenticatedChildrenNewRoute
   '/children/': typeof AuthenticatedChildrenIndexRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/consent': typeof ConsentRoute
   '/login': typeof LoginRoute
   '/ui-test': typeof UiTestRoute
+  '/user-profile': typeof UserProfileRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/children/new': typeof AuthenticatedChildrenNewRoute
   '/children': typeof AuthenticatedChildrenIndexRoute
@@ -238,6 +246,7 @@ export interface FileRoutesById {
   '/consent': typeof ConsentRoute
   '/login': typeof LoginRoute
   '/ui-test': typeof UiTestRoute
+  '/user-profile': typeof UserProfileRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/children/new': typeof AuthenticatedChildrenNewRoute
   '/_authenticated/children/': typeof AuthenticatedChildrenIndexRoute
@@ -266,6 +275,7 @@ export interface FileRouteTypes {
     | '/consent'
     | '/login'
     | '/ui-test'
+    | '/user-profile'
     | '/dashboard'
     | '/children/new'
     | '/children/'
@@ -292,6 +302,7 @@ export interface FileRouteTypes {
     | '/consent'
     | '/login'
     | '/ui-test'
+    | '/user-profile'
     | '/dashboard'
     | '/children/new'
     | '/children'
@@ -319,6 +330,7 @@ export interface FileRouteTypes {
     | '/consent'
     | '/login'
     | '/ui-test'
+    | '/user-profile'
     | '/_authenticated/dashboard'
     | '/_authenticated/children/new'
     | '/_authenticated/children/'
@@ -347,10 +359,18 @@ export interface RootRouteChildren {
   ConsentRoute: typeof ConsentRoute
   LoginRoute: typeof LoginRoute
   UiTestRoute: typeof UiTestRoute
+  UserProfileRoute: typeof UserProfileRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/user-profile': {
+      id: '/user-profile'
+      path: '/user-profile'
+      fullPath: '/user-profile'
+      preLoaderRoute: typeof UserProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ui-test': {
       id: '/ui-test'
       path: '/ui-test'
@@ -593,6 +613,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConsentRoute: ConsentRoute,
   LoginRoute: LoginRoute,
   UiTestRoute: UiTestRoute,
+  UserProfileRoute: UserProfileRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
