@@ -14,12 +14,10 @@ import { cn } from "@haber-final/ui/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { Check, ChevronRight, Plus, Trash2, X } from "lucide-react";
+import { Check, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-type ConsentType = "TREATMENT" | "DATA_PROCESSING" | "IMAGE_VIDEO_CAPTURE";
 
 import { z } from "zod";
 
@@ -46,39 +44,31 @@ const ProfileSchema = z.object({
 type ProfileValues = z.infer<typeof ProfileSchema>;
 type MedicalValues = z.infer<typeof MedicalHistoryInput>;
 
-const GuardiansSchema = z.object({
-	guardians: z
-		.array(
-			z.object({
-				name: z.string().min(1, "Name is required"),
-				relation: z.string().min(1, "Relation is required"),
-				phone: z.string().min(1, "Phone is required"),
-				email: z.string().email("Valid email required"),
-			}),
-		)
-		.min(1),
+const GuardianSchema = z.object({
+	name: z.string().min(1, "Name is required"),
+	relation: z.string().min(1, "Relation is required"),
+	phone: z.string().min(1, "Phone is required"),
+	email: z.string().email("Valid email required"),
 });
 
-type GuardiansValues = z.infer<typeof GuardiansSchema>;
+type GuardianValues = z.infer<typeof GuardianSchema>;
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type GuardianData = {
-	id: string;
-	name: string;
-	relation: string;
-	phone: string;
-	email: string | null;
-};
-
 type CreatedChild = {
 	id: string;
-	guardian: GuardianData;
+	guardian: {
+		id: string;
+		name: string;
+		relation: string;
+		phone: string;
+		email: string | null;
+	};
 };
 
 // ─── Stepper ─────────────────────────────────────────────────────────────────
 
-const STEPS = ["Profile", "Medical History", "Guardians", "Consent"];
+const STEPS = ["Profile", "Medical History", "Guardian", "Consent"];
 
 function WizardStepper({ currentStep }: { currentStep: number }) {
 	return (
@@ -419,146 +409,98 @@ function Step3Guardians({
 	onBack,
 	isSubmitting,
 }: {
-	onNext: (data: GuardiansValues["guardians"]) => void;
+	onNext: (data: GuardianValues) => void;
 	onBack: () => void;
 	isSubmitting: boolean;
 }) {
 	const {
 		register,
 		handleSubmit,
-		control,
 		formState: { errors },
-	} = useForm<GuardiansValues>({
-		resolver: zodResolver(GuardiansSchema),
+	} = useForm<GuardianValues>({
+		resolver: zodResolver(GuardianSchema),
 		defaultValues: {
-			guardians: [{ name: "", relation: "", phone: "", email: "" }],
+			name: "",
+			relation: "",
+			phone: "",
+			email: "",
 		},
 	});
 
-	const { fields, append, remove } = useFieldArray({
-		control,
-		name: "guardians",
-	});
-
 	return (
-		<form onSubmit={handleSubmit((v) => onNext(v.guardians))}>
+		<form onSubmit={handleSubmit(onNext)}>
 			<div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
 				<div className="border-outline-variant border-b px-6 py-4">
-					<h2 className="font-semibold text-on-surface text-xl">Guardians</h2>
+					<h2 className="font-semibold text-on-surface text-xl">Guardian</h2>
 					<p className="mt-1 text-on-surface-variant text-sm">
-						Add at least one guardian for this child
+						Primary guardian for this child
 					</p>
 				</div>
 
 				<div className="space-y-4 p-6">
-					{fields.map((field, idx) => (
-						<div
-							key={field.id}
-							className="relative rounded-lg border border-outline-variant p-4"
-						>
-							<div className="mb-3 flex items-center justify-between">
-								<span className="font-medium text-on-surface text-sm">
-									Guardian {idx + 1}
-								</span>
-								{fields.length > 1 && (
-									<button
-										type="button"
-										onClick={() => remove(idx)}
-										className="text-on-surface-variant hover:text-red-600"
-									>
-										<Trash2 className="h-4 w-4" />
-									</button>
+					<div className="rounded-lg border border-outline-variant p-4">
+						<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+							<div className="flex flex-col gap-1.5">
+								<Label>
+									Full Name <span className="text-red-500">*</span>
+								</Label>
+								<Input
+									placeholder="Guardian's full name"
+									{...register("name")}
+									className={errors.name ? "border-red-500" : ""}
+								/>
+								{errors.name && (
+									<p className="text-red-600 text-xs">{errors.name.message}</p>
 								)}
 							</div>
 
-							<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-								<div className="flex flex-col gap-1.5">
-									<Label>
-										Full Name <span className="text-red-500">*</span>
-									</Label>
-									<Input
-										placeholder="Guardian's full name"
-										{...register(`guardians.${idx}.name`)}
-										className={
-											errors.guardians?.[idx]?.name ? "border-red-500" : ""
-										}
-									/>
-									{errors.guardians?.[idx]?.name && (
-										<p className="text-red-600 text-xs">
-											{errors.guardians[idx]?.name?.message}
-										</p>
-									)}
-								</div>
+							<div className="flex flex-col gap-1.5">
+								<Label>
+									Relation <span className="text-red-500">*</span>
+								</Label>
+								<Input
+									placeholder="e.g. Mother, Father"
+									{...register("relation")}
+									className={errors.relation ? "border-red-500" : ""}
+								/>
+								{errors.relation && (
+									<p className="text-red-600 text-xs">
+										{errors.relation.message}
+									</p>
+								)}
+							</div>
 
-								<div className="flex flex-col gap-1.5">
-									<Label>
-										Relation <span className="text-red-500">*</span>
-									</Label>
-									<Input
-										placeholder="e.g. Mother, Father"
-										{...register(`guardians.${idx}.relation`)}
-										className={
-											errors.guardians?.[idx]?.relation ? "border-red-500" : ""
-										}
-									/>
-									{errors.guardians?.[idx]?.relation && (
-										<p className="text-red-600 text-xs">
-											{errors.guardians[idx]?.relation?.message}
-										</p>
-									)}
-								</div>
+							<div className="flex flex-col gap-1.5">
+								<Label>
+									Phone <span className="text-red-500">*</span>
+								</Label>
+								<Input
+									type="tel"
+									placeholder="+971 50 000 0000"
+									{...register("phone")}
+									className={errors.phone ? "border-red-500" : ""}
+								/>
+								{errors.phone && (
+									<p className="text-red-600 text-xs">{errors.phone.message}</p>
+								)}
+							</div>
 
-								<div className="flex flex-col gap-1.5">
-									<Label>
-										Phone <span className="text-red-500">*</span>
-									</Label>
-									<Input
-										type="tel"
-										placeholder="+971 50 000 0000"
-										{...register(`guardians.${idx}.phone`)}
-										className={
-											errors.guardians?.[idx]?.phone ? "border-red-500" : ""
-										}
-									/>
-									{errors.guardians?.[idx]?.phone && (
-										<p className="text-red-600 text-xs">
-											{errors.guardians[idx]?.phone?.message}
-										</p>
-									)}
-								</div>
-
-								<div className="flex flex-col gap-1.5">
-									<Label>
-										Email <span className="text-red-500">*</span>
-									</Label>
-									<Input
-										type="email"
-										placeholder="guardian@example.com"
-										{...register(`guardians.${idx}.email`)}
-										className={
-											errors.guardians?.[idx]?.email ? "border-red-500" : ""
-										}
-									/>
-									{errors.guardians?.[idx]?.email && (
-										<p className="text-red-600 text-xs">
-											{errors.guardians[idx]?.email?.message}
-										</p>
-									)}
-								</div>
+							<div className="flex flex-col gap-1.5">
+								<Label>
+									Email <span className="text-red-500">*</span>
+								</Label>
+								<Input
+									type="email"
+									placeholder="guardian@example.com"
+									{...register("email")}
+									className={errors.email ? "border-red-500" : ""}
+								/>
+								{errors.email && (
+									<p className="text-red-600 text-xs">{errors.email.message}</p>
+								)}
 							</div>
 						</div>
-					))}
-
-					<button
-						type="button"
-						onClick={() =>
-							append({ name: "", relation: "", phone: "", email: "" })
-						}
-						className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-outline-variant border-dashed py-4 text-on-surface-variant text-sm transition-colors hover:border-brown-400 hover:text-brown-700"
-					>
-						<Plus className="h-4 w-4" />
-						Add Another Guardian
-					</button>
+					</div>
 				</div>
 
 				<div className="flex justify-between border-outline-variant border-t px-6 py-4">
@@ -684,11 +626,11 @@ function NewChildPage() {
 		setStep(3);
 	}
 
-	async function handleStep3(guardians: GuardiansValues["guardians"]) {
+	async function handleStep3(guardian: GuardianValues) {
 		if (!profileData) return;
 		setIsCreating(true);
 		try {
-			const child = await createChildMutation.mutateAsync({
+			const result = await createChildMutation.mutateAsync({
 				opNumber: profileData.opNumber,
 				fullName: `${profileData.firstName} ${profileData.lastName}`.trim(),
 				dob: new Date(profileData.dob),
@@ -700,33 +642,24 @@ function NewChildPage() {
 					.filter(Boolean),
 				school: profileData.school || undefined,
 				preferredTherapistId: profileData.preferredTherapistId || undefined,
-				guardians,
+				guardian: {
+					name: guardian.name,
+					relation: guardian.relation,
+					phone: guardian.phone,
+					email: guardian.email,
+				},
 			});
 
-			const hasMedical =
+			const hasAnyMedicalData =
 				medicalData && Object.values(medicalData).some(Boolean);
-			if (hasMedical) {
+			if (hasAnyMedicalData) {
 				await updateMedicalMutation.mutateAsync({
-					childId: child.id,
+					childId: result.child.id,
 					history: medicalData,
 				});
 			}
 
-			const guardianData = await trpc.child.get.queryOptions({
-				childId: child.id,
-			});
-			// With single guardian per child, access the first guardian
-			const firstGuardian = (
-				guardianData as unknown as { guards: GuardianData[] }
-			).guards?.[0];
-
-			if (!firstGuardian) {
-				toast.error("Failed to create guardian record");
-				setIsCreating(false);
-				return;
-			}
-
-			setCreatedChild({ id: child.id, guardian: firstGuardian });
+			setCreatedChild({ id: result.child.id, guardian: result.guardian });
 			setStep(4);
 		} catch (err: unknown) {
 			const message =

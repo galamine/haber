@@ -32,7 +32,7 @@ export const CreateChildInput = z.object({
 	spokenLanguages: z.array(z.string()),
 	school: z.string().optional(),
 	preferredTherapistId: z.string().optional(),
-	guardians: z.array(GuardianInput).min(1),
+	guardian: GuardianInput,
 });
 
 export const UpdateChildInput = z.object({

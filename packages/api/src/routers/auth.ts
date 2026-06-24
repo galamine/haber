@@ -17,7 +17,7 @@ const OTP_WINDOW_MS = 10 * 60 * 1000;
 const OTP_MAX_REQUESTS = 3;
 const OTP_EXPIRY_MS = 10 * 60 * 1000;
 const OTP_MAX_ATTEMPTS = 5;
-const SESSION_EXPIRY_MS = 30 * 24 * 60 * 60 * 1000;
+const SESSION_EXPIRY_MS = 1 * 24 * 60 * 60 * 1000;
 const IDLE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
 function maskEmail(email: string): string {

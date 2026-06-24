@@ -70,19 +70,19 @@ export const childRouter = router({
 				}
 			}
 
-			const emails = input.guardians.map((g) => g.email);
-			const existingUsers = await prisma.user.findMany({
-				where: { email: { in: emails } },
+			const email = input.guardian.email;
+			const existingUser = await prisma.user.findUnique({
+				where: { email },
 				select: { email: true },
 			});
-			if (existingUsers.length > 0) {
+			if (existingUser) {
 				throw new TRPCError({
 					code: "CONFLICT",
-					message: `Email already registered: ${existingUsers.map((u) => u.email).join(", ")}`,
+					message: `Email already registered: ${existingUser.email}`,
 				});
 			}
 
-			const { guardians, ...childData } = input;
+			const { guardian, ...childData } = input;
 
 			return prisma.$transaction(async (tx) => {
 				const child = await tx.child.create({
@@ -93,28 +93,27 @@ export const childRouter = router({
 					},
 				});
 
-				for (const guardian of guardians) {
-					const guardianUser = await tx.user.create({
-						data: {
-							email: guardian.email,
-							role: "GUARDIAN",
-							loginEnabled: false,
-							clinicId: ctx.auth.tenantId!,
-						},
-					});
-					await tx.guardian.create({
-						data: {
-							childId: child.id,
-							userId: guardianUser.id,
-							name: guardian.name,
-							relation: guardian.relation,
-							phone: guardian.phone,
-							email: guardian.email,
-						},
-					});
-				}
+				const guardianUser = await tx.user.create({
+					data: {
+						email: guardian.email,
+						role: "GUARDIAN",
+						loginEnabled: false,
+						clinicId: ctx.auth.tenantId!,
+					},
+				});
 
-				return child;
+				const guardianRecord = await tx.guardian.create({
+					data: {
+						childId: child.id,
+						userId: guardianUser.id,
+						name: guardian.name,
+						relation: guardian.relation,
+						phone: guardian.phone,
+						email: guardian.email,
+					},
+				});
+
+				return { child, guardian: guardianRecord };
 			});
 		}),
 
