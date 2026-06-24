@@ -31,7 +31,9 @@ export const SectionASchema = z.object({
 		years: z.number().int().min(0),
 		months: z.number().int().min(0).max(11),
 	}),
-	gender: z.string().min(1, "Gender is required"),
+	gender: z.enum(["Male", "Female", "Other", "Prefer not to say"], {
+		message: "Gender is required",
+	}),
 	assessmentDate: z.string().min(1, "Assessment date is required"),
 	location: z.string().min(1, "Assessment location is required"),
 	referringTherapist: z
@@ -40,7 +42,10 @@ export const SectionASchema = z.object({
 	referralSource: z.string().min(1, "Referral source is required"),
 	caregiverName: z.string().min(1, "Caregiver name is required"),
 	caregiverRelation: z.string().min(1, "Relationship to child is required"),
-	caregiverContact: z.string().min(1, "Contact number is required"),
+	caregiverContact: z
+		.string()
+		.min(1, "Contact number is required")
+		.regex(/^[+\d][+\d\s\-()]*$/, "Invalid contact number format"),
 	caregiverEmail: z
 		.string()
 		.min(1, "Email is required")

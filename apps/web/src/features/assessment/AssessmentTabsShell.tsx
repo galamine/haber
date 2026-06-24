@@ -57,7 +57,7 @@ export function AssessmentTabsShell({
 				</p>
 			</div>
 
-			<Tabs value={activeTab}>
+			<Tabs value={activeTab} onValueChange={onTabChange}>
 				<TabsList className="h-auto w-full flex-wrap justify-start gap-1 bg-transparent p-0">
 					{SECTION_TABS.map((tab) => (
 						<TabsTrigger
