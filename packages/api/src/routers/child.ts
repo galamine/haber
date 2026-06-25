@@ -47,7 +47,7 @@ export async function assertChildInClinic(childId: string, tenantId: string) {
 	return child;
 }
 
-export const childRouter = router({
+export const childRouter: ReturnType<typeof router> = router({
 	create: protectedProcedure
 		.input(CreateChildInput)
 		.mutation(async ({ input, ctx }) => {

@@ -66,7 +66,15 @@ export const EMPTY_DEFAULTS: AssessmentFormValues = {
 		milestones: [],
 	},
 	sectionD: {
-		sensoryProfile: [],
+		sensoryProfile: [
+			{ systemId: "", rating: 3, notes: "" },
+			{ systemId: "", rating: 3, notes: "" },
+			{ systemId: "", rating: 3, notes: "" },
+			{ systemId: "", rating: 3, notes: "" },
+			{ systemId: "", rating: 3, notes: "" },
+			{ systemId: "", rating: 3, notes: "" },
+			{ systemId: "", rating: 3, notes: "" },
+		],
 		behaviouralObservations: "",
 	},
 	sectionE: {
@@ -80,19 +88,18 @@ export const EMPTY_DEFAULTS: AssessmentFormValues = {
 	sectionG: {
 		shortTermGoals: [],
 		longTermGoals: [],
-		recommendedFrequency: 0,
-		sessionDurationMinutes: 0,
+		recommendedFrequency: 1,
+		sessionDurationMinutes: 30,
 		interventionSetting: "",
-		reviewPeriodWeeks: 0,
+		reviewPeriodWeeks: 1,
 		homeProgramRecommendations: "",
 		equipment: [],
 		referrals: "",
 	},
 	sectionH: {
 		therapistName: "",
+		signedAt: "",
 		guardianName: "",
-		// RHF default must be an unchecked checkbox; zodResolver flags it
-		// invalid until the user checks it.
 		consentObtained: false as unknown as true,
 	},
 };
@@ -130,20 +137,26 @@ export function buildDefaultValues({
 			gender: child.sex,
 		},
 		sectionC: {
-			milestones: milestones.map((m) => ({
-				milestoneId: m.id,
-				achievedAtAgeMonths: undefined,
-				delayed: false,
-				notes: "",
-			})),
+			milestones:
+				milestones.length > 0
+					? milestones.map((m) => ({
+							milestoneId: m.id,
+							achievedAtAgeMonths: undefined,
+							delayed: false,
+							notes: "",
+						}))
+					: EMPTY_DEFAULTS.sectionC.milestones,
 		},
 		sectionD: {
 			...EMPTY_DEFAULTS.sectionD,
-			sensoryProfile: sensorySystems.map((s) => ({
-				systemId: s.id,
-				rating: 3,
-				notes: "",
-			})),
+			sensoryProfile:
+				sensorySystems.length >= 7
+					? sensorySystems.map((s) => ({
+							systemId: s.id,
+							rating: 3,
+							notes: "",
+						}))
+					: EMPTY_DEFAULTS.sectionD.sensoryProfile,
 		},
 	};
 }

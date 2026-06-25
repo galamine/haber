@@ -27,6 +27,7 @@ async function createAssessmentVersion(
 ) {
 	const sectionH = {
 		...input.sectionH,
+		signedAt: new Date().toISOString(),
 		therapistIp: ctx.ip,
 		guardianIp: ctx.ip,
 		therapistCredentials: await buildCredentialsSnapshot(ctx.auth.userId),

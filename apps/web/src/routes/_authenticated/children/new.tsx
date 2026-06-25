@@ -14,12 +14,10 @@ import { cn } from "@haber-final/ui/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { Check, ChevronRight, Plus, Trash2, X } from "lucide-react";
+import { Check, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-type ConsentType = "TREATMENT" | "DATA_PROCESSING" | "IMAGE_VIDEO_CAPTURE";
 
 import { z } from "zod";
 
@@ -57,22 +55,20 @@ type GuardianValues = z.infer<typeof GuardianSchema>;
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type GuardianData = {
-	id: string;
-	name: string;
-	relation: string;
-	phone: string;
-	email: string | null;
-};
-
 type CreatedChild = {
 	id: string;
-	guardian: GuardianData;
+	guardian: {
+		id: string;
+		name: string;
+		relation: string;
+		phone: string;
+		email: string | null;
+	};
 };
 
 // ─── Stepper ─────────────────────────────────────────────────────────────────
 
-const STEPS = ["Profile", "Medical History", "Guardians", "Consent"];
+const STEPS = ["Profile", "Medical History", "Guardian", "Consent"];
 
 function WizardStepper({ currentStep }: { currentStep: number }) {
 	return (
@@ -615,7 +611,7 @@ function NewChildPage() {
 	const [createdChild, setCreatedChild] = useState<CreatedChild | null>(null);
 	const [isCreating, setIsCreating] = useState(false);
 
-	const createChildMutation = useMutation(trpc.child.create.mutationOptions());
+	const createChildMutation = trpc.child.create.useMutation();
 
 	function handleStep1(data: ProfileValues) {
 		setProfileData(data);
