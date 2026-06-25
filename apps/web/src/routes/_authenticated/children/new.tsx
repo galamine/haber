@@ -576,7 +576,7 @@ function NewChildPage() {
 	const [createdChild, setCreatedChild] = useState<CreatedChild | null>(null);
 	const [isCreating, setIsCreating] = useState(false);
 
-	const createChildMutation = trpc.child.create.useMutation();
+	const createChildMutation = useMutation(trpc.child.create.mutationOptions());
 
 	function handleStep1(data: ProfileValues) {
 		setProfileData(data);

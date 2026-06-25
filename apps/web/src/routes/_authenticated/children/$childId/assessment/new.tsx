@@ -106,14 +106,13 @@ function NewAssessmentPage() {
 	const handleNext = async (): Promise<boolean> => {
 		if (!currentTabConfig) return false;
 
-		let isValid = await trigger(currentTabConfig.field);
-		if (activeTab === "g") {
-			isValid = (await trigger("sectionG.shortTermGoals")) && isValid;
-			isValid = (await trigger("sectionG.longTermGoals")) && isValid;
-		}
+		const isValid = await trigger(currentTabConfig.field);
 
 		if (!isValid) {
 			setSubmitAttempted(true);
+			toast.error(
+				"Please fill short term goal and long term goal fields before proceeding",
+			);
 			return false;
 		}
 		const nextIdx = SECTION_TABS.findIndex((t) => t.value === activeTab) + 1;
