@@ -94,7 +94,7 @@ export const staffRouter: ReturnType<typeof router> = router({
 			return { message: "OTP sent" };
 		}),
 
-	list: clinicAdminProcedure
+	list: protectedProcedure
 		.input(StaffListInput)
 		.query(async ({ input, ctx }) => {
 			const where = {

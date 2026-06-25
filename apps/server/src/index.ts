@@ -11,15 +11,28 @@ const app = new Hono();
 app.use(async (c, next) => {
 	const start = Date.now();
 	await next();
-	logger.info(
-		{
-			method: c.req.method,
-			path: c.req.path,
-			status: c.res.status,
-			ms: Date.now() - start,
-		},
-		"http",
-	);
+	const ms = Date.now() - start;
+	const logData = {
+		method: c.req.method,
+		path: c.req.path,
+		status: c.res.status,
+		ms,
+	};
+
+	if (c.res.status >= 400) {
+		let errorBody: string | undefined;
+		try {
+			if (c.res.body) {
+				errorBody = await c.res.text();
+			}
+		} catch {
+			/* ignore - body already consumed */
+		}
+
+		logger.error({ ...logData, error: errorBody }, "http error");
+	} else {
+		logger.info(logData, "http");
+	}
 });
 app.use(
 	"/*",
@@ -38,6 +51,19 @@ app.use(
 		},
 	}),
 );
+
+app.onError((err, c) => {
+	logger.error(
+		{
+			method: c.req.method,
+			path: c.req.path,
+			error: err.message,
+			stack: err.stack,
+		},
+		"request error",
+	);
+	return c.text("Internal Server Error", 500);
+});
 
 app.get("/", (c) => {
 	return c.text("OK");

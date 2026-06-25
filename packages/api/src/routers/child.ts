@@ -70,51 +70,51 @@ export const childRouter = router({
 				}
 			}
 
-			const emails = input.guardians.map((g) => g.email);
-			const existingUsers = await prisma.user.findMany({
-				where: { email: { in: emails } },
+			const existingUser = await prisma.user.findUnique({
+				where: { email: input.guardian.email },
 				select: { email: true },
 			});
-			if (existingUsers.length > 0) {
+			if (existingUser) {
 				throw new TRPCError({
 					code: "CONFLICT",
-					message: `Email already registered: ${existingUsers.map((u) => u.email).join(", ")}`,
+					message: `Email already registered: ${existingUser.email}`,
 				});
 			}
 
-			const { guardians, ...childData } = input;
+			const { guardian, medicalHistory, ...childData } = input;
 
 			return prisma.$transaction(async (tx) => {
 				const child = await tx.child.create({
 					data: {
 						...childData,
 						clinicId: ctx.auth.tenantId!,
-						medicalHistory: {},
+						medicalHistory: medicalHistory ?? {},
 					},
 				});
 
-				for (const guardian of guardians) {
-					const guardianUser = await tx.user.create({
-						data: {
-							email: guardian.email,
-							role: "GUARDIAN",
-							loginEnabled: false,
-							clinicId: ctx.auth.tenantId!,
-						},
-					});
-					await tx.guardian.create({
-						data: {
-							childId: child.id,
-							userId: guardianUser.id,
-							name: guardian.name,
-							relation: guardian.relation,
-							phone: guardian.phone,
-							email: guardian.email,
-						},
-					});
-				}
+				const guardianUser = await tx.user.create({
+					data: {
+						email: guardian.email,
+						role: "GUARDIAN",
+						loginEnabled: false,
+						clinicId: ctx.auth.tenantId!,
+					},
+				});
+				await tx.guardian.create({
+					data: {
+						childId: child.id,
+						userId: guardianUser.id,
+						name: guardian.name,
+						relation: guardian.relation,
+						phone: guardian.phone,
+						email: guardian.email,
+					},
+				});
 
-				return child;
+				return tx.child.findUniqueOrThrow({
+					where: { id: child.id },
+					include: { guardian: true },
+				});
 			});
 		}),
 
