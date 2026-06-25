@@ -12,7 +12,7 @@ import {
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { cn } from "@haber-final/ui/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Check, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
@@ -38,7 +38,6 @@ const ProfileSchema = z.object({
 	addressStreet: z.string().optional(),
 	spokenLanguages: z.string().min(1, "At least one language is required"),
 	school: z.string().optional(),
-	preferredTherapistId: z.string().optional(),
 });
 
 type ProfileValues = z.infer<typeof ProfileSchema>;
@@ -124,11 +123,6 @@ function Step1Profile({
 	initial: ProfileValues | null;
 	onNext: (data: ProfileValues) => void;
 }) {
-	const { data: therapistsData } = useQuery(
-		trpc.staff.list.queryOptions({ role: "THERAPIST", pageSize: 100 }),
-	);
-	const therapists = therapistsData?.items ?? [];
-
 	const {
 		register,
 		handleSubmit,
@@ -145,7 +139,6 @@ function Step1Profile({
 			addressStreet: "",
 			spokenLanguages: "",
 			school: "",
-			preferredTherapistId: "",
 		},
 	});
 
@@ -295,34 +288,6 @@ function Step1Profile({
 							{...register("school")}
 						/>
 					</div>
-
-					{therapists.length > 0 && (
-						<div className="flex flex-col gap-1.5 md:col-span-2">
-							<Label htmlFor="preferredTherapistId">Preferred Therapist</Label>
-							<Controller
-								control={control}
-								name="preferredTherapistId"
-								render={({ field }) => (
-									<Select
-										value={field.value ?? "none"}
-										onValueChange={(v) => field.onChange(v === "none" ? "" : v)}
-									>
-										<SelectTrigger id="preferredTherapistId">
-											<SelectValue placeholder="Unassigned" />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value="none">Unassigned</SelectItem>
-											{therapists.map((t) => (
-												<SelectItem key={t.id} value={t.id}>
-													{t.email}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-								)}
-							/>
-						</div>
-					)}
 				</div>
 
 				<div className="flex justify-end border-outline-variant border-t px-6 py-4">
@@ -638,7 +603,6 @@ function NewChildPage() {
 					.map((s) => s.trim())
 					.filter(Boolean),
 				school: profileData.school || undefined,
-				preferredTherapistId: profileData.preferredTherapistId || undefined,
 				guardian,
 				medicalHistory: medicalData ?? {},
 			});

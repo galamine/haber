@@ -53,23 +53,6 @@ export const childRouter: ReturnType<typeof router> = router({
 		.mutation(async ({ input, ctx }) => {
 			await requireIntakePermission(ctx);
 
-			if (input.preferredTherapistId) {
-				const therapist = await prisma.user.findFirst({
-					where: {
-						id: input.preferredTherapistId,
-						role: "THERAPIST",
-						clinicId: ctx.auth.tenantId!,
-					},
-				});
-				if (!therapist) {
-					throw new TRPCError({
-						code: "BAD_REQUEST",
-						message:
-							"Invalid preferredTherapistId: not a THERAPIST in this clinic",
-					});
-				}
-			}
-
 			const existingUser = await prisma.user.findUnique({
 				where: { email: input.guardian.email },
 				select: { email: true },
@@ -130,7 +113,7 @@ export const childRouter: ReturnType<typeof router> = router({
 			const { role, tenantId, userId } = ctx.auth;
 			const isAdmin = role === "CLINIC_ADMIN" || role === "SUPER_ADMIN";
 
-			const extraAnd: { OR: Record<string, unknown>[] }[] = [];
+			const extraAnd: Record<string, unknown>[] = [];
 
 			if (role === "THERAPIST" || role === "STAFF") {
 				const assignments = await prisma.childTherapistAssignment.findMany({
@@ -139,10 +122,7 @@ export const childRouter: ReturnType<typeof router> = router({
 				});
 				const assignedChildIds = assignments.map((a) => a.childId);
 				extraAnd.push({
-					OR: [
-						{ preferredTherapistId: userId },
-						{ id: { in: assignedChildIds } },
-					],
+					OR: [{ id: { in: assignedChildIds } }],
 				});
 			}
 
@@ -155,12 +135,19 @@ export const childRouter: ReturnType<typeof router> = router({
 				});
 			}
 
+			if (input.therapistId) {
+				const therapistAssignments =
+					await prisma.childTherapistAssignment.findMany({
+						where: { therapistId: input.therapistId },
+						select: { childId: true },
+					});
+				const therapistChildIds = therapistAssignments.map((a) => a.childId);
+				extraAnd.push({ id: { in: therapistChildIds } });
+			}
+
 			const where = {
 				...(role !== "SUPER_ADMIN" ? { clinicId: tenantId ?? undefined } : {}),
 				...(!isAdmin ? { deletedAt: null } : {}),
-				...(input.therapistId
-					? { preferredTherapistId: input.therapistId }
-					: {}),
 				...(input.consentStatus ? { consentStatus: input.consentStatus } : {}),
 				...(extraAnd.length > 0 ? { AND: extraAnd } : {}),
 			};

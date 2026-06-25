@@ -24,7 +24,6 @@ model Child {
   weightMeasuredAt    DateTime?
   spokenLanguages     String[]
   school              String?
-  preferredTherapistId String?
   consentStatus       ConsentStatus @default(PENDING)
   medicalHistory      Json          @default("{}")
   latestPlanId        String?
