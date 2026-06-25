@@ -105,7 +105,13 @@ function NewAssessmentPage() {
 	const currentTabConfig = SECTION_TABS.find((t) => t.value === activeTab);
 	const handleNext = async (): Promise<boolean> => {
 		if (!currentTabConfig) return false;
-		const isValid = await trigger(currentTabConfig.field);
+
+		let isValid = await trigger(currentTabConfig.field);
+		if (activeTab === "g") {
+			isValid = (await trigger("sectionG.shortTermGoals")) && isValid;
+			isValid = (await trigger("sectionG.longTermGoals")) && isValid;
+		}
+
 		if (!isValid) {
 			setSubmitAttempted(true);
 			return false;

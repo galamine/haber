@@ -115,7 +115,7 @@ export const childRouter: ReturnType<typeof router> = router({
 
 			const extraAnd: Record<string, unknown>[] = [];
 
-			if (role === "THERAPIST" || role === "STAFF") {
+			/* if (role === "THERAPIST" || role === "STAFF") {
 				const assignments = await prisma.childTherapistAssignment.findMany({
 					where: { therapistId: userId },
 					select: { childId: true },
@@ -124,7 +124,7 @@ export const childRouter: ReturnType<typeof router> = router({
 				extraAnd.push({
 					OR: [{ id: { in: assignedChildIds } }],
 				});
-			}
+			} */
 
 			if (input.search) {
 				extraAnd.push({
