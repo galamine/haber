@@ -5,9 +5,9 @@ import {
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { Controller } from "react-hook-form";
 import { MultiSelectCombobox } from "@/components/multi-select-combobox";
+import { FieldWrapper } from "../../assessment/FieldWrapper";
+import { SectionCard } from "../../assessment/SectionCard";
 import { COMPLIANCE_OPTIONS, ENGAGEMENT_OPTIONS } from "../constants";
-import { FieldWrapper } from "../FieldWrapper";
-import { SectionCard } from "../SectionCard";
 import type { FollowUpSectionProps } from "../types";
 
 type SectionDProps = FollowUpSectionProps & {

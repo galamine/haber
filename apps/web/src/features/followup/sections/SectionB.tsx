@@ -8,10 +8,9 @@ import {
 import { Slider } from "@haber-final/ui/components/slider";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { Controller, useFieldArray } from "react-hook-form";
-
+import { FieldWrapper } from "../../assessment/FieldWrapper";
+import { SectionCard } from "../../assessment/SectionCard";
 import { GOAL_STATUS_OPTIONS } from "../constants";
-import { FieldWrapper } from "../FieldWrapper";
-import { SectionCard } from "../SectionCard";
 import type { FollowUpSectionProps } from "../types";
 
 type SectionBProps = FollowUpSectionProps & {

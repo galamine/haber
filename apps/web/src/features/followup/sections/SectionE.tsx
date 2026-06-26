@@ -11,13 +11,12 @@ import {
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { Plus, Trash2 } from "lucide-react";
 import { Controller, useFieldArray } from "react-hook-form";
-
+import { FieldWrapper } from "../../assessment/FieldWrapper";
+import { SectionCard } from "../../assessment/SectionCard";
 import {
 	GOAL_STATUS_DECISION_OPTIONS,
 	NEXT_ASSESSMENT_TYPE_OPTIONS,
 } from "../constants";
-import { FieldWrapper } from "../FieldWrapper";
-import { SectionCard } from "../SectionCard";
 import type { FollowUpSectionProps } from "../types";
 
 export function SectionE({ register, control, errors }: FollowUpSectionProps) {

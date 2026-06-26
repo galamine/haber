@@ -2,8 +2,8 @@ import { Checkbox } from "@haber-final/ui/components/checkbox";
 import { Input } from "@haber-final/ui/components/input";
 import { Controller } from "react-hook-form";
 
-import { FieldWrapper } from "../FieldWrapper";
-import { SectionCard } from "../SectionCard";
+import { FieldWrapper } from "../../assessment/FieldWrapper";
+import { SectionCard } from "../../assessment/SectionCard";
 import type { FollowUpSectionProps } from "../types";
 
 type SectionFProps = FollowUpSectionProps & {

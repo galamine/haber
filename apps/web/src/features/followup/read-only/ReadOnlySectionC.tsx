@@ -8,9 +8,8 @@ import {
 	TableRow,
 } from "@haber-final/ui/components/table";
 import type { z } from "zod";
-
+import { SectionCard } from "../../assessment/SectionCard";
 import { DeltaBadge } from "../delta-badge";
-import { SectionCard } from "../SectionCard";
 
 type ReadOnlySectionCProps = {
 	data: { sensoryCheck: z.infer<typeof SensoryCheckResultSchema>[] };

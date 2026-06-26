@@ -10,7 +10,7 @@ import {
 } from "@haber-final/ui/components/table";
 import type { z } from "zod";
 
-import { SectionCard } from "../SectionCard";
+import { SectionCard } from "../../assessment/SectionCard";
 
 type SectionBData = z.infer<typeof FollowUpSectionBSchema>;
 

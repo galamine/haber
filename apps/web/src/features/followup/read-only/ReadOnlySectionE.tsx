@@ -1,12 +1,11 @@
 import type { FollowUpSectionESchema } from "@haber-final/api/schemas/assessment";
 import type { z } from "zod";
-
+import { ReadOnlyField } from "../../assessment/read-only/ReadOnlyField";
+import { SectionCard } from "../../assessment/SectionCard";
 import {
 	GOAL_STATUS_DECISION_OPTIONS,
 	NEXT_ASSESSMENT_TYPE_OPTIONS,
 } from "../constants";
-import { SectionCard } from "../SectionCard";
-import { ReadOnlyField } from "./ReadOnlyField";
 
 type SectionEData = z.infer<typeof FollowUpSectionESchema>;
 

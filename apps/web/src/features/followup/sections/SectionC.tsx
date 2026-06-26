@@ -1,3 +1,4 @@
+import { Slider } from "@haber-final/ui/components/slider";
 import {
 	Table,
 	TableBody,
@@ -8,10 +9,9 @@ import {
 } from "@haber-final/ui/components/table";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { Controller, useFieldArray, useWatch } from "react-hook-form";
-
+import { FieldWrapper } from "../../assessment/FieldWrapper";
+import { SectionCard } from "../../assessment/SectionCard";
 import { DeltaBadge } from "../delta-badge";
-import { FieldWrapper } from "../FieldWrapper";
-import { SectionCard } from "../SectionCard";
 import type { FollowUpSectionProps } from "../types";
 
 type SectionCProps = FollowUpSectionProps & {
