@@ -1,7 +1,7 @@
 import prisma from "@haber-final/db";
+import { PERMISSIONS } from "@haber-final/db/permissions";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-
 import type { AuthUser } from "../context";
 import { hasPermission, protectedProcedure, router } from "../index";
 import {
@@ -13,7 +13,6 @@ import {
 	UnassignTherapistInput,
 	UpdateChildInput,
 } from "../schemas/child";
-import { PERMISSIONS } from "../schemas/staff";
 
 async function requireIntakePermission(ctx: { auth: AuthUser }) {
 	const allowed = await hasPermission(ctx, PERMISSIONS.CHILD_INTAKE);
@@ -24,7 +23,7 @@ export async function getChildForRead(
 	childId: string,
 	ctx: { auth: AuthUser },
 ) {
-	const { role, tenantId, userId } = ctx.auth;
+	const { role, tenantId } = ctx.auth;
 
 	const child = await prisma.child.findFirst({
 		where: {
@@ -32,19 +31,10 @@ export async function getChildForRead(
 			deletedAt: null,
 			...(role !== "SUPER_ADMIN" ? { clinicId: tenantId ?? undefined } : {}),
 		},
-		include: { guards: true },
+		include: { guardian: true },
 	});
 
 	if (!child) throw new TRPCError({ code: "NOT_FOUND" });
-
-	if (role === "THERAPIST" || role === "STAFF") {
-		const isAssigned =
-			child.preferredTherapistId === userId ||
-			(await prisma.childTherapistAssignment.findFirst({
-				where: { childId, therapistId: userId },
-			})) !== null;
-		if (!isAssigned) throw new TRPCError({ code: "FORBIDDEN" });
-	}
 
 	return child;
 }
@@ -57,74 +47,57 @@ export async function assertChildInClinic(childId: string, tenantId: string) {
 	return child;
 }
 
-export const childRouter = router({
+export const childRouter: ReturnType<typeof router> = router({
 	create: protectedProcedure
 		.input(CreateChildInput)
 		.mutation(async ({ input, ctx }) => {
 			await requireIntakePermission(ctx);
 
-			if (input.preferredTherapistId) {
-				const therapist = await prisma.user.findFirst({
-					where: {
-						id: input.preferredTherapistId,
-						role: "THERAPIST",
-						clinicId: ctx.auth.tenantId!,
-					},
-				});
-				if (!therapist) {
-					throw new TRPCError({
-						code: "BAD_REQUEST",
-						message:
-							"Invalid preferredTherapistId: not a THERAPIST in this clinic",
-					});
-				}
-			}
-
-			const emails = input.guardians.map((g) => g.email);
-			const existingUsers = await prisma.user.findMany({
-				where: { email: { in: emails } },
+			const existingUser = await prisma.user.findUnique({
+				where: { email: input.guardian.email },
 				select: { email: true },
 			});
-			if (existingUsers.length > 0) {
+			if (existingUser) {
 				throw new TRPCError({
 					code: "CONFLICT",
-					message: `Email already registered: ${existingUsers.map((u) => u.email).join(", ")}`,
+					message: `Email already registered: ${existingUser.email}`,
 				});
 			}
 
-			const { guardians, ...childData } = input;
+			const { guardian, medicalHistory, ...childData } = input;
 
 			return prisma.$transaction(async (tx) => {
 				const child = await tx.child.create({
 					data: {
 						...childData,
 						clinicId: ctx.auth.tenantId!,
-						medicalHistory: {},
+						medicalHistory: medicalHistory ?? {},
 					},
 				});
 
-				for (const guardian of guardians) {
-					const guardianUser = await tx.user.create({
-						data: {
-							email: guardian.email,
-							role: "GUARDIAN",
-							loginEnabled: false,
-							clinicId: ctx.auth.tenantId!,
-						},
-					});
-					await tx.guardian.create({
-						data: {
-							childId: child.id,
-							userId: guardianUser.id,
-							name: guardian.name,
-							relation: guardian.relation,
-							phone: guardian.phone,
-							email: guardian.email,
-						},
-					});
-				}
+				const guardianUser = await tx.user.create({
+					data: {
+						email: guardian.email,
+						role: "GUARDIAN",
+						loginEnabled: false,
+						clinicId: ctx.auth.tenantId!,
+					},
+				});
+				await tx.guardian.create({
+					data: {
+						childId: child.id,
+						userId: guardianUser.id,
+						name: guardian.name,
+						relation: guardian.relation,
+						phone: guardian.phone,
+						email: guardian.email,
+					},
+				});
 
-				return child;
+				return tx.child.findUniqueOrThrow({
+					where: { id: child.id },
+					include: { guardian: true },
+				});
 			});
 		}),
 
@@ -140,21 +113,18 @@ export const childRouter = router({
 			const { role, tenantId, userId } = ctx.auth;
 			const isAdmin = role === "CLINIC_ADMIN" || role === "SUPER_ADMIN";
 
-			const extraAnd: { OR: Record<string, unknown>[] }[] = [];
+			const extraAnd: Record<string, unknown>[] = [];
 
-			if (role === "THERAPIST" || role === "STAFF") {
+			/* if (role === "THERAPIST" || role === "STAFF") {
 				const assignments = await prisma.childTherapistAssignment.findMany({
 					where: { therapistId: userId },
 					select: { childId: true },
 				});
 				const assignedChildIds = assignments.map((a) => a.childId);
 				extraAnd.push({
-					OR: [
-						{ preferredTherapistId: userId },
-						{ id: { in: assignedChildIds } },
-					],
+					OR: [{ id: { in: assignedChildIds } }],
 				});
-			}
+			} */
 
 			if (input.search) {
 				extraAnd.push({
@@ -165,12 +135,19 @@ export const childRouter = router({
 				});
 			}
 
+			if (input.therapistId) {
+				const therapistAssignments =
+					await prisma.childTherapistAssignment.findMany({
+						where: { therapistId: input.therapistId },
+						select: { childId: true },
+					});
+				const therapistChildIds = therapistAssignments.map((a) => a.childId);
+				extraAnd.push({ id: { in: therapistChildIds } });
+			}
+
 			const where = {
 				...(role !== "SUPER_ADMIN" ? { clinicId: tenantId ?? undefined } : {}),
 				...(!isAdmin ? { deletedAt: null } : {}),
-				...(input.therapistId
-					? { preferredTherapistId: input.therapistId }
-					: {}),
 				...(input.consentStatus ? { consentStatus: input.consentStatus } : {}),
 				...(extraAnd.length > 0 ? { AND: extraAnd } : {}),
 			};
@@ -243,9 +220,23 @@ export const childRouter = router({
 
 			const child = await prisma.child.findFirst({
 				where: { id: input.childId, deletedAt: null },
-				include: { guards: { include: { consentRecords: true } } },
 			});
 			if (!child) throw new TRPCError({ code: "NOT_FOUND" });
+
+			const guardian = await prisma.guardian.findUnique({
+				where: { childId: input.childId },
+			});
+			const consentRecords = await prisma.consentRecord.findMany({
+				where: { childId: input.childId },
+			});
+			const requiredConsents = [
+				"TREATMENT",
+				"DATA_PROCESSING",
+				"IMAGE_VIDEO_CAPTURE",
+			] as const;
+			const hasAllConsents = requiredConsents.every((type) =>
+				consentRecords.some((r) => r.consentType === type && r.checkbox),
+			);
 
 			const missingFields: string[] = [];
 			if (!child.opNumber) missingFields.push("opNumber");
@@ -254,11 +245,8 @@ export const childRouter = router({
 			if (!child.sex) missingFields.push("sex");
 			if (child.spokenLanguages.length === 0)
 				missingFields.push("spokenLanguages");
-			if (child.guards.length === 0) missingFields.push("guardians");
-			if (
-				child.consentStatus !== "GRANTED" ||
-				child.guards.some((g) => g.consentRecords.length === 0)
-			) {
+			if (!guardian) missingFields.push("guardian");
+			if (!hasAllConsents) {
 				missingFields.push("consent");
 			}
 
@@ -268,7 +256,7 @@ export const childRouter = router({
 	assignTherapist: protectedProcedure
 		.input(AssignTherapistInput)
 		.mutation(async ({ input, ctx }) => {
-			const { role, tenantId, userId } = ctx.auth;
+			const { role, tenantId } = ctx.auth;
 			const isClinicAdmin = role === "CLINIC_ADMIN";
 			const hasIntake = await hasPermission(ctx, PERMISSIONS.CHILD_INTAKE);
 			if (!isClinicAdmin && !hasIntake) {

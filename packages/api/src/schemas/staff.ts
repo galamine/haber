@@ -1,11 +1,5 @@
 import { z } from "zod";
 
-export const PERMISSIONS = {
-	CHILD_INTAKE: "child.intake",
-	SESSION_RUN: "session.run",
-	TREATMENT_PLAN_MODIFY: "treatment_plan.modify",
-} as const;
-
 export const StaffRoleSchema = z.enum(["THERAPIST", "STAFF"]);
 
 export const InviteStaffInput = z.object({

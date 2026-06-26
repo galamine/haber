@@ -19,7 +19,7 @@ import {
 	UpdateSensoryRoomInput,
 } from "../schemas/clinic";
 
-export const clinicRouter = router({
+export const clinicRouter: ReturnType<typeof router> = router({
 	// ── SuperAdmin procedures ────────────────────────────────────────────────
 
 	create: adminProcedure

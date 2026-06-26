@@ -1,11 +1,23 @@
 import { Input } from "@haber-final/ui/components/input";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@haber-final/ui/components/select";
 import { Textarea } from "@haber-final/ui/components/textarea";
+import { Controller } from "react-hook-form";
 
 import { FieldWrapper } from "../FieldWrapper";
 import { SectionCard } from "../SectionCard";
 import type { AssessmentSectionProps } from "../types";
 
-export function SectionA({ register, errors }: AssessmentSectionProps) {
+export function SectionA({
+	register,
+	control,
+	errors,
+}: AssessmentSectionProps) {
 	const e = errors.sectionA;
 
 	return (
@@ -65,10 +77,27 @@ export function SectionA({ register, errors }: AssessmentSectionProps) {
 				required
 				error={e?.gender?.message}
 			>
-				<Input
-					id="sectionA.gender"
-					{...register("sectionA.gender")}
-					className={e?.gender ? "border-red-500" : ""}
+				<Controller
+					control={control}
+					name="sectionA.gender"
+					render={({ field }) => (
+						<Select value={field.value} onValueChange={field.onChange}>
+							<SelectTrigger
+								id="sectionA.gender"
+								className={e?.gender ? "border-red-500" : ""}
+							>
+								<SelectValue placeholder="Select gender" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="Male">Male</SelectItem>
+								<SelectItem value="Female">Female</SelectItem>
+								<SelectItem value="Other">Other</SelectItem>
+								<SelectItem value="Prefer not to say">
+									Prefer not to say
+								</SelectItem>
+							</SelectContent>
+						</Select>
+					)}
 				/>
 			</FieldWrapper>
 
@@ -159,6 +188,7 @@ export function SectionA({ register, errors }: AssessmentSectionProps) {
 			>
 				<Input
 					id="sectionA.caregiverContact"
+					type="number"
 					{...register("sectionA.caregiverContact")}
 					className={e?.caregiverContact ? "border-red-500" : ""}
 				/>
