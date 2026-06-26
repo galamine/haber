@@ -31,8 +31,8 @@ export const CreateChildInput = z.object({
 	weightMeasuredAt: z.coerce.date().optional(),
 	spokenLanguages: z.array(z.string()),
 	school: z.string().optional(),
-	preferredTherapistId: z.string().optional(),
-	guardians: z.array(GuardianInput).min(1),
+	guardian: GuardianInput,
+	medicalHistory: MedicalHistoryInput.optional(),
 });
 
 export const UpdateChildInput = z.object({
@@ -48,7 +48,6 @@ export const UpdateChildInput = z.object({
 	weightMeasuredAt: z.coerce.date().optional(),
 	spokenLanguages: z.array(z.string()).optional(),
 	school: z.string().optional(),
-	preferredTherapistId: z.string().optional(),
 });
 
 export const ChildListInput = z.object({

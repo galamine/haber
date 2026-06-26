@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { env } from "@haber-final/env/server";
 import { createPrismaClient } from "../src/index";
+import { PERMISSIONS } from "../src/permissions";
 
 const prisma = createPrismaClient();
 
@@ -26,6 +27,8 @@ const seedUsers = [
 	{ email: "therapist2@seed.local", role: "THERAPIST" as const },
 ];
 
+const allPermissions = Object.values(PERMISSIONS);
+
 for (const { email, role } of seedUsers) {
 	const user = await prisma.user.upsert({
 		where: { email },
@@ -43,7 +46,20 @@ for (const { email, role } of seedUsers) {
 			emailVerified: true,
 		},
 	});
-	console.log(`User upserted: ${user.id} (${user.email}, ${user.role})`);
+
+	await prisma.$transaction([
+		prisma.userPermission.deleteMany({ where: { userId: user.id } }),
+		prisma.userPermission.createMany({
+			data: allPermissions.map((permission) => ({
+				userId: user.id,
+				permission,
+			})),
+		}),
+	]);
+
+	console.log(
+		`User upserted: ${user.id} (${user.email}, ${user.role}) with permissions: ${allPermissions.join(", ")}`,
+	);
 }
 
 if (env.SUPER_ADMIN_EMAIL) {

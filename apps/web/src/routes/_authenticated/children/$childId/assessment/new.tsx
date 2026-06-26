@@ -55,6 +55,9 @@ function NewAssessmentPage() {
 
 	const [activeTab, setActiveTab] = useState<SectionTabValue>("a");
 	const [submitAttempted, setSubmitAttempted] = useState(false);
+	const [visitedTabs, setVisitedTabs] = useState<Set<SectionTabValue>>(
+		new Set(["a"]),
+	);
 
 	const form = useForm<AssessmentFormValues>({
 		resolver: zodResolver(AssessmentFormSchema),
@@ -64,6 +67,7 @@ function NewAssessmentPage() {
 		register,
 		control,
 		handleSubmit,
+		trigger,
 		formState: { errors },
 	} = form;
 
@@ -97,6 +101,27 @@ function NewAssessmentPage() {
 			form.setValue("sectionH.therapistName", taxonomy.therapistMe.data.email);
 		}
 	}, [child, taxonomy, existingAssessmentQuery, form]);
+
+	const currentTabConfig = SECTION_TABS.find((t) => t.value === activeTab);
+	const handleNext = async (): Promise<boolean> => {
+		if (!currentTabConfig) return false;
+
+		const isValid = await trigger(currentTabConfig.field);
+
+		if (!isValid) {
+			setSubmitAttempted(true);
+			toast.error(
+				"Please fill short term goal and long term goal fields before proceeding",
+			);
+			return false;
+		}
+		const nextIdx = SECTION_TABS.findIndex((t) => t.value === activeTab) + 1;
+		if (nextIdx < SECTION_TABS.length) {
+			const nextTab = SECTION_TABS[nextIdx].value;
+			setVisitedTabs((prev) => new Set([...prev, nextTab]));
+		}
+		return true;
+	};
 
 	const createMutation = useMutation(
 		trpc.assessment.create.mutationOptions({
@@ -265,6 +290,10 @@ function NewAssessmentPage() {
 		(taxonomy.sensorySystems.data ?? []).map((s) => [s.id, s.label]),
 	);
 
+	const lockedTabs = new Set(
+		SECTION_TABS.map((t) => t.value).filter((v) => !visitedTabs.has(v)),
+	);
+
 	return (
 		<div className="p-8">
 			<button
@@ -289,6 +318,8 @@ function NewAssessmentPage() {
 				activeTab={activeTab}
 				onTabChange={setActiveTab}
 				errorTabs={errorTabs}
+				lockedTabs={lockedTabs}
+				onNext={handleNext}
 				onSubmit={handleSubmit(onValid, onInvalid)}
 				isSubmitting={createMutation.isPending}
 				sections={{

@@ -1,7 +1,7 @@
 import prisma from "@haber-final/db";
+import { PERMISSIONS } from "@haber-final/db/permissions";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-
 import type { AuthUser } from "../context";
 import { hasPermission, protectedProcedure, router } from "../index";
 import {
@@ -9,41 +9,11 @@ import {
 	RestoreConsentInput,
 	WithdrawConsentInput,
 } from "../schemas/consent";
-import { PERMISSIONS } from "../schemas/staff";
 import { assertChildInClinic, getChildForRead } from "./child";
 
 async function requireIntakePermission(ctx: { auth: AuthUser }) {
 	const allowed = await hasPermission(ctx, PERMISSIONS.CHILD_INTAKE);
 	if (!allowed) throw new TRPCError({ code: "FORBIDDEN" });
-}
-
-async function assertGuardianOfChild(guardianId: string, childId: string) {
-	const guardian = await prisma.guardian.findFirst({
-		where: { id: guardianId, childId },
-	});
-	if (!guardian) throw new TRPCError({ code: "NOT_FOUND" });
-	return guardian;
-}
-
-async function isUnanimousTreatmentConsent(childId: string): Promise<boolean> {
-	const child = await prisma.child.findUnique({
-		where: { id: childId },
-		include: {
-			guards: {
-				include: {
-					consentRecords: {
-						where: { consentType: "TREATMENT", checkbox: true },
-						select: { id: true },
-					},
-				},
-			},
-		},
-	});
-	if (!child) return false;
-	return (
-		child.guards.length > 0 &&
-		child.guards.every((g) => g.consentRecords.length > 0)
-	);
 }
 
 async function assertChildAdmin(childId: string, ctx: { auth: AuthUser }) {
@@ -72,40 +42,53 @@ export async function assertConsentGranted(childId: string) {
 	}
 }
 
-export const consentRouter = router({
+async function checkAllConsentsGranted(childId: string): Promise<boolean> {
+	const records = await prisma.consentRecord.findMany({ where: { childId } });
+	const requiredTypes = [
+		"TREATMENT",
+		"DATA_PROCESSING",
+		"IMAGE_VIDEO_CAPTURE",
+	] as const;
+	return requiredTypes.every((type) =>
+		records.some((r) => r.consentType === type && r.checkbox),
+	);
+}
+
+export const consentRouter: ReturnType<typeof router> = router({
 	record: protectedProcedure
 		.input(RecordConsentInput)
 		.mutation(async ({ input, ctx }) => {
 			await requireIntakePermission(ctx);
 			await assertChildInClinic(input.childId, ctx.auth.tenantId!);
-			await assertGuardianOfChild(input.guardianId, input.childId);
 
 			return prisma.$transaction(async (tx) => {
-				const record = await tx.consentRecord.create({
-					data: {
+				const record = await tx.consentRecord.upsert({
+					where: {
+						childId_consentType: {
+							childId: input.childId,
+							consentType: input.consentType,
+						},
+					},
+					create: {
 						childId: input.childId,
-						guardianId: input.guardianId,
 						consentType: input.consentType,
 						typedName: input.typedName,
 						checkbox: input.checkbox,
-						ip: ctx.ip,
+						ip: ctx.ip ?? "unknown",
+					},
+					update: {
+						typedName: input.typedName,
+						checkbox: input.checkbox,
+						ip: ctx.ip ?? "unknown",
 					},
 				});
 
-				if (input.consentType === "TREATMENT") {
-					const child = await tx.child.findUnique({
+				const allGranted = await checkAllConsentsGranted(input.childId);
+				if (allGranted) {
+					await tx.child.update({
 						where: { id: input.childId },
-						select: { consentStatus: true },
+						data: { consentStatus: "GRANTED" },
 					});
-					if (
-						child?.consentStatus === "PENDING" &&
-						(await isUnanimousTreatmentConsent(input.childId))
-					) {
-						await tx.child.update({
-							where: { id: input.childId },
-							data: { consentStatus: "GRANTED" },
-						});
-					}
 				}
 
 				return record;
@@ -117,9 +100,9 @@ export const consentRouter = router({
 		.query(async ({ input, ctx }) => {
 			const child = await getChildForRead(input.childId, ctx);
 
-			const guardians = await prisma.guardian.findMany({
+			const records = await prisma.consentRecord.findMany({
 				where: { childId: input.childId },
-				include: { consentRecords: { orderBy: { timestamp: "desc" } } },
+				orderBy: { timestamp: "desc" },
 			});
 
 			const TYPES = [
@@ -128,39 +111,30 @@ export const consentRouter = router({
 				"IMAGE_VIDEO_CAPTURE",
 			] as const;
 
-			const guardianSummaries = guardians.map((g) => {
-				const consents = {} as Record<
-					(typeof TYPES)[number],
-					{
-						consented: boolean;
-						typedName: string | null;
-						timestamp: Date | null;
-					}
-				>;
-				for (const type of TYPES) {
-					const latest = g.consentRecords.find((r) => r.consentType === type);
-					consents[type] = {
-						consented: latest?.checkbox ?? false,
-						typedName: latest?.typedName ?? null,
-						timestamp: latest?.timestamp ?? null,
-					};
-				}
-				return {
-					guardianId: g.id,
-					name: g.name,
-					relation: g.relation,
-					consents,
-				};
-			});
+			const consents = Object.fromEntries(
+				TYPES.map((type) => {
+					const latest = records.find((r) => r.consentType === type);
+					return [
+						type,
+						{
+							consented: latest?.checkbox ?? false,
+							typedName: latest?.typedName ?? null,
+							timestamp: latest?.timestamp ?? null,
+						},
+					];
+				}),
+			) as Record<
+				(typeof TYPES)[number],
+				{ consented: boolean; typedName: string | null; timestamp: Date | null }
+			>;
 
-			return { status: child.consentStatus, guardians: guardianSummaries };
+			return { status: child.consentStatus, consents };
 		}),
 
 	withdraw: protectedProcedure
 		.input(WithdrawConsentInput)
 		.mutation(async ({ input, ctx }) => {
 			await assertChildAdmin(input.childId, ctx);
-			await assertGuardianOfChild(input.guardianId, input.childId);
 
 			await prisma.$transaction(async (tx) => {
 				await tx.child.update({
@@ -182,11 +156,10 @@ export const consentRouter = router({
 		.input(RestoreConsentInput)
 		.mutation(async ({ input, ctx }) => {
 			await assertChildAdmin(input.childId, ctx);
-			await assertGuardianOfChild(input.guardianId, input.childId);
 
 			await prisma.$transaction(async (tx) => {
-				const unanimous = await isUnanimousTreatmentConsent(input.childId);
-				if (unanimous) {
+				const allGranted = await checkAllConsentsGranted(input.childId);
+				if (allGranted) {
 					await tx.child.update({
 						where: { id: input.childId },
 						data: { consentStatus: "GRANTED" },

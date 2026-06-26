@@ -12,12 +12,13 @@ import {
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { cn } from "@haber-final/ui/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { Check, ChevronRight, Plus, Trash2, X } from "lucide-react";
+import { Check, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
+
 import { z } from "zod";
 
 import { trpc } from "@/utils/trpc";
@@ -37,54 +38,36 @@ const ProfileSchema = z.object({
 	addressStreet: z.string().optional(),
 	spokenLanguages: z.string().min(1, "At least one language is required"),
 	school: z.string().optional(),
-	preferredTherapistId: z.string().optional(),
 });
 
 type ProfileValues = z.infer<typeof ProfileSchema>;
 type MedicalValues = z.infer<typeof MedicalHistoryInput>;
 
-const GuardiansSchema = z.object({
-	guardians: z
-		.array(
-			z.object({
-				name: z.string().min(1, "Name is required"),
-				relation: z.string().min(1, "Relation is required"),
-				phone: z.string().min(1, "Phone is required"),
-				email: z.string().email("Valid email required"),
-			}),
-		)
-		.min(1),
+const GuardianSchema = z.object({
+	name: z.string().min(1, "Name is required"),
+	relation: z.string().min(1, "Relation is required"),
+	phone: z.string().min(1, "Phone is required"),
+	email: z.string().email("Valid email required"),
 });
 
-type GuardiansValues = z.infer<typeof GuardiansSchema>;
+type GuardianValues = z.infer<typeof GuardianSchema>;
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type GuardianData = {
-	id: string;
-	name: string;
-	relation: string;
-	phone: string;
-	email: string | null;
-};
-
 type CreatedChild = {
 	id: string;
-	guards: GuardianData[];
-};
-
-type ConsentType = "TREATMENT" | "DATA_PROCESSING" | "IMAGE_VIDEO_CAPTURE";
-
-type ConsentCardState = {
-	typedName: string;
-	TREATMENT: boolean;
-	DATA_PROCESSING: boolean;
-	IMAGE_VIDEO_CAPTURE: boolean;
+	guardian: {
+		id: string;
+		name: string;
+		relation: string;
+		phone: string;
+		email: string | null;
+	};
 };
 
 // ─── Stepper ─────────────────────────────────────────────────────────────────
 
-const STEPS = ["Profile", "Medical History", "Guardians", "Consent"];
+const STEPS = ["Profile", "Medical History", "Guardian", "Consent"];
 
 function WizardStepper({ currentStep }: { currentStep: number }) {
 	return (
@@ -140,11 +123,6 @@ function Step1Profile({
 	initial: ProfileValues | null;
 	onNext: (data: ProfileValues) => void;
 }) {
-	const { data: therapistsData } = useQuery(
-		trpc.staff.list.queryOptions({ role: "THERAPIST", pageSize: 100 }),
-	);
-	const therapists = therapistsData?.items ?? [];
-
 	const {
 		register,
 		handleSubmit,
@@ -161,7 +139,6 @@ function Step1Profile({
 			addressStreet: "",
 			spokenLanguages: "",
 			school: "",
-			preferredTherapistId: "",
 		},
 	});
 
@@ -311,34 +288,6 @@ function Step1Profile({
 							{...register("school")}
 						/>
 					</div>
-
-					{therapists.length > 0 && (
-						<div className="flex flex-col gap-1.5 md:col-span-2">
-							<Label htmlFor="preferredTherapistId">Preferred Therapist</Label>
-							<Controller
-								control={control}
-								name="preferredTherapistId"
-								render={({ field }) => (
-									<Select
-										value={field.value ?? "none"}
-										onValueChange={(v) => field.onChange(v === "none" ? "" : v)}
-									>
-										<SelectTrigger id="preferredTherapistId">
-											<SelectValue placeholder="Unassigned" />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value="none">Unassigned</SelectItem>
-											{therapists.map((t) => (
-												<SelectItem key={t.id} value={t.id}>
-													{t.email}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-								)}
-							/>
-						</div>
-					)}
 				</div>
 
 				<div className="flex justify-end border-outline-variant border-t px-6 py-4">
@@ -425,146 +374,98 @@ function Step3Guardians({
 	onBack,
 	isSubmitting,
 }: {
-	onNext: (data: GuardiansValues["guardians"]) => void;
+	onNext: (data: GuardianValues) => void;
 	onBack: () => void;
 	isSubmitting: boolean;
 }) {
 	const {
 		register,
 		handleSubmit,
-		control,
 		formState: { errors },
-	} = useForm<GuardiansValues>({
-		resolver: zodResolver(GuardiansSchema),
+	} = useForm<GuardianValues>({
+		resolver: zodResolver(GuardianSchema),
 		defaultValues: {
-			guardians: [{ name: "", relation: "", phone: "", email: "" }],
+			name: "",
+			relation: "",
+			phone: "",
+			email: "",
 		},
 	});
 
-	const { fields, append, remove } = useFieldArray({
-		control,
-		name: "guardians",
-	});
-
 	return (
-		<form onSubmit={handleSubmit((v) => onNext(v.guardians))}>
+		<form onSubmit={handleSubmit(onNext)}>
 			<div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
 				<div className="border-outline-variant border-b px-6 py-4">
-					<h2 className="font-semibold text-on-surface text-xl">Guardians</h2>
+					<h2 className="font-semibold text-on-surface text-xl">Guardian</h2>
 					<p className="mt-1 text-on-surface-variant text-sm">
-						Add at least one guardian for this child
+						Add the child&apos;s guardian
 					</p>
 				</div>
 
 				<div className="space-y-4 p-6">
-					{fields.map((field, idx) => (
-						<div
-							key={field.id}
-							className="relative rounded-lg border border-outline-variant p-4"
-						>
-							<div className="mb-3 flex items-center justify-between">
-								<span className="font-medium text-on-surface text-sm">
-									Guardian {idx + 1}
-								</span>
-								{fields.length > 1 && (
-									<button
-										type="button"
-										onClick={() => remove(idx)}
-										className="text-on-surface-variant hover:text-red-600"
-									>
-										<Trash2 className="h-4 w-4" />
-									</button>
+					<div className="rounded-lg border border-outline-variant p-4">
+						<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+							<div className="flex flex-col gap-1.5">
+								<Label>
+									Full Name <span className="text-red-500">*</span>
+								</Label>
+								<Input
+									placeholder="Guardian's full name"
+									{...register("name")}
+									className={errors.name ? "border-red-500" : ""}
+								/>
+								{errors.name && (
+									<p className="text-red-600 text-xs">{errors.name.message}</p>
 								)}
 							</div>
 
-							<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-								<div className="flex flex-col gap-1.5">
-									<Label>
-										Full Name <span className="text-red-500">*</span>
-									</Label>
-									<Input
-										placeholder="Guardian's full name"
-										{...register(`guardians.${idx}.name`)}
-										className={
-											errors.guardians?.[idx]?.name ? "border-red-500" : ""
-										}
-									/>
-									{errors.guardians?.[idx]?.name && (
-										<p className="text-red-600 text-xs">
-											{errors.guardians[idx]?.name?.message}
-										</p>
-									)}
-								</div>
+							<div className="flex flex-col gap-1.5">
+								<Label>
+									Relation <span className="text-red-500">*</span>
+								</Label>
+								<Input
+									placeholder="e.g. Mother, Father"
+									{...register("relation")}
+									className={errors.relation ? "border-red-500" : ""}
+								/>
+								{errors.relation && (
+									<p className="text-red-600 text-xs">
+										{errors.relation.message}
+									</p>
+								)}
+							</div>
 
-								<div className="flex flex-col gap-1.5">
-									<Label>
-										Relation <span className="text-red-500">*</span>
-									</Label>
-									<Input
-										placeholder="e.g. Mother, Father"
-										{...register(`guardians.${idx}.relation`)}
-										className={
-											errors.guardians?.[idx]?.relation ? "border-red-500" : ""
-										}
-									/>
-									{errors.guardians?.[idx]?.relation && (
-										<p className="text-red-600 text-xs">
-											{errors.guardians[idx]?.relation?.message}
-										</p>
-									)}
-								</div>
+							<div className="flex flex-col gap-1.5">
+								<Label>
+									Phone <span className="text-red-500">*</span>
+								</Label>
+								<Input
+									type="tel"
+									placeholder="+971 50 000 0000"
+									{...register("phone")}
+									className={errors.phone ? "border-red-500" : ""}
+								/>
+								{errors.phone && (
+									<p className="text-red-600 text-xs">{errors.phone.message}</p>
+								)}
+							</div>
 
-								<div className="flex flex-col gap-1.5">
-									<Label>
-										Phone <span className="text-red-500">*</span>
-									</Label>
-									<Input
-										type="tel"
-										placeholder="+971 50 000 0000"
-										{...register(`guardians.${idx}.phone`)}
-										className={
-											errors.guardians?.[idx]?.phone ? "border-red-500" : ""
-										}
-									/>
-									{errors.guardians?.[idx]?.phone && (
-										<p className="text-red-600 text-xs">
-											{errors.guardians[idx]?.phone?.message}
-										</p>
-									)}
-								</div>
-
-								<div className="flex flex-col gap-1.5">
-									<Label>
-										Email <span className="text-red-500">*</span>
-									</Label>
-									<Input
-										type="email"
-										placeholder="guardian@example.com"
-										{...register(`guardians.${idx}.email`)}
-										className={
-											errors.guardians?.[idx]?.email ? "border-red-500" : ""
-										}
-									/>
-									{errors.guardians?.[idx]?.email && (
-										<p className="text-red-600 text-xs">
-											{errors.guardians[idx]?.email?.message}
-										</p>
-									)}
-								</div>
+							<div className="flex flex-col gap-1.5">
+								<Label>
+									Email <span className="text-red-500">*</span>
+								</Label>
+								<Input
+									type="email"
+									placeholder="guardian@example.com"
+									{...register("email")}
+									className={errors.email ? "border-red-500" : ""}
+								/>
+								{errors.email && (
+									<p className="text-red-600 text-xs">{errors.email.message}</p>
+								)}
 							</div>
 						</div>
-					))}
-
-					<button
-						type="button"
-						onClick={() =>
-							append({ name: "", relation: "", phone: "", email: "" })
-						}
-						className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-outline-variant border-dashed py-4 text-on-surface-variant text-sm transition-colors hover:border-brown-400 hover:text-brown-700"
-					>
-						<Plus className="h-4 w-4" />
-						Add Another Guardian
-					</button>
+					</div>
 				</div>
 
 				<div className="flex justify-between border-outline-variant border-t px-6 py-4">
@@ -581,123 +482,34 @@ function Step3Guardians({
 	);
 }
 
-// ─── Step 4: Consent ──────────────────────────────────────────────────────────
+// ─── Step 4: Send Consent Link ────────────────────────────────────────────────
 
-const CONSENT_TYPES: {
-	type: ConsentType;
-	label: string;
-	description: string;
-}[] = [
-	{
-		type: "TREATMENT",
-		label: "Treatment Consent",
-		description:
-			"I consent to my child receiving therapeutic assessment and treatment services.",
-	},
-	{
-		type: "DATA_PROCESSING",
-		label: "Data Processing",
-		description:
-			"I consent to my child's personal and clinical data being collected and processed.",
-	},
-	{
-		type: "IMAGE_VIDEO_CAPTURE",
-		label: "Image & Video Capture",
-		description:
-			"I consent to photos or videos being taken of my child for clinical or educational purposes.",
-	},
-];
-
-function Step4Consent({
+function Step4SendConsentLink({
 	childId,
-	guards,
+	guardianName,
+	guardianEmail,
 	onBack,
+	onComplete,
 }: {
 	childId: string;
-	guards: GuardianData[];
+	guardianName: string;
+	guardianEmail: string | null;
 	onBack: () => void;
+	onComplete: () => void;
 }) {
-	const router = useRouter();
 	const queryClient = useQueryClient();
-	const [isSubmitting, setIsSubmitting] = useState(false);
-
-	const [states, setStates] = useState<Record<string, ConsentCardState>>(() =>
-		Object.fromEntries(
-			guards.map((g) => [
-				g.id,
-				{
-					typedName: "",
-					TREATMENT: false,
-					DATA_PROCESSING: false,
-					IMAGE_VIDEO_CAPTURE: false,
-				},
-			]),
-		),
+	const sendMutation = useMutation(
+		trpc.consentInvitation.send.mutationOptions({
+			onSuccess: () => {
+				toast.success("Consent link sent!");
+				queryClient.invalidateQueries({
+					queryKey: trpc.child.list.queryOptions({}).queryKey,
+				});
+				onComplete();
+			},
+			onError: (err) => toast.error(err.message),
+		}),
 	);
-
-	const recordMutation = useMutation(trpc.consent.record.mutationOptions());
-
-	function updateState(guardianId: string, patch: Partial<ConsentCardState>) {
-		setStates((prev) => ({
-			...prev,
-			[guardianId]: { ...prev[guardianId], ...patch },
-		}));
-	}
-
-	async function handleComplete() {
-		for (const guard of guards) {
-			const state = states[guard.id];
-			if (!state.typedName.trim()) {
-				toast.error(`Please provide a signed name for ${guard.name}`);
-				return;
-			}
-			if (!state.TREATMENT) {
-				toast.error(`Treatment consent is required for ${guard.name}`);
-				return;
-			}
-		}
-
-		setIsSubmitting(true);
-		try {
-			const calls: Promise<unknown>[] = [];
-			for (const guard of guards) {
-				const state = states[guard.id];
-				const types = (
-					[
-						"TREATMENT",
-						"DATA_PROCESSING",
-						"IMAGE_VIDEO_CAPTURE",
-					] as ConsentType[]
-				).filter((t) => state[t]);
-				for (const consentType of types) {
-					calls.push(
-						recordMutation.mutateAsync({
-							childId,
-							guardianId: guard.id,
-							consentType,
-							typedName: state.typedName.trim(),
-							checkbox: true,
-						}),
-					);
-				}
-			}
-			await Promise.all(calls);
-			await queryClient.invalidateQueries({
-				queryKey: trpc.child.list.queryOptions({}).queryKey,
-			});
-			toast.success("Intake complete!");
-			router.navigate({
-				to: "/children/$childId",
-				params: { childId },
-			});
-		} catch (err: unknown) {
-			const message =
-				err instanceof Error ? err.message : "Failed to record consent";
-			toast.error(message);
-		} finally {
-			setIsSubmitting(false);
-		}
-	}
 
 	return (
 		<div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
@@ -706,98 +518,47 @@ function Step4Consent({
 					Guardian Consent
 				</h2>
 				<p className="mt-1 text-on-surface-variant text-sm">
-					Each guardian must provide a signed name and consent to treatment
+					Send a magic link to the guardian to collect consent remotely
 				</p>
 			</div>
-
-			<div className="space-y-6 p-6">
-				{guards.map((guard) => {
-					const state = states[guard.id];
-					return (
-						<div
-							key={guard.id}
-							className="overflow-hidden rounded-xl border border-outline-variant"
-						>
-							<div className="flex items-center gap-3 border-outline-variant border-b bg-surface px-5 py-4">
-								<div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-container font-semibold text-on-primary-container text-sm">
-									{guard.name
-										.split(" ")
-										.map((n) => n[0])
-										.join("")
-										.slice(0, 2)
-										.toUpperCase()}
-								</div>
-								<div>
-									<p className="font-medium text-on-surface text-sm">
-										{guard.name}
-									</p>
-									<p className="text-on-surface-variant text-xs capitalize">
-										{guard.relation}
-									</p>
-								</div>
-							</div>
-
-							<div className="space-y-3 p-5">
-								<p className="font-medium text-on-surface-variant text-xs uppercase tracking-wider">
-									Consent Types
-								</p>
-								{CONSENT_TYPES.map(({ type, label, description }) => (
-									<label
-										key={type}
-										className="flex cursor-pointer items-start gap-3"
-									>
-										<input
-											type="checkbox"
-											checked={state[type]}
-											onChange={(e) =>
-												updateState(guard.id, { [type]: e.target.checked })
-											}
-											className="mt-0.5 h-4 w-4 rounded border-outline-variant text-brown-600 focus:ring-brown-600"
-										/>
-										<div>
-											<p className="font-medium text-on-surface text-sm">
-												{label}
-											</p>
-											<p className="mt-0.5 text-on-surface-variant text-xs">
-												{description}
-											</p>
-										</div>
-									</label>
-								))}
-
-								<div className="mt-4 flex flex-col gap-1.5 border-outline-variant border-t pt-4">
-									<Label>
-										Typed Signature <span className="text-red-500">*</span>
-									</Label>
-									<Input
-										placeholder="Type full name to sign"
-										value={state.typedName}
-										onChange={(e) =>
-											updateState(guard.id, { typedName: e.target.value })
-										}
-										className="font-serif italic"
-									/>
-									<p className="text-on-surface-variant text-xs">
-										Type your full name as your digital signature
-									</p>
-								</div>
-							</div>
-						</div>
-					);
-				})}
+			<div className="space-y-4 p-6">
+				<div className="rounded-lg border border-outline-variant bg-surface p-4">
+					<p className="text-on-surface-variant text-sm">Sending to:</p>
+					<p className="font-medium text-on-surface">{guardianName}</p>
+					{guardianEmail ? (
+						<p className="text-on-surface-variant text-sm">{guardianEmail}</p>
+					) : (
+						<p className="text-red-500 text-sm">No email on file</p>
+					)}
+				</div>
+				<Button
+					className="w-full"
+					disabled={sendMutation.isPending || !guardianEmail}
+					onClick={() => sendMutation.mutate({ childId })}
+				>
+					{sendMutation.isPending ? "Sending…" : "Send Consent Link"}
+				</Button>
+				<p className="text-center text-on-surface-variant text-xs">
+					The link expires in 7 days and can only be used once.
+				</p>
 			</div>
-
 			<div className="flex justify-between border-outline-variant border-t px-6 py-4">
 				<Button type="button" variant="outline" onClick={onBack}>
 					Back
 				</Button>
 				<Button
-					onClick={handleComplete}
-					disabled={isSubmitting}
+					disabled={sendMutation.isPending}
+					onClick={() => {
+						if (guardianEmail) {
+							sendMutation.mutate({ childId });
+						} else {
+							onComplete();
+						}
+					}}
 					className="gap-2"
 				>
-					{isSubmitting ? "Submitting…" : "Complete Intake"}
-					{!isSubmitting && <Check className="h-4 w-4" />}
+					{sendMutation.isPending ? "Sending…" : "Complete Intake"}
+					{!sendMutation.isPending && <Check className="h-4 w-4" />}
 				</Button>
 			</div>
 		</div>
@@ -816,9 +577,6 @@ function NewChildPage() {
 	const [isCreating, setIsCreating] = useState(false);
 
 	const createChildMutation = useMutation(trpc.child.create.mutationOptions());
-	const updateMedicalMutation = useMutation(
-		trpc.child.updateMedicalHistory.mutationOptions(),
-	);
 
 	function handleStep1(data: ProfileValues) {
 		setProfileData(data);
@@ -830,11 +588,11 @@ function NewChildPage() {
 		setStep(3);
 	}
 
-	async function handleStep3(guardians: GuardiansValues["guardians"]) {
+	async function handleStep3(guardian: GuardianValues) {
 		if (!profileData) return;
 		setIsCreating(true);
 		try {
-			const child = await createChildMutation.mutateAsync({
+			const childWithGuardian = await createChildMutation.mutateAsync({
 				opNumber: profileData.opNumber,
 				fullName: `${profileData.firstName} ${profileData.lastName}`.trim(),
 				dob: new Date(profileData.dob),
@@ -845,24 +603,18 @@ function NewChildPage() {
 					.map((s) => s.trim())
 					.filter(Boolean),
 				school: profileData.school || undefined,
-				preferredTherapistId: profileData.preferredTherapistId || undefined,
-				guardians,
+				guardian,
+				medicalHistory: medicalData ?? {},
 			});
 
-			const hasMedical =
-				medicalData && Object.values(medicalData).some(Boolean);
-			if (hasMedical) {
-				await updateMedicalMutation.mutateAsync({
-					childId: child.id,
-					history: medicalData,
-				});
+			if (!childWithGuardian.guardian) {
+				throw new Error("Failed to create guardian record");
 			}
 
-			const fullChild = await queryClient.fetchQuery(
-				trpc.child.get.queryOptions({ childId: child.id }),
-			);
-
-			setCreatedChild({ id: child.id, guards: fullChild.guards });
+			setCreatedChild({
+				id: childWithGuardian.id,
+				guardian: childWithGuardian.guardian,
+			});
 			setStep(4);
 		} catch (err: unknown) {
 			const message =
@@ -921,10 +673,17 @@ function NewChildPage() {
 						/>
 					)}
 					{step === 4 && createdChild && (
-						<Step4Consent
+						<Step4SendConsentLink
 							childId={createdChild.id}
-							guards={createdChild.guards}
+							guardianName={createdChild.guardian.name}
+							guardianEmail={createdChild.guardian.email}
 							onBack={() => setStep(3)}
+							onComplete={() =>
+								router.navigate({
+									to: "/children/$childId",
+									params: { childId: createdChild.id },
+								})
+							}
 						/>
 					)}
 				</div>

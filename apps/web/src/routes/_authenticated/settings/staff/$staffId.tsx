@@ -1,4 +1,4 @@
-import { PERMISSIONS } from "@haber-final/api/schemas/staff";
+import { PERMISSIONS } from "@haber-final/db/permissions";
 import { Avatar, AvatarFallback } from "@haber-final/ui/components/avatar";
 import { Button } from "@haber-final/ui/components/button";
 import { Checkbox } from "@haber-final/ui/components/checkbox";
@@ -30,7 +30,6 @@ import {
 import { ChevronRight, Mail, Shield } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-
 import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 
