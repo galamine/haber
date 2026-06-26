@@ -1,8 +1,9 @@
 import prisma from "@haber-final/db";
 import { initTRPC, TRPCError } from "@trpc/server";
-
+import presetsRaw from "../../../clinical-data/treatment-plan-presets.json";
 import type { AuthUser, Context } from "./context";
 import { logger } from "./lib/logger";
+export const PLAN_PRESETS = presetsRaw.presets;
 
 export const t = initTRPC.context<Context>().create();
 

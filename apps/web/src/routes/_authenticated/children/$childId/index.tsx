@@ -430,13 +430,23 @@ function ChildProfilePage() {
 				</TabsContent>
 
 				{/* Placeholder tabs */}
-				{(["assessments", "plans", "sessions"] as const).map((tab) => (
+				{(["assessments", "sessions"] as const).map((tab) => (
 					<TabsContent key={tab} value={tab}>
 						<div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center text-on-surface-variant text-sm">
 							{tab.charAt(0).toUpperCase() + tab.slice(1)} coming soon.
 						</div>
 					</TabsContent>
 				))}
+				<TabsContent value="plans">
+					<div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center text-on-surface-variant text-sm">
+						<a
+							href={`/children/${childId}/plans`}
+							className="text-primary hover:underline"
+						>
+							View Treatment Plans
+						</a>
+					</div>
+				</TabsContent>
 			</Tabs>
 		</div>
 	);
