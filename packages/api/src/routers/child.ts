@@ -110,7 +110,7 @@ export const childRouter: ReturnType<typeof router> = router({
 	list: protectedProcedure
 		.input(ChildListInput)
 		.query(async ({ input, ctx }) => {
-			const { role, tenantId, userId } = ctx.auth;
+			const { role, tenantId } = ctx.auth;
 			const isAdmin = role === "CLINIC_ADMIN" || role === "SUPER_ADMIN";
 
 			const extraAnd: Record<string, unknown>[] = [];

@@ -85,6 +85,9 @@ function NewFollowUpPage() {
 		trpc.assessment.createFollowUp.mutationOptions({
 			onSuccess: (result) => {
 				toast.success("Follow-up assessment created");
+				trpc.goal.list.invalidate({
+					treatmentPlanId: data.activePlan.data!.id,
+				});
 				router.navigate({
 					to: "/children/$childId/followup/$followUpId",
 					params: { childId, followUpId: result.id },

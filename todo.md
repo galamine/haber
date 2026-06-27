@@ -1,6 +1,9 @@
 # 📋 Project Tasks & Roadmap
 
 ## 🐞 Active Bugs & Issues
+- [ ] **Therapist Treatment Plan Access (403 Forbidden / CORS)**
+  - [ ] Fix/investigate issue where visiting `/children/:childId/plans/:planId` throws a `FORBIDDEN` error because the therapist is not assigned to the child, which also causes a CORS console block.
+  - [ ] Determine if authorization should allow clinic-wide access or if we need to handle unassigned states gracefully in the UI.
 - [ ] **Authentication Timeout Routing**
   - [ ] Fix issue where session timeout on logged-in screens doesn't properly redirect the user to the login page.
   - [ ] Investigate "unauthorized" error log that appears when attempting to log out after a session timeout.

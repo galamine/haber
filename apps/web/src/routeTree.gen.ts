@@ -35,6 +35,7 @@ import { Route as AuthenticatedChildrenChildIdEditRouteImport } from './routes/_
 import { Route as AuthenticatedChildrenChildIdConsentRouteImport } from './routes/_authenticated/children/$childId/consent'
 import { Route as AuthenticatedChildrenChildIdPlansIndexRouteImport } from './routes/_authenticated/children/$childId/plans/index'
 import { Route as AuthenticatedChildrenChildIdPlansNewRouteImport } from './routes/_authenticated/children/$childId/plans/new'
+import { Route as AuthenticatedChildrenChildIdGoalsGoalIdRouteImport } from './routes/_authenticated/children/$childId/goals/$goalId'
 import { Route as AuthenticatedChildrenChildIdFollowupNewRouteImport } from './routes/_authenticated/children/$childId/followup/new'
 import { Route as AuthenticatedChildrenChildIdFollowupFollowUpIdRouteImport } from './routes/_authenticated/children/$childId/followup/$followUpId'
 import { Route as AuthenticatedChildrenChildIdAssessmentNewRouteImport } from './routes/_authenticated/children/$childId/assessment/new'
@@ -188,6 +189,12 @@ const AuthenticatedChildrenChildIdPlansNewRoute =
     path: '/children/$childId/plans/new',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedChildrenChildIdGoalsGoalIdRoute =
+  AuthenticatedChildrenChildIdGoalsGoalIdRouteImport.update({
+    id: '/children/$childId/goals/$goalId',
+    path: '/children/$childId/goals/$goalId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedChildrenChildIdFollowupNewRoute =
   AuthenticatedChildrenChildIdFollowupNewRouteImport.update({
     id: '/children/$childId/followup/new',
@@ -247,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/children/$childId/assessment/new': typeof AuthenticatedChildrenChildIdAssessmentNewRoute
   '/children/$childId/followup/$followUpId': typeof AuthenticatedChildrenChildIdFollowupFollowUpIdRoute
   '/children/$childId/followup/new': typeof AuthenticatedChildrenChildIdFollowupNewRoute
+  '/children/$childId/goals/$goalId': typeof AuthenticatedChildrenChildIdGoalsGoalIdRoute
   '/children/$childId/plans/new': typeof AuthenticatedChildrenChildIdPlansNewRoute
   '/children/$childId/plans/': typeof AuthenticatedChildrenChildIdPlansIndexRoute
   '/children/$childId/plans/$planId/': typeof AuthenticatedChildrenChildIdPlansPlanIdIndexRoute
@@ -279,6 +287,7 @@ export interface FileRoutesByTo {
   '/children/$childId/assessment/new': typeof AuthenticatedChildrenChildIdAssessmentNewRoute
   '/children/$childId/followup/$followUpId': typeof AuthenticatedChildrenChildIdFollowupFollowUpIdRoute
   '/children/$childId/followup/new': typeof AuthenticatedChildrenChildIdFollowupNewRoute
+  '/children/$childId/goals/$goalId': typeof AuthenticatedChildrenChildIdGoalsGoalIdRoute
   '/children/$childId/plans/new': typeof AuthenticatedChildrenChildIdPlansNewRoute
   '/children/$childId/plans': typeof AuthenticatedChildrenChildIdPlansIndexRoute
   '/children/$childId/plans/$planId': typeof AuthenticatedChildrenChildIdPlansPlanIdIndexRoute
@@ -313,6 +322,7 @@ export interface FileRoutesById {
   '/_authenticated/children/$childId/assessment/new': typeof AuthenticatedChildrenChildIdAssessmentNewRoute
   '/_authenticated/children/$childId/followup/$followUpId': typeof AuthenticatedChildrenChildIdFollowupFollowUpIdRoute
   '/_authenticated/children/$childId/followup/new': typeof AuthenticatedChildrenChildIdFollowupNewRoute
+  '/_authenticated/children/$childId/goals/$goalId': typeof AuthenticatedChildrenChildIdGoalsGoalIdRoute
   '/_authenticated/children/$childId/plans/new': typeof AuthenticatedChildrenChildIdPlansNewRoute
   '/_authenticated/children/$childId/plans/': typeof AuthenticatedChildrenChildIdPlansIndexRoute
   '/_authenticated/children/$childId/plans/$planId/': typeof AuthenticatedChildrenChildIdPlansPlanIdIndexRoute
@@ -347,6 +357,7 @@ export interface FileRouteTypes {
     | '/children/$childId/assessment/new'
     | '/children/$childId/followup/$followUpId'
     | '/children/$childId/followup/new'
+    | '/children/$childId/goals/$goalId'
     | '/children/$childId/plans/new'
     | '/children/$childId/plans/'
     | '/children/$childId/plans/$planId/'
@@ -379,6 +390,7 @@ export interface FileRouteTypes {
     | '/children/$childId/assessment/new'
     | '/children/$childId/followup/$followUpId'
     | '/children/$childId/followup/new'
+    | '/children/$childId/goals/$goalId'
     | '/children/$childId/plans/new'
     | '/children/$childId/plans'
     | '/children/$childId/plans/$planId'
@@ -412,6 +424,7 @@ export interface FileRouteTypes {
     | '/_authenticated/children/$childId/assessment/new'
     | '/_authenticated/children/$childId/followup/$followUpId'
     | '/_authenticated/children/$childId/followup/new'
+    | '/_authenticated/children/$childId/goals/$goalId'
     | '/_authenticated/children/$childId/plans/new'
     | '/_authenticated/children/$childId/plans/'
     | '/_authenticated/children/$childId/plans/$planId/'
@@ -611,6 +624,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChildrenChildIdPlansNewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/children/$childId/goals/$goalId': {
+      id: '/_authenticated/children/$childId/goals/$goalId'
+      path: '/children/$childId/goals/$goalId'
+      fullPath: '/children/$childId/goals/$goalId'
+      preLoaderRoute: typeof AuthenticatedChildrenChildIdGoalsGoalIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/children/$childId/followup/new': {
       id: '/_authenticated/children/$childId/followup/new'
       path: '/children/$childId/followup/new'
@@ -671,6 +691,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedChildrenChildIdAssessmentNewRoute: typeof AuthenticatedChildrenChildIdAssessmentNewRoute
   AuthenticatedChildrenChildIdFollowupFollowUpIdRoute: typeof AuthenticatedChildrenChildIdFollowupFollowUpIdRoute
   AuthenticatedChildrenChildIdFollowupNewRoute: typeof AuthenticatedChildrenChildIdFollowupNewRoute
+  AuthenticatedChildrenChildIdGoalsGoalIdRoute: typeof AuthenticatedChildrenChildIdGoalsGoalIdRoute
   AuthenticatedChildrenChildIdPlansNewRoute: typeof AuthenticatedChildrenChildIdPlansNewRoute
   AuthenticatedChildrenChildIdPlansIndexRoute: typeof AuthenticatedChildrenChildIdPlansIndexRoute
   AuthenticatedChildrenChildIdPlansPlanIdIndexRoute: typeof AuthenticatedChildrenChildIdPlansPlanIdIndexRoute
@@ -709,6 +730,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedChildrenChildIdFollowupFollowUpIdRoute,
   AuthenticatedChildrenChildIdFollowupNewRoute:
     AuthenticatedChildrenChildIdFollowupNewRoute,
+  AuthenticatedChildrenChildIdGoalsGoalIdRoute:
+    AuthenticatedChildrenChildIdGoalsGoalIdRoute,
   AuthenticatedChildrenChildIdPlansNewRoute:
     AuthenticatedChildrenChildIdPlansNewRoute,
   AuthenticatedChildrenChildIdPlansIndexRoute:

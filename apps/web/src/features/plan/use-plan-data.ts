@@ -28,6 +28,13 @@ export function usePlanData({
 		{ enabled: !!planId },
 	);
 
+	const goals = useQuery({
+		...(planId
+			? trpc.goal.list.queryOptions({ treatmentPlanId: planId })
+			: { queryKey: ["unused"], queryFn: () => null }),
+		enabled: !!planId,
+	});
+
 	const isLoading = [
 		child,
 		plans,
@@ -35,6 +42,7 @@ export function usePlanData({
 		activePlans,
 		plan,
 		sessionDuration,
+		goals,
 	].some((q) => q.isLoading);
 
 	return {
@@ -44,6 +52,7 @@ export function usePlanData({
 		activePlans,
 		plan,
 		sessionDuration,
+		goals,
 		isLoading,
 	};
 }
