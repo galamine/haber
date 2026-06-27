@@ -16,8 +16,10 @@ import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as AcceptInviteRouteImport } from './routes/accept-invite'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedChildrenIndexRouteImport } from './routes/_authenticated/children/index'
+import { Route as AuthenticatedSettingsLibraryRouteImport } from './routes/_authenticated/settings/library'
 import { Route as AuthenticatedChildrenNewRouteImport } from './routes/_authenticated/children/new'
 import { Route as AuthenticatedSettingsStaffIndexRouteImport } from './routes/_authenticated/settings/staff/index'
 import { Route as AuthenticatedSettingsRoomsIndexRouteImport } from './routes/_authenticated/settings/rooms/index'
@@ -70,6 +72,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedLibraryRoute = AuthenticatedLibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -79,6 +86,12 @@ const AuthenticatedChildrenIndexRoute =
   AuthenticatedChildrenIndexRouteImport.update({
     id: '/children/',
     path: '/children/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsLibraryRoute =
+  AuthenticatedSettingsLibraryRouteImport.update({
+    id: '/settings/library',
+    path: '/settings/library',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedChildrenNewRoute =
@@ -192,7 +205,9 @@ export interface FileRoutesByFullPath {
   '/ui-test': typeof UiTestRoute
   '/user-profile': typeof UserProfileRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/library': typeof AuthenticatedLibraryRoute
   '/children/new': typeof AuthenticatedChildrenNewRoute
+  '/settings/library': typeof AuthenticatedSettingsLibraryRoute
   '/children/': typeof AuthenticatedChildrenIndexRoute
   '/children/$childId/consent': typeof AuthenticatedChildrenChildIdConsentRoute
   '/children/$childId/edit': typeof AuthenticatedChildrenChildIdEditRoute
@@ -219,7 +234,9 @@ export interface FileRoutesByTo {
   '/ui-test': typeof UiTestRoute
   '/user-profile': typeof UserProfileRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/library': typeof AuthenticatedLibraryRoute
   '/children/new': typeof AuthenticatedChildrenNewRoute
+  '/settings/library': typeof AuthenticatedSettingsLibraryRoute
   '/children': typeof AuthenticatedChildrenIndexRoute
   '/children/$childId/consent': typeof AuthenticatedChildrenChildIdConsentRoute
   '/children/$childId/edit': typeof AuthenticatedChildrenChildIdEditRoute
@@ -248,7 +265,9 @@ export interface FileRoutesById {
   '/ui-test': typeof UiTestRoute
   '/user-profile': typeof UserProfileRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/children/new': typeof AuthenticatedChildrenNewRoute
+  '/_authenticated/settings/library': typeof AuthenticatedSettingsLibraryRoute
   '/_authenticated/children/': typeof AuthenticatedChildrenIndexRoute
   '/_authenticated/children/$childId/consent': typeof AuthenticatedChildrenChildIdConsentRoute
   '/_authenticated/children/$childId/edit': typeof AuthenticatedChildrenChildIdEditRoute
@@ -277,7 +296,9 @@ export interface FileRouteTypes {
     | '/ui-test'
     | '/user-profile'
     | '/dashboard'
+    | '/library'
     | '/children/new'
+    | '/settings/library'
     | '/children/'
     | '/children/$childId/consent'
     | '/children/$childId/edit'
@@ -304,7 +325,9 @@ export interface FileRouteTypes {
     | '/ui-test'
     | '/user-profile'
     | '/dashboard'
+    | '/library'
     | '/children/new'
+    | '/settings/library'
     | '/children'
     | '/children/$childId/consent'
     | '/children/$childId/edit'
@@ -332,7 +355,9 @@ export interface FileRouteTypes {
     | '/ui-test'
     | '/user-profile'
     | '/_authenticated/dashboard'
+    | '/_authenticated/library'
     | '/_authenticated/children/new'
+    | '/_authenticated/settings/library'
     | '/_authenticated/children/'
     | '/_authenticated/children/$childId/consent'
     | '/_authenticated/children/$childId/edit'
@@ -413,6 +438,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/library': {
+      id: '/_authenticated/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof AuthenticatedLibraryRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -425,6 +457,13 @@ declare module '@tanstack/react-router' {
       path: '/children'
       fullPath: '/children/'
       preLoaderRoute: typeof AuthenticatedChildrenIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/library': {
+      id: '/_authenticated/settings/library'
+      path: '/settings/library'
+      fullPath: '/settings/library'
+      preLoaderRoute: typeof AuthenticatedSettingsLibraryRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/children/new': {
@@ -551,7 +590,9 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedChildrenNewRoute: typeof AuthenticatedChildrenNewRoute
+  AuthenticatedSettingsLibraryRoute: typeof AuthenticatedSettingsLibraryRoute
   AuthenticatedChildrenIndexRoute: typeof AuthenticatedChildrenIndexRoute
   AuthenticatedChildrenChildIdConsentRoute: typeof AuthenticatedChildrenChildIdConsentRoute
   AuthenticatedChildrenChildIdEditRoute: typeof AuthenticatedChildrenChildIdEditRoute
@@ -573,7 +614,9 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedChildrenNewRoute: AuthenticatedChildrenNewRoute,
+  AuthenticatedSettingsLibraryRoute: AuthenticatedSettingsLibraryRoute,
   AuthenticatedChildrenIndexRoute: AuthenticatedChildrenIndexRoute,
   AuthenticatedChildrenChildIdConsentRoute:
     AuthenticatedChildrenChildIdConsentRoute,
