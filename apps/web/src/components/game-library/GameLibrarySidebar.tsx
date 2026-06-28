@@ -10,7 +10,9 @@ import {
 	SelectValue,
 } from "@haber-final/ui/components/select";
 import { Slider } from "@haber-final/ui/components/slider";
+import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
+import { DIFFICULTY_LEVELS, TARGET_ISSUES } from "./constants";
 
 export interface GameLibraryFilters {
 	search?: string;
@@ -26,22 +28,13 @@ interface GameLibrarySidebarProps {
 	onChange: (filters: GameLibraryFilters) => void;
 }
 
-const COMMON_TARGET_ISSUES = [
-	"ADHD",
-	"Anxiety",
-	"Depression",
-	"Focus",
-	"Social Skills",
-	"Emotional Regulation",
-];
-
-const DIFFICULTIES = ["1", "2", "3", "4", "5"];
-
 export function GameLibrarySidebar({
 	filters,
 	onChange,
 }: GameLibrarySidebarProps) {
-	const { data: categories } = trpc.game.listCategories.useQuery();
+	const { data: categories } = useQuery(
+		trpc.game.listCategories.queryOptions(),
+	);
 
 	const handleTargetIssueChange = (issue: string, checked: boolean) => {
 		const current = filters.targetIssues || [];
@@ -98,7 +91,7 @@ export function GameLibrarySidebar({
 			<div>
 				<Label className="mb-2 block">Difficulty Level</Label>
 				<div className="flex flex-wrap gap-2">
-					{DIFFICULTIES.map((diff) => (
+					{DIFFICULTY_LEVELS.map((diff) => (
 						<Button
 							key={diff}
 							variant={filters.difficulty === diff ? "default" : "outline"}
@@ -121,14 +114,14 @@ export function GameLibrarySidebar({
 				<div className="mb-2 flex items-center justify-between">
 					<Label>Age Range</Label>
 					<span className="text-muted-foreground text-sm">
-						{filters.ageRangeMin || 3} - {filters.ageRangeMax || 18} yrs
+						{filters.ageRangeMin || 3} - {filters.ageRangeMax || 100} yrs
 					</span>
 				</div>
 				<Slider
 					min={3}
-					max={18}
+					max={100}
 					step={1}
-					value={[filters.ageRangeMin || 3, filters.ageRangeMax || 18]}
+					value={[filters.ageRangeMin || 3, filters.ageRangeMax || 100]}
 					onValueChange={([min, max]) =>
 						onChange({ ...filters, ageRangeMin: min, ageRangeMax: max })
 					}
@@ -139,7 +132,7 @@ export function GameLibrarySidebar({
 			<div>
 				<Label className="mb-2 block">Target Issues</Label>
 				<div className="space-y-2">
-					{COMMON_TARGET_ISSUES.map((issue) => (
+					{TARGET_ISSUES.map((issue) => (
 						<div key={issue} className="flex items-center space-x-2">
 							<Checkbox
 								id={`issue-${issue}`}
@@ -169,7 +162,7 @@ export function GameLibrarySidebar({
 						difficulty: undefined,
 						ageRangeMin: undefined,
 						ageRangeMax: undefined,
-						targetIssues: [],
+						targetIssues: undefined,
 					})
 				}
 			>

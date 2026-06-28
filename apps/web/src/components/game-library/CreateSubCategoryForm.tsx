@@ -25,6 +25,7 @@ import {
 	SelectValue,
 } from "@haber-final/ui/components/select";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -40,8 +41,9 @@ const formSchema = z.object({
 export function CreateSubCategoryForm() {
 	const [open, setOpen] = useState(false);
 
-	const { data: categories, isLoading: isLoadingCategories } =
-		trpc.game.listCategories.useQuery();
+	const { data: categories, isLoading: isLoadingCategories } = useQuery(
+		trpc.game.listCategories.queryOptions(),
+	);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -51,17 +53,19 @@ export function CreateSubCategoryForm() {
 		},
 	});
 
-	const createMutation = trpc.game.createSubCategory.useMutation({
-		onSuccess: () => {
-			toast.success("Sub-category created successfully");
-			queryClient.invalidateQueries({ queryKey: ["game.listCategories"] });
-			form.reset();
-			setOpen(false);
-		},
-		onError: (error) => {
-			toast.error(error.message || "Failed to create sub-category");
-		},
-	});
+	const createMutation = useMutation(
+		trpc.game.createSubCategory.mutationOptions({
+			onSuccess: () => {
+				toast.success("Sub-category created successfully");
+				queryClient.invalidateQueries({ queryKey: ["game.listCategories"] });
+				form.reset();
+				setOpen(false);
+			},
+			onError: (error) => {
+				toast.error(error.message || "Failed to create sub-category");
+			},
+		}),
+	);
 
 	const onSubmit = (values: z.infer<typeof formSchema>) => {
 		createMutation.mutate(values);

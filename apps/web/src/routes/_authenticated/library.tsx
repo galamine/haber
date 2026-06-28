@@ -1,4 +1,5 @@
 import { ScrollArea } from "@haber-final/ui/components/scroll-area";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { GameGrid } from "@/components/game-library/GameGrid";
@@ -14,10 +15,12 @@ export const Route = createFileRoute("/_authenticated/library")({
 
 function LibraryPage() {
 	const [filters, setFilters] = useState<GameLibraryFilters>({});
-	const { data, isLoading } = trpc.game.list.useQuery({
-		...filters,
-		enabledForClinic: true,
-	});
+	const { data, isLoading } = useQuery(
+		trpc.game.list.queryOptions({
+			...filters,
+			enabledForClinic: true,
+		}),
+	);
 
 	return (
 		<div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden bg-background md:flex-row">

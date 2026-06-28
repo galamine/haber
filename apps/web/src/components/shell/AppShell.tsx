@@ -37,12 +37,6 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
 	{
-		label: "Clinics",
-		to: "/platform/clinics",
-		icon: <Shield className="h-4 w-4" />,
-		roles: ["SUPER_ADMIN"],
-	},
-	{
 		label: "Dashboard",
 		to: "/dashboard",
 		icon: <LayoutDashboard className="h-4 w-4" />,
@@ -53,6 +47,24 @@ const NAV_ITEMS: NavItem[] = [
 		to: "/children",
 		icon: <Baby className="h-4 w-4" />,
 		roles: ["CLINIC_ADMIN", "THERAPIST", "STAFF"],
+	},
+	{
+		label: "Game Library",
+		to: "/library",
+		icon: <Stethoscope className="h-4 w-4" />,
+		roles: ["CLINIC_ADMIN", "THERAPIST", "STAFF"],
+	},
+	{
+		label: "Clinics",
+		to: "/platform/clinics",
+		icon: <Shield className="h-4 w-4" />,
+		roles: ["SUPER_ADMIN"],
+	},
+	{
+		label: "Platform Games",
+		to: "/platform/games",
+		icon: <Stethoscope className="h-4 w-4" />,
+		roles: ["SUPER_ADMIN"],
 	},
 	{
 		label: "Staff",
@@ -73,7 +85,7 @@ const NAV_ITEMS: NavItem[] = [
 		roles: ["CLINIC_ADMIN"],
 	},
 	{
-		label: "Game Library",
+		label: "Library Settings",
 		to: "/settings/library",
 		icon: <Stethoscope className="h-4 w-4" />,
 		roles: ["CLINIC_ADMIN"],

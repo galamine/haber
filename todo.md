@@ -18,6 +18,12 @@
 - [ ] **Registration Workflow Refactoring**
   - [ ] Migrate the existing registration process into a modal/dialog-based workflow.
 
+## 🎮 Game Library (FE-08)
+- [ ] **Multi-Clinic Game Assignment**
+  - [ ] Add `clinicIds` field to `CreateGameInput` and `UpdateGameInput` schemas
+  - [ ] Update `GameForm.tsx` to show clinic selector when `isGlobal` is unchecked
+  - [ ] Support assigning game to multiple specific clinics
+
 ## 🏥 Clinic Admin & Staff Operations
 - [ ] **Child Management (Intake & Listing)**
   - [ ] Allow clinic admins to register a "New Child" into the clinic system.

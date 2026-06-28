@@ -10,6 +10,7 @@ export const CreateGameInput = z.object({
 	ageRangeMin: z.number().int().nonnegative().optional(),
 	ageRangeMax: z.number().int().nonnegative().optional(),
 	isGlobal: z.boolean().default(true),
+	clinicIds: z.array(z.string()).optional(),
 });
 
 export const UpdateGameInput = z.object({
@@ -23,6 +24,7 @@ export const UpdateGameInput = z.object({
 	ageRangeMin: z.number().int().nonnegative().optional(),
 	ageRangeMax: z.number().int().nonnegative().optional(),
 	isGlobal: z.boolean().optional(),
+	clinicIds: z.array(z.string()).optional(),
 });
 
 export const CreateGameVersionInput = z.object({
@@ -38,7 +40,7 @@ export const GameListInput = z.object({
 	search: z.string().optional(),
 	categoryId: z.string().optional(),
 	subCategory: z.string().optional(),
-	targetIssues: z.string().optional(),
+	targetIssues: z.array(z.string()).optional(),
 	difficulty: z.string().optional(),
 	ageRangeMin: z.number().int().nonnegative().optional(),
 	ageRangeMax: z.number().int().nonnegative().optional(),

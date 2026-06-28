@@ -6,6 +6,7 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from "@haber-final/ui/components/sheet";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
@@ -27,7 +28,9 @@ export function GameLibraryBrowserSheet({
 	onOpenChange,
 }: GameLibraryBrowserSheetProps) {
 	const [filters, setFilters] = useState<GameLibraryFilters>({});
-	const { data, isLoading } = trpc.game.list.useQuery({ ...filters });
+	const { data, isLoading } = useQuery(
+		trpc.game.list.queryOptions({ ...filters }),
+	);
 
 	// Note: api.plan.addGame is mentioned in the spec but plan router might not exist yet.
 	// You can replace this when plan router is available.

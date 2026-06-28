@@ -19,7 +19,8 @@ import {
 export const gameRouter = router({
 	create: adminProcedure.input(CreateGameInput).mutation(async ({ input }) => {
 		return prisma.$transaction(async (tx) => {
-			const game = await tx.game.create({ data: input });
+			const { clinicIds, ...gameData } = input;
+			const game = await tx.game.create({ data: gameData });
 			await tx.gameVersion.create({
 				data: {
 					gameId: game.id,
@@ -29,6 +30,15 @@ export const gameRouter = router({
 					isLatest: true,
 				},
 			});
+			if (!input.isGlobal && clinicIds?.length) {
+				await tx.clinicGameEnable.createMany({
+					data: clinicIds.map((clinicId) => ({
+						clinicId,
+						gameId: game.id,
+						enabled: true,
+					})),
+				});
+			}
 			return game;
 		});
 	}),
@@ -54,8 +64,22 @@ export const gameRouter = router({
 		}),
 
 	update: adminProcedure.input(UpdateGameInput).mutation(async ({ input }) => {
-		const { id, ...data } = input;
-		return prisma.game.update({ where: { id }, data });
+		return prisma.$transaction(async (tx) => {
+			const { id, clinicIds, ...gameData } = input;
+			await tx.game.update({ where: { id }, data: gameData });
+			if (clinicIds !== undefined) {
+				await tx.clinicGameEnable.deleteMany({ where: { gameId: id } });
+				if (clinicIds.length > 0) {
+					await tx.clinicGameEnable.createMany({
+						data: clinicIds.map((clinicId) => ({
+							clinicId,
+							gameId: id,
+							enabled: true,
+						})),
+					});
+				}
+			}
+		});
 	}),
 
 	deprecate: adminProcedure
@@ -94,8 +118,8 @@ export const gameRouter = router({
 			if (filters.difficulty) where.difficulty = filters.difficulty;
 			if (filters.ageRangeMin) where.ageRangeMin = { gte: filters.ageRangeMin };
 			if (filters.ageRangeMax) where.ageRangeMax = { lte: filters.ageRangeMax };
-			if (filters.targetIssues)
-				where.targetIssues = { hasSome: [filters.targetIssues] };
+			if (filters.targetIssues?.length)
+				where.targetIssues = { hasSome: filters.targetIssues };
 
 			if (enabledForClinic === true) {
 				const tenantId = ctx.auth.tenantId;

@@ -9,6 +9,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@haber-final/ui/components/table";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { queryClient, trpc } from "@/utils/trpc";
@@ -18,39 +19,45 @@ export function ClinicLibrarySettingsTable() {
 	const [search, setSearch] = useState("");
 
 	// Fetch all games
-	const { data: allGamesData, isLoading: isLoadingAll } =
-		trpc.game.list.useQuery({
+	const { data: allGamesData, isLoading: isLoadingAll } = useQuery(
+		trpc.game.list.queryOptions({
 			search,
 			pageSize: 100, // Fetch more for admin table
-		});
+		}),
+	);
 
 	// Fetch only enabled games to determine toggle state
-	const { data: enabledGamesData, isLoading: isLoadingEnabled } =
-		trpc.game.list.useQuery({
+	const { data: enabledGamesData, isLoading: isLoadingEnabled } = useQuery(
+		trpc.game.list.queryOptions({
 			search,
 			pageSize: 100,
 			enabledForClinic: true,
-		});
+		}),
+	);
 
-	const enableMutation = trpc.game.enableForClinic.useMutation({
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["game.list"] });
-			toast.success("Game enabled successfully.");
-		},
-		onError: (error) => {
-			toast.error(error.message || "Failed to enable game.");
-		},
-	});
+	const enableMutation = useMutation(
+		trpc.game.enableForClinic.mutationOptions({
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ["game.list"] });
+				toast.success("Game enabled successfully.");
+			},
+			onError: (error) => {
+				toast.error(error.message || "Failed to enable game.");
+			},
+		}),
+	);
 
-	const disableMutation = trpc.game.disableForClinic.useMutation({
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["game.list"] });
-			toast.success("Game disabled successfully.");
-		},
-		onError: (error) => {
-			toast.error(error.message || "Failed to disable game.");
-		},
-	});
+	const disableMutation = useMutation(
+		trpc.game.disableForClinic.mutationOptions({
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ["game.list"] });
+				toast.success("Game disabled successfully.");
+			},
+			onError: (error) => {
+				toast.error(error.message || "Failed to disable game.");
+			},
+		}),
+	);
 
 	const isLoading = isLoadingAll || isLoadingEnabled;
 	const allGames = allGamesData?.items || [];
