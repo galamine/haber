@@ -1,6 +1,11 @@
 import { createContext } from "@haber-final/api/context";
 import { logger } from "@haber-final/api/lib/logger";
 import { appRouter } from "@haber-final/api/routers/index";
+import {
+	WebhookCompleteBody,
+	WebhookStartBody,
+} from "@haber-final/api/schemas/session-execution";
+import prisma from "@haber-final/db";
 import { env } from "@haber-final/env/server";
 import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
@@ -51,6 +56,85 @@ app.use(
 		},
 	}),
 );
+
+app.post("/api/sessions/:id/start", async (c) => {
+	const sessionId = c.req.param("id");
+	const body = await c.req.json();
+	const parsed = WebhookStartBody.safeParse(body);
+	if (!parsed.success) {
+		return c.json({ error: "Invalid body" }, 400);
+	}
+
+	const session = await prisma.therapySession.findUnique({
+		where: { id: sessionId },
+	});
+	if (!session) {
+		return c.json({ error: "Session not found" }, 404);
+	}
+
+	if (session.webhookSecret !== parsed.data.webhook_secret) {
+		return c.json({ error: "Invalid webhook secret" }, 401);
+	}
+
+	if (session.status !== "PENDING") {
+		return c.json({ error: "Session is not pending" }, 409);
+	}
+
+	const updated = await prisma.therapySession.update({
+		where: { id: sessionId },
+		data: { status: "IN_PROGRESS", startedAt: new Date() },
+	});
+
+	return c.json({ sessionId: updated.id, startedAt: updated.startedAt });
+});
+
+app.post("/api/sessions/:id/complete", async (c) => {
+	const sessionId = c.req.param("id");
+	const body = await c.req.json();
+	const parsed = WebhookCompleteBody.safeParse(body);
+	if (!parsed.success) {
+		return c.json({ error: "Invalid body" }, 400);
+	}
+
+	const session = await prisma.therapySession.findUnique({
+		where: { id: sessionId },
+	});
+	if (!session) {
+		return c.json({ error: "Session not found" }, 404);
+	}
+
+	if (session.webhookSecret !== parsed.data.webhook_secret) {
+		return c.json({ error: "Invalid webhook secret" }, 401);
+	}
+
+	if (session.status === "COMPLETED" && session.webhookSecretUsed) {
+		const existingResult = await prisma.gameResult.findUnique({
+			where: { sessionId },
+		});
+		return c.json(existingResult);
+	}
+
+	const result = await prisma.gameResult.create({
+		data: {
+			sessionId,
+			scored: parsed.data.scored,
+			rubricVersion: parsed.data.scored.rubric_version,
+			rawMetrics: parsed.data.raw_metrics,
+			events: parsed.data.events,
+		},
+	});
+
+	await prisma.therapySession.update({
+		where: { id: sessionId },
+		data: {
+			status: "COMPLETED",
+			completedAt: new Date(),
+			webhookSecretUsed: true,
+		},
+	});
+
+	return c.json(result);
+});
 
 app.onError((err, c) => {
 	logger.error(

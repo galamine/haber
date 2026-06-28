@@ -5,10 +5,12 @@ import { childRouter } from "./child";
 import { clinicRouter } from "./clinic";
 import { consentRouter } from "./consent";
 import { consentInvitationRouter } from "./consentInvitation";
+import { gameRouter } from "./game";
 import { goalRouter } from "./goal";
 import { milestoneRouter } from "./milestone";
 import { planRouter } from "./plan";
 import { profileRouter } from "./profile";
+import { sessionRouter } from "./session";
 import { staffRouter } from "./staff";
 import { taxonomyRouter } from "./taxonomy";
 
@@ -26,7 +28,9 @@ export const appRouter: ReturnType<typeof router> = router({
 	consentInvitation: consentInvitationRouter,
 	assessment: assessmentRouter,
 	goal: goalRouter,
+	game: gameRouter,
 	profile: profileRouter,
 	plan: planRouter,
+	session: sessionRouter,
 });
 export type AppRouter = typeof appRouter;

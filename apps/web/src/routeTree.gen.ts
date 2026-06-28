@@ -17,7 +17,10 @@ import { Route as AcceptInviteRouteImport } from './routes/accept-invite'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedSessionsIndexRouteImport } from './routes/_authenticated/sessions/index'
 import { Route as AuthenticatedChildrenIndexRouteImport } from './routes/_authenticated/children/index'
+import { Route as AuthenticatedSessionsUncoveredRouteImport } from './routes/_authenticated/sessions/uncovered'
+import { Route as AuthenticatedSessionsSessionIdRouteImport } from './routes/_authenticated/sessions/$sessionId'
 import { Route as AuthenticatedChildrenNewRouteImport } from './routes/_authenticated/children/new'
 import { Route as AuthenticatedSettingsStaffIndexRouteImport } from './routes/_authenticated/settings/staff/index'
 import { Route as AuthenticatedSettingsRoomsIndexRouteImport } from './routes/_authenticated/settings/rooms/index'
@@ -81,10 +84,28 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedSessionsIndexRoute =
+  AuthenticatedSessionsIndexRouteImport.update({
+    id: '/sessions/',
+    path: '/sessions/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedChildrenIndexRoute =
   AuthenticatedChildrenIndexRouteImport.update({
     id: '/children/',
     path: '/children/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSessionsUncoveredRoute =
+  AuthenticatedSessionsUncoveredRouteImport.update({
+    id: '/sessions/uncovered',
+    path: '/sessions/uncovered',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSessionsSessionIdRoute =
+  AuthenticatedSessionsSessionIdRouteImport.update({
+    id: '/sessions/$sessionId',
+    path: '/sessions/$sessionId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedChildrenNewRoute =
@@ -235,7 +256,10 @@ export interface FileRoutesByFullPath {
   '/user-profile': typeof UserProfileRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/children/new': typeof AuthenticatedChildrenNewRoute
+  '/sessions/$sessionId': typeof AuthenticatedSessionsSessionIdRoute
+  '/sessions/uncovered': typeof AuthenticatedSessionsUncoveredRoute
   '/children/': typeof AuthenticatedChildrenIndexRoute
+  '/sessions/': typeof AuthenticatedSessionsIndexRoute
   '/children/$childId/consent': typeof AuthenticatedChildrenChildIdConsentRoute
   '/children/$childId/edit': typeof AuthenticatedChildrenChildIdEditRoute
   '/platform/clinics/new': typeof AuthenticatedPlatformClinicsNewRoute
@@ -268,7 +292,10 @@ export interface FileRoutesByTo {
   '/user-profile': typeof UserProfileRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/children/new': typeof AuthenticatedChildrenNewRoute
+  '/sessions/$sessionId': typeof AuthenticatedSessionsSessionIdRoute
+  '/sessions/uncovered': typeof AuthenticatedSessionsUncoveredRoute
   '/children': typeof AuthenticatedChildrenIndexRoute
+  '/sessions': typeof AuthenticatedSessionsIndexRoute
   '/children/$childId/consent': typeof AuthenticatedChildrenChildIdConsentRoute
   '/children/$childId/edit': typeof AuthenticatedChildrenChildIdEditRoute
   '/platform/clinics/new': typeof AuthenticatedPlatformClinicsNewRoute
@@ -303,7 +330,10 @@ export interface FileRoutesById {
   '/user-profile': typeof UserProfileRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/children/new': typeof AuthenticatedChildrenNewRoute
+  '/_authenticated/sessions/$sessionId': typeof AuthenticatedSessionsSessionIdRoute
+  '/_authenticated/sessions/uncovered': typeof AuthenticatedSessionsUncoveredRoute
   '/_authenticated/children/': typeof AuthenticatedChildrenIndexRoute
+  '/_authenticated/sessions/': typeof AuthenticatedSessionsIndexRoute
   '/_authenticated/children/$childId/consent': typeof AuthenticatedChildrenChildIdConsentRoute
   '/_authenticated/children/$childId/edit': typeof AuthenticatedChildrenChildIdEditRoute
   '/_authenticated/platform/clinics/new': typeof AuthenticatedPlatformClinicsNewRoute
@@ -338,7 +368,10 @@ export interface FileRouteTypes {
     | '/user-profile'
     | '/dashboard'
     | '/children/new'
+    | '/sessions/$sessionId'
+    | '/sessions/uncovered'
     | '/children/'
+    | '/sessions/'
     | '/children/$childId/consent'
     | '/children/$childId/edit'
     | '/platform/clinics/new'
@@ -371,7 +404,10 @@ export interface FileRouteTypes {
     | '/user-profile'
     | '/dashboard'
     | '/children/new'
+    | '/sessions/$sessionId'
+    | '/sessions/uncovered'
     | '/children'
+    | '/sessions'
     | '/children/$childId/consent'
     | '/children/$childId/edit'
     | '/platform/clinics/new'
@@ -405,7 +441,10 @@ export interface FileRouteTypes {
     | '/user-profile'
     | '/_authenticated/dashboard'
     | '/_authenticated/children/new'
+    | '/_authenticated/sessions/$sessionId'
+    | '/_authenticated/sessions/uncovered'
     | '/_authenticated/children/'
+    | '/_authenticated/sessions/'
     | '/_authenticated/children/$childId/consent'
     | '/_authenticated/children/$childId/edit'
     | '/_authenticated/platform/clinics/new'
@@ -498,11 +537,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/sessions/': {
+      id: '/_authenticated/sessions/'
+      path: '/sessions'
+      fullPath: '/sessions/'
+      preLoaderRoute: typeof AuthenticatedSessionsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/children/': {
       id: '/_authenticated/children/'
       path: '/children'
       fullPath: '/children/'
       preLoaderRoute: typeof AuthenticatedChildrenIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/sessions/uncovered': {
+      id: '/_authenticated/sessions/uncovered'
+      path: '/sessions/uncovered'
+      fullPath: '/sessions/uncovered'
+      preLoaderRoute: typeof AuthenticatedSessionsUncoveredRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/sessions/$sessionId': {
+      id: '/_authenticated/sessions/$sessionId'
+      path: '/sessions/$sessionId'
+      fullPath: '/sessions/$sessionId'
+      preLoaderRoute: typeof AuthenticatedSessionsSessionIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/children/new': {
@@ -672,7 +732,10 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedChildrenNewRoute: typeof AuthenticatedChildrenNewRoute
+  AuthenticatedSessionsSessionIdRoute: typeof AuthenticatedSessionsSessionIdRoute
+  AuthenticatedSessionsUncoveredRoute: typeof AuthenticatedSessionsUncoveredRoute
   AuthenticatedChildrenIndexRoute: typeof AuthenticatedChildrenIndexRoute
+  AuthenticatedSessionsIndexRoute: typeof AuthenticatedSessionsIndexRoute
   AuthenticatedChildrenChildIdConsentRoute: typeof AuthenticatedChildrenChildIdConsentRoute
   AuthenticatedChildrenChildIdEditRoute: typeof AuthenticatedChildrenChildIdEditRoute
   AuthenticatedPlatformClinicsNewRoute: typeof AuthenticatedPlatformClinicsNewRoute
@@ -700,7 +763,10 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedChildrenNewRoute: AuthenticatedChildrenNewRoute,
+  AuthenticatedSessionsSessionIdRoute: AuthenticatedSessionsSessionIdRoute,
+  AuthenticatedSessionsUncoveredRoute: AuthenticatedSessionsUncoveredRoute,
   AuthenticatedChildrenIndexRoute: AuthenticatedChildrenIndexRoute,
+  AuthenticatedSessionsIndexRoute: AuthenticatedSessionsIndexRoute,
   AuthenticatedChildrenChildIdConsentRoute:
     AuthenticatedChildrenChildIdConsentRoute,
   AuthenticatedChildrenChildIdEditRoute: AuthenticatedChildrenChildIdEditRoute,

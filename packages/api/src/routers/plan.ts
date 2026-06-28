@@ -11,6 +11,10 @@ import {
 	ReorderGamesInput,
 	UpdateGameInput,
 } from "../schemas/plan";
+import {
+	generateSessionsForPlan,
+	regenerateFutureSessions,
+} from "../services/session-generator";
 import { getChildForRead } from "./child";
 
 async function getPlanForTherapist(planId: string, ctx: { auth: AuthUser }) {
@@ -90,6 +94,12 @@ export const planRouter: ReturnType<typeof router> = router({
 	create: protectedProcedure
 		.input(CreatePlanInput)
 		.mutation(async ({ input, ctx }) => {
+			if (!ctx.auth.tenantId) {
+				throw new TRPCError({
+					code: "UNAUTHORIZED",
+					message: "Tenant ID is required",
+				});
+			}
 			await getChildForRead(input.childId, ctx);
 
 			const planData = {
@@ -107,7 +117,7 @@ export const planRouter: ReturnType<typeof router> = router({
 				versionNumber: 1,
 				parentPlanId: null,
 				sourcePresetId: input.presetId ?? null,
-				clinicId: ctx.auth.tenantId!,
+				clinicId: ctx.auth.tenantId,
 				createdById: ctx.auth.userId,
 			};
 
@@ -303,9 +313,15 @@ export const planRouter: ReturnType<typeof router> = router({
 				});
 			}
 
-			return prisma.treatmentPlan.update({
+			await prisma.treatmentPlan.update({
 				where: { id: input.planId },
 				data: { status: "ACTIVE", isActive: true },
+			});
+
+			await generateSessionsForPlan(input.planId);
+
+			return prisma.treatmentPlan.findUniqueOrThrow({
+				where: { id: input.planId },
 			});
 		}),
 
@@ -458,6 +474,8 @@ export const planRouter: ReturnType<typeof router> = router({
 
 				return created;
 			});
+
+			await regenerateFutureSessions(current.id, newPlan.id, new Date());
 
 			return newPlan;
 		}),
