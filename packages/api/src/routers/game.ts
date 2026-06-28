@@ -87,6 +87,8 @@ export const gameRouter = router({
 
 			const where: any = {};
 
+			if (filters.search)
+				where.name = { contains: filters.search, mode: "insensitive" };
 			if (filters.categoryId) where.categoryId = filters.categoryId;
 			if (filters.subCategory) where.subCategory = filters.subCategory;
 			if (filters.difficulty) where.difficulty = filters.difficulty;
@@ -116,6 +118,7 @@ export const gameRouter = router({
 					skip,
 					take: pageSize,
 					orderBy: { createdAt: "desc" },
+					include: { versions: { where: { isLatest: true }, take: 1 } },
 				}),
 				prisma.game.count({ where }),
 			]);

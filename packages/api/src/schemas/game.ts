@@ -35,6 +35,7 @@ export const CreateGameVersionInput = z.object({
 export const GameListInput = z.object({
 	page: z.number().int().positive().default(1),
 	pageSize: z.number().int().positive().max(100).default(20),
+	search: z.string().optional(),
 	categoryId: z.string().optional(),
 	subCategory: z.string().optional(),
 	targetIssues: z.string().optional(),

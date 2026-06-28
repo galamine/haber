@@ -30,7 +30,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { trpc } from "@/utils/trpc";
+import { queryClient, trpc } from "@/utils/trpc";
 
 const formSchema = z.object({
 	name: z.string().min(1, "Name is required").max(200),
@@ -39,7 +39,6 @@ const formSchema = z.object({
 
 export function CreateSubCategoryForm() {
 	const [open, setOpen] = useState(false);
-	const utils = trpc.useUtils();
 
 	const { data: categories, isLoading: isLoadingCategories } =
 		trpc.game.listCategories.useQuery();
@@ -55,7 +54,7 @@ export function CreateSubCategoryForm() {
 	const createMutation = trpc.game.createSubCategory.useMutation({
 		onSuccess: () => {
 			toast.success("Sub-category created successfully");
-			utils.game.listCategories.invalidate();
+			queryClient.invalidateQueries({ queryKey: ["game.listCategories"] });
 			form.reset();
 			setOpen(false);
 		},

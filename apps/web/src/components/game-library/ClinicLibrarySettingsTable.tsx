@@ -11,13 +11,11 @@ import {
 } from "@haber-final/ui/components/table";
 import { useState } from "react";
 import { toast } from "sonner";
-import { trpc } from "@/utils/trpc";
+import { queryClient, trpc } from "@/utils/trpc";
 import type { GameItem } from "./GameCard";
 
 export function ClinicLibrarySettingsTable() {
 	const [search, setSearch] = useState("");
-
-	const utils = trpc.useUtils();
 
 	// Fetch all games
 	const { data: allGamesData, isLoading: isLoadingAll } =
@@ -36,7 +34,7 @@ export function ClinicLibrarySettingsTable() {
 
 	const enableMutation = trpc.game.enableForClinic.useMutation({
 		onSuccess: () => {
-			utils.game.list.invalidate();
+			queryClient.invalidateQueries({ queryKey: ["game.list"] });
 			toast.success("Game enabled successfully.");
 		},
 		onError: (error) => {
@@ -46,7 +44,7 @@ export function ClinicLibrarySettingsTable() {
 
 	const disableMutation = trpc.game.disableForClinic.useMutation({
 		onSuccess: () => {
-			utils.game.list.invalidate();
+			queryClient.invalidateQueries({ queryKey: ["game.list"] });
 			toast.success("Game disabled successfully.");
 		},
 		onError: (error) => {

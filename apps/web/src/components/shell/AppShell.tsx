@@ -72,6 +72,12 @@ const NAV_ITEMS: NavItem[] = [
 		icon: <Building2 className="h-4 w-4" />,
 		roles: ["CLINIC_ADMIN"],
 	},
+	{
+		label: "Game Library",
+		to: "/settings/library",
+		icon: <Stethoscope className="h-4 w-4" />,
+		roles: ["CLINIC_ADMIN"],
+	},
 ];
 
 export function AppShell() {

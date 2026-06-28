@@ -1,8 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { ClinicLibrarySettingsTable } from "@/components/game-library/ClinicLibrarySettingsTable";
 import { CreateSubCategoryForm } from "@/components/game-library/CreateSubCategoryForm";
+import { useAuthStore } from "@/stores/auth";
 
 export const Route = createFileRoute("/_authenticated/settings/library")({
+	beforeLoad: () => {
+		const { role } = useAuthStore.getState();
+		if (role !== "CLINIC_ADMIN") {
+			throw redirect({ to: "/dashboard" });
+		}
+	},
 	component: SettingsLibraryPage,
 });
 
