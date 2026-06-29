@@ -16,6 +16,7 @@ import { Outlet, useRouter } from "@tanstack/react-router";
 import {
 	Baby,
 	Building2,
+	CalendarCheck,
 	LayoutDashboard,
 	LogOut,
 	Settings,
@@ -52,6 +53,12 @@ const NAV_ITEMS: NavItem[] = [
 		label: "Game Library",
 		to: "/library",
 		icon: <Stethoscope className="h-4 w-4" />,
+		roles: ["CLINIC_ADMIN", "THERAPIST", "STAFF"],
+	},
+	{
+		label: "Sessions",
+		to: "/sessions",
+		icon: <CalendarCheck className="h-4 w-4" />,
 		roles: ["CLINIC_ADMIN", "THERAPIST", "STAFF"],
 	},
 	{
