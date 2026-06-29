@@ -12,7 +12,7 @@ import {
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { cn } from "@haber-final/ui/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Check, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
@@ -52,6 +52,13 @@ const GuardianSchema = z.object({
 
 type GuardianValues = z.infer<typeof GuardianSchema>;
 
+const TherapistAssignmentSchema = z.object({
+	therapistId: z.string().min(1, "Therapist is required"),
+	reviewDueAt: z.string().optional(),
+});
+
+type TherapistAssignmentValues = z.infer<typeof TherapistAssignmentSchema>;
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 type CreatedChild = {
@@ -67,7 +74,13 @@ type CreatedChild = {
 
 // ─── Stepper ─────────────────────────────────────────────────────────────────
 
-const STEPS = ["Profile", "Medical History", "Guardian", "Consent"];
+const STEPS = [
+	"Profile",
+	"Medical History",
+	"Guardian",
+	"Therapist",
+	"Consent",
+];
 
 function WizardStepper({ currentStep }: { currentStep: number }) {
 	return (
@@ -482,9 +495,139 @@ function Step3Guardians({
 	);
 }
 
-// ─── Step 4: Send Consent Link ────────────────────────────────────────────────
+// ─── Step 4: Therapist ─────────────────────────────────────────────────────────
 
-function Step4SendConsentLink({
+function Step4Therapist({
+	initial,
+	onNext,
+	onBack,
+}: {
+	initial: TherapistAssignmentValues | null;
+	onNext: (data: TherapistAssignmentValues) => void;
+	onBack: () => void;
+}) {
+	const {
+		register,
+		handleSubmit,
+		control,
+		formState: { errors },
+	} = useForm<TherapistAssignmentValues>({
+		resolver: zodResolver(TherapistAssignmentSchema),
+		defaultValues: initial ?? {
+			therapistId: "",
+			reviewDueAt: "",
+		},
+	});
+
+	const {
+		data: therapistsData,
+		isLoading,
+		isError,
+		refetch,
+	} = useQuery(
+		trpc.staff.list.queryOptions({ role: "THERAPIST", pageSize: 100 }),
+	);
+
+	const therapists = therapistsData?.items ?? [];
+
+	return (
+		<form onSubmit={handleSubmit(onNext)}>
+			<div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
+				<div className="border-outline-variant border-b px-6 py-4">
+					<h2 className="font-semibold text-on-surface text-xl">
+						Therapist Assignment
+					</h2>
+					<p className="mt-1 text-on-surface-variant text-sm">
+						Assign a therapist to this child
+					</p>
+				</div>
+
+				<div className="space-y-4 p-6">
+					<div className="flex flex-col gap-1.5">
+						<Label htmlFor="therapistId">
+							Therapist <span className="text-red-500">*</span>
+						</Label>
+						{isLoading ? (
+							<Input
+								id="therapistId"
+								disabled
+								placeholder="Loading therapists..."
+							/>
+						) : isError ? (
+							<>
+								<Input
+									id="therapistId"
+									disabled
+									placeholder="Failed to load therapists"
+								/>
+								<Button
+									type="button"
+									variant="outline"
+									size="sm"
+									onClick={() => void refetch()}
+								>
+									Retry
+								</Button>
+							</>
+						) : (
+							<Controller
+								control={control}
+								name="therapistId"
+								render={({ field }) => (
+									<Select value={field.value} onValueChange={field.onChange}>
+										<SelectTrigger
+											id="therapistId"
+											className={errors.therapistId ? "border-red-500" : ""}
+										>
+											<SelectValue placeholder="Select a therapist" />
+										</SelectTrigger>
+										<SelectContent>
+											{therapists.length === 0 ? (
+												<div className="px-2 py-1.5 text-muted-foreground text-sm">
+													No therapists available
+												</div>
+											) : (
+												therapists.map((therapist) => (
+													<SelectItem key={therapist.id} value={therapist.id}>
+														{therapist.name} ({therapist.email})
+													</SelectItem>
+												))
+											)}
+										</SelectContent>
+									</Select>
+								)}
+							/>
+						)}
+						{errors.therapistId && (
+							<p className="text-red-600 text-xs">
+								{errors.therapistId.message}
+							</p>
+						)}
+					</div>
+
+					<div className="flex flex-col gap-1.5">
+						<Label htmlFor="reviewDueAt">Review Due Date</Label>
+						<Input id="reviewDueAt" type="date" {...register("reviewDueAt")} />
+					</div>
+				</div>
+
+				<div className="flex justify-between border-outline-variant border-t px-6 py-4">
+					<Button type="button" variant="outline" onClick={onBack}>
+						Back
+					</Button>
+					<Button type="submit" className="gap-2">
+						Continue
+						<ChevronRight className="h-4 w-4" />
+					</Button>
+				</div>
+			</div>
+		</form>
+	);
+}
+
+// ─── Step 5: Send Consent Link ────────────────────────────────────────────────
+
+function Step5SendConsentLink({
 	childId,
 	guardianName,
 	guardianEmail,
@@ -574,9 +717,14 @@ function NewChildPage() {
 	const [profileData, setProfileData] = useState<ProfileValues | null>(null);
 	const [medicalData, setMedicalData] = useState<MedicalValues | null>(null);
 	const [createdChild, setCreatedChild] = useState<CreatedChild | null>(null);
+	const [therapistData, setTherapistData] =
+		useState<TherapistAssignmentValues | null>(null);
 	const [isCreating, setIsCreating] = useState(false);
 
 	const createChildMutation = useMutation(trpc.child.create.mutationOptions());
+	const assignTherapistMutation = useMutation(
+		trpc.child.assignTherapist.mutationOptions(),
+	);
 
 	function handleStep1(data: ProfileValues) {
 		setProfileData(data);
@@ -623,6 +771,22 @@ function NewChildPage() {
 		} finally {
 			setIsCreating(false);
 		}
+	}
+
+	async function handleStep4(data: TherapistAssignmentValues) {
+		if (!createdChild) return;
+		try {
+			await assignTherapistMutation.mutateAsync({
+				childId: createdChild.id,
+				therapistId: data.therapistId,
+				reviewDueAt: data.reviewDueAt ? new Date(data.reviewDueAt) : undefined,
+			});
+		} catch (_err) {
+			toast.error("Failed to assign therapist");
+			return;
+		}
+		setTherapistData(data);
+		setStep(5);
 	}
 
 	return (
@@ -673,11 +837,18 @@ function NewChildPage() {
 						/>
 					)}
 					{step === 4 && createdChild && (
-						<Step4SendConsentLink
+						<Step4Therapist
+							initial={therapistData}
+							onNext={handleStep4}
+							onBack={() => setStep(3)}
+						/>
+					)}
+					{step === 5 && createdChild && (
+						<Step5SendConsentLink
 							childId={createdChild.id}
 							guardianName={createdChild.guardian.name}
 							guardianEmail={createdChild.guardian.email}
-							onBack={() => setStep(3)}
+							onBack={() => setStep(4)}
 							onComplete={() =>
 								router.navigate({
 									to: "/children/$childId",

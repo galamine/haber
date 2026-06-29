@@ -257,9 +257,8 @@ export const childRouter: ReturnType<typeof router> = router({
 		.input(AssignTherapistInput)
 		.mutation(async ({ input, ctx }) => {
 			const { role, tenantId } = ctx.auth;
-			const isClinicAdmin = role === "CLINIC_ADMIN";
 			const hasIntake = await hasPermission(ctx, PERMISSIONS.CHILD_INTAKE);
-			if (!isClinicAdmin && !hasIntake) {
+			if (!hasIntake) {
 				throw new TRPCError({ code: "FORBIDDEN" });
 			}
 
