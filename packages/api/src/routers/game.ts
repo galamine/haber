@@ -8,143 +8,164 @@ import {
 	router,
 } from "../index";
 import {
-	ClinicGameEnableInput,
 	CreateGameInput,
 	CreateGameVersionInput,
 	CreateSubCategoryInput,
-	ListGamesInput,
+	EnableDisableGameInput,
+	GameListInput,
 	UpdateGameInput,
 } from "../schemas/game";
 
-export const gameRouter: ReturnType<typeof router> = router({
+export const gameRouter = router({
 	create: adminProcedure.input(CreateGameInput).mutation(async ({ input }) => {
-		return prisma.game.create({
-			data: {
-				name: input.name,
-				description: input.description,
-				categoryId: input.categoryId,
-				subCategory: input.subCategory,
-				targetIssues: input.targetIssues,
-				difficulty: input.difficulty,
-				ageRangeMin: input.ageRangeMin,
-				ageRangeMax: input.ageRangeMax,
-				isGlobal: input.isGlobal,
-			},
+		return prisma.$transaction(async (tx) => {
+			const { clinicIds, ...gameData } = input;
+			const game = await tx.game.create({ data: gameData });
+			await tx.gameVersion.create({
+				data: {
+					gameId: game.id,
+					versionNumber: "1",
+					rubricVersion: "1",
+					scoringSchema: {},
+					isLatest: true,
+				},
+			});
+			if (!input.isGlobal && clinicIds?.length) {
+				await tx.clinicGameEnable.createMany({
+					data: clinicIds.map((clinicId) => ({
+						clinicId,
+						gameId: game.id,
+						enabled: true,
+					})),
+				});
+			}
+			return game;
 		});
 	}),
 
 	createVersion: adminProcedure
 		.input(CreateGameVersionInput)
 		.mutation(async ({ input }) => {
-			await prisma.gameVersion.updateMany({
-				where: { gameId: input.gameId },
-				data: { isLatest: false },
-			});
-
-			return prisma.gameVersion.create({
-				data: {
-					gameId: input.gameId,
-					versionNumber: input.versionNumber,
-					rubricVersion: input.rubricVersion,
-					scoringSchema: input.scoringSchema,
-					isLatest: true,
-				},
+			return prisma.$transaction(async (tx) => {
+				await tx.gameVersion.updateMany({
+					where: { gameId: input.gameId, isLatest: true },
+					data: { isLatest: false },
+				});
+				return tx.gameVersion.create({
+					data: {
+						gameId: input.gameId,
+						versionNumber: input.versionNumber,
+						rubricVersion: input.rubricVersion,
+						scoringSchema: JSON.parse(JSON.stringify(input.scoringSchema)),
+						isLatest: true,
+					},
+				});
 			});
 		}),
 
+	update: adminProcedure.input(UpdateGameInput).mutation(async ({ input }) => {
+		return prisma.$transaction(async (tx) => {
+			const { id, clinicIds, ...gameData } = input;
+			await tx.game.update({ where: { id }, data: gameData });
+			if (clinicIds !== undefined) {
+				await tx.clinicGameEnable.deleteMany({ where: { gameId: id } });
+				if (clinicIds.length > 0) {
+					await tx.clinicGameEnable.createMany({
+						data: clinicIds.map((clinicId) => ({
+							clinicId,
+							gameId: id,
+							enabled: true,
+						})),
+					});
+				}
+			}
+		});
+	}),
+
+	deprecate: adminProcedure
+		.input(EnableDisableGameInput)
+		.mutation(async ({ input }) => {
+			await prisma.gameVersion.updateMany({
+				where: { gameId: input.gameId, isLatest: true },
+				data: { isLatest: false },
+			});
+			return { success: true };
+		}),
+
 	get: protectedProcedure
-		.input(z.object({ gameId: z.string() }))
+		.input(z.object({ id: z.string() }))
 		.query(async ({ input }) => {
 			const game = await prisma.game.findUnique({
-				where: { id: input.gameId },
-				include: {
-					versions: { orderBy: { createdAt: "desc" } },
-					clinicEnables: true,
-				},
+				where: { id: input.id },
+				include: { versions: { orderBy: { createdAt: "desc" } } },
 			});
-			if (!game) {
-				throw new TRPCError({ code: "NOT_FOUND" });
-			}
+			if (!game) throw new TRPCError({ code: "NOT_FOUND" });
 			return game;
 		}),
 
 	list: protectedProcedure
-		.input(ListGamesInput)
-		.query(async ({ input, ctx }) => {
-			const where: Record<string, unknown> = {};
+		.input(GameListInput)
+		.query(async ({ ctx, input }) => {
+			const { page, pageSize, enabledForClinic, ...filters } = input;
+			const skip = (page - 1) * pageSize;
 
-			if (input.categoryId) {
-				where.categoryId = input.categoryId;
-			}
+			const where: any = {};
 
-			if (input.search) {
-				where.OR = [
-					{ name: { contains: input.search, mode: "insensitive" } },
-					{ description: { contains: input.search, mode: "insensitive" } },
-				];
-			}
+			if (filters.search)
+				where.name = { contains: filters.search, mode: "insensitive" };
+			if (filters.categoryId) where.categoryId = filters.categoryId;
+			if (filters.subCategory) where.subCategory = filters.subCategory;
+			if (filters.difficulty) where.difficulty = filters.difficulty;
+			if (filters.ageRangeMin) where.ageRangeMin = { gte: filters.ageRangeMin };
+			if (filters.ageRangeMax) where.ageRangeMax = { lte: filters.ageRangeMax };
+			if (filters.targetIssues?.length)
+				where.targetIssues = { hasSome: filters.targetIssues };
 
-			if (input.enabledForClinic && ctx.auth.tenantId) {
+			if (enabledForClinic === true) {
+				const tenantId = ctx.auth.tenantId;
 				where.OR = [
 					{
-						clinicEnables: {
-							some: { clinicId: ctx.auth.tenantId, enabled: true },
+						isGlobal: true,
+						NOT: {
+							clinicEnables: { some: { clinicId: tenantId!, enabled: false } },
 						},
 					},
-					{ isGlobal: true },
-				];
-				where.NOT = {
-					clinicEnables: {
-						some: { clinicId: ctx.auth.tenantId, enabled: false },
+					{
+						clinicEnables: { some: { clinicId: tenantId!, enabled: true } },
 					},
-				};
+				];
 			}
 
 			const [items, total] = await prisma.$transaction([
 				prisma.game.findMany({
 					where,
-					skip: (input.page - 1) * input.pageSize,
-					take: input.pageSize,
+					skip,
+					take: pageSize,
 					orderBy: { createdAt: "desc" },
-					include: {
-						versions: { where: { isLatest: true } },
-						clinicEnables: true,
-					},
+					include: { versions: { where: { isLatest: true }, take: 1 } },
 				}),
 				prisma.game.count({ where }),
 			]);
 
-			return {
-				items,
-				total,
-				page: input.page,
-				totalPages: Math.ceil(total / input.pageSize),
-			};
+			return { items, total, page, totalPages: Math.ceil(total / pageSize) };
 		}),
 
-	update: adminProcedure
-		.input(UpdateGameInput.merge(z.object({ gameId: z.string() })))
-		.mutation(async ({ input }) => {
-			const { gameId, ...data } = input;
-			return prisma.game.update({
-				where: { id: gameId },
-				data,
-			});
-		}),
-
-	deprecate: adminProcedure
-		.input(z.object({ gameVersionId: z.string() }))
-		.mutation(async ({ input }) => {
-			return prisma.gameVersion.update({
-				where: { id: input.gameVersionId },
-				data: { isLatest: false },
-			});
-		}),
-
-	listCategories: protectedProcedure.query(async () => {
+	listCategories: protectedProcedure.query(async ({ ctx }) => {
 		return prisma.gameCategory.findMany({
-			where: { parentId: null },
-			include: { children: true },
+			where: {
+				OR: [{ clinicId: null }, { clinicId: ctx.auth.tenantId }],
+			},
+			orderBy: { name: "asc" },
+		});
+	}),
+
+	listEnabledForClinic: protectedProcedure.query(async ({ ctx }) => {
+		return prisma.game.findMany({
+			where: {
+				clinicEnables: {
+					some: { clinicId: ctx.auth.tenantId!, enabled: true },
+				},
+			},
 			orderBy: { name: "asc" },
 		});
 	}),
@@ -152,22 +173,6 @@ export const gameRouter: ReturnType<typeof router> = router({
 	createSubCategory: clinicAdminProcedure
 		.input(CreateSubCategoryInput)
 		.mutation(async ({ input, ctx }) => {
-			if (!ctx.auth.tenantId) {
-				throw new TRPCError({
-					code: "UNAUTHORIZED",
-					message: "Tenant ID is required",
-				});
-			}
-			const parent = await prisma.gameCategory.findUnique({
-				where: { id: input.parentId },
-			});
-			if (!parent || parent.clinicId !== null) {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "Parent category must be a global category",
-				});
-			}
-
 			return prisma.gameCategory.create({
 				data: {
 					name: input.name,
@@ -178,80 +183,40 @@ export const gameRouter: ReturnType<typeof router> = router({
 		}),
 
 	enableForClinic: clinicAdminProcedure
-		.input(ClinicGameEnableInput)
+		.input(EnableDisableGameInput)
 		.mutation(async ({ input, ctx }) => {
-			if (!ctx.auth.tenantId) {
-				throw new TRPCError({
-					code: "UNAUTHORIZED",
-					message: "Tenant ID is required",
-				});
-			}
-			return prisma.clinicGameEnable.upsert({
+			await prisma.clinicGameEnable.upsert({
 				where: {
 					clinicId_gameId: {
-						clinicId: ctx.auth.tenantId,
+						clinicId: ctx.auth.tenantId!,
 						gameId: input.gameId,
 					},
 				},
-				update: { enabled: input.enabled },
 				create: {
-					clinicId: ctx.auth.tenantId,
+					clinicId: ctx.auth.tenantId!,
 					gameId: input.gameId,
-					enabled: input.enabled,
+					enabled: true,
 				},
+				update: { enabled: true },
 			});
 		}),
 
 	disableForClinic: clinicAdminProcedure
-		.input(z.object({ gameId: z.string() }))
+		.input(EnableDisableGameInput)
 		.mutation(async ({ input, ctx }) => {
-			if (!ctx.auth.tenantId) {
-				throw new TRPCError({
-					code: "UNAUTHORIZED",
-					message: "Tenant ID is required",
-				});
-			}
-			return prisma.clinicGameEnable.upsert({
+			await prisma.clinicGameEnable.upsert({
 				where: {
 					clinicId_gameId: {
-						clinicId: ctx.auth.tenantId,
+						clinicId: ctx.auth.tenantId!,
 						gameId: input.gameId,
 					},
 				},
-				update: { enabled: false },
 				create: {
-					clinicId: ctx.auth.tenantId,
+					clinicId: ctx.auth.tenantId!,
 					gameId: input.gameId,
 					enabled: false,
 				},
+				update: { enabled: false },
 			});
 		}),
-
-	listEnabledForClinic: protectedProcedure.query(async ({ ctx }) => {
-		if (!ctx.auth.tenantId) {
-			return [];
-		}
-
-		return prisma.game.findMany({
-			where: {
-				OR: [
-					{
-						clinicEnables: {
-							some: { clinicId: ctx.auth.tenantId, enabled: true },
-						},
-					},
-					{ isGlobal: true },
-				],
-				NOT: {
-					clinicEnables: {
-						some: { clinicId: ctx.auth.tenantId, enabled: false },
-					},
-				},
-			},
-			include: {
-				versions: { where: { isLatest: true } },
-				clinicEnables: true,
-			},
-		});
-	}),
 });

@@ -15,16 +15,16 @@ const seedData =
 	};
 
 const GAME_CATEGORIES = [
-	{ id: "gc_fine_motor", name: "Fine Motor" },
 	{ id: "gc_gross_motor", name: "Gross Motor" },
-	{ id: "gc_sensory_processing", name: "Sensory Processing" },
-	{ id: "gc_adl_self_care", name: "ADL / Self-Care" },
-	{ id: "gc_cognitive_attention", name: "Cognitive & Attention" },
-	{ id: "gc_social_emotional", name: "Social & Emotional" },
-	{ id: "gc_communication", name: "Communication" },
-	{ id: "gc_visual_perception", name: "Visual Perception" },
-	{ id: "gc_oral_motor_feeding", name: "Oral Motor / Feeding" },
-	{ id: "gc_play_leisure", name: "Play & Leisure" },
+	{ id: "gc_fine_motor", name: "Fine Motor" },
+	{ id: "gc_sensory_integration", name: "Sensory Integration" },
+	{ id: "gc_visual_motor", name: "Visual-Motor" },
+	{ id: "gc_cognitive", name: "Cognitive" },
+	{ id: "gc_speech_language", name: "Speech & Language" },
+	{ id: "gc_social", name: "Social" },
+	{ id: "gc_self_care", name: "Self-Care" },
+	{ id: "gc_balance", name: "Balance" },
+	{ id: "gc_coordination", name: "Coordination" },
 ] as const;
 
 const prisma = createPrismaClient();
