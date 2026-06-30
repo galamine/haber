@@ -9,7 +9,7 @@ import {
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { cn } from "@haber-final/ui/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
@@ -22,8 +22,8 @@ type ModifyPlanSheetProps = {
 	plan: {
 		id: string;
 		name: string;
-		goals: Goal[];
-		gameAssignments: GameAssignment[];
+		goals?: Goal[];
+		gameAssignments?: GameAssignment[];
 	};
 	onSuccess: (newPlanId: string) => void;
 };
@@ -31,14 +31,15 @@ type ModifyPlanSheetProps = {
 export function ModifyPlanSheet({
 	open,
 	onOpenChange,
-	plan,
+	plan: { goals = [], gameAssignments = [], ...plan },
 	onSuccess,
 }: ModifyPlanSheetProps) {
+	const queryClient = useQueryClient();
 	const form = useForm<ModifyPlanFormValues>({
 		resolver: zodResolver(ModifyPlanFormSchema),
 		defaultValues: {
 			changes: { name: plan.name },
-			goalDecisions: plan.goals.map((g) => ({
+			goalDecisions: goals.map((g) => ({
 				goalId: g.id,
 				action: "CARRY_OVER" as const,
 			})),
@@ -54,8 +55,12 @@ export function ModifyPlanSheet({
 		trpc.plan.modify.mutationOptions({
 			onSuccess: (newPlan) => {
 				toast.success("Plan modified — new version created");
-				trpc.plan.get.invalidate({ planId: plan.id });
-				trpc.plan.list.invalidate();
+				queryClient.invalidateQueries({
+					queryKey: trpc.plan.get.queryOptions({ planId: plan.id }).queryKey,
+				});
+				queryClient.invalidateQueries({
+					queryKey: trpc.plan.list.queryOptions().queryKey,
+				});
 				onOpenChange(false);
 				onSuccess(newPlan.id);
 			},
@@ -87,7 +92,7 @@ export function ModifyPlanSheet({
 						</h3>
 						<div className="space-y-3">
 							{goalFields.map((field, idx) => {
-								const goal = plan.goals.find((g) => g.id === field.goalId);
+								const goal = goals.find((g) => g.id === field.goalId);
 								const action = form.watch(`goalDecisions.${idx}.action`);
 								return (
 									<div
@@ -166,8 +171,8 @@ export function ModifyPlanSheet({
 							Games
 						</h3>
 						<p className="text-on-surface-variant text-sm">
-							{plan.gameAssignments.length} game(s) assigned. Games are copied
-							to the new version.
+							{gameAssignments.length} game(s) assigned. Games are copied to the
+							new version.
 						</p>
 					</div>
 

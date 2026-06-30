@@ -11,7 +11,7 @@ type Goal = {
 };
 
 type GoalSectionProps = {
-	goals: Goal[];
+	goals?: Goal[];
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -21,7 +21,7 @@ const STATUS_COLORS: Record<string, string> = {
 	DISCONTINUED: "bg-surface-container text-on-surface-variant",
 };
 
-export function GoalSection({ goals }: GoalSectionProps) {
+export function GoalSection({ goals = [] }: GoalSectionProps) {
 	const activeGoals = goals.filter((g) => g.status !== "DISCONTINUED");
 
 	return (

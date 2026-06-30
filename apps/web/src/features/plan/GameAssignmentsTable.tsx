@@ -18,7 +18,7 @@ type GameAssignment = {
 };
 
 type GameAssignmentsTableProps = {
-	assignments: GameAssignment[];
+	assignments?: GameAssignment[];
 	onEdit: (assignmentId: string) => void;
 	onRemove: (assignmentId: string) => void;
 	onAddGame: () => void;
@@ -26,7 +26,7 @@ type GameAssignmentsTableProps = {
 };
 
 export function GameAssignmentsTable({
-	assignments,
+	assignments = [],
 	onEdit,
 	onRemove,
 	onAddGame,

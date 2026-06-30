@@ -5,7 +5,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@haber-final/ui/components/dropdown-menu";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { trpc } from "@/utils/trpc";
@@ -19,11 +19,15 @@ export function PlanLifecycleButtons({
 	plan,
 	onModify,
 }: PlanLifecycleButtonsProps) {
+	const queryClient = useQueryClient();
+
 	const activate = useMutation(
 		trpc.plan.activate.mutationOptions({
 			onSuccess: () => {
 				toast.success("Plan activated");
-				trpc.plan.get.invalidate({ planId: plan.id });
+				queryClient.invalidateQueries({
+					queryKey: trpc.plan.get.queryOptions({ planId: plan.id }).queryKey,
+				});
 			},
 			onError: (err) => toast.error(err.message),
 		}),
@@ -33,7 +37,9 @@ export function PlanLifecycleButtons({
 		trpc.plan.pause.mutationOptions({
 			onSuccess: () => {
 				toast.success("Plan paused");
-				trpc.plan.get.invalidate({ planId: plan.id });
+				queryClient.invalidateQueries({
+					queryKey: trpc.plan.get.queryOptions({ planId: plan.id }).queryKey,
+				});
 			},
 			onError: (err) => toast.error(err.message),
 		}),
@@ -43,7 +49,9 @@ export function PlanLifecycleButtons({
 		trpc.plan.resume.mutationOptions({
 			onSuccess: () => {
 				toast.success("Plan resumed");
-				trpc.plan.get.invalidate({ planId: plan.id });
+				queryClient.invalidateQueries({
+					queryKey: trpc.plan.get.queryOptions({ planId: plan.id }).queryKey,
+				});
 			},
 			onError: (err) => toast.error(err.message),
 		}),
@@ -53,7 +61,9 @@ export function PlanLifecycleButtons({
 		trpc.plan.close.mutationOptions({
 			onSuccess: () => {
 				toast.success("Plan closed");
-				trpc.plan.get.invalidate({ planId: plan.id });
+				queryClient.invalidateQueries({
+					queryKey: trpc.plan.get.queryOptions({ planId: plan.id }).queryKey,
+				});
 			},
 			onError: (err) => toast.error(err.message),
 		}),
@@ -63,7 +73,9 @@ export function PlanLifecycleButtons({
 		trpc.plan.extend.mutationOptions({
 			onSuccess: () => {
 				toast.success("Plan extended");
-				trpc.plan.get.invalidate({ planId: plan.id });
+				queryClient.invalidateQueries({
+					queryKey: trpc.plan.get.queryOptions({ planId: plan.id }).queryKey,
+				});
 			},
 			onError: (err) => toast.error(err.message),
 		}),

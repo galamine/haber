@@ -27,7 +27,7 @@ import {
 	MapPin,
 	UserX,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { trpc } from "@/utils/trpc";
@@ -120,10 +120,21 @@ function SessionDetailPage() {
 		"CALM" | "DISTRACTED" | "REFUSED" | undefined
 	>();
 
-	const { data: session, isLoading } = useQuery({
-		...trpc.session.get.queryOptions({ sessionId }),
-		refetchInterval: session?.status === "IN_PROGRESS" ? 5_000 : undefined,
-	});
+	const { data: session, isLoading } = useQuery(
+		trpc.session.get.queryOptions({ sessionId }),
+	);
+
+	useEffect(() => {
+		if (session?.status !== "IN_PROGRESS") return;
+
+		const interval = setInterval(() => {
+			queryClient.invalidateQueries({
+				queryKey: trpc.session.get.queryOptions({ sessionId }).queryKey,
+			});
+		}, 5_000);
+
+		return () => clearInterval(interval);
+	}, [session?.status, queryClient, sessionId]);
 
 	const { data: rooms } = useQuery(trpc.clinic.listSensoryRooms.queryOptions());
 

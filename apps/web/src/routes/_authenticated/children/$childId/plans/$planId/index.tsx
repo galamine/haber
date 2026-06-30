@@ -1,6 +1,6 @@
 import { Button } from "@haber-final/ui/components/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@haber-final/ui/components/tabs";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
@@ -16,7 +16,7 @@ import { ModifyPlanSheet } from "@/features/plan/ModifyPlanSheet";
 import { GameLibraryBrowserSheet } from "@/features/plan/GameLibraryBrowserSheet";
 import { PlanDetailSkeleton } from "@/features/plan/skeletons/PlanDetailSkeleton";
 import { GoalTabContent } from "@/features/goals/GoalTabContent";
-import { trpc } from "@/utils/trpc";
+import { trpc, trpcClient } from "@/utils/trpc";
 import type { GoalWithLatestNote } from "@/features/goals/types";
 
 export const Route = createFileRoute("/_authenticated/children/$childId/plans/$planId/")({
@@ -35,7 +35,7 @@ function PlanDetailPage() {
 					queryFn: async () => {
 						const results = await Promise.all(
 							goals.data!.map(async (goal) => {
-								const history = await trpc.goal.listProgressHistory.query({ goalId: goal.id });
+								const history = await trpcClient.goal.listProgressHistory.query({ goalId: goal.id });
 								const latestNote = history.length > 0 ? history[history.length - 1]?.evidenceNotes ?? null : null;
 								return { ...goal, latestNote } as GoalWithLatestNote;
 							}),
@@ -49,13 +49,18 @@ function PlanDetailPage() {
 
 	const [modifySheetOpen, setModifySheetOpen] = useState(false);
 	const [addGameSheetOpen, setAddGameSheetOpen] = useState(false);
+	const queryClient = useQueryClient();
 
 	const addGame = useMutation(trpc.plan.addGame.mutationOptions({
 		onSuccess: () => {
 			toast.success("Game added to plan");
 			setAddGameSheetOpen(false);
-			trpc.plan.get.invalidate({ planId });
-			trpc.plan.checkSessionDuration.invalidate({ planId });
+			queryClient.invalidateQueries({
+				queryKey: trpc.plan.get.queryOptions({ planId }).queryKey,
+			});
+			queryClient.invalidateQueries({
+				queryKey: trpc.plan.checkSessionDuration.queryOptions({ planId }).queryKey,
+			});
 		},
 		onError: (err) => toast.error(err.message),
 	}));
@@ -63,8 +68,12 @@ function PlanDetailPage() {
 	const removeGame = useMutation(trpc.plan.removeGame.mutationOptions({
 		onSuccess: () => {
 			toast.success("Game removed");
-			trpc.plan.get.invalidate({ planId });
-			trpc.plan.checkSessionDuration.invalidate({ planId });
+			queryClient.invalidateQueries({
+				queryKey: trpc.plan.get.queryOptions({ planId }).queryKey,
+			});
+			queryClient.invalidateQueries({
+				queryKey: trpc.plan.checkSessionDuration.queryOptions({ planId }).queryKey,
+			});
 		},
 		onError: (err) => toast.error(err.message),
 	}));

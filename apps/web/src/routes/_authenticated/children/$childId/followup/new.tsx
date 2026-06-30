@@ -1,7 +1,7 @@
 import { Button } from "@haber-final/ui/components/button";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -37,6 +37,7 @@ function NewFollowUpPage() {
 	const router = useRouter();
 
 	const data = useFollowUpData({ childId });
+	const queryClient = useQueryClient();
 
 	const [activeTab, setActiveTab] = useState<FollowUpTabValue>("a");
 	const [submitAttempted, setSubmitAttempted] = useState(false);
@@ -85,8 +86,10 @@ function NewFollowUpPage() {
 		trpc.assessment.createFollowUp.mutationOptions({
 			onSuccess: (result) => {
 				toast.success("Follow-up assessment created");
-				trpc.goal.list.invalidate({
-					treatmentPlanId: data.activePlan.data!.id,
+				queryClient.invalidateQueries({
+					queryKey: trpc.goal.list.queryOptions({
+						treatmentPlanId: data.activePlan.data!.id,
+					}).queryKey,
 				});
 				router.navigate({
 					to: "/children/$childId/followup/$followUpId",

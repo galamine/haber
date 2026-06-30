@@ -14,19 +14,19 @@ export function usePlanData({
 	const presets = useQuery(trpc.plan.listPresets.queryOptions());
 	const activePlans = useQuery(trpc.plan.listActive.queryOptions({ childId }));
 
-	const plan = useQuery(
-		planId
+	const plan = useQuery({
+		...(planId
 			? trpc.plan.get.queryOptions({ planId })
-			: { queryKey: ["unused"], queryFn: () => null },
-		{ enabled: !!planId },
-	);
+			: { queryKey: ["unused"], queryFn: () => null }),
+		enabled: !!planId,
+	});
 
-	const sessionDuration = useQuery(
-		planId
+	const sessionDuration = useQuery({
+		...(planId
 			? trpc.plan.checkSessionDuration.queryOptions({ planId })
-			: { queryKey: ["unused"], queryFn: () => null },
-		{ enabled: !!planId },
-	);
+			: { queryKey: ["unused"], queryFn: () => null }),
+		enabled: !!planId,
+	});
 
 	const goals = useQuery({
 		...(planId

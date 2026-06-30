@@ -4,7 +4,12 @@ import { TRPCError } from "@trpc/server";
 import { Resend } from "resend";
 import { z } from "zod";
 
-import { adminProcedure, clinicAdminProcedure, router } from "../index";
+import {
+	adminProcedure,
+	clinicAdminProcedure,
+	protectedProcedure,
+	router,
+} from "../index";
 import { generateOtp, hashValue } from "../lib/otp";
 
 const resend = new Resend(env.RESEND_API_KEY);
@@ -191,7 +196,7 @@ export const clinicRouter: ReturnType<typeof router> = router({
 			});
 		}),
 
-	listSensoryRooms: clinicAdminProcedure.query(async ({ ctx }) => {
+	listSensoryRooms: protectedProcedure.query(async ({ ctx }) => {
 		return prisma.sensoryRoom.findMany({
 			where: { clinicId: ctx.auth.tenantId! },
 			orderBy: { createdAt: "asc" },
