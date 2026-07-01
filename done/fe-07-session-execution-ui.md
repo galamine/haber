@@ -1,93 +1,86 @@
 # FE-07: Session Scheduling & Game Execution UI
 
-## Context
+## What to build
 
-Therapists need a daily session workflow: see today's sessions grouped by status, open a session to assign rooms and launch games, track game completion via webhook polling, mark children absent, or manually close sessions. FE-05 (PlanDetailPage) is done. BE-12 provides the tRPC procedures and webhook endpoints.
+Build the therapist's daily session workflow: today's session list, session detail with game launch, room assignment, absent marking, manual close, and coverage claim for uncovered sessions.
 
-**BE-12 is the hard dependency.**
+**Package:** `apps/web`
 
-## Files to Create
+### Routes to add
 
-```
-apps/web/src/routes/_authenticated/sessions/
-├── index.tsx                → /dashboard/sessions       (TodaySessionsPage)
-├── uncovered.tsx            → /dashboard/sessions/uncovered  (UncoveredSessionsPage)
-└── $sessionId.tsx           → /dashboard/sessions/:sessionId  (SessionDetailPage)
-```
-
-## Files to Modify
+Add these files under `apps/web/src/routes/_authenticated/`:
 
 ```
-apps/web/src/routes/_authenticated/dashboard.tsx     — add "Sessions" nav link
+_authenticated/
+└── sessions/
+    ├── index.tsx                    → /dashboard/sessions
+    ├── uncovered.tsx                → /dashboard/sessions/uncovered
+    └── $sessionId.tsx               → /dashboard/sessions/:sessionId
 ```
 
----
+TanStack Router matches static segments before dynamic ones, so `/sessions/uncovered` correctly hits `uncovered.tsx` rather than `$sessionId.tsx`.
 
-## Implementation Details
+### Key components
 
-### TodaySessionsPage (`sessions/index.tsx`)
+**TodaySessionsPage:**
+- Header: today's date + session count
+- List of sessions grouped by status (Pending, In Progress, Completed, Absent)
+- Per session card: child name + age, scheduled time, room assigned (or "Unassigned"), game count, status badge
+- "Claim" button on uncovered sessions → calls `session.claimCoverage`
+- Link to `SessionDetailPage`
 
-- Header: "Today's Sessions" + current date
-- Fetch `session.listForToday` with `refetchInterval: 30_000`
-- Sessions grouped by status (`PENDING`, `IN_PROGRESS`, `COMPLETED`, `ABSENT`) using a tab per status
-- Per session card: child name, scheduled time, room (or "Unassigned"), game count, status badge
-- Each card links to `/dashboard/sessions/:sessionId`
+**SessionDetailPage:**
+- Child summary banner (name, active plan name, consent status)
+- Room assignment: dropdown from `clinic.listSensoryRooms`; saves via `session.assignRoom`
+- Game assignments list: per game card showing game name, version, duration, reps, instructions
+- "Open Game" button per game:
+  - Fetches `session.getWebhookUrl` to get `{ game_id, version, session_id, webhook_secret }`
+  - Opens the game URL in a new browser tab (URL constructed client-side)
+  - After clicking, polls `session.get` every 5 seconds to detect when `status = COMPLETED` (webhook fired)
+- Result display: once session status = COMPLETED, show the `GameResult` (score, rubric version, key metrics)
+- Actions panel:
+  - "Mark Absent" button (only for PENDING sessions) — calls `session.markAbsent`
+  - "Close Session" button — opens a sheet with notes textarea + quality tag radio (Calm / Distracted / Refused) — calls `session.manualClose`
+- Status banner updates automatically (polling or React Query refetch interval)
 
-### SessionDetailPage (`sessions/$sessionId.tsx`)
+**UncoveredSessionsPage:**
+- Sessions from `session.listUncovered` — sessions where the originally assigned therapist is absent
+- "Claim" button per session
+- After claiming, session appears in `TodaySessionsPage`
 
-- Status banner with badge + started time
-- Child summary: name, plan name, consent status
-- Room assignment dropdown: fetch `clinic.listSensoryRooms`, on select call `session.assignRoom`
-- Game cards: show game name, version, instructions, duration
-- "Open Game" button: fetch `session.getWebhookUrl`, construct URL `https://game-server.example.com/?game_id=...&version=...&session_id=...&webhook_secret=...`, `window.open` in new tab
-- After opening: poll `session.get` every 5 seconds (`refetchInterval: 5_000`) while `status = IN_PROGRESS`
-- When `status = COMPLETED`: show `GameResult` (score, rubric version)
-- "Mark Absent" button: only shown for `PENDING`; calls `session.markAbsent`
-- "Close Session" button: opens Sheet with `notes` textarea + `qualityTag` radio (CALM / DISTRACTED / REFUSED); calls `session.manualClose`
+### Game launch mechanism
 
-### UncoveredSessionsPage (`sessions/uncovered.tsx`)
+The "Open Game" flow (no iframe — new tab):
+```typescript
+const { data } = api.session.getWebhookUrl.useQuery({ sessionId, gameId, gameVersion })
+// Constructs: https://game-server.example.com/?game_id=...&version=...&session_id=...&webhook_secret=...
+window.open(gameUrl, '_blank')
+```
 
-- Fetch `session.listUncovered`
-- Per session card with "Claim" button
-- On claim success: navigate to `/dashboard/sessions`
+### tRPC hooks used
 
-### Navigation
+- `api.session.listForToday.useQuery({ refetchInterval: 30_000 })`
+- `api.session.get.useQuery({ refetchInterval: 5_000 })` (on SessionDetailPage while IN_PROGRESS)
+- `api.session.getWebhookUrl.useQuery()`
+- `api.session.assignRoom.useMutation()`
+- `api.session.markAbsent.useMutation()`
+- `api.session.manualClose.useMutation()`
+- `api.session.claimCoverage.useMutation()`
+- `api.session.listUncovered.useQuery()`
+- `api.clinic.listSensoryRooms.useQuery()`
 
-In `dashboard.tsx`, add a nav item: `/dashboard/sessions` → "Sessions" with a `event` icon.
+## Acceptance criteria
 
----
+- [ ] `TodaySessionsPage` shows only today's sessions for the logged-in therapist
+- [ ] Room assignment dropdown shows active rooms; selecting a room persists via API
+- [ ] "Open Game" button constructs the correct URL with all 4 parameters and opens in a new tab
+- [ ] SessionDetailPage polls every 5s; when the game calls the complete webhook, the page updates to show the result without a manual refresh
+- [ ] "Mark Absent" is disabled for non-PENDING sessions
+- [ ] "Close Session" sheet captures notes and quality tag; submits via `session.manualClose`
+- [ ] Uncovered sessions page shows claimable sessions; clicking "Claim" moves them to today's list
+- [ ] `pnpm check-types` passes
 
-## tRPC Hooks Used
+## Blocked by
 
-| Hook | Polling | Purpose |
-|------|---------|---------|
-| `trpc.session.listForToday.useQuery()` | 30s | Today's session list |
-| `trpc.session.get.useQuery()` | 5s (when IN_PROGRESS) | Session detail + status polling |
-| `trpc.session.getWebhookUrl.useQuery()` | — | Get game launch URL params |
-| `trpc.session.assignRoom.useMutation()` | — | Assign room |
-| `trpc.session.markAbsent.useMutation()` | — | Mark absent |
-| `trpc.session.manualClose.useMutation()` | — | Close session with notes |
-| `trpc.session.claimCoverage.useMutation()` | — | Claim uncovered session |
-| `trpc.session.listUncovered.useQuery()` | — | Uncovered session list |
-| `trpc.clinic.listSensoryRooms.useQuery()` | — | Room dropdown |
-
----
-
-## Out of Scope
-
-- Game result visualization beyond score display — deferred
-- Printing/exporting session records — deferred to FE-11
-
----
-
-## Verification
-
-1. `pnpm check-types` — must pass across all packages
-2. `pnpm check` (Biome) — on new and edited files
-3. `/dashboard/sessions` shows only the calling therapist's sessions with today's date
-4. Room dropdown shows active rooms; selecting one persists
-5. "Open Game" opens correct URL with all 4 params in a new tab
-6. After game completion webhook fires, page updates to show result without refresh
-7. "Mark Absent" hidden for non-PENDING sessions
-8. "Close Session" sheet submits correctly with notes and quality tag
-9. Claiming an uncovered session moves it to today's list
+- BE-12 (Session execution and webhook API)
+- FE-05 (Sessions are generated from plans; plan UI must exist to create sessions)
