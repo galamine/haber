@@ -101,6 +101,7 @@ await prisma.userProfile.upsert({
 		phoneNumber: "+91-9876500001",
 		district: "Chennai",
 		state: "Tamil Nadu",
+		dateOfBirth: new Date("1975-03-15"),
 	},
 });
 
@@ -113,6 +114,7 @@ await prisma.userProfile.upsert({
 		phoneNumber: "+91-9876500002",
 		district: "Chennai",
 		state: "Tamil Nadu",
+		dateOfBirth: new Date("1980-07-22"),
 	},
 });
 
@@ -335,7 +337,7 @@ const gvBubble = await prisma.gameVersion.upsert({
 	create: {
 		id: "sf_gv_bubble",
 		gameId: gameBubble.id,
-		versionNumber: 1,
+		versionNumber: "1",
 		isLatest: true,
 		rubricVersion: "v1",
 		scoringSchema: {
@@ -360,7 +362,7 @@ const gvBalance = await prisma.gameVersion.upsert({
 	create: {
 		id: "sf_gv_balance",
 		gameId: gameBalance.id,
-		versionNumber: 1,
+		versionNumber: "1",
 		isLatest: true,
 		rubricVersion: "v1",
 		scoringSchema: {
@@ -383,7 +385,7 @@ const gvTrace = await prisma.gameVersion.upsert({
 	create: {
 		id: "sf_gv_trace",
 		gameId: gameTrace.id,
-		versionNumber: 1,
+		versionNumber: "1",
 		isLatest: true,
 		rubricVersion: "v1",
 		scoringSchema: {
@@ -406,7 +408,7 @@ const gvCatch = await prisma.gameVersion.upsert({
 	create: {
 		id: "sf_gv_catch",
 		gameId: gameCatch.id,
-		versionNumber: 1,
+		versionNumber: "1",
 		isLatest: true,
 		rubricVersion: "v1",
 		scoringSchema: {
@@ -442,128 +444,148 @@ const assessmentAarav = await prisma.initialAssessment.upsert({
 		therapistId: priyaUser.id,
 		versionNumber: 1,
 		sectionA: {
-			patient_full_name: "Aarav Sharma",
-			date_of_birth: "2020-03-15",
+			patientName: "Aarav Sharma",
+			dob: "2020-03-15",
 			age: { years: 5, months: 2 },
-			gender: "male",
-			date_of_assessment: "2026-05-07",
-			assessment_location: "Sunshine Children's OT Clinic, Chennai",
-			referring_doctor: "Dr. Karthik Subramaniam (Developmental Paediatrician)",
-			referral_source: "Paediatric outpatient referral",
-			primary_caregiver_name: "Riya Sharma",
-			relationship_to_child: "Mother",
-			contact_number: "+91-9898001234",
-			chief_complaint:
+			gender: "Male",
+			assessmentDate: "2026-05-07",
+			location: "Sunshine Children's OT Clinic, Chennai",
+			referringTherapist:
+				"Dr. Karthik Subramaniam (Developmental Paediatrician)",
+			referralSource: "Paediatric outpatient referral",
+			caregiverName: "Riya Sharma",
+			caregiverRelation: "Mother",
+			caregiverContact: "+91-9898001234",
+			caregiverEmail: "riya.sharma@example.com",
+			chiefComplaint:
 				"Avoids messy textures, frequent meltdowns in noisy environments, toe-walking, limited eye contact.",
 		},
 		sectionB: {
-			primary_diagnoses: ["asd", "spd"],
-			prenatal_history: "Uncomplicated pregnancy.",
-			birth_history_complications: "Emergency C-section. APGAR 7/9.",
-			neonatal_history: "48h NICU stay for observation; discharged stable.",
-			gestational_age_at_birth_weeks: 39,
-			past_medical_surgical_history:
-				"Recurrent otitis media age 2; bilateral grommets age 3.",
-			current_medications: "Multivitamin syrup 5 ml OD.",
-			allergies_clinical_precautions:
-				"Mild eczema; avoid lanolin-based products.",
-			previous_therapies_duration: "Speech therapy 6 months (3 sessions/week).",
+			primaryDiagnoses: ["asd", "spd"],
+			prenatalHistory: "Uncomplicated pregnancy.",
+			birthHistory: "Emergency C-section. APGAR 7/9.",
+			neonatalHistory: "48h NICU stay for observation; discharged stable.",
+			gestationalAgeWeeks: 39,
+			medicalHistory: "Recurrent otitis media age 2; bilateral grommets age 3.",
+			currentMedications: "Multivitamin syrup 5 ml OD.",
+			allergies: "Mild eczema; avoid lanolin-based products.",
+			previousTherapies: "Speech therapy 6 months (3 sessions/week).",
 		},
-		sectionC: [
-			{
-				milestone_id: "head_control",
-				achieved_at_age_months: 4,
-				delayed: false,
-			},
-			{ milestone_id: "rolling", achieved_at_age_months: 6, delayed: false },
-			{
-				milestone_id: "sitting_independently",
-				achieved_at_age_months: 8,
-				delayed: false,
-			},
-			{ milestone_id: "crawling", achieved_at_age_months: 11, delayed: false },
-			{ milestone_id: "standing", achieved_at_age_months: 13, delayed: false },
-			{
-				milestone_id: "walking",
-				achieved_at_age_months: 16,
-				delayed: true,
-				notes: "Toe-walking past 24 months.",
-			},
-			{
-				milestone_id: "first_words",
-				achieved_at_age_months: 24,
-				delayed: true,
-				notes: "Single words only at 24 months.",
-			},
-			{
-				milestone_id: "two_word_phrases",
-				achieved_at_age_months: 36,
-				delayed: true,
-			},
-			{
-				milestone_id: "toilet_training",
-				achieved_at_age_months: null,
-				delayed: true,
-				notes: "In progress; resists toilet.",
-			},
-			{
-				milestone_id: "self_feeding",
-				achieved_at_age_months: 30,
-				delayed: true,
-				notes: "Refuses textured food.",
-			},
-			{
-				milestone_id: "dressing",
-				achieved_at_age_months: null,
-				delayed: true,
-				notes: "Tolerates pull-on clothing only.",
-			},
-			{
-				milestone_id: "eye_contact_social_smile",
-				achieved_at_age_months: 18,
-				delayed: true,
-				notes: "Reduced, inconsistent.",
-			},
-		],
-		sectionD: {
-			ratings: [
+		sectionC: {
+			milestones: [
 				{
-					system_id: "tactile",
+					milestoneId: "head_control",
+					achievedAtAgeMonths: 4,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "rolling",
+					achievedAtAgeMonths: 6,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "sitting_independently",
+					achievedAtAgeMonths: 8,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "crawling",
+					achievedAtAgeMonths: 11,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "standing",
+					achievedAtAgeMonths: 13,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "walking",
+					achievedAtAgeMonths: 16,
+					delayed: true,
+					notes: "Toe-walking past 24 months.",
+				},
+				{
+					milestoneId: "first_words",
+					achievedAtAgeMonths: 24,
+					delayed: true,
+					notes: "Single words only at 24 months.",
+				},
+				{
+					milestoneId: "two_word_phrases",
+					achievedAtAgeMonths: 36,
+					delayed: true,
+					notes: "",
+				},
+				{
+					milestoneId: "toilet_training",
+					achievedAtAgeMonths: null,
+					delayed: true,
+					notes: "In progress; resists toilet.",
+				},
+				{
+					milestoneId: "self_feeding",
+					achievedAtAgeMonths: 30,
+					delayed: true,
+					notes: "Refuses textured food.",
+				},
+				{
+					milestoneId: "dressing",
+					achievedAtAgeMonths: null,
+					delayed: true,
+					notes: "Tolerates pull-on clothing only.",
+				},
+				{
+					milestoneId: "eye_contact_social_smile",
+					achievedAtAgeMonths: 18,
+					delayed: true,
+					notes: "Reduced, inconsistent.",
+				},
+			],
+		},
+		sectionD: {
+			sensoryProfile: [
+				{
+					systemId: "tactile",
 					rating: 5,
 					notes: "Avoids messy textures; tags on clothing trigger meltdowns.",
 				},
 				{
-					system_id: "vestibular",
+					systemId: "vestibular",
 					rating: 4,
 					notes: "Seeks rotary movement; spins frequently.",
 				},
 				{
-					system_id: "proprioceptive",
+					systemId: "proprioceptive",
 					rating: 4,
 					notes: "Crashing, jumping, deep pressure seeking.",
 				},
 				{
-					system_id: "auditory",
+					systemId: "auditory",
 					rating: 5,
 					notes: "Covers ears; meltdowns in malls.",
 				},
-				{ system_id: "visual", rating: 3, notes: "Typical." },
+				{ systemId: "visual", rating: 3, notes: "Typical." },
 				{
-					system_id: "olfactory_gustatory",
+					systemId: "olfactory_gustatory",
 					rating: 5,
 					notes: "Refuses strong-smelling foods; gags on textures.",
 				},
 				{
-					system_id: "interoception",
+					systemId: "interoception",
 					rating: 2,
 					notes: "Limited awareness of toilet needs and hunger.",
 				},
 			],
-			behavioural_observations:
+			behaviouralObservations:
 				"Sought weighted lap pad during transitions. Covered ears repeatedly. Avoided sand bin; tolerated rice bin for 2 min after modeling.",
 		},
 		sectionE: {
-			areas_of_concern: [
+			functionalConcerns: [
 				"buttoning_zipping_dressing",
 				"feeding_skills_oral_motor",
 				"play_skills",
@@ -571,79 +593,78 @@ const assessmentAarav = await prisma.initialAssessment.upsert({
 				"adl_independence",
 				"emotional_regulation_behavior",
 			],
-			clinical_observations_findings:
+			observations:
 				"Bilateral coordination at 2nd percentile (BOT-2). Rigid play schemas. Strong proprioceptive seeking. Refuses messy art tasks.",
 		},
 		sectionF: {
-			tools_used: [
+			toolsAdministered: [
 				{
-					tool_id: "sp2",
-					scores_summary:
+					toolId: "sp2",
+					scoresSummary:
 						"Significant sensory sensitivity (>2 SD) and sensory avoiding elevated.",
 				},
 				{
-					tool_id: "bot2",
-					scores_summary: "Bilateral coordination at 2nd percentile.",
+					toolId: "bot2",
+					scoresSummary: "Bilateral coordination at 2nd percentile.",
 				},
 				{
-					tool_id: "cars2",
-					scores_summary: "Total score 32.5 — Moderate autism range.",
+					toolId: "cars2",
+					scoresSummary: "Total score 32.5 — Moderate autism range.",
 				},
 			],
-			scores_percentiles_summary:
+			overallSummary:
 				"Profile consistent with ASD + sensory modulation disorder; bilateral coordination at 2nd percentile; auditory and tactile hyper-responsivity dominant.",
 		},
 		sectionG: {
-			short_term_goals: [
+			shortTermGoals: [
 				{
+					goalId: "sf_goal_aarav_st1",
 					description:
 						"Tolerate light touch to hands 3/5 trials without distress.",
-					target_attainment_pct: 100,
+					targetAttainmentPct: 100,
 				},
 				{
+					goalId: "sf_goal_aarav_st2",
 					description: "Engage in sand/rice tactile bin play for 5 minutes.",
-					target_attainment_pct: 100,
+					targetAttainmentPct: 100,
 				},
 			],
-			long_term_goals: [
+			longTermGoals: [
 				{
+					goalId: "sf_goal_aarav_lt1",
 					description:
 						"Independent participation in group sensory activities at school.",
-					target_attainment_pct: 100,
+					targetAttainmentPct: 100,
 				},
 				{
+					goalId: "sf_goal_aarav_lt2",
 					description:
 						"Independently use 2+ self-regulation strategies when dysregulated.",
-					target_attainment_pct: 100,
+					targetAttainmentPct: 100,
 				},
 			],
-			recommended_frequency_sessions_per_week: 3,
-			session_duration_minutes: 60,
-			intervention_setting: "hybrid",
-			review_period_weeks: 6,
-			home_program_recommendations:
+			recommendedFrequency: 3,
+			sessionDurationMinutes: 60,
+			interventionSetting: "hybrid",
+			reviewPeriodWeeks: 6,
+			homeProgramRecommendations:
 				"Wilbarger brushing protocol 2x daily; weighted blanket at bedtime; chewy tool during homework.",
-			equipment_recommended: [
+			equipment: [
 				"lycra_body_sock",
 				"weighted_lap_pad",
 				"linear_swing",
 				"tactile_bin_rice",
 				"noise_cancelling_headphones",
 			],
+			referrals: "None at this time.",
 		},
 		sectionH: {
-			therapist: {
-				user_id: priyaUser.id,
-				name: "Dr. Priya Menon",
-				credentials: "BOT, MOT (Pediatrics)",
-				signed_at: "2026-05-07T10:25:00+05:30",
-			},
-			parent_guardian: {
-				guardian_id: "sf_guardian_aarav",
-				name: "Riya Sharma",
-				signed_at: "2026-05-07T10:26:00+05:30",
-				consent_obtained: true,
-			},
+			therapistName: "Dr. Priya Menon",
+			therapistCredentials: "BOT, MOT (Pediatrics)",
+			signedAt: "2026-05-07T10:25:00+05:30",
+			guardianName: "Riya Sharma",
+			guardianIp: "203.0.113.10",
+			consentObtained: true,
 		},
 	},
 });
@@ -709,183 +730,212 @@ const assessmentMeera = await prisma.initialAssessment.upsert({
 		therapistId: raviUser.id,
 		versionNumber: 1,
 		sectionA: {
-			patient_full_name: "Meera Pillai",
-			date_of_birth: "2017-08-22",
+			patientName: "Meera Pillai",
+			dob: "2017-08-22",
 			age: { years: 8, months: 8 },
-			gender: "female",
-			date_of_assessment: "2026-05-07",
-			assessment_location: "Sunshine Children's OT Clinic, Chennai",
-			referring_doctor: "Dr. Anita Chandrasekaran (School Physician)",
-			referral_source: "School referral",
-			primary_caregiver_name: "Suresh Pillai",
-			relationship_to_child: "Father",
-			contact_number: "+91-9898005678",
-			chief_complaint:
+			gender: "Female",
+			assessmentDate: "2026-05-07",
+			location: "Sunshine Children's OT Clinic, Chennai",
+			referringTherapist: "Dr. Anita Chandrasekaran (School Physician)",
+			referralSource: "School referral",
+			caregiverName: "Suresh Pillai",
+			caregiverRelation: "Father",
+			caregiverContact: "+91-9898005678",
+			caregiverEmail: "suresh.pillai@example.com",
+			chiefComplaint:
 				"Clumsy, very slow illegible handwriting, avoids PE, low self-esteem around physical activities.",
 		},
 		sectionB: {
-			primary_diagnoses: ["dcd", "dyspraxia"],
-			prenatal_history: "Uncomplicated pregnancy.",
-			birth_history_complications: "Normal vaginal delivery. APGAR 9/10.",
-			neonatal_history: "No NICU. Discharged at 48h.",
-			gestational_age_at_birth_weeks: 40,
-			past_medical_surgical_history: "Nil significant.",
-			current_medications: "None.",
-			allergies_clinical_precautions: "None.",
-			previous_therapies_duration: "None.",
+			primaryDiagnoses: ["dcd", "dyspraxia"],
+			prenatalHistory: "Uncomplicated pregnancy.",
+			birthHistory: "Normal vaginal delivery. APGAR 9/10.",
+			neonatalHistory: "No NICU. Discharged at 48h.",
+			gestationalAgeWeeks: 40,
+			medicalHistory: "Nil significant.",
+			currentMedications: "None.",
+			allergies: "None.",
+			previousTherapies: "None.",
 		},
-		sectionC: [
-			{
-				milestone_id: "head_control",
-				achieved_at_age_months: 3,
-				delayed: false,
-			},
-			{ milestone_id: "rolling", achieved_at_age_months: 5, delayed: false },
-			{
-				milestone_id: "sitting_independently",
-				achieved_at_age_months: 7,
-				delayed: false,
-			},
-			{ milestone_id: "crawling", achieved_at_age_months: 10, delayed: false },
-			{ milestone_id: "standing", achieved_at_age_months: 12, delayed: false },
-			{ milestone_id: "walking", achieved_at_age_months: 14, delayed: false },
-			{
-				milestone_id: "first_words",
-				achieved_at_age_months: 12,
-				delayed: false,
-			},
-			{
-				milestone_id: "two_word_phrases",
-				achieved_at_age_months: 24,
-				delayed: false,
-			},
-			{
-				milestone_id: "toilet_training",
-				achieved_at_age_months: 30,
-				delayed: false,
-			},
-			{
-				milestone_id: "self_feeding",
-				achieved_at_age_months: 18,
-				delayed: false,
-			},
-			{
-				milestone_id: "dressing",
-				achieved_at_age_months: 48,
-				delayed: true,
-				notes: "Still slow; struggles with buttons and zippers.",
-			},
-			{
-				milestone_id: "eye_contact_social_smile",
-				achieved_at_age_months: 6,
-				delayed: false,
-			},
-		],
-		sectionD: {
-			ratings: [
-				{ system_id: "tactile", rating: 3, notes: "Typical." },
-				{ system_id: "vestibular", rating: 3, notes: "Typical." },
+		sectionC: {
+			milestones: [
 				{
-					system_id: "proprioceptive",
+					milestoneId: "head_control",
+					achievedAtAgeMonths: 3,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "rolling",
+					achievedAtAgeMonths: 5,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "sitting_independently",
+					achievedAtAgeMonths: 7,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "crawling",
+					achievedAtAgeMonths: 10,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "standing",
+					achievedAtAgeMonths: 12,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "walking",
+					achievedAtAgeMonths: 14,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "first_words",
+					achievedAtAgeMonths: 12,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "two_word_phrases",
+					achievedAtAgeMonths: 24,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "toilet_training",
+					achievedAtAgeMonths: 30,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "self_feeding",
+					achievedAtAgeMonths: 18,
+					delayed: false,
+					notes: "",
+				},
+				{
+					milestoneId: "dressing",
+					achievedAtAgeMonths: 48,
+					delayed: true,
+					notes: "Still slow; struggles with buttons and zippers.",
+				},
+				{
+					milestoneId: "eye_contact_social_smile",
+					achievedAtAgeMonths: 6,
+					delayed: false,
+					notes: "",
+				},
+			],
+		},
+		sectionD: {
+			sensoryProfile: [
+				{ systemId: "tactile", rating: 3, notes: "Typical." },
+				{ systemId: "vestibular", rating: 3, notes: "Typical." },
+				{
+					systemId: "proprioceptive",
 					rating: 4,
 					notes: "Poor body awareness; underregisters proprioceptive feedback.",
 				},
-				{ system_id: "auditory", rating: 3, notes: "Typical." },
+				{ systemId: "auditory", rating: 3, notes: "Typical." },
 				{
-					system_id: "visual",
+					systemId: "visual",
 					rating: 4,
 					notes:
 						"Visual-motor integration difficulties; struggles copying from board.",
 				},
-				{ system_id: "olfactory_gustatory", rating: 3, notes: "Typical." },
-				{ system_id: "interoception", rating: 3, notes: "Typical." },
+				{ systemId: "olfactory_gustatory", rating: 3, notes: "Typical." },
+				{ systemId: "interoception", rating: 3, notes: "Typical." },
 			],
-			behavioural_observations:
+			behaviouralObservations:
 				"Frequent collisions with furniture during clinic navigation. Reversed b/d during writing task. Very slow pencil speed; grip awkward and effortful.",
 		},
 		sectionE: {
-			areas_of_concern: [
+			functionalConcerns: [
 				"pencil_grasp_handwriting",
 				"bilateral_coordination",
 				"gross_motor_motor_planning",
 				"eye_hand_coordination_visual_motor",
 				"adl_independence",
 			],
-			clinical_observations_findings:
+			observations:
 				"MABC-2: 3rd percentile. Beery VMI: 7th percentile. Handwriting speed 40% below class average. Avoids PE; negative self-talk about physical tasks.",
 		},
 		sectionF: {
-			tools_used: [
+			toolsAdministered: [
 				{
-					tool_id: "mabc2",
-					scores_summary:
+					toolId: "mabc2",
+					scoresSummary:
 						"3rd percentile — significant motor impairment category.",
 				},
 				{
-					tool_id: "beery_vmi",
-					scores_summary:
+					toolId: "beery_vmi",
+					scoresSummary:
 						"7th percentile; visual-motor integration well below age norms.",
 				},
 				{
-					tool_id: "bot2",
-					scores_summary:
+					toolId: "bot2",
+					scoresSummary:
 						"Running speed 4th percentile. Fine motor precision 8th percentile.",
 				},
 			],
-			scores_percentiles_summary:
+			overallSummary:
 				"Profile consistent with DCD/dyspraxia; significant motor impairment across fine and gross domains; visual-motor integration deficit.",
 		},
 		sectionG: {
-			short_term_goals: [
+			shortTermGoals: [
 				{
+					goalId: "sf_goal_meera_st1",
 					description:
 						"Produce legible handwriting at functional speed for classroom tasks.",
-					target_attainment_pct: 100,
+					targetAttainmentPct: 100,
 				},
 				{
+					goalId: "sf_goal_meera_st2",
 					description: "Catch a tennis ball 7/10 trials at 2 metres distance.",
-					target_attainment_pct: 100,
+					targetAttainmentPct: 100,
 				},
 			],
-			long_term_goals: [
+			longTermGoals: [
 				{
+					goalId: "sf_goal_meera_lt1",
 					description:
 						"Active participation in PE class activities alongside peers.",
-					target_attainment_pct: 100,
+					targetAttainmentPct: 100,
 				},
 				{
+					goalId: "sf_goal_meera_lt2",
 					description:
 						"Consistent written output at grade-level speed and legibility.",
-					target_attainment_pct: 100,
+					targetAttainmentPct: 100,
 				},
 			],
-			recommended_frequency_sessions_per_week: 2,
-			session_duration_minutes: 60,
-			intervention_setting: "hybrid",
-			review_period_weeks: 6,
-			home_program_recommendations:
+			recommendedFrequency: 2,
+			sessionDurationMinutes: 60,
+			interventionSetting: "hybrid",
+			reviewPeriodWeeks: 6,
+			homeProgramRecommendations:
 				"Daily 10-min handwriting practice; practice chosen CO-OP skill 5 min daily; encourage swimming/cycling.",
-			equipment_recommended: [
+			equipment: [
 				"slant_board",
 				"pencil_grips",
 				"graph_paper",
 				"balance_beam",
 				"catching_mitts",
 			],
+			referrals: "None at this time.",
 		},
 		sectionH: {
-			therapist: {
-				user_id: raviUser.id,
-				name: "Mr. Ravi Krishnan",
-				credentials: "BOT, MSc OT",
-				signed_at: "2026-05-07T11:30:00+05:30",
-			},
-			parent_guardian: {
-				guardian_id: "sf_guardian_meera",
-				name: "Suresh Pillai",
-				signed_at: "2026-05-07T11:31:00+05:30",
-				consent_obtained: true,
-			},
+			therapistName: "Mr. Ravi Krishnan",
+			therapistCredentials: "BOT, MSc OT",
+			signedAt: "2026-05-07T11:30:00+05:30",
+			guardianName: "Suresh Pillai",
+			guardianIp: "203.0.113.10",
+			consentObtained: true,
 		},
 	},
 });
@@ -1413,146 +1463,153 @@ const followUpAarav = await prisma.followUpAssessment.upsert({
 		therapistId: priyaUser.id,
 		versionNumber: 1,
 		sectionA: {
-			patient_name: "Aarav Sharma",
-			follow_up_date: "2026-06-18",
-			therapist_user_id: priyaUser.id,
-			therapist_name: "Dr. Priya Menon",
-			session_number: 4,
-			weeks_since_initial_assessment: 6,
-			parent_caregiver_present: true,
-			caregiver_present_name: "Riya Sharma",
+			date: "2026-06-18",
+			therapistId: priyaUser.id,
+			sessionNumber: 4,
+			weeksSinceInitial: 6,
+			parentPresent: true,
 		},
-		sectionB: [
-			{
-				goal_id: "sf_goal_aarav_st1",
-				horizon: "short_term",
-				description:
-					"Tolerate light touch to hands 3/5 trials without distress.",
-				attainment_pct: 80,
-				status: "in_progress",
-				evidence_notes:
-					"3/5 trials in clinic; novel textures still challenging.",
-			},
-			{
-				goal_id: "sf_goal_aarav_st2",
-				horizon: "short_term",
-				description: "Engage in sand/rice tactile bin play for 5 minutes.",
-				attainment_pct: 100,
-				status: "met",
-				evidence_notes: "Sustained engagement for 7 min in last two sessions.",
-			},
-			{
-				goal_id: "sf_goal_aarav_lt1",
-				horizon: "long_term",
-				description:
-					"Independent participation in group sensory activities at school.",
-				attainment_pct: 25,
-				status: "in_progress",
-				evidence_notes:
-					"One full circle-time without leaving group (teacher report).",
-			},
-			{
-				goal_id: "sf_goal_aarav_lt2",
-				horizon: "long_term",
-				description:
-					"Independently use 2+ self-regulation strategies when dysregulated.",
-				attainment_pct: 30,
-				status: "in_progress",
-				evidence_notes:
-					"Uses breathing card 2/5 times when prompted by teacher.",
-			},
-		],
-		sectionC: [
-			{
-				system_id: "tactile",
-				initial_rating: 5,
-				now_rating: 4,
-				change: -1,
-				notes: "Tolerates rice/sand bins; novel textures still avoidant.",
-			},
-			{
-				system_id: "vestibular",
-				initial_rating: 4,
-				now_rating: 4,
-				change: 0,
-				notes: "Unchanged — still seeks rotary input.",
-			},
-			{
-				system_id: "proprioceptive",
-				initial_rating: 4,
-				now_rating: 3,
-				change: -1,
-				notes: "Heavy work routine helping; less crashing.",
-			},
-			{
-				system_id: "auditory",
-				initial_rating: 5,
-				now_rating: 5,
-				change: 0,
-				notes: "No change — headphones in use.",
-			},
-			{
-				system_id: "visual",
-				initial_rating: 3,
-				now_rating: 3,
-				change: 0,
-				notes: "Stable.",
-			},
-			{
-				system_id: "olfactory_gustatory",
-				initial_rating: 5,
-				now_rating: 4,
-				change: -1,
-				notes: "Tolerated mild-smelling food once.",
-			},
-			{
-				system_id: "interoception",
-				initial_rating: 2,
-				now_rating: 2,
-				change: 0,
-				notes: "Limited progress — add toilet schedule.",
-			},
-		],
+		sectionB: {
+			goalProgress: [
+				{
+					goalId: "sf_goal_aarav_st1",
+					description:
+						"Tolerate light touch to hands 3/5 trials without distress.",
+					attainmentPct: 80,
+					status: "IN_PROGRESS",
+					evidenceNotes:
+						"3/5 trials in clinic; novel textures still challenging.",
+				},
+				{
+					goalId: "sf_goal_aarav_st2",
+					description: "Engage in sand/rice tactile bin play for 5 minutes.",
+					attainmentPct: 100,
+					status: "MET",
+					evidenceNotes: "Sustained engagement for 7 min in last two sessions.",
+				},
+				{
+					goalId: "sf_goal_aarav_lt1",
+					description:
+						"Independent participation in group sensory activities at school.",
+					attainmentPct: 25,
+					status: "IN_PROGRESS",
+					evidenceNotes:
+						"One full circle-time without leaving group (teacher report).",
+				},
+				{
+					goalId: "sf_goal_aarav_lt2",
+					description:
+						"Independently use 2+ self-regulation strategies when dysregulated.",
+					attainmentPct: 30,
+					status: "IN_PROGRESS",
+					evidenceNotes:
+						"Uses breathing card 2/5 times when prompted by teacher.",
+				},
+			],
+		},
+		sectionC: {
+			sensoryCheck: [
+				{
+					systemId: "tactile",
+					rating: 4,
+					baseline: 5,
+					current: 4,
+					change: -1,
+					notes: "Tolerates rice/sand bins; novel textures still avoidant.",
+				},
+				{
+					systemId: "vestibular",
+					rating: 4,
+					baseline: 4,
+					current: 4,
+					change: 0,
+					notes: "Unchanged — still seeks rotary input.",
+				},
+				{
+					systemId: "proprioceptive",
+					rating: 3,
+					baseline: 4,
+					current: 3,
+					change: -1,
+					notes: "Heavy work routine helping; less crashing.",
+				},
+				{
+					systemId: "auditory",
+					rating: 5,
+					baseline: 5,
+					current: 5,
+					change: 0,
+					notes: "No change — headphones in use.",
+				},
+				{
+					systemId: "visual",
+					rating: 3,
+					baseline: 3,
+					current: 3,
+					change: 0,
+					notes: "Stable.",
+				},
+				{
+					systemId: "olfactory_gustatory",
+					rating: 4,
+					baseline: 5,
+					current: 4,
+					change: -1,
+					notes: "Tolerated mild-smelling food once.",
+				},
+				{
+					systemId: "interoception",
+					rating: 2,
+					baseline: 2,
+					current: 2,
+					change: 0,
+					notes: "Limited progress — add toilet schedule.",
+				},
+			],
+		},
 		sectionD: {
-			improvements_at_home_or_school:
+			improvementsAtHome:
 				"Mother reports child participated in messy art class twice. Less resistance to bath time.",
-			regression_new_concerns:
+			improvementsAtSchool:
+				"Mother reports child participated in messy art class twice. Less resistance to bath time.",
+			regressions:
 				"New sleep onset difficulty correlating with school field trip. No skill regression.",
-			home_program_compliance_id: "good",
-			child_engagement_tolerance_id: "good",
-			therapist_clinical_observations_this_session:
+			homeProgramCompliance: "good",
+			sessionEngagement: "good",
+			schoolPerformanceChanges: "",
+			behaviourChanges: "",
+			newSkillsObserved: "",
+			equipmentEffectivelyUsed: "",
+			therapistObservations:
 				"Child presented regulated. Engaged in tactile circuit 15 min including sand bin. Good carry-over of brushing protocol.",
 		},
 		sectionE: {
-			goal_status_decisions: ["modify_existing", "add_new", "continue_all"],
-			updated_goals_for_next_period: [
+			goalStatusDecisions: ["modify_existing", "add_new", "continue_all"],
+			updatedGoals: [
 				{
-					goal_id: "sf_goal_aarav_st1",
-					action: "continue",
+					goalId: "sf_goal_aarav_st1",
 					description:
 						"Tolerate light touch to hands 4/5 trials including novel textures.",
+					targetAttainmentPct: 100,
 				},
 				{
-					goal_id: "sf_goal_aarav_lt2",
-					action: "modify",
+					goalId: "sf_goal_aarav_lt2",
 					description:
 						"Independently initiate regulation strategy 3/5 dysregulation events without teacher prompt.",
+					targetAttainmentPct: 100,
 				},
 			],
-			next_follow_up_date: "2026-07-30",
-			next_assessment_type: "follow_up",
+			updatedHomeProgram:
+				"Continue Wilbarger brushing protocol. Increase sensory diet activities.",
+			nextFollowUpDate: "2026-07-30",
+			nextAssessmentType: "follow_up",
+			clinicalNotes:
+				"Progress noted in tactile tolerance and heavy work activities.",
 		},
 		sectionF: {
-			therapist: {
-				user_id: priyaUser.id,
-				name: "Dr. Priya Menon",
-				signed_at: "2026-06-18T14:35:00+05:30",
-			},
-			parent_guardian: {
-				guardian_id: "sf_guardian_aarav",
-				name: "Riya Sharma",
-				signed_at: "2026-06-18T14:36:00+05:30",
-			},
+			therapistName: "Dr. Priya Menon",
+			therapistCredentials: "BOT, MOT (Pediatrics)",
+			guardianName: "Riya Sharma",
 		},
 	},
 });
@@ -1665,143 +1722,148 @@ const followUpMeera = await prisma.followUpAssessment.upsert({
 		therapistId: raviUser.id,
 		versionNumber: 1,
 		sectionA: {
-			patient_name: "Meera Pillai",
-			follow_up_date: "2026-06-19",
-			therapist_user_id: raviUser.id,
-			therapist_name: "Mr. Ravi Krishnan",
-			session_number: 4,
-			weeks_since_initial_assessment: 6,
-			parent_caregiver_present: true,
-			caregiver_present_name: "Suresh Pillai",
+			date: "2026-06-19",
+			therapistId: raviUser.id,
+			sessionNumber: 4,
+			weeksSinceInitial: 6,
+			parentPresent: true,
 		},
-		sectionB: [
-			{
-				goal_id: "sf_goal_meera_st1",
-				horizon: "short_term",
-				description:
-					"Produce legible handwriting at functional speed for classroom tasks.",
-				attainment_pct: 70,
-				status: "in_progress",
-				evidence_notes:
-					"Legible 2-line output; speed still 25% below class average.",
-			},
-			{
-				goal_id: "sf_goal_meera_st2",
-				horizon: "short_term",
-				description: "Catch a tennis ball 7/10 trials at 2 metres.",
-				attainment_pct: 80,
-				status: "in_progress",
-				evidence_notes: "8/10 catches at 1.5m; extending distance to 2m.",
-			},
-			{
-				goal_id: "sf_goal_meera_lt1",
-				horizon: "long_term",
-				description:
-					"Active participation in PE class activities alongside peers.",
-				attainment_pct: 40,
-				status: "in_progress",
-				evidence_notes:
-					"PE teacher reports Meera joined warm-up unprompted this week.",
-			},
-			{
-				goal_id: "sf_goal_meera_lt2",
-				horizon: "long_term",
-				description:
-					"Consistent written output at grade-level speed and legibility.",
-				attainment_pct: 35,
-				status: "in_progress",
-				evidence_notes: "Handwriting improving; still 20% below class norm.",
-			},
-		],
-		sectionC: [
-			{
-				system_id: "tactile",
-				initial_rating: 3,
-				now_rating: 3,
-				change: 0,
-				notes: "Stable.",
-			},
-			{
-				system_id: "vestibular",
-				initial_rating: 3,
-				now_rating: 3,
-				change: 0,
-				notes: "Stable.",
-			},
-			{
-				system_id: "proprioceptive",
-				initial_rating: 4,
-				now_rating: 3,
-				change: -1,
-				notes: "Improved body awareness with CO-OP strategy use.",
-			},
-			{
-				system_id: "auditory",
-				initial_rating: 3,
-				now_rating: 3,
-				change: 0,
-				notes: "Stable.",
-			},
-			{
-				system_id: "visual",
-				initial_rating: 4,
-				now_rating: 3,
-				change: -1,
-				notes: "Fewer letter reversals; copying from board improving.",
-			},
-			{
-				system_id: "olfactory_gustatory",
-				initial_rating: 3,
-				now_rating: 3,
-				change: 0,
-				notes: "Stable.",
-			},
-			{
-				system_id: "interoception",
-				initial_rating: 3,
-				now_rating: 3,
-				change: 0,
-				notes: "Stable.",
-			},
-		],
+		sectionB: {
+			goalProgress: [
+				{
+					goalId: "sf_goal_meera_st1",
+					description:
+						"Produce legible handwriting at functional speed for classroom tasks.",
+					attainmentPct: 70,
+					status: "IN_PROGRESS",
+					evidenceNotes:
+						"Legible 2-line output; speed still 25% below class average.",
+				},
+				{
+					goalId: "sf_goal_meera_st2",
+					description: "Catch a tennis ball 7/10 trials at 2 metres.",
+					attainmentPct: 80,
+					status: "IN_PROGRESS",
+					evidenceNotes: "8/10 catches at 1.5m; extending distance to 2m.",
+				},
+				{
+					goalId: "sf_goal_meera_lt1",
+					description:
+						"Active participation in PE class activities alongside peers.",
+					attainmentPct: 40,
+					status: "IN_PROGRESS",
+					evidenceNotes:
+						"PE teacher reports Meera joined warm-up unprompted this week.",
+				},
+				{
+					goalId: "sf_goal_meera_lt2",
+					description:
+						"Consistent written output at grade-level speed and legibility.",
+					attainmentPct: 35,
+					status: "IN_PROGRESS",
+					evidenceNotes: "Handwriting improving; still 20% below class norm.",
+				},
+			],
+		},
+		sectionC: {
+			sensoryCheck: [
+				{
+					systemId: "tactile",
+					rating: 3,
+					baseline: 3,
+					current: 3,
+					change: 0,
+					notes: "Stable.",
+				},
+				{
+					systemId: "vestibular",
+					rating: 3,
+					baseline: 3,
+					current: 3,
+					change: 0,
+					notes: "Stable.",
+				},
+				{
+					systemId: "proprioceptive",
+					rating: 3,
+					baseline: 4,
+					current: 3,
+					change: -1,
+					notes: "Improved body awareness with CO-OP strategy use.",
+				},
+				{
+					systemId: "auditory",
+					rating: 3,
+					baseline: 3,
+					current: 3,
+					change: 0,
+					notes: "Stable.",
+				},
+				{
+					systemId: "visual",
+					rating: 3,
+					baseline: 4,
+					current: 3,
+					change: -1,
+					notes: "Fewer letter reversals; copying from board improving.",
+				},
+				{
+					systemId: "olfactory_gustatory",
+					rating: 3,
+					baseline: 3,
+					current: 3,
+					change: 0,
+					notes: "Stable.",
+				},
+				{
+					systemId: "interoception",
+					rating: 3,
+					baseline: 3,
+					current: 3,
+					change: 0,
+					notes: "Stable.",
+				},
+			],
+		},
 		sectionD: {
-			improvements_at_home_or_school:
-				"Father reports Meera completing homework faster. PE teacher notes increased group participation.",
-			regression_new_concerns: "None.",
-			home_program_compliance_id: "excellent",
-			child_engagement_tolerance_id: "excellent",
-			therapist_clinical_observations_this_session:
+			improvementsAtHome: "Father reports Meera completing homework faster.",
+			improvementsAtSchool: "PE teacher notes increased group participation.",
+			regressions: "None.",
+			homeProgramCompliance: "excellent",
+			sessionEngagement: "excellent",
+			schoolPerformanceChanges: "",
+			behaviourChanges: "",
+			newSkillsObserved: "",
+			equipmentEffectivelyUsed: "",
+			therapistObservations:
 				"Child self-monitored during trace task using CO-OP check step independently. Positive self-talk about catching.",
 		},
 		sectionE: {
-			goal_status_decisions: ["continue_all", "modify_existing"],
-			updated_goals_for_next_period: [
+			goalStatusDecisions: ["continue_all", "modify_existing"],
+			updatedGoals: [
 				{
-					goal_id: "sf_goal_meera_st2",
-					action: "modify",
+					goalId: "sf_goal_meera_st2",
 					description: "Catch a tennis ball 8/10 trials at 2 metres distance.",
+					targetAttainmentPct: 100,
 				},
 				{
-					goal_id: "sf_goal_meera_st1",
-					action: "modify",
+					goalId: "sf_goal_meera_st1",
 					description:
 						"Produce legible handwriting at classroom speed for 5-line writing task.",
+					targetAttainmentPct: 100,
 				},
 			],
-			next_follow_up_date: "2026-08-01",
-			next_assessment_type: "follow_up",
+			updatedHomeProgram:
+				"Continue daily handwriting practice and CO-OP skill practice.",
+			nextFollowUpDate: "2026-08-01",
+			nextAssessmentType: "follow_up",
+			clinicalNotes:
+				"Improved self-monitoring skills observed during trace task.",
 		},
 		sectionF: {
-			therapist: {
-				user_id: raviUser.id,
-				name: "Mr. Ravi Krishnan",
-				signed_at: "2026-06-19T12:35:00+05:30",
-			},
-			parent_guardian: {
-				guardian_id: "sf_guardian_meera",
-				name: "Suresh Pillai",
-				signed_at: "2026-06-19T12:36:00+05:30",
-			},
+			therapistName: "Mr. Ravi Krishnan",
+			therapistCredentials: "BOT, MSc OT",
+			guardianName: "Suresh Pillai",
 		},
 	},
 });
