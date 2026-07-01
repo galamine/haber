@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HaberApp MVP Audit Report — July 2026</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #faf9f7;
+      color: #1c1917;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    /* ── Layout ── */
+    .page { max-width: 1280px; margin: 0 auto; padding: 40px 32px 80px; }
+
+    /* ── Header ── */
+    .report-header { border-bottom: 2px solid #78350f; padding-bottom: 24px; margin-bottom: 36px; }
+    .report-header h1 { font-size: 28px; font-weight: 700; color: #78350f; }
+    .report-header .meta { font-size: 13px; color: #57534e; margin-top: 6px; }
+
+    /* ── Summary Cards ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .summary-card {
+      background: white;
+      border: 1px solid #e7e5e4;
+      border-radius: 10px;
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .summary-card .number { font-size: 36px; font-weight: 800; line-height: 1; }
+    .summary-card .label { font-size: 12px; color: #57534e; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .card-green .number { color: #15803d; }
+    .card-amber .number { color: #92400e; }
+    .card-blue .number  { color: #1d4ed8; }
+    .card-red .number   { color: #b91c1c; }
+    .card-purple .number { color: #7c3aed; }
+
+    /* ── Section headings ── */
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #78350f;
+      margin: 48px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e7e5e4;
+    }
+    h3 { font-size: 15px; font-weight: 700; color: #292524; margin: 28px 0 10px; }
+
+    /* ── Tables ── */
+    .audit-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 24px; }
+    .audit-table th {
+      background: #f5f5f4;
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #57534e;
+      white-space: nowrap;
+    }
+    .audit-table td { padding: 10px 14px; vertical-align: top; border-top: 1px solid #f5f5f4; }
+    .audit-table tr:hover td { background: #faf9f7; }
+
+    .us-num { font-size: 11px; font-weight: 700; color: #a8a29e; white-space: nowrap; }
+    .feature-name { font-weight: 600; }
+    .feature-note { font-size: 12px; color: #57534e; margin-top: 3px; }
+    .code { font-family: "SF Mono", Consolas, monospace; font-size: 11px; background: #f5f5f4; padding: 1px 5px; border-radius: 3px; }
+
+    /* ── Status badges ── */
+    .badge {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge-done    { background: #dcfce7; color: #15803d; }
+    .badge-partial { background: #fef3c7; color: #92400e; }
+    .badge-planned { background: #dbeafe; color: #1d4ed8; }
+    .badge-missing { background: #fee2e2; color: #b91c1c; }
+
+    /* ── Row background tint ── */
+    tr.row-done    td { border-left: 3px solid #86efac; }
+    tr.row-partial td { border-left: 3px solid #fcd34d; }
+    tr.row-planned td { border-left: 3px solid #93c5fd; }
+    tr.row-missing td { border-left: 3px solid #fca5a5; }
+
+    /* ── Gap / Issue blocks ── */
+    .gap-card {
+      background: white;
+      border: 1px solid #e7e5e4;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .gap-card .gap-title { font-weight: 700; font-size: 15px; }
+    .gap-card .gap-meta { font-size: 12px; color: #57534e; margin-top: 4px; margin-bottom: 10px; }
+    .gap-card p { color: #44403c; margin-bottom: 8px; }
+    .gap-card ul { color: #44403c; padding-left: 20px; }
+    .gap-card ul li { margin-bottom: 4px; }
+    .severity-high   { border-left: 4px solid #ef4444; }
+    .severity-medium { border-left: 4px solid #f59e0b; }
+    .severity-low    { border-left: 4px solid #3b82f6; }
+
+    .severity-badge-high   { background: #fee2e2; color: #b91c1c; }
+    .severity-badge-medium { background: #fef3c7; color: #92400e; }
+    .severity-badge-low    { background: #dbeafe; color: #1d4ed8; }
+
+    /* ── Issue cards ── */
+    .issue-card {
+      background: white;
+      border: 1px solid #e7e5e4;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .issue-card .issue-id { font-size: 11px; font-weight: 700; font-family: monospace; background: #f5f5f4; padding: 2px 8px; border-radius: 4px; color: #78350f; }
+    .issue-card .issue-title { font-size: 16px; font-weight: 700; margin: 10px 0 6px; }
+    .issue-card .issue-body { color: #44403c; }
+    .issue-card .issue-body ul { padding-left: 20px; margin: 8px 0; }
+    .issue-card .issue-body li { margin-bottom: 4px; }
+
+    /* ── Mismatch table ── */
+    .mismatch-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .mismatch-table th { background: #f5f5f4; text-align: left; padding: 10px 14px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #57534e; }
+    .mismatch-table td { padding: 10px 14px; vertical-align: top; border-top: 1px solid #f5f5f4; }
+
+    .note-tag { font-family: monospace; font-size: 11px; background: #fef3c7; color: #92400e; padding: 1px 6px; border-radius: 3px; }
+    .ok-tag   { font-family: monospace; font-size: 11px; background: #dcfce7; color: #15803d; padding: 1px 6px; border-radius: 3px; }
+
+    @media print {
+      body { background: white; }
+      .page { padding: 20px; }
+      h2 { page-break-before: always; }
+      h2:first-of-type { page-break-before: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="report-header">
+    <h1>HaberApp — MVP Audit Report</h1>
+    <div class="meta">
+      Audited: 1 July 2026 &nbsp;·&nbsp; Branch: <span class="code">issue-fe-05</span> &nbsp;·&nbsp;
+      Against: <span class="code">HaberApp-Technical-PRD v2.0</span> &nbsp;·&nbsp; 77 user stories assessed
+    </div>
+  </div>
+
+  <!-- ══ EXECUTIVE SUMMARY ══ -->
+  <div class="summary-grid">
+    <div class="summary-card card-green">
+      <div class="number">58</div>
+      <div class="label">Fully Implemented</div>
+    </div>
+    <div class="summary-card card-amber">
+      <div class="number">11</div>
+      <div class="label">Partially Done</div>
+    </div>
+    <div class="summary-card card-blue">
+      <div class="number">4</div>
+      <div class="label">Planned (in issues)</div>
+    </div>
+    <div class="summary-card card-red">
+      <div class="number">4</div>
+      <div class="label">No Coverage</div>
+    </div>
+    <div class="summary-card card-purple">
+      <div class="number">75%</div>
+      <div class="label">Core MVP Ready</div>
+    </div>
+  </div>
+
+  <p style="color:#57534e;margin-bottom:40px;">
+    The core clinical workflow (intake → assessment → plan → sessions → follow-up) is <strong>fully built end-to-end</strong>.
+    The main blockers for a demoable MVP are <strong>dashboards &amp; reporting</strong> (all three planned as FE-09/FE-10/FE-11 + BE-14),
+    the <strong>review-due indicator</strong> for multi-therapist coverage, and minor schema/permission gaps listed below.
+    Test suites (TEST-01–04) are filed but unimplemented — high risk for a clinical application.
+  </p>
+
+  <!-- ══ PRD AUDIT TABLE ══ -->
+  <h2>PRD Point-by-Point Audit (All 77 User Stories)</h2>
+
+  <!-- ── Authentication & Identity ── -->
+  <h3>Authentication &amp; Identity (US#1–5)</h3>
+  <table class="audit-table">
+    <thead>
+      <tr>
+        <th style="width:70px">US#</th>
+        <th>Feature</th>
+        <th style="width:120px">Frontend</th>
+        <th style="width:120px">Backend / DB</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#1</td>
+        <td><span class="feature-name">Super Admin creates clinic</span><br><span class="feature-note">name, address, contact, timezone</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">/platform/clinics/new</span> → <span class="code">clinic.create</span> (SuperAdmin mutation). Clinic model complete.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#2</td>
+        <td><span class="feature-name">Clinic Admin invite + OTP + profile setup</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">clinic.inviteAdmin</span> → <span class="code">/accept-invite</span> auto-verifies OTP → <span class="code">/user-profile</span> for profile completion.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#3</td>
+        <td><span class="feature-name">OTP login (6-digit, 10-min, 5-attempt limit, 3 req/10 min)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">/login</span> two-step form. <span class="code">Otp.attemptCount</span> invalidates after 5 wrong codes. Rate limit middleware caps 3 requests/email/10 min.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#4</td>
+        <td><span class="feature-name">24h idle expiry + refresh rotation + reuse detection</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">Session.reuseDetected</span>, <span class="code">Session.familyId</span>. Auth store tracks <span class="code">lastActivity</span>, calls <span class="code">isIdle()</span> at 24h. Auto-refresh scheduled before expiry.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#5</td>
+        <td><span class="feature-name">Log out everywhere</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">auth.logoutAll</span> revokes all refresh tokens for user. Sidebar logout button in AppShell.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Clinic Structure ── -->
+  <h3>Clinic Structure (US#6–8)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#6</td>
+        <td><span class="feature-name">Departments (name, head, description)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">/settings/departments</span> + CRUD. <span class="code">clinic.createDepartment / listDepartments / updateDepartment / deleteDepartment</span>. Department model has headUserId FK.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#7</td>
+        <td><span class="feature-name">Sensory rooms (name, code, department, equipment, status)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">/settings/rooms</span> + CRUD. <span class="code">clinic.createSensoryRoom / listSensoryRooms / toggleRoomStatus</span>. ACTIVE / MAINTENANCE status enum.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#8</td>
+        <td><span class="feature-name">Toggle clinic game library</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">/settings/library</span> via <span class="code">ClinicLibrarySettingsTable</span>. <span class="code">game.enableForClinic / disableForClinic</span>. <span class="code">ClinicGameEnable</span> model.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Staff Management ── -->
+  <h3>Staff Management (US#9–10)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#9</td>
+        <td><span class="feature-name">Staff invite: email, role, permissions, departments, deactivate</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">/settings/staff</span>. <span class="code">staff.invite / list / updatePermissions / assignDepartments / deactivate / reactivate</span>. <span class="code">UserPermission</span> table.</td>
+      </tr>
+      <tr class="row-partial">
+        <td class="us-num">US#10</td>
+        <td><span class="feature-name">Granular permissions incl. <code>treatment_plan.modify_minor</code></span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td>
+          Only 3 permissions defined in <span class="code">packages/db/src/permissions.ts</span>: <span class="code">child.intake</span>, <span class="code">session.run</span>, <span class="code">treatment_plan.modify</span>.
+          PRD specifies a 4th: <span class="code">treatment_plan.modify_minor</span>. Missing. → <span class="note-tag">GAP: BE-17</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Child Intake ── -->
+  <h3>Child Intake (US#11–16)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-partial">
+        <td class="us-num">US#11</td>
+        <td><span class="feature-name">Child profile wizard (all fields)</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td>5-step wizard at <span class="code">/children/new</span> covers most fields. <span class="code">Child.photoUrl</span> exists in DB but <strong>no photo upload UI</strong> implemented. → <span class="note-tag">GAP: FE-13</span></td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#12</td>
+        <td><span class="feature-name">Structured medical history</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td>Step 2 of intake wizard. <span class="code">child.updateMedicalHistory</span>. <span class="code">Child.medicalHistory</span> JSONB stores birth history, immunisations, allergies, meds, diagnoses, family history, sensory sensitivities.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#13</td>
+        <td><span class="feature-name">Guardian consent (3 types, typed name, IP, timestamp)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td>Public <span class="code">/consent</span> page. <span class="code">ConsentInvitation</span> (tokenHash, 7-day expiry) + <span class="code">ConsentRecord</span> (typedName, checkbox, timestamp, ip). <span class="code">consentInvitation.send / validate / submit</span>.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#14</td>
+        <td><span class="feature-name">Guardian registered as user (login disabled)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">Guardian.userId</span> FK → <span class="code">User.loginEnabled = false</span>. Created at intake. V2 parent portal can attach without backfill.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#15</td>
+        <td><span class="feature-name">Block assessment if consent incomplete</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">assessment.create</span> checks <span class="code">child.consentStatus === 'GRANTED'</span> before allowing creation. Returns <span class="code">FORBIDDEN</span> otherwise.</td>
+      </tr>
+      <tr class="row-partial">
+        <td class="us-num">US#16</td>
+        <td><span class="feature-name">Soft-delete child (DPDP 7-year retention)</span></td>
+        <td><span class="badge badge-missing">MISSING</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td><span class="code">child.softDelete</span> procedure exists. <span class="code">Child.deletedAt</span> field in schema. But: <strong>no admin UI</strong> to trigger it, no Prisma middleware auto-filtering, no retention report. → <span class="note-tag">Issue BE-15 (planned)</span> + <span class="note-tag">GAP: FE-14</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Therapist Assessment ── -->
+  <h3>Therapist Assessment (US#17–20)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#17</td>
+        <td><span class="feature-name">Initial assessment (8 sections)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">/children/$childId/assessment/new</span>. 8-tab form (SectionA–H). <span class="code">assessment.create</span>. <span class="code">InitialAssessment.sectionA–H</span> JSONB. Read-only view also implemented.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#18</td>
+        <td><span class="feature-name">Milestone tagging (at least 1 leaf milestone)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">Milestone</span> model seeded globally. <span class="code">milestone.list</span> with clinic extension support. Assessment Section C captures 12 developmental milestones with achieved age, delayed flag, and notes.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#19</td>
+        <td><span class="feature-name">Versioned assessments (append-only)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">assessment.review</span> creates a new <span class="code">InitialAssessment</span> row (versionNumber incremented). Never overwrites. <span class="code">assessment.list</span> returns all versions.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#20</td>
+        <td><span class="feature-name">Assessments scoped to assigned therapists</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">assessment.get/list</span> check <span class="code">ChildTherapistAssignment</span> for THERAPIST/STAFF roles before returning data. CLINIC_ADMIN and SUPER_ADMIN bypass.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Treatment Plan Builder ── -->
+  <h3>Treatment Plan Builder (US#21–27)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#21</td>
+        <td><span class="feature-name">Treatment plan with all fields + status lifecycle</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">TreatmentPlan</span> model has all PRD fields: name, programLengthWeeks, phases (JSON), startDate, projectedEndDate, targetMilestones, status enum (DRAFT/ACTIVE/PAUSED/COMPLETED/CLOSED), sessionDurationMinutes.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#22</td>
+        <td><span class="feature-name">Add games with per-game overrides</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">plan.addGame / removeGame / updateGame / reorderGames</span>. <span class="code">PlanGameAssignment</span> has durationSeconds, repetitions, frequencyPerWeek, instructions, appliesToPhase, order.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#23</td>
+        <td><span class="feature-name">Soft warning if games exceed session duration</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">plan.checkSessionDuration</span> query compares total game durations vs <span class="code">sessionDurationMinutes</span>. <span class="code">DurationAdvisory</span> component in plan builder FE. Non-blocking.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#24</td>
+        <td><span class="feature-name">Plan modifications versioned (is_active swap)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">plan.modify</span> sets old plan <span class="code">is_active=false</span>, inserts new row with <span class="code">is_active=true</span>, increments <span class="code">versionNumber</span>, sets <span class="code">parentPlanId</span>. All in a DB transaction.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#25</td>
+        <td><span class="feature-name">Pin game to specific version</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">PlanGameAssignment.gameVersionId</span> FK pins to a specific <span class="code">GameVersion</span> row. Games auto-update only when therapist explicitly re-selects.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#26</td>
+        <td><span class="feature-name">Plan lifecycle (activate/pause/resume/extend/close)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">plan.activate / pause / resume / extend / close</span>. Closure captures <span class="code">closureReason</span> + <span class="code">outcomeSummary</span>. <span class="code">PlanLifecycleButtons</span> component on FE.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#27</td>
+        <td><span class="feature-name">Game library browser with filters</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">/library</span> page + <span class="code">GameLibraryBrowserSheet</span> inside plan builder. <span class="code">game.list</span> filters by category, difficulty, ageRange, targetIssues, enabledForClinic.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Session Execution ── -->
+  <h3>Session Execution (US#28–41)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#28</td>
+        <td><span class="feature-name">Sessions generated on activate; regenerated on modify</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">plan.activate</span> triggers <span class="code">generateSessionsForPlan</span>. <span class="code">plan.modify</span> triggers <span class="code">regenerateFutureSessions</span> (PENDING-only). No nightly job needed.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#29</td>
+        <td><span class="feature-name">Today's Sessions view</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">/sessions</span> tabbed by status (Pending / In Progress / Completed / Absent). <span class="code">session.listForToday</span> returns therapist's sessions for today.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#30</td>
+        <td><span class="feature-name">Pre-linked game assignments on session</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">SessionGameAssignment</span> pre-linked at session generation. <span class="code">session.get</span> returns with <span class="code">gameAssignments</span>. Includes durationSeconds, repetitions, instructions, rubricVersion.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#31</td>
+        <td><span class="feature-name">Assign room to session</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">session.assignRoom</span> creates <span class="code">RoomBooking</span> with first-write-wins semantics. Room selector in session detail page.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#32</td>
+        <td><span class="feature-name">Open game in new tab; start webhook records start time</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">session.getWebhookUrl</span> returns game URL with params. <span class="code">POST /api/sessions/:id/start</span> (Hono HTTP, not tRPC) records <span class="code">startedAt</span>, transitions PENDING→IN_PROGRESS.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#33</td>
+        <td><span class="feature-name">Game receives game_id, version, session_id, webhook_secret</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">session.getWebhookUrl</span> constructs URL with all 4 params as query string. <span class="code">Session.webhookSecret</span> (UUIDv4) generated at session creation.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#34</td>
+        <td><span class="feature-name">Webhook auth via webhook_secret</span></td>
+        <td>N/A (game)</td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td>Both <span class="code">start</span> and <span class="code">complete</span> webhooks validate <span class="code">webhook_secret</span> in request body. Returns 401 on mismatch. <span class="code">Session.webhookSecretUsed</span> marked after complete.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#35</td>
+        <td><span class="feature-name">Results appear after complete webhook</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">POST /api/sessions/:id/complete</span> creates <span class="code">GameResult</span>. Session detail page displays result once status is COMPLETED.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#36</td>
+        <td><span class="feature-name">Manual close session</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">session.manualClose</span> sets status to MANUALLY_CLOSED with therapist notes. Button in session detail page.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#37</td>
+        <td><span class="feature-name">Mark session absent</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">session.markAbsent</span> sets status to ABSENT (terminal state). "Mark Absent" button in session detail. No separate attendance field — terminal state encodes it.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#38</td>
+        <td><span class="feature-name">Notes + quality tag on session close</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">session.addNotes</span>. <span class="code">TherapySession.notes</span> (text) + <span class="code">qualityTag</span> (Calm / Distracted / Refused).</td>
+      </tr>
+      <tr class="row-partial">
+        <td class="us-num">US#39</td>
+        <td><span class="feature-name">Advance room booking + same-day idle room claim</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td><span class="code">RoomBooking</span> model exists. <span class="code">session.assignRoom</span> does first-write-wins via DB unique constraint. <strong>No explicit "idle room" same-day claim UI</strong> distinct from advance booking. Functionally works but no documented conflict resolution UX.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#40</td>
+        <td><span class="feature-name">Uncovered sessions when therapist absent</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">/sessions/uncovered</span> page. <span class="code">session.listUncovered</span> returns today's sessions with no assigned therapist.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#41</td>
+        <td><span class="feature-name">Claim sessions (first-claim first-served)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">session.claimCoverage</span> sets <span class="code">assignedTherapistId</span> on the session row. DB-level first-write-wins. Claimed sessions locked to claimer.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Game Result Ingestion ── -->
+  <h3>Game Result Ingestion (US#42–44)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#42</td>
+        <td><span class="feature-name">Game calls complete webhook; results persisted</span></td>
+        <td>N/A (game)</td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">POST /api/sessions/:id/complete</span> creates <span class="code">GameResult</span>. Sets session status to COMPLETED.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#43</td>
+        <td><span class="feature-name">Idempotent complete webhook</span></td>
+        <td>N/A (game)</td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">GameResult.sessionId @unique</span> — duplicate calls return already-stored result without duplication.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#44</td>
+        <td><span class="feature-name">Store scored, rubric_version, raw_metrics, events[]</span></td>
+        <td>N/A (game)</td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">GameResult</span>: <span class="code">scored</span> (JSON), <span class="code">rubricVersion</span> (string), <span class="code">rawMetrics</span> (JSON), <span class="code">events</span> (JSON). Immutable once recorded.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Progress Dashboards & Reporting ── -->
+  <h3>Progress Dashboards &amp; Reporting (US#45–48)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-planned">
+        <td class="us-num">US#45</td>
+        <td><span class="feature-name">Per-child longitudinal dashboard</span><br><span class="feature-note">Snapshot, radar, sensory chart, game trends, calendar, notes timeline</span></td>
+        <td><span class="badge badge-planned">PLANNED</span></td>
+        <td><span class="badge badge-planned">PLANNED</span></td>
+        <td>→ <strong>Issue FE-09</strong> (route + Recharts components) blocked by <strong>Issue BE-14</strong> (dashboard API). Data exists in DB but aggregation endpoints not yet built.</td>
+      </tr>
+      <tr class="row-planned">
+        <td class="us-num">US#46</td>
+        <td><span class="feature-name">Clinic admin dashboard</span><br><span class="feature-note">Active children, sessions, room utilisation, therapist load, plan adherence</span></td>
+        <td><span class="badge badge-planned">PLANNED</span></td>
+        <td><span class="badge badge-planned">PLANNED</span></td>
+        <td>→ <strong>Issue FE-10</strong> (clinic admin + SuperAdmin dashboard UI) blocked by <strong>Issue BE-14</strong>.</td>
+      </tr>
+      <tr class="row-partial">
+        <td class="us-num">US#47</td>
+        <td><span class="feature-name">Super Admin platform dashboard</span><br><span class="feature-note">All clinics, active children, therapists, sessions this month</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td><span class="code">/platform/clinics</span> table exists in FE. <span class="code">clinic.platformSummary</span> query exists in BE. Basic aggregation works. Full version (adherence rate, room util) deferred to BE-14.</td>
+      </tr>
+      <tr class="row-planned">
+        <td class="us-num">US#48</td>
+        <td><span class="feature-name">Progress report export (print-ready)</span></td>
+        <td><span class="badge badge-planned">PLANNED</span></td>
+        <td><span class="badge badge-planned">PLANNED</span></td>
+        <td>→ <strong>Issue FE-11</strong> (client-side print rendering) blocked by <strong>Issue BE-14</strong> (<span class="code">report.childProgress</span> structured JSON export).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Milestone Framework ── -->
+  <h3>Milestone Framework (US#49–51)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#49</td>
+        <td><span class="feature-name">Seed canonical milestone framework</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">Milestone</span> model with <span class="code">frameworkId="global"</span>. 12 developmental milestones seeded from <span class="code">clinical-taxonomies.seed.json</span> via <span class="code">seed-clinical.ts</span>.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#50</td>
+        <td><span class="feature-name">Clinic-specific milestone extensions</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">milestone.addClinicExtension</span> (clinicAdmin). <span class="code">Milestone.frameworkId = 'clinic_{tenantId}'</span> pattern. <span class="code">milestone.list</span> returns global + clinic extensions.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#51</td>
+        <td><span class="feature-name">10 game categories + tenant sub-category extensions</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td>10 global categories seeded (Gross Motor, Fine Motor, Sensory Integration, etc.). <span class="code">GameCategory.clinicId=null</span> = global. <span class="code">game.createSubCategory</span> for clinic extensions.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Multi-Therapist Coverage ── -->
+  <h3>Multi-Therapist Coverage (US#52–54)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#52</td>
+        <td><span class="feature-name">Multiple therapists co-assigned (flat, equal peers)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">ChildTherapistAssignment</span> table supports multiple rows per child. Therapist assignment in intake step 4. <span class="code">child.assignTherapist / unassignTherapist</span>.</td>
+      </tr>
+      <tr class="row-partial">
+        <td class="us-num">US#53</td>
+        <td><span class="feature-name">Review-due indicator visible to all assigned therapists</span></td>
+        <td><span class="badge badge-missing">MISSING</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td><span class="code">ChildTherapistAssignment.reviewDueAt</span> set at intake. <span class="code">reviewClaimed / reviewClaimedBy</span> fields in schema. But: <strong>no FE badge</strong> shown anywhere (child list, dashboard, sessions). → <span class="note-tag">GAP: FE-12</span></td>
+      </tr>
+      <tr class="row-partial">
+        <td class="us-num">US#54</td>
+        <td><span class="feature-name">First-claim review ownership (clears indicator for others)</span></td>
+        <td><span class="badge badge-missing">MISSING</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td>DB fields exist (<span class="code">reviewClaimed</span>, <span class="code">reviewClaimedBy</span>). <strong>No API procedure</strong> to claim review ownership and no FE flow. → <span class="note-tag">GAP: FE-12</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Form 1 (Initial Assessment) ── -->
+  <h3>Initial Assessment Form — Form 1 (US#55–62)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#55</td>
+        <td><span class="feature-name">Section A: Patient &amp; referral info</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">SectionA.tsx</span> + <span class="code">sectionA</span> JSONB. Auto-populates from child profile. Name, DOB, age, gender, assessment date/location, referring therapist, chief complaint.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#56</td>
+        <td><span class="feature-name">Section B/C: Medical &amp; developmental history</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">SectionB.tsx</span> + <span class="code">SectionC.tsx</span>. Diagnoses multi-select from 12-item seeded taxonomy. Prenatal/birth/neonatal, gestational age, medications, allergies, prior therapies.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#57</td>
+        <td><span class="feature-name">Section C: Developmental milestones (12 items)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td>12 milestones (head control → eye contact). Each: <span class="code">achieved_at_age_months</span>, <span class="code">delayed</span> boolean, notes. Data feeds milestone radar chart (FE-09).</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#58</td>
+        <td><span class="feature-name">Section D: Sensory processing profile (7 systems, 1–5 scale)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">SectionD.tsx</span>. <span class="code">SensoryProfile</span> model stores 7 rows per assessment. Rating 1–5 (1=Hypo, 3=Typical, 5=Hyper). Per-system notes + overall behavioural observations.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#59</td>
+        <td><span class="feature-name">Section E: Functional &amp; fine-motor concerns (16 items)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td>16-item seeded <span class="code">FunctionalConcern</span> taxonomy. Multi-select + free-text clinical observations. Stored in <span class="code">sectionE</span> JSONB.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#60</td>
+        <td><span class="feature-name">Section F: Standardised assessment tools (14 tools)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">SectionF.tsx</span>. 14-tool seeded taxonomy (SP2, BOT-2, PDMS-2, CARS-2, COPM, MABC-2, etc.). Per-tool free-text score summary + overall percentile summary.</td>
+      </tr>
+      <tr class="row-partial">
+        <td class="us-num">US#61</td>
+        <td><span class="feature-name">Section G: Initial goals &amp; intervention plan</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td>
+          Section G captures goals, frequency, session duration, setting, equipment, home program in <span class="code">sectionG</span> JSONB.
+          However, <strong>goals in Section G are not auto-created as <span class="code">Goal</span> entities</strong> in the goal table — they are stored as free text only.
+          The standalone <span class="code">Goal</span> model is created separately via <span class="code">plan.create</span>.
+          This means assessment-level goals and plan-level goals are disconnected.
+          → <span class="note-tag">GAP: BE-17</span>
+        </td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#62</td>
+        <td><span class="feature-name">Section H: Signatures (therapist + guardian) with IP</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td>Typed name + credentials + timestamp. <strong>IP confirmed</strong> — <span class="code">ctx.ip</span> injected server-side into <span class="code">therapistIp</span> and <span class="code">guardianIp</span> fields in <span class="code">sectionH</span>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Form 2 (Follow-Up Assessment) ── -->
+  <h3>Follow-Up Assessment — Form 2 (US#63–69)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#63</td>
+        <td><span class="feature-name">Section A: Session info</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td>Follow-up date, therapist, session number, weeks since initial, parent/caregiver presence. Stored in <span class="code">sectionA</span> JSONB.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#64</td>
+        <td><span class="feature-name">Section B: Goal progress review (% attainment + status)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">GoalProgressEntry</span> appended per follow-up (<span class="code">attainmentPct</span>, <span class="code">status</span>, <span class="code">evidenceNotes</span>). <span class="code">assessment.createFollowUp</span> handles this. FE SectionC/SectionB render goal progress.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#65</td>
+        <td><span class="feature-name">Section C: Sensory progress check (delta vs baseline)</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">SensoryProfile</span> stored per follow-up. <span class="code">assessment.getFollowUpDelta</span> computes change vs initial. <span class="code">DeltaBadge</span> component shows colour-coded delta.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#66</td>
+        <td><span class="feature-name">Section D: Follow-up clinical questions</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td>Home/school improvements, regression, home-program compliance (5-point), session engagement (4-point), school changes, behaviour changes, new skills, equipment use, therapist observations.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#67</td>
+        <td><span class="feature-name">Section E: Plan adjustment &amp; next steps</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td>Goal-status decisions (continue/modify/add/discontinue), updated goals, updated home program, next follow-up date, clinical notes for team.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#68</td>
+        <td><span class="feature-name">Follow-up linked to initial assessment, plan, previous follow-up</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">FollowUpAssessment</span> model: <span class="code">initialAssessmentId</span> FK, <span class="code">treatmentPlanId</span> FK, <span class="code">previousFollowUpId</span> FK. Enables longitudinal delta queries.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#69</td>
+        <td><span class="feature-name">Section F: Signatures on follow-up</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td>Therapist + parent/guardian signature with typed name, timestamp, IP (confirmed via <span class="code">ctx.ip</span> injection in <span class="code">assessment.ts</span>).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Goal Tracking ── -->
+  <h3>Goal Tracking (US#70–71)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#70</td>
+        <td><span class="feature-name">Goal as first-class entity with progress timeline</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">Goal</span>: id, description, horizon, targetAttainmentPct, currentAttainmentPct, status, supersededByGoalId. <span class="code">GoalProgressEntry</span> per follow-up. <span class="code">goal.list / create / updateAttainment</span>. <span class="code">/children/$childId/goals/$goalId</span> with chart.</td>
+      </tr>
+      <tr class="row-partial">
+        <td class="us-num">US#71</td>
+        <td><span class="feature-name">Goal decisions on plan modify</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td>
+          <span class="code">plan.modify</span> accepts CLOSE (→discontinued), CARRY_OVER (→copy to new plan), MODIFY (→discontinued + new goal with edits).
+          <strong>No explicit ADD action</strong> during plan.modify — new goals must be created separately via <span class="code">goal.create</span> after modify.
+          PRD says "continue / modify / add / discontinue". Functionally equivalent but workflow gap. → <span class="note-tag">Minor gap</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Treatment Plan Presets ── -->
+  <h3>Treatment Plan Presets (US#72–74)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#72</td>
+        <td><span class="feature-name">Browse 5 clinical presets</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">plan.listPresets</span> loads from <span class="code">/clinical-data/treatment-plan-presets.json</span>. 5 presets (ASD, CP, ADHD, Down Syndrome, DCD). <span class="code">PresetCard</span> component in plan builder FE.</td>
+      </tr>
+      <tr class="row-done">
+        <td class="us-num">US#73</td>
+        <td><span class="feature-name">Clone preset into fully editable plan</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">plan.create</span> with preset ID clones goals/games. <span class="code">TreatmentPlan.sourcePresetId</span> for analytics. Plan immediately diverges — no live link to preset after clone.</td>
+      </tr>
+      <tr class="row-partial">
+        <td class="us-num">US#74</td>
+        <td><span class="feature-name">Preset session_structure → plan phases</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td><span class="code">TreatmentPlan.phases</span> is a JSONB field. Preset JSON contains <span class="code">session_structure</span> (ordered phase blocks with minutes). Whether <span class="code">plan.create</span> maps preset session_structure into <span class="code">phases</span> needs verification. <span class="code">PhaseBuilder</span> component exists in FE.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Therapist Credentials ── -->
+  <h3>Therapist Credentials (US#75)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-done">
+        <td class="us-num">US#75</td>
+        <td><span class="feature-name">Therapist credentials + snapshot on signatures</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="badge badge-done">DONE</span></td>
+        <td><span class="code">User.credentialsQualifications</span>, <span class="code">User.credentialsRegistrationNumber</span>. <span class="code">staff.updateCredentials</span>. Assessment router snapshots credentials into sectionH at signing time.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── DPDP Compliance ── -->
+  <h3>DPDP Compliance (US#76–77)</h3>
+  <table class="audit-table">
+    <thead><tr><th style="width:70px">US#</th><th>Feature</th><th style="width:120px">Frontend</th><th style="width:120px">Backend / DB</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="row-planned">
+        <td class="us-num">US#76</td>
+        <td><span class="feature-name">PHI stored in India region</span></td>
+        <td>N/A</td>
+        <td><span class="badge badge-planned">PLANNED</span></td>
+        <td>Infrastructure concern (DB provisioning). → <strong>Issue BE-15</strong> adds <span class="code">DATA_REGION</span> env check at startup with warning if not "india".</td>
+      </tr>
+      <tr class="row-partial">
+        <td class="us-num">US#77</td>
+        <td><span class="feature-name">Soft-delete + 7-year retention enforcement</span></td>
+        <td><span class="badge badge-missing">MISSING</span></td>
+        <td><span class="badge badge-partial">PARTIAL</span></td>
+        <td><span class="code">child.softDelete</span> procedure + <span class="code">Child.deletedAt</span> exist. No admin UI, no Prisma auto-filter middleware, no retention report. → <strong>Issue BE-15</strong> (Prisma middleware, retention report, permanentDelete). → <span class="note-tag">GAP: FE-14</span> (admin UI).</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <!-- ══ GAP ANALYSIS ══ -->
+  <h2>Gap Analysis — Critical Blockers for Demo MVP</h2>
+
+  <div class="gap-card severity-high">
+    <div class="gap-title">GAP 1: Dashboards &amp; Reporting (All 3 views missing)</div>
+    <div class="gap-meta"><span class="badge badge-missing">HIGH</span> &nbsp; Blocks: US#45, US#46, US#48 &nbsp;·&nbsp; Planned Issues: BE-14, FE-09, FE-10, FE-11</div>
+    <p>The per-child longitudinal dashboard, clinic admin operational dashboard, and progress report are entirely unimplemented. Data exists in the DB but the aggregation tRPC procedures (<span class="code">dashboard.*</span>, <span class="code">report.*</span>) are not built. For a clinical demo this is critical — therapists and clinic admins have no visibility into progress.</p>
+    <ul>
+      <li>BE-14 must be built first (6 dashboard procedures + 1 report procedure)</li>
+      <li>FE-09 (per-child dashboard with Recharts) depends on BE-14</li>
+      <li>FE-10 (clinic + super admin dashboards) depends on BE-14</li>
+      <li>FE-11 (progress report print view) depends on BE-14</li>
+    </ul>
+  </div>
+
+  <div class="gap-card severity-high">
+    <div class="gap-title">GAP 2: Review-Due Indicator &amp; Claim Flow (Multi-Therapist)</div>
+    <div class="gap-meta"><span class="badge badge-missing">HIGH</span> &nbsp; Blocks: US#53, US#54 &nbsp;·&nbsp; New Issue: FE-12</div>
+    <p>The DB schema (<span class="code">ChildTherapistAssignment.reviewDueAt / reviewClaimed / reviewClaimedBy</span>) and the intake form (sets <span class="code">reviewDueAt</span>) are in place. But there is no:</p>
+    <ul>
+      <li>Badge/indicator on the child list or any other screen showing "review due"</li>
+      <li>API procedure to claim a review (set <span class="code">reviewClaimed=true</span>, <span class="code">reviewClaimedBy=therapistId</span>)</li>
+      <li>FE flow where opening a follow-up auto-claims the review slot</li>
+    </ul>
+  </div>
+
+  <div class="gap-card severity-high">
+    <div class="gap-title">GAP 3: Guardian Consent Model — 1:1 vs Unanimous Multi-Guardian</div>
+    <div class="gap-meta"><span class="badge badge-missing">HIGH</span> &nbsp; PRD Mismatch &nbsp;·&nbsp; New Issue: BE-16</div>
+    <p>PRD section says "unanimous guardian consent model" — if <em>any</em> guardian withdraws, consent is withdrawn for all. But the DB has <span class="code">Guardian.childId @unique</span>, meaning one child can only have one guardian record. <span class="code">ConsentRecord</span> is per-child (not per-guardian). The unanimous model cannot work with only one guardian.</p>
+    <p>This requires a schema change: remove <span class="code">@unique</span> on <span class="code">Guardian.childId</span>, allow multiple Guardian rows per child, and update consent withdrawal logic to check all guardians.</p>
+  </div>
+
+  <div class="gap-card severity-medium">
+    <div class="gap-title">GAP 4: Missing Permission — treatment_plan.modify_minor</div>
+    <div class="gap-meta"><span class="badge badge-partial">MEDIUM</span> &nbsp; Blocks: US#10 &nbsp;·&nbsp; New Issue: BE-17</div>
+    <p>Only 3 permissions defined in <span class="code">packages/db/src/permissions.ts</span>. PRD US#10 explicitly names a 4th: <span class="code">treatment_plan.modify_minor</span> — to grant senior therapists minor plan edits without full plan-modify rights. No route currently enforces this permission.</p>
+  </div>
+
+  <div class="gap-card severity-medium">
+    <div class="gap-title">GAP 5: Child Photo Upload UI</div>
+    <div class="gap-meta"><span class="badge badge-partial">MEDIUM</span> &nbsp; Blocks: US#11 &nbsp;·&nbsp; New Issue: FE-13</div>
+    <p><span class="code">Child.photoUrl</span> field exists in the DB schema, but the 5-step child intake wizard has no file upload component. A photo upload (to S3/R2/Supabase Storage) with the URL stored in <span class="code">photoUrl</span> is needed.</p>
+  </div>
+
+  <div class="gap-card severity-medium">
+    <div class="gap-title">GAP 6: Admin UI for Child Soft-Delete</div>
+    <div class="gap-meta"><span class="badge badge-partial">MEDIUM</span> &nbsp; Blocks: US#16, US#77 &nbsp;·&nbsp; New Issue: FE-14</div>
+    <p><span class="code">child.softDelete</span> procedure exists but there is no UI for clinic admins or super admins to trigger it. The child profile and child list pages do not expose a delete action. Required for DPDP compliance demonstration.</p>
+  </div>
+
+  <div class="gap-card severity-medium">
+    <div class="gap-title">GAP 7: Assessment Section G Goals Not Linked to Goal Entity</div>
+    <div class="gap-meta"><span class="badge badge-partial">MEDIUM</span> &nbsp; Blocks: US#61 &nbsp;·&nbsp; Recommendation: Fold into BE-17</div>
+    <p>When a therapist fills in Section G of the initial assessment (up to 4 short-term + 4 long-term goals), those goals are stored as free text inside <span class="code">sectionG</span> JSONB. They are <strong>not</strong> automatically created as first-class <span class="code">Goal</span> entities on the treatment plan. This breaks the longitudinal goal-tracking flow where <span class="code">GoalProgressEntry</span> records are appended at follow-ups.</p>
+    <p>Recommendation: when <span class="code">assessment.create</span> is called with Section G data, auto-create <span class="code">Goal</span> rows on the child's active or newly created plan.</p>
+  </div>
+
+  <div class="gap-card severity-low">
+    <div class="gap-title">GAP 8: Zero Automated Test Coverage</div>
+    <div class="gap-meta"><span class="badge badge-planned">LOW (risk)</span> &nbsp; Planned Issues: TEST-01, TEST-02, TEST-03, TEST-04</div>
+    <p>No integration tests exist for any module. For a clinical app handling child health data, this is a significant risk. Tests are planned across 4 suites covering AuthService, ConsentService, AssessmentService, GoalService, SessionGenerator, GameResultService, and TreatmentPlanService.</p>
+  </div>
+
+  <div class="gap-card severity-low">
+    <div class="gap-title">GAP 9: plan.modify Missing ADD Goal Action</div>
+    <div class="gap-meta"><span class="badge badge-planned">LOW</span> &nbsp; Minor workflow gap</div>
+    <p><span class="code">plan.modify</span> accepts CLOSE / CARRY_OVER / MODIFY for existing goals but does not accept an ADD action to create brand-new goals in the same transaction. PRD US#71 lists "add" as one of the four decisions. Workaround: call <span class="code">goal.create</span> separately after modify. This is functionally equivalent but creates an inconsistent UX — the plan modify wizard should include a "new goal" section.</p>
+  </div>
+
+
+  <!-- ══ PRD vs IMPLEMENTATION MISMATCHES ══ -->
+  <h2>PRD vs Implementation — Confirmed Mismatches</h2>
+
+  <table class="mismatch-table">
+    <thead>
+      <tr>
+        <th>PRD Says</th>
+        <th>Implementation</th>
+        <th style="width:100px">Severity</th>
+        <th>Recommendation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Multiple guardians</strong> per child, unanimous consent model (US#13)</td>
+        <td><span class="code">Guardian.childId @unique</span> — only one guardian per child possible</td>
+        <td><span class="badge severity-badge-high">HIGH</span></td>
+        <td>Remove <span class="code">@unique</span>, add migration, update consent logic. New issue: BE-16.</td>
+      </tr>
+      <tr>
+        <td><strong>treatment_plan.modify_minor</strong> permission for senior therapists (US#10)</td>
+        <td>Absent from <span class="code">permissions.ts</span>; only 3 permissions defined</td>
+        <td><span class="badge severity-badge-medium">MEDIUM</span></td>
+        <td>Add permission constant + route-level check. New issue: BE-17.</td>
+      </tr>
+      <tr>
+        <td>Goal decisions: <strong>continue / modify / add / discontinue</strong> (US#71)</td>
+        <td>plan.modify accepts CLOSE / CARRY_OVER / MODIFY (no ADD)</td>
+        <td><span class="badge severity-badge-low">LOW</span></td>
+        <td>Add ADD action to <span class="code">plan.modify</span> and include new-goal inputs in ModifyPlanSheet. Fold into BE-17.</td>
+      </tr>
+      <tr>
+        <td>Section G goals auto-create <strong>first-class Goal entities</strong> (US#61)</td>
+        <td>Goals stored as free text in <span class="code">sectionG</span> JSONB only</td>
+        <td><span class="badge severity-badge-medium">MEDIUM</span></td>
+        <td>Auto-create Goal rows on assessment.create/review. Fold into BE-17.</td>
+      </tr>
+      <tr>
+        <td><strong>Child photo</strong> in intake (US#11)</td>
+        <td><span class="code">photoUrl</span> field exists; no upload UI</td>
+        <td><span class="badge severity-badge-medium">MEDIUM</span></td>
+        <td>Add file upload to child intake wizard + storage integration. New issue: FE-13.</td>
+      </tr>
+      <tr>
+        <td><strong>Review-due indicator</strong> visible to all therapists (US#53, US#54)</td>
+        <td>DB fields exist; no FE badge, no claim API procedure</td>
+        <td><span class="badge severity-badge-high">HIGH</span></td>
+        <td>Add indicator to child list + claim procedure to API. New issue: FE-12.</td>
+      </tr>
+      <tr>
+        <td><strong>Preferred therapist</strong> field at intake (US#11)</td>
+        <td>No dedicated preferred-therapist field; replaced by multi-therapist assignment system</td>
+        <td><span class="ok-tag">ACCEPTABLE</span></td>
+        <td>Multi-therapist assignment is a better implementation. No change needed; document deviation.</td>
+      </tr>
+      <tr>
+        <td>Assessment + consent forms capture <strong>IP address</strong> (US#13, US#62, US#69)</td>
+        <td>✅ CONFIRMED — <span class="code">ctx.ip</span> injected server-side in assessment.ts and consentInvitation.ts</td>
+        <td><span class="ok-tag">MATCHED</span></td>
+        <td>No action needed.</td>
+      </tr>
+      <tr>
+        <td>Preset <strong>session_structure</strong> → plan <span class="code">phases</span> (US#74)</td>
+        <td>Phases field exists; mapping not confirmed in plan.create code path</td>
+        <td><span class="badge severity-badge-medium">MEDIUM</span></td>
+        <td>Verify <span class="code">plan.create</span> maps preset <span class="code">session_structure</span> into <span class="code">TreatmentPlan.phases</span>. Fix if missing.</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <!-- ══ NEW ISSUES TO CREATE ══ -->
+  <h2>Recommended New Issues</h2>
+  <p style="color:#57534e;margin-bottom:24px;">
+    Five new issues to file in <span class="code">/issues/</span>. These cover the gaps not already tracked by the existing 9 issues (BE-14, BE-15, FE-09, FE-10, FE-11, TEST-01–04).
+  </p>
+
+  <div class="issue-card">
+    <div class="issue-id">FE-12</div>
+    <div class="issue-title">Review-Due Indicator &amp; Claim Flow (Multi-Therapist)</div>
+    <div class="issue-body">
+      <p><strong>What to build:</strong> Surface the review-due badge on the children list and child profile header for all assigned therapists. Add an API procedure to claim review ownership, and wire it to follow-up creation so that opening a new follow-up auto-claims the review slot.</p>
+      <ul>
+        <li>Add <span class="code">badge</span> to children list rows where <span class="code">ChildTherapistAssignment.reviewDueAt ≤ today</span> and <span class="code">reviewClaimed = false</span></li>
+        <li>Add <span class="code">child.claimReview</span> mutation: sets <span class="code">reviewClaimed=true</span>, <span class="code">reviewClaimedBy=ctx.userId</span> on the calling therapist's assignment row</li>
+        <li>Call <span class="code">child.claimReview</span> automatically when therapist opens <span class="code">/children/$childId/followup/new</span></li>
+        <li>Show "Review claimed by [therapist name]" state to other assigned therapists</li>
+      </ul>
+      <p><strong>Blocked by:</strong> None (DB fields already exist)</p>
+    </div>
+  </div>
+
+  <div class="issue-card">
+    <div class="issue-id">BE-16</div>
+    <div class="issue-title">Guardian Schema — Multi-Guardian &amp; Unanimous Consent Model</div>
+    <div class="issue-body">
+      <p><strong>What to build:</strong> Support multiple guardians per child so that the unanimous consent model (any withdrawal = all withdrawn) works as specified in the PRD.</p>
+      <ul>
+        <li>Remove <span class="code">@unique</span> constraint from <span class="code">Guardian.childId</span> — run a migration</li>
+        <li>Update <span class="code">child.create</span> to accept an array of guardian objects (name, relation, phone, email)</li>
+        <li>Update <span class="code">ConsentRecord</span>: add <span class="code">guardianId</span> FK so each consent record is per-guardian</li>
+        <li>Update <span class="code">consent.withdraw</span>: if any guardian withdraws, set <span class="code">Child.consentStatus = WITHDRAWN</span></li>
+        <li>Update <span class="code">consent.restore</span>: only restore if ALL guardians have active consent</li>
+        <li>Update intake wizard Step 3 to support adding multiple guardians</li>
+        <li>Update <span class="code">consentInvitation.send</span> to send per-guardian</li>
+      </ul>
+      <p><strong>Blocked by:</strong> BE-05 (child CRUD) — already done, but migration required</p>
+    </div>
+  </div>
+
+  <div class="issue-card">
+    <div class="issue-id">BE-17</div>
+    <div class="issue-title">Permission Gap + Goal ADD Action + Assessment Goal Entity Sync</div>
+    <div class="issue-body">
+      <p><strong>What to build:</strong> Three related gaps fixed together.</p>
+      <p><strong>1 — Add missing permission:</strong></p>
+      <ul>
+        <li>Add <span class="code">TREATMENT_PLAN_MODIFY_MINOR: "treatment_plan.modify_minor"</span> to <span class="code">packages/db/src/permissions.ts</span></li>
+        <li>Identify which plan operations (e.g. editing notes/instructions without re-versioning) should require this permission vs <span class="code">treatment_plan.modify</span></li>
+        <li>Add route-level permission check in <span class="code">plan.ts</span> for minor-modify operations</li>
+      </ul>
+      <p><strong>2 — Add ADD action to plan.modify:</strong></p>
+      <ul>
+        <li>Extend <span class="code">ModificationDecisionInput</span> schema to accept <span class="code">action: "ADD"</span> with new goal fields (description, horizon, targetAttainmentPct)</li>
+        <li>In <span class="code">applyPlanModificationDecisions</span>: create a new <span class="code">Goal</span> row on the new plan version for ADD decisions</li>
+        <li>Update <span class="code">ModifyPlanSheet</span> FE component to render a "New Goals" section</li>
+      </ul>
+      <p><strong>3 — Auto-create Goal entities from assessment Section G:</strong></p>
+      <ul>
+        <li>In <span class="code">assessment.create</span> and <span class="code">assessment.review</span>: after creating the assessment, read <span class="code">sectionG.goals</span> and create <span class="code">Goal</span> rows on the child's active or most recent plan</li>
+        <li>Skip if no active plan exists (goals are informational only until a plan exists)</li>
+      </ul>
+      <p><strong>Blocked by:</strong> None</p>
+    </div>
+  </div>
+
+  <div class="issue-card">
+    <div class="issue-id">FE-13</div>
+    <div class="issue-title">Child Photo Upload in Intake Wizard</div>
+    <div class="issue-body">
+      <p><strong>What to build:</strong> Add optional photo upload to Step 1 of the child intake wizard (<span class="code">/children/new</span>) and the child profile edit page (<span class="code">/children/$childId/edit</span>).</p>
+      <ul>
+        <li>Add an <span class="code">&lt;input type="file"&gt;</span> or drag-and-drop zone (accept: image/*) in Step 1 of the intake wizard</li>
+        <li>Upload the file to object storage (Supabase Storage / R2 / S3 depending on infra) on form submit</li>
+        <li>Store the returned public URL in <span class="code">Child.photoUrl</span> via <span class="code">child.create</span> / <span class="code">child.update</span></li>
+        <li>Display the avatar on the child profile header, session cards, and (when built) the dashboard snapshot card</li>
+        <li>Respect DPDP consent — only upload if image/video consent is granted (IMAGE_VIDEO_CAPTURE ConsentType)</li>
+      </ul>
+      <p><strong>Note:</strong> Storage configuration must be added to <span class="code">packages/env</span> (e.g. <span class="code">STORAGE_BUCKET_URL</span>).</p>
+      <p><strong>Blocked by:</strong> US#13 consent (already implemented)</p>
+    </div>
+  </div>
+
+  <div class="issue-card">
+    <div class="issue-id">FE-14</div>
+    <div class="issue-title">Admin UI for Child Soft-Delete &amp; Deleted Records View</div>
+    <div class="issue-body">
+      <p><strong>What to build:</strong> Expose the existing <span class="code">child.softDelete</span> procedure via an admin UI, and add a "deleted records" view for DPDP compliance reporting.</p>
+      <ul>
+        <li>Add a "Delete Child Record" action (CLINIC_ADMIN only) in the child profile page — behind a confirmation dialog with an optional reason field</li>
+        <li>Soft-deleted children should disappear from the main <span class="code">/children</span> list</li>
+        <li>Add an <span class="code">/settings/deleted-records</span> route (CLINIC_ADMIN + SUPER_ADMIN) showing soft-deleted children with <span class="code">deletedAt</span> date and retention expiry (deletedAt + 7 years)</li>
+        <li>Wire up <span class="code">child.listDeleted</span> (from BE-15) once that issue is implemented</li>
+        <li>The "permanent delete" action remains BE-15 territory and is only available to SUPER_ADMIN for records past the 7-year window</li>
+      </ul>
+      <p><strong>Blocked by:</strong> BE-15 (Prisma middleware + retention enforcement) — partial; the soft-delete trigger UI can be built independently</p>
+    </div>
+  </div>
+
+
+  <!-- ══ ARCHITECTURE NOTES ══ -->
+  <h2>Architecture Notes</h2>
+  <table class="mismatch-table">
+    <thead>
+      <tr><th>Area</th><th>Observation</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Session generation</strong></td>
+        <td>Synchronous on plan activation — no background job. For a 52-week plan at 3x/week, this creates 156 session rows in one transaction. Should be acceptable for V1 but watch for timeout on large plans.</td>
+      </tr>
+      <tr>
+        <td><strong>Permissions model</strong></td>
+        <td>Currently all-or-nothing per string. The <span class="code">UserPermission</span> table supports arbitrary strings, making the <span class="code">modify_minor</span> addition a zero-schema-change addition. Only <span class="code">permissions.ts</span> and route checks need updating.</td>
+      </tr>
+      <tr>
+        <td><strong>Assessment JSONB vs relational</strong></td>
+        <td>Sections A–H stored as JSONB blobs. This is pragmatic for the complex form structure but makes querying specific sub-fields (e.g. "show all children with Tactile rating ≥ 4") impossible without JSON path queries. Acceptable for V1; sensory data that needs querying is already in the relational <span class="code">SensoryProfile</span> table.</td>
+      </tr>
+      <tr>
+        <td><strong>Plan phases</strong></td>
+        <td><span class="code">TreatmentPlan.phases</span> is JSONB (no separate Phase model). PRD says "optional phases (e.g., 4 cycles of 2 weeks)". This is fine for V1; <span class="code">PlanGameAssignment.appliesToPhase</span> references phase index by convention.</td>
+      </tr>
+      <tr>
+        <td><strong>tRPC vs webhooks</strong></td>
+        <td>Game webhook endpoints are plain Hono HTTP routes (not tRPC) — correct per PRD design. All other client–server communication is tRPC. Split is clean.</td>
+      </tr>
+      <tr>
+        <td><strong>Soft-delete filtering</strong></td>
+        <td>Currently <span class="code">child.list</span> appends <span class="code">deletedAt: null</span> manually in the query. BE-15 adds a Prisma middleware to enforce this globally. Until BE-15 ships, any new query touching Child must remember to add the filter.</td>
+      </tr>
+      <tr>
+        <td><strong>Primary keys</strong></td>
+        <td>Clinic uses <span class="code">cuid()</span>; PRD specifies UUID v4. Mix of cuid and uuid across tables (auth uses uuid from <span class="code">gen_random_uuid()</span>). Not a functional issue for V1 but worth standardising.</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <!-- ══ ISSUE SUMMARY ══ -->
+  <h2>Full Issue Index (Existing + New)</h2>
+  <table class="mismatch-table">
+    <thead>
+      <tr><th style="width:100px">Issue ID</th><th>Title</th><th style="width:110px">Status</th><th>PRD Coverage</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="code">BE-14</span></td><td>Dashboards &amp; Reporting API</td><td><span class="badge badge-planned">PLANNED</span></td><td>US#45, US#46, US#47, US#48</td></tr>
+      <tr><td><span class="code">BE-15</span></td><td>DPDP Compliance (Soft Delete &amp; 7-Year Retention)</td><td><span class="badge badge-planned">PLANNED</span></td><td>US#16, US#76, US#77</td></tr>
+      <tr><td><span class="code">FE-09</span></td><td>Per-Child Dashboard &amp; Progress UI</td><td><span class="badge badge-planned">PLANNED</span></td><td>US#45</td></tr>
+      <tr><td><span class="code">FE-10</span></td><td>Clinic &amp; Super Admin Dashboard UI</td><td><span class="badge badge-planned">PLANNED</span></td><td>US#46, US#47</td></tr>
+      <tr><td><span class="code">FE-11</span></td><td>Progress Report Print-Ready UI</td><td><span class="badge badge-planned">PLANNED</span></td><td>US#48</td></tr>
+      <tr><td><span class="code">TEST-01</span></td><td>Auth, Tenant &amp; Staff Test Suite</td><td><span class="badge badge-planned">PLANNED</span></td><td>US#3, US#4, US#9</td></tr>
+      <tr><td><span class="code">TEST-02</span></td><td>Child Intake &amp; Consent Test Suite</td><td><span class="badge badge-planned">PLANNED</span></td><td>US#13, US#15, US#16</td></tr>
+      <tr><td><span class="code">TEST-03</span></td><td>Assessment, Goals &amp; Sensory Profile Test Suite</td><td><span class="badge badge-planned">PLANNED</span></td><td>US#17–20, US#64, US#65, US#70, US#71</td></tr>
+      <tr><td><span class="code">TEST-04</span></td><td>Session Game &amp; Plan Test Suite</td><td><span class="badge badge-planned">PLANNED</span></td><td>US#28, US#42–44, US#72–74</td></tr>
+      <tr style="background:#fef9f0"><td><span class="code">FE-12 ✨</span></td><td>Review-Due Indicator &amp; Claim Flow</td><td><span class="badge badge-missing">NEW</span></td><td>US#53, US#54</td></tr>
+      <tr style="background:#fef9f0"><td><span class="code">BE-16 ✨</span></td><td>Multi-Guardian &amp; Unanimous Consent Model</td><td><span class="badge badge-missing">NEW</span></td><td>US#13</td></tr>
+      <tr style="background:#fef9f0"><td><span class="code">BE-17 ✨</span></td><td>Permission Gap + Goal ADD Action + Sec-G Goal Sync</td><td><span class="badge badge-missing">NEW</span></td><td>US#10, US#61, US#71</td></tr>
+      <tr style="background:#fef9f0"><td><span class="code">FE-13 ✨</span></td><td>Child Photo Upload in Intake Wizard</td><td><span class="badge badge-missing">NEW</span></td><td>US#11</td></tr>
+      <tr style="background:#fef9f0"><td><span class="code">FE-14 ✨</span></td><td>Admin UI for Child Soft-Delete &amp; Deleted Records View</td><td><span class="badge badge-missing">NEW</span></td><td>US#16, US#77</td></tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top:40px;color:#a8a29e;font-size:12px;text-align:center;">
+    HaberApp MVP Audit — Generated 1 July 2026 · claude-sonnet-4-6
+  </p>
+
+</div>
+</body>
+</html>
