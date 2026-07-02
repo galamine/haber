@@ -1,9 +1,17 @@
+import { env } from "@haber-final/env/web";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@haber-final/ui/components/avatar";
 import { Button } from "@haber-final/ui/components/button";
 import { Input } from "@haber-final/ui/components/input";
 import { Label } from "@haber-final/ui/components/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
+import { Upload } from "lucide-react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -17,6 +25,7 @@ const ProfileSchema = z.object({
 	district: z.string().min(1, "District is required"),
 	state: z.string().min(1, "State is required"),
 	phoneNumber: z.string().min(1, "Phone number is required"),
+	photoUrl: z.string().optional(),
 });
 
 type ProfileValues = z.infer<typeof ProfileSchema>;
@@ -33,6 +42,9 @@ export const Route = createFileRoute("/user-profile")({
 function UserProfilePage() {
 	const router = useRouter();
 	const queryClient = useQueryClient();
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [photoUrl, setPhotoUrl] = useState<string>("");
+	const [isUploading, setIsUploading] = useState(false);
 
 	const {
 		register,
@@ -46,8 +58,35 @@ function UserProfilePage() {
 			district: "",
 			state: "",
 			phoneNumber: "",
+			photoUrl: "",
 		},
 	});
+
+	async function handleUpload(file: File) {
+		setIsUploading(true);
+		try {
+			const formData = new FormData();
+			formData.append("file", file);
+			const res = await fetch(
+				`${env.VITE_SERVER_URL}/api/upload/profile-photo`,
+				{
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${useAuthStore.getState().accessToken}`,
+					},
+					body: formData,
+				},
+			);
+			if (!res.ok) throw new Error((await res.json()).error || "Upload failed");
+			const { url } = await res.json();
+			setPhotoUrl(url);
+			toast.success("Photo uploaded");
+		} catch (err) {
+			toast.error(err instanceof Error ? err.message : "Upload failed");
+		} finally {
+			setIsUploading(false);
+		}
+	}
 
 	const createMutation = useMutation(
 		trpc.profile.create.mutationOptions({
@@ -63,7 +102,7 @@ function UserProfilePage() {
 	);
 
 	function onSubmit(data: ProfileValues) {
-		createMutation.mutate(data);
+		createMutation.mutate({ ...data, photoUrl });
 	}
 
 	return (
@@ -77,6 +116,36 @@ function UserProfilePage() {
 					<p className="text-on-surface-variant text-sm">
 						Please fill in your details to continue
 					</p>
+				</div>
+
+				<div className="flex flex-col items-center gap-3">
+					<Avatar className="h-24 w-24">
+						{photoUrl && <AvatarImage src={photoUrl} alt="Profile photo" />}
+						<AvatarFallback className="bg-brown-200 text-2xl text-brown-800">
+							{photoUrl ? "" : "?"}
+						</AvatarFallback>
+					</Avatar>
+					<input
+						type="file"
+						accept="image/*"
+						className="hidden"
+						ref={fileInputRef}
+						onChange={(e) => {
+							const file = e.target.files?.[0];
+							if (file) handleUpload(file);
+						}}
+					/>
+					<Button
+						type="button"
+						variant="outline"
+						size="sm"
+						className="gap-2"
+						onClick={() => fileInputRef.current?.click()}
+						disabled={isUploading}
+					>
+						<Upload className="h-4 w-4" />
+						{isUploading ? "Uploading…" : "Upload Photo"}
+					</Button>
 				</div>
 
 				<form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">

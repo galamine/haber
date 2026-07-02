@@ -1,4 +1,8 @@
-import { Avatar, AvatarFallback } from "@haber-final/ui/components/avatar";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@haber-final/ui/components/avatar";
 import { Button } from "@haber-final/ui/components/button";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
 import {
@@ -61,6 +65,7 @@ type ChildProfile = {
 	consentStatus: string;
 	medicalHistory: Record<string, string | undefined>;
 	guardian: ChildGuard | null;
+	photoUrl: string | null;
 };
 
 const MEDICAL_FIELDS: { key: string; label: string }[] = [
@@ -171,6 +176,7 @@ function ChildProfilePage() {
 			<div className="mb-6 flex items-start justify-between">
 				<div className="flex items-center gap-4">
 					<Avatar className="h-16 w-16">
+						{c.photoUrl && <AvatarImage src={c.photoUrl} alt={c.fullName} />}
 						<AvatarFallback className="bg-brown-200 text-brown-800 text-lg">
 							{getInitials(c.fullName)}
 						</AvatarFallback>

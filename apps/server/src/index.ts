@@ -1,3 +1,4 @@
+import { hasPermission } from "@haber-final/api";
 import { createContext } from "@haber-final/api/context";
 import { logger } from "@haber-final/api/lib/logger";
 import { appRouter } from "@haber-final/api/routers/index";
@@ -6,10 +7,16 @@ import {
 	WebhookStartBody,
 } from "@haber-final/api/schemas/session-execution";
 import prisma from "@haber-final/db";
+import { PERMISSIONS } from "@haber-final/db/permissions";
 import { env } from "@haber-final/env/server";
 import { trpcServer } from "@hono/trpc-server";
+import { v2 as cloudinary } from "cloudinary";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+
+cloudinary.config({
+	cloudinary_url: env.CLOUDINARY_URL,
+});
 
 const app = new Hono();
 
@@ -134,6 +141,103 @@ app.post("/api/sessions/:id/complete", async (c) => {
 	});
 
 	return c.json(result);
+});
+
+app.post("/api/upload/child-photo", async (c) => {
+	const authContext = await createContext({ context: c });
+	if (authContext.auth === null) {
+		return c.json({ error: "Unauthorized" }, 401);
+	}
+
+	const hasIntake = await hasPermission(
+		{ auth: authContext.auth },
+		PERMISSIONS.CHILD_INTAKE,
+	);
+	if (!hasIntake) {
+		return c.json({ error: "Forbidden" }, 403);
+	}
+
+	const childId = c.req.query("childId");
+	if (!childId) {
+		return c.json({ error: "childId is required" }, 400);
+	}
+
+	const child = await prisma.child.findUnique({
+		where: { id: childId },
+		select: { clinicId: true },
+	});
+	if (!child) {
+		return c.json({ error: "Child not found" }, 404);
+	}
+	if (child.clinicId !== authContext.auth.tenantId) {
+		return c.json({ error: "Child does not belong to your clinic" }, 403);
+	}
+
+	const body = await c.req.parseBody();
+	const file = body.file;
+	if (!file || !(file instanceof File)) {
+		return c.json({ error: "No file provided" }, 400);
+	}
+
+	const MAX_SIZE = 5 * 1024 * 1024;
+	if (file.size > MAX_SIZE) {
+		return c.json({ error: "File size must be 5MB or less" }, 400);
+	}
+
+	if (!file.type.startsWith("image/")) {
+		return c.json({ error: "Only image files are allowed" }, 400);
+	}
+
+	const timestamp = Date.now();
+	const publicId = `child/${childId}/${timestamp}-${file.name}`;
+	const buffer = Buffer.from(await file.arrayBuffer());
+	const b64 = buffer.toString("base64");
+	const dataUri = `data:${file.type};base64,${b64}`;
+
+	const result = await cloudinary.uploader.upload(dataUri, {
+		public_id: publicId,
+		folder: "",
+		resource_type: "image",
+	});
+
+	return c.json({ url: result.secure_url });
+});
+
+app.post("/api/upload/profile-photo", async (c) => {
+	const authContext = await createContext({ context: c });
+	if (authContext.auth === null) {
+		return c.json({ error: "Unauthorized" }, 401);
+	}
+
+	const body = await c.req.parseBody();
+	const file = body.file;
+	if (!file || !(file instanceof File)) {
+		return c.json({ error: "No file provided" }, 400);
+	}
+
+	const MAX_SIZE = 5 * 1024 * 1024;
+	if (file.size > MAX_SIZE) {
+		return c.json({ error: "File size must be 5MB or less" }, 400);
+	}
+
+	if (!file.type.startsWith("image/")) {
+		return c.json({ error: "Only image files are allowed" }, 400);
+	}
+
+	const timestamp = Date.now();
+	const userId = authContext.auth.userId;
+	const publicId = `profile/${userId}/${timestamp}-${file.name}`;
+	const buffer = Buffer.from(await file.arrayBuffer());
+	const b64 = buffer.toString("base64");
+	const dataUri = `data:${file.type};base64,${b64}`;
+
+	const result = await cloudinary.uploader.upload(dataUri, {
+		public_id: publicId,
+		folder: "",
+		resource_type: "image",
+	});
+
+	return c.json({ url: result.secure_url });
 });
 
 app.onError((err, c) => {

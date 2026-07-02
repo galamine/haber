@@ -1,3 +1,9 @@
+import { env } from "@haber-final/env/web";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@haber-final/ui/components/avatar";
 import { Button } from "@haber-final/ui/components/button";
 import { Input } from "@haber-final/ui/components/input";
 import { Label } from "@haber-final/ui/components/label";
@@ -13,12 +19,13 @@ import { Textarea } from "@haber-final/ui/components/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
-import { useEffect } from "react";
+import { ArrowLeft, Upload } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/_authenticated/children/$childId/edit")({
@@ -40,6 +47,7 @@ const EditSchema = z.object({
 	priorDiagnoses: z.string().optional(),
 	familyHistory: z.string().optional(),
 	sensorySensitivities: z.string().optional(),
+	photoUrl: z.string().optional(),
 });
 
 type EditValues = z.infer<typeof EditSchema>;
@@ -48,6 +56,9 @@ function EditChildPage() {
 	const { childId } = Route.useParams();
 	const router = useRouter();
 	const queryClient = useQueryClient();
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [photoUrl, setPhotoUrl] = useState<string>("");
+	const [isUploading, setIsUploading] = useState(false);
 
 	const { data: child, isLoading } = useQuery(
 		trpc.child.get.queryOptions({ childId }),
@@ -69,12 +80,14 @@ function EditChildPage() {
 			address: "",
 			spokenLanguages: "",
 			school: "",
+			photoUrl: "",
 		},
 	});
 
 	useEffect(() => {
 		if (!child) return;
 		const medical = child.medicalHistory as Record<string, string | undefined>;
+		setPhotoUrl(child.photoUrl ?? "");
 		reset({
 			fullName: child.fullName,
 			dob: new Date(child.dob).toISOString().split("T")[0],
@@ -90,8 +103,35 @@ function EditChildPage() {
 			priorDiagnoses: medical.priorDiagnoses ?? "",
 			familyHistory: medical.familyHistory ?? "",
 			sensorySensitivities: medical.sensorySensitivities ?? "",
+			photoUrl: child.photoUrl ?? "",
 		});
 	}, [child, reset]);
+
+	async function handleUpload(file: File) {
+		setIsUploading(true);
+		try {
+			const formData = new FormData();
+			formData.append("file", file);
+			const res = await fetch(
+				`${env.VITE_SERVER_URL}/api/upload/child-photo?childId=${childId}`,
+				{
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${useAuthStore.getState().accessToken}`,
+					},
+					body: formData,
+				},
+			);
+			if (!res.ok) throw new Error((await res.json()).error || "Upload failed");
+			const { url } = await res.json();
+			setPhotoUrl(url);
+			toast.success("Photo uploaded");
+		} catch (err) {
+			toast.error(err instanceof Error ? err.message : "Upload failed");
+		} finally {
+			setIsUploading(false);
+		}
+	}
 
 	const updateMutation = useMutation(trpc.child.update.mutationOptions());
 	const updateMedicalMutation = useMutation(
@@ -112,6 +152,7 @@ function EditChildPage() {
 					.map((s) => s.trim())
 					.filter(Boolean),
 				school: values.school || undefined,
+				photoUrl: photoUrl || undefined,
 			});
 
 			await updateMedicalMutation.mutateAsync({
@@ -181,6 +222,43 @@ function EditChildPage() {
 			<h1 className="mb-6 font-semibold text-2xl text-on-surface">
 				Edit Child Record
 			</h1>
+
+			<div className="mb-6 flex flex-col items-center gap-3">
+				<Avatar className="h-24 w-24">
+					{photoUrl && <AvatarImage src={photoUrl} alt={child?.fullName} />}
+					<AvatarFallback className="bg-brown-200 text-2xl text-brown-800">
+						{photoUrl
+							? ""
+							: (child?.fullName
+									?.split(" ")
+									.map((n) => n[0])
+									.join("")
+									.slice(0, 2)
+									.toUpperCase() ?? "?")}
+					</AvatarFallback>
+				</Avatar>
+				<input
+					type="file"
+					accept="image/*"
+					className="hidden"
+					ref={fileInputRef}
+					onChange={(e) => {
+						const file = e.target.files?.[0];
+						if (file) handleUpload(file);
+					}}
+				/>
+				<Button
+					type="button"
+					variant="outline"
+					size="sm"
+					className="gap-2"
+					onClick={() => fileInputRef.current?.click()}
+					disabled={isUploading}
+				>
+					<Upload className="h-4 w-4" />
+					{isUploading ? "Uploading…" : "Upload Photo"}
+				</Button>
+			</div>
 
 			<div className="max-w-2xl">
 				<form onSubmit={handleSubmit(onSubmit)}>

@@ -1,4 +1,10 @@
 import { MedicalHistoryInput } from "@haber-final/api/schemas/child";
+import { env } from "@haber-final/env/web";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@haber-final/ui/components/avatar";
 import { Button } from "@haber-final/ui/components/button";
 import { Input } from "@haber-final/ui/components/input";
 import { Label } from "@haber-final/ui/components/label";
@@ -14,13 +20,14 @@ import { cn } from "@haber-final/ui/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { Check, ChevronRight, X } from "lucide-react";
-import { useState } from "react";
+import { Check, ChevronRight, Upload, X } from "lucide-react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { z } from "zod";
 
+import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/_authenticated/children/new")({
@@ -38,6 +45,7 @@ const ProfileSchema = z.object({
 	addressStreet: z.string().optional(),
 	spokenLanguages: z.string().min(1, "At least one language is required"),
 	school: z.string().optional(),
+	photoUrl: z.string().optional(),
 });
 
 type ProfileValues = z.infer<typeof ProfileSchema>;
@@ -134,8 +142,22 @@ function Step1Profile({
 	onNext,
 }: {
 	initial: ProfileValues | null;
-	onNext: (data: ProfileValues) => void;
+	onNext: (data: ProfileValues, photoFile: File | null) => void;
 }) {
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [photoPreview, setPhotoPreview] = useState<string>(
+		initial?.photoUrl ?? "",
+	);
+	const [photoFile, setPhotoFile] = useState<File | null>(null);
+	const [isUploading, setIsUploading] = useState(false);
+
+	function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const file = e.target.files?.[0];
+		if (!file) return;
+		setPhotoFile(file);
+		setPhotoPreview(URL.createObjectURL(file));
+	}
+
 	const {
 		register,
 		handleSubmit,
@@ -152,11 +174,16 @@ function Step1Profile({
 			addressStreet: "",
 			spokenLanguages: "",
 			school: "",
+			photoUrl: "",
 		},
 	});
 
+	function onSubmit(data: ProfileValues) {
+		onNext({ ...data, photoUrl: photoPreview }, photoFile);
+	}
+
 	return (
-		<form onSubmit={handleSubmit(onNext)}>
+		<form onSubmit={handleSubmit(onSubmit)}>
 			<div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
 				<div className="border-outline-variant border-b px-6 py-4">
 					<h2 className="font-semibold text-on-surface text-xl">
@@ -165,6 +192,35 @@ function Step1Profile({
 					<p className="mt-1 text-on-surface-variant text-sm">
 						Basic information about the child
 					</p>
+				</div>
+
+				<div className="flex flex-col items-center gap-3 border-outline-variant border-b p-6">
+					<Avatar className="h-24 w-24">
+						{photoPreview && (
+							<AvatarImage src={photoPreview} alt="Child photo" />
+						)}
+						<AvatarFallback className="bg-brown-200 text-2xl text-brown-800">
+							{photoPreview ? "" : "?"}
+						</AvatarFallback>
+					</Avatar>
+					<input
+						type="file"
+						accept="image/*"
+						className="hidden"
+						ref={fileInputRef}
+						onChange={handleFileChange}
+					/>
+					<Button
+						type="button"
+						variant="outline"
+						size="sm"
+						className="gap-2"
+						onClick={() => fileInputRef.current?.click()}
+						disabled={isUploading}
+					>
+						<Upload className="h-4 w-4" />
+						{isUploading ? "Uploading…" : "Upload Photo"}
+					</Button>
 				</div>
 
 				<div className="grid grid-cols-1 gap-x-6 gap-y-5 p-6 md:grid-cols-2">
@@ -715,6 +771,7 @@ function NewChildPage() {
 	const queryClient = useQueryClient();
 	const [step, setStep] = useState(1);
 	const [profileData, setProfileData] = useState<ProfileValues | null>(null);
+	const [photoFile, setPhotoFile] = useState<File | null>(null);
 	const [medicalData, setMedicalData] = useState<MedicalValues | null>(null);
 	const [createdChild, setCreatedChild] = useState<CreatedChild | null>(null);
 	const [therapistData, setTherapistData] =
@@ -722,18 +779,41 @@ function NewChildPage() {
 	const [isCreating, setIsCreating] = useState(false);
 
 	const createChildMutation = useMutation(trpc.child.create.mutationOptions());
+	const updateChildMutation = useMutation(trpc.child.update.mutationOptions());
 	const assignTherapistMutation = useMutation(
 		trpc.child.assignTherapist.mutationOptions(),
 	);
 
-	function handleStep1(data: ProfileValues) {
+	function handleStep1(data: ProfileValues, file: File | null) {
 		setProfileData(data);
+		setPhotoFile(file);
 		setStep(2);
 	}
 
 	function handleStep2(data: MedicalValues) {
 		setMedicalData(data);
 		setStep(3);
+	}
+
+	async function uploadChildPhoto(childId: string, file: File) {
+		const formData = new FormData();
+		formData.append("file", file);
+		const res = await fetch(
+			`${env.VITE_SERVER_URL}/api/upload/child-photo?childId=${childId}`,
+			{
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${useAuthStore.getState().accessToken}`,
+				},
+				body: formData,
+			},
+		);
+		if (!res.ok) {
+			const error = await res.json();
+			throw new Error(error.error || "Photo upload failed");
+		}
+		const { url } = await res.json();
+		return url;
 	}
 
 	async function handleStep3(guardian: GuardianValues) {
@@ -757,6 +837,22 @@ function NewChildPage() {
 
 			if (!childWithGuardian.guardian) {
 				throw new Error("Failed to create guardian record");
+			}
+
+			if (photoFile) {
+				try {
+					const photoUrl = await uploadChildPhoto(
+						childWithGuardian.id,
+						photoFile,
+					);
+					await updateChildMutation.mutateAsync({
+						id: childWithGuardian.id,
+						photoUrl,
+					});
+				} catch (photoErr) {
+					console.error("Photo upload failed:", photoErr);
+					toast.warning("Child created but photo upload failed");
+				}
 			}
 
 			setCreatedChild({

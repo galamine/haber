@@ -16,6 +16,7 @@
 		"@hono/node-server": "^1.14.4",
 		"@hono/trpc-server": "^0.4.0",
 		"@trpc/server": "catalog:",
+		"cloudinary": "^2.5.0",
 		"dotenv": "catalog:",
 		"hono": "catalog:",
 		"zod": "catalog:"

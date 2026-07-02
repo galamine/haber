@@ -6,6 +6,7 @@ export const CreateProfileInput = z.object({
 	district: z.string().min(1, "District is required"),
 	state: z.string().min(1, "State is required"),
 	phoneNumber: z.string().min(1, "Phone number is required"),
+	photoUrl: z.string().optional(),
 });
 
 export const UpdateProfileInput = CreateProfileInput.partial();

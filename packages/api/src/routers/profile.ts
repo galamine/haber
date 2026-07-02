@@ -32,6 +32,7 @@ export const profileRouter: ReturnType<typeof router> = router({
 					district: input.district,
 					state: input.state,
 					phoneNumber: input.phoneNumber,
+					photoUrl: input.photoUrl,
 				},
 			});
 		}),
@@ -59,6 +60,7 @@ export const profileRouter: ReturnType<typeof router> = router({
 					...(input.phoneNumber !== undefined && {
 						phoneNumber: input.phoneNumber,
 					}),
+					...(input.photoUrl !== undefined && { photoUrl: input.photoUrl }),
 				},
 			});
 		}),
