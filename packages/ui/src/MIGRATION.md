@@ -257,8 +257,7 @@ Fix any TypeScript errors from changed component props (most likely in sidebar o
 4. AppShell sidebar opens/closes, nav links active state works
 5. `/settings/staff` renders the table, invite button opens modal
 6. Dark mode toggle switches `.dark` on `<html>`, all semantic colors respond
-7. `/ui-test` renders without crashes
-8. No missing icon errors (lucide-react icons in sidebar/components resolve)
+7. No missing icon errors (lucide-react icons in sidebar/components resolve)
 
 ---
 
