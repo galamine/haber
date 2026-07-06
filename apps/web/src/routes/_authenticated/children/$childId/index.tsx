@@ -120,6 +120,15 @@ function ChildProfilePage() {
 		trpc.consent.getStatus.queryOptions({ childId }),
 	);
 
+	const initialAssessment = useQuery({
+		...trpc.assessment.get.queryOptions({ childId }),
+		retry: false,
+		meta: { suppressErrorToast: true },
+	});
+	const activePlan = useQuery(
+		trpc.assessment.getActivePlan.queryOptions({ childId }),
+	);
+
 	const withdrawMutation = useMutation(
 		trpc.consent.withdraw.mutationOptions({
 			onSuccess: () => {
@@ -292,6 +301,23 @@ function ChildProfilePage() {
 									}
 								>
 									Manage Consent
+								</Button>
+								<Button
+									className="w-full"
+									disabled={!initialAssessment.data || !activePlan.data}
+									title={
+										!initialAssessment.data || !activePlan.data
+											? "Initial assessment and active treatment plan required"
+											: undefined
+									}
+									onClick={() =>
+										router.navigate({
+											to: "/children/$childId/followup/new",
+											params: { childId },
+										})
+									}
+								>
+									Start Follow-up
 								</Button>
 							</div>
 							{!intake?.complete && intake?.missingFields.length ? (
