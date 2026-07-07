@@ -24,6 +24,54 @@ import {
 	UpdateSensoryRoomInput,
 } from "../schemas/clinic";
 
+export async function computeClinicSummaries() {
+	const clinics = await prisma.clinic.findMany({ where: { deletedAt: null } });
+	const now = new Date();
+	const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+	const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+	const clinicData = await Promise.all(
+		clinics.map(async (clinic) => {
+			const [activeChildren, activeTherapists, sessionsThisMonth] =
+				await Promise.all([
+					prisma.child.count({
+						where: { clinicId: clinic.id, deletedAt: null },
+					}),
+					prisma.user.count({
+						where: { clinicId: clinic.id, role: "THERAPIST" },
+					}),
+					prisma.therapySession.count({
+						where: {
+							plan: { clinicId: clinic.id },
+							scheduledDate: { gte: startOfMonth, lt: endOfMonth },
+						},
+					}),
+				]);
+			return {
+				name: clinic.name,
+				createdAt: clinic.createdAt,
+				activeChildren,
+				activeTherapists,
+				sessionsThisMonth,
+			};
+		}),
+	);
+
+	const newClinicsThisMonth = clinics.filter(
+		(c) => c.createdAt >= startOfMonth,
+	).length;
+
+	return {
+		clinicData,
+		totalChildren: clinicData.reduce((s, c) => s + c.activeChildren, 0),
+		totalSessionsThisMonth: clinicData.reduce(
+			(s, c) => s + c.sessionsThisMonth,
+			0,
+		),
+		newClinicsThisMonth,
+	};
+}
+
 export const clinicRouter: ReturnType<typeof router> = router({
 	// ── SuperAdmin procedures ────────────────────────────────────────────────
 
@@ -117,41 +165,7 @@ export const clinicRouter: ReturnType<typeof router> = router({
 			return prisma.clinic.update({ where: { id }, data });
 		}),
 
-	platformSummary: adminProcedure.query(async () => {
-		const clinics = await prisma.clinic.findMany({
-			where: { deletedAt: null },
-		});
-		const now = new Date();
-		const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-		const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-
-		return Promise.all(
-			clinics.map(async (clinic) => {
-				const [activeChildren, activeTherapists, sessionsThisMonth] =
-					await Promise.all([
-						prisma.child.count({
-							where: { clinicId: clinic.id, deletedAt: null },
-						}),
-						prisma.user.count({
-							where: { clinicId: clinic.id, role: "THERAPIST" },
-						}),
-						prisma.therapySession.count({
-							where: {
-								plan: { clinicId: clinic.id },
-								scheduledDate: { gte: startOfMonth, lt: endOfMonth },
-							},
-						}),
-					]);
-				return {
-					name: clinic.name,
-					createdAt: clinic.createdAt,
-					activeChildren,
-					activeTherapists,
-					sessionsThisMonth,
-				};
-			}),
-		);
-	}),
+	platformSummary: adminProcedure.query(() => computeClinicSummaries()),
 
 	// ── ClinicAdmin procedures ───────────────────────────────────────────────
 
