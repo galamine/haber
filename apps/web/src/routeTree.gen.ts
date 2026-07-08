@@ -38,6 +38,7 @@ import { Route as AuthenticatedSettingsDepartmentsNewRouteImport } from './route
 import { Route as AuthenticatedSettingsDepartmentsDepartmentIdRouteImport } from './routes/_authenticated/settings/departments/$departmentId'
 import { Route as AuthenticatedPlatformGamesNewRouteImport } from './routes/_authenticated/platform/games/new'
 import { Route as AuthenticatedPlatformClinicsNewRouteImport } from './routes/_authenticated/platform/clinics/new'
+import { Route as AuthenticatedChildrenChildIdReportRouteImport } from './routes/_authenticated/children/$childId/report'
 import { Route as AuthenticatedChildrenChildIdEditRouteImport } from './routes/_authenticated/children/$childId/edit'
 import { Route as AuthenticatedChildrenChildIdDashboardRouteImport } from './routes/_authenticated/children/$childId/dashboard'
 import { Route as AuthenticatedChildrenChildIdConsentRouteImport } from './routes/_authenticated/children/$childId/consent'
@@ -216,6 +217,12 @@ const AuthenticatedPlatformClinicsNewRoute =
     path: '/platform/clinics/new',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedChildrenChildIdReportRoute =
+  AuthenticatedChildrenChildIdReportRouteImport.update({
+    id: '/children/$childId/report',
+    path: '/children/$childId/report',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedChildrenChildIdEditRoute =
   AuthenticatedChildrenChildIdEditRouteImport.update({
     id: '/children/$childId/edit',
@@ -307,6 +314,7 @@ export interface FileRoutesByFullPath {
   '/children/$childId/consent': typeof AuthenticatedChildrenChildIdConsentRoute
   '/children/$childId/dashboard': typeof AuthenticatedChildrenChildIdDashboardRoute
   '/children/$childId/edit': typeof AuthenticatedChildrenChildIdEditRoute
+  '/children/$childId/report': typeof AuthenticatedChildrenChildIdReportRoute
   '/platform/clinics/new': typeof AuthenticatedPlatformClinicsNewRoute
   '/platform/games/new': typeof AuthenticatedPlatformGamesNewRoute
   '/settings/departments/$departmentId': typeof AuthenticatedSettingsDepartmentsDepartmentIdRoute
@@ -349,6 +357,7 @@ export interface FileRoutesByTo {
   '/children/$childId/consent': typeof AuthenticatedChildrenChildIdConsentRoute
   '/children/$childId/dashboard': typeof AuthenticatedChildrenChildIdDashboardRoute
   '/children/$childId/edit': typeof AuthenticatedChildrenChildIdEditRoute
+  '/children/$childId/report': typeof AuthenticatedChildrenChildIdReportRoute
   '/platform/clinics/new': typeof AuthenticatedPlatformClinicsNewRoute
   '/platform/games/new': typeof AuthenticatedPlatformGamesNewRoute
   '/settings/departments/$departmentId': typeof AuthenticatedSettingsDepartmentsDepartmentIdRoute
@@ -393,6 +402,7 @@ export interface FileRoutesById {
   '/_authenticated/children/$childId/consent': typeof AuthenticatedChildrenChildIdConsentRoute
   '/_authenticated/children/$childId/dashboard': typeof AuthenticatedChildrenChildIdDashboardRoute
   '/_authenticated/children/$childId/edit': typeof AuthenticatedChildrenChildIdEditRoute
+  '/_authenticated/children/$childId/report': typeof AuthenticatedChildrenChildIdReportRoute
   '/_authenticated/platform/clinics/new': typeof AuthenticatedPlatformClinicsNewRoute
   '/_authenticated/platform/games/new': typeof AuthenticatedPlatformGamesNewRoute
   '/_authenticated/settings/departments/$departmentId': typeof AuthenticatedSettingsDepartmentsDepartmentIdRoute
@@ -437,6 +447,7 @@ export interface FileRouteTypes {
     | '/children/$childId/consent'
     | '/children/$childId/dashboard'
     | '/children/$childId/edit'
+    | '/children/$childId/report'
     | '/platform/clinics/new'
     | '/platform/games/new'
     | '/settings/departments/$departmentId'
@@ -479,6 +490,7 @@ export interface FileRouteTypes {
     | '/children/$childId/consent'
     | '/children/$childId/dashboard'
     | '/children/$childId/edit'
+    | '/children/$childId/report'
     | '/platform/clinics/new'
     | '/platform/games/new'
     | '/settings/departments/$departmentId'
@@ -522,6 +534,7 @@ export interface FileRouteTypes {
     | '/_authenticated/children/$childId/consent'
     | '/_authenticated/children/$childId/dashboard'
     | '/_authenticated/children/$childId/edit'
+    | '/_authenticated/children/$childId/report'
     | '/_authenticated/platform/clinics/new'
     | '/_authenticated/platform/games/new'
     | '/_authenticated/settings/departments/$departmentId'
@@ -761,6 +774,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPlatformClinicsNewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/children/$childId/report': {
+      id: '/_authenticated/children/$childId/report'
+      path: '/children/$childId/report'
+      fullPath: '/children/$childId/report'
+      preLoaderRoute: typeof AuthenticatedChildrenChildIdReportRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/children/$childId/edit': {
       id: '/_authenticated/children/$childId/edit'
       path: '/children/$childId/edit'
@@ -861,6 +881,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedChildrenChildIdConsentRoute: typeof AuthenticatedChildrenChildIdConsentRoute
   AuthenticatedChildrenChildIdDashboardRoute: typeof AuthenticatedChildrenChildIdDashboardRoute
   AuthenticatedChildrenChildIdEditRoute: typeof AuthenticatedChildrenChildIdEditRoute
+  AuthenticatedChildrenChildIdReportRoute: typeof AuthenticatedChildrenChildIdReportRoute
   AuthenticatedPlatformClinicsNewRoute: typeof AuthenticatedPlatformClinicsNewRoute
   AuthenticatedPlatformGamesNewRoute: typeof AuthenticatedPlatformGamesNewRoute
   AuthenticatedSettingsDepartmentsDepartmentIdRoute: typeof AuthenticatedSettingsDepartmentsDepartmentIdRoute
@@ -901,6 +922,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedChildrenChildIdDashboardRoute:
     AuthenticatedChildrenChildIdDashboardRoute,
   AuthenticatedChildrenChildIdEditRoute: AuthenticatedChildrenChildIdEditRoute,
+  AuthenticatedChildrenChildIdReportRoute:
+    AuthenticatedChildrenChildIdReportRoute,
   AuthenticatedPlatformClinicsNewRoute: AuthenticatedPlatformClinicsNewRoute,
   AuthenticatedPlatformGamesNewRoute: AuthenticatedPlatformGamesNewRoute,
   AuthenticatedSettingsDepartmentsDepartmentIdRoute:

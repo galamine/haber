@@ -2,7 +2,7 @@ import { Button } from "@haber-final/ui/components/button";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Printer } from "lucide-react";
 import { useState } from "react";
 import { GameScoreTrendChart } from "@/features/child-dashboard/GameScoreTrendChart";
 import { MilestoneRadarChart } from "@/features/child-dashboard/MilestoneRadarChart";
@@ -119,6 +119,19 @@ function ChildDashboardPage() {
 					attendancePct={snapshot.attendancePct}
 					photoUrl={child?.photoUrl}
 				/>
+
+				<div className="mb-4 flex justify-end">
+					<Button variant="outline" asChild>
+						<Link
+							to="/children/$childId/report"
+							params={{ childId }}
+							className="gap-2"
+						>
+							<Printer className="h-4 w-4" />
+							Export Report
+						</Link>
+					</Button>
+				</div>
 
 				<div className="grid gap-6 lg:grid-cols-3">
 					<div className="space-y-6 lg:col-span-2">

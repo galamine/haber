@@ -10,34 +10,63 @@ export const reportRouter: ReturnType<typeof router> = router({
 			await assertAssignedTherapist(input.childId, ctx);
 			const child = await getChildForRead(input.childId, ctx);
 
-			const [assessments, followUps, goals, sessions] = await Promise.all([
-				prisma.initialAssessment.findMany({
-					where: { childId: input.childId },
-					orderBy: { versionNumber: "asc" },
-					include: { sensoryProfiles: true },
-				}),
-				prisma.followUpAssessment.findMany({
-					where: { childId: input.childId },
-					orderBy: { versionNumber: "asc" },
-					include: {
-						sensoryProfiles: true,
-						progressEntries: true,
-					},
-				}),
-				prisma.goal.findMany({
-					where: {
-						plan: {
-							childId: input.childId,
+			const [assessments, followUps, goals, sessions, activePlan] =
+				await Promise.all([
+					prisma.initialAssessment.findMany({
+						where: { childId: input.childId },
+						orderBy: { versionNumber: "asc" },
+						include: { sensoryProfiles: true },
+					}),
+					prisma.followUpAssessment.findMany({
+						where: { childId: input.childId },
+						orderBy: { versionNumber: "asc" },
+						include: {
+							sensoryProfiles: true,
+							progressEntries: true,
 						},
-					},
-					include: { progressEntries: true },
-				}),
-				prisma.therapySession.findMany({
-					where: { childId: input.childId },
-					orderBy: { scheduledDate: "asc" },
-					include: { result: true },
-				}),
-			]);
+					}),
+					prisma.goal.findMany({
+						where: {
+							plan: {
+								childId: input.childId,
+							},
+						},
+						include: { progressEntries: true },
+					}),
+					prisma.therapySession.findMany({
+						where: { childId: input.childId },
+						orderBy: { scheduledDate: "asc" },
+						include: {
+							result: true,
+							gameAssignments: {
+								include: {
+									gameVersion: {
+										include: { game: { select: { name: true } } },
+									},
+								},
+							},
+						},
+					}),
+					prisma.treatmentPlan.findFirst({
+						where: { childId: input.childId, isActive: true },
+						select: {
+							name: true,
+							startDate: true,
+							projectedEndDate: true,
+							status: true,
+						},
+					}),
+				]);
+
+			const assignments = await prisma.childTherapistAssignment.findMany({
+				where: { childId: input.childId },
+				select: { therapistId: true },
+			});
+			const therapistIds = assignments.map((a) => a.therapistId);
+			const therapists = await prisma.user.findMany({
+				where: { id: { in: therapistIds } },
+				select: { id: true, profile: { select: { name: true } } },
+			});
 
 			return {
 				child: {
@@ -47,11 +76,17 @@ export const reportRouter: ReturnType<typeof router> = router({
 					dob: child.dob,
 					sex: child.sex,
 				},
+				activePlan: activePlan ?? null,
+				assignedTherapists: therapists
+					.map((t) => t.profile?.name)
+					.filter(Boolean),
 				assessments: assessments.map((a) => ({
 					id: a.id,
 					versionNumber: a.versionNumber,
 					createdAt: a.createdAt,
 					sectionC: a.sectionC,
+					therapistName: (a.sectionH as Record<string, unknown>)
+						?.therapistName as string | null,
 					sensoryProfiles: a.sensoryProfiles.map((sp) => ({
 						systemId: sp.systemId,
 						rating: sp.rating,
@@ -66,6 +101,8 @@ export const reportRouter: ReturnType<typeof router> = router({
 					sectionC: fu.sectionC,
 					sectionD: fu.sectionD,
 					sectionE: fu.sectionE,
+					therapistName: (fu.sectionF as Record<string, unknown>)
+						?.therapistName as string | null,
 					sensoryProfiles: fu.sensoryProfiles.map((sp) => ({
 						systemId: sp.systemId,
 						rating: sp.rating,
@@ -104,6 +141,11 @@ export const reportRouter: ReturnType<typeof router> = router({
 						status: s.status,
 						notes: s.notes,
 						score: scored?.score ?? null,
+						games: s.gameAssignments.map((ga) => ({
+							name: ga.gameVersion.game.name,
+							score:
+								(ga.result?.scored as { score: number } | null)?.score ?? null,
+						})),
 					};
 				}),
 			};

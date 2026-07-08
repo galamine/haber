@@ -23,9 +23,23 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function DashboardPage() {
 	const role = useAuthStore((s) => s.role);
-	const { data, isLoading } = useQuery(
-		trpc.dashboard.clinicSummary.queryOptions(),
-	);
+	const isAdmin = role === "CLINIC_ADMIN";
+
+	const { data, isLoading } = useQuery({
+		...trpc.dashboard.clinicSummary.queryOptions(),
+		enabled: isAdmin,
+	});
+
+	if (!isAdmin) {
+		return (
+			<div className="p-8">
+				<h1 className="font-semibold text-2xl text-on-surface">Dashboard</h1>
+				<p className="mt-2 text-on-surface-variant">
+					Welcome back. More content coming soon.
+				</p>
+			</div>
+		);
+	}
 
 	if (isLoading) {
 		return (
@@ -46,33 +60,6 @@ function DashboardPage() {
 
 	if (!data) {
 		return null;
-	}
-
-	const isTherapist = role === "THERAPIST";
-
-	if (isTherapist) {
-		return (
-			<div className="space-y-6 p-8">
-				<h1 className="font-semibold text-2xl text-on-surface">Dashboard</h1>
-				<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-					<StatCard
-						title="Sessions Today"
-						value={data.sessionsToday.total}
-						icon={Calendar}
-					/>
-					<StatCard
-						title="Active Children"
-						value={data.activeChildren}
-						icon={Users}
-					/>
-					<StatCard
-						title="Plan Adherence"
-						value={`${data.planAdherenceRate.toFixed(1)}%`}
-						icon={TrendingUp}
-					/>
-				</div>
-			</div>
-		);
 	}
 
 	return (
