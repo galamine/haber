@@ -205,6 +205,14 @@
 	--chart-3: #f59e0b;
 	--chart-4: #ef4444;
 	--chart-5: #06b6d4;
+	--chart-6: #8b5cf6;
+	--chart-7: #ec4899;
+
+	/* Session Calendar Colors */
+	--session-color-pending: #dbeafe;
+	--session-color-completed: #dcfce7;
+	--session-color-absent: #fee2e2;
+	--session-color-manually-closed: #f3f4f6;
 
 	/* Radius */
 	--radius: 10px;
@@ -329,6 +337,8 @@
 	--color-chart-3: var(--chart-3);
 	--color-chart-4: var(--chart-4);
 	--color-chart-5: var(--chart-5);
+	--color-chart-6: var(--chart-6);
+	--color-chart-7: var(--chart-7);
 	--color-sidebar: var(--sidebar);
 	--color-sidebar-foreground: var(--sidebar-foreground);
 	--color-sidebar-primary: var(--sidebar-primary);
