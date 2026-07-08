@@ -61,7 +61,7 @@ TanStack Router uses file-based routing. Add a file to `apps/web/src/routes/` �
 - `@haber-final/env/server` — `DATABASE_URL`, `CORS_ORIGIN`, `NODE_ENV`
 - `@haber-final/env/web` — `VITE_SERVER_URL` (must be prefixed `VITE_`)
 
-Add new vars to the appropriate file and the corresponding `.env` (`apps/server/.env` or `apps/web/.env`).
+Add new vars to the appropriate file and the corresponding `.env` (`apps/server/.env` or `apps/web/.env`). When creating or adding an environment variable, **always mention and document it in the corresponding `.env.example` file properly** (with clear comments and example values).
 
 ### UI components
 - **Shared primitives** (used across apps): add to `packages/ui` via `npx shadcn@latest add <component> -c packages/ui`, import as `@haber-final/ui/components/<name>`
