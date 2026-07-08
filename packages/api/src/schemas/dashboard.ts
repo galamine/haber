@@ -90,17 +90,33 @@ export const ChildSnapshotSchema = z.object({
 
 export const ClinicSummarySchema = z.object({
 	activeChildren: z.number(),
-	sessionsToday: z.number(),
+	sessionsToday: z.object({
+		total: z.number(),
+		pending: z.number(),
+		inProgress: z.number(),
+		completed: z.number(),
+	}),
 	sessionsThisWeek: z.number(),
 	roomUtilisation: z.object({
 		booked: z.number(),
 		total: z.number(),
+		rooms: z.array(
+			z.object({
+				id: z.string(),
+				name: z.string(),
+				code: z.string(),
+				status: z.enum(["ACTIVE", "MAINTENANCE"]),
+				bookedToday: z.boolean(),
+				occupyingTherapist: z.string().nullable(),
+			}),
+		),
 	}),
 	therapistLoad: z.array(
 		z.object({
 			therapistId: z.string(),
 			name: z.string(),
-			count: z.number(),
+			assignedToday: z.number(),
+			completedToday: z.number(),
 		}),
 	),
 	planAdherenceRate: z.number(),
@@ -111,21 +127,4 @@ export const ClinicSummarySchema = z.object({
 			sessionCount: z.number(),
 		}),
 	),
-});
-
-// ── Platform summary ───────────────────────────────────────────────────────
-
-export const PlatformSummarySchema = z.object({
-	clinicData: z.array(
-		z.object({
-			name: z.string(),
-			createdAt: z.date(),
-			activeChildren: z.number(),
-			activeTherapists: z.number(),
-			sessionsThisMonth: z.number(),
-		}),
-	),
-	totalChildren: z.number(),
-	totalSessionsThisMonth: z.number(),
-	newClinicsThisMonth: z.number(),
 });

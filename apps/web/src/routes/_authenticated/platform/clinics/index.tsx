@@ -105,14 +105,14 @@ function ClinicsListPage() {
 
 				{isLoading ? (
 					<ClinicsListSkeleton />
-				) : !data?.length ? (
+				) : !data?.clinicData?.length ? (
 					<div className="flex flex-col items-center justify-center gap-3 py-16 text-on-surface-variant">
 						<Building2 className="h-8 w-8" />
 						<p className="text-sm">No clinics registered.</p>
 					</div>
 				) : (
 					<div className="divide-y divide-outline-variant">
-						{data.map((clinic, i) => (
+						{data.clinicData.map((clinic, i) => (
 							<ClinicRow key={i} clinic={clinic} />
 						))}
 					</div>

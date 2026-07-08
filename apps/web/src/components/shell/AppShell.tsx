@@ -74,6 +74,12 @@ const NAV_ITEMS: NavItem[] = [
 		roles: ["SUPER_ADMIN"],
 	},
 	{
+		label: "Dashboard",
+		to: "/platform/dashboard",
+		icon: <LayoutDashboard className="h-4 w-4" />,
+		roles: ["SUPER_ADMIN"],
+	},
+	{
 		label: "Staff",
 		to: "/settings/staff",
 		icon: <Users className="h-4 w-4" />,

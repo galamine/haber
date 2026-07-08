@@ -367,105 +367,175 @@ export const dashboardRouter: ReturnType<typeof router> = router({
 		endOfWeek.setDate(startOfWeek.getDate() + 6);
 		endOfWeek.setHours(23, 59, 59, 999);
 
-		const [activeChildren, sessionsToday, sessionsThisWeek, rooms] =
-			await Promise.all([
-				prisma.child.count({
-					where: { clinicId, deletedAt: null },
-				}),
-				prisma.therapySession.count({
-					where: {
-						plan: { clinicId },
-						scheduledDate: { gte: today, lt: tomorrow },
+		const [activeChildren, sessionsThisWeek] = await Promise.all([
+			prisma.child.count({
+				where: { clinicId, deletedAt: null },
+			}),
+			prisma.therapySession.count({
+				where: {
+					plan: { clinicId },
+					scheduledDate: {
+						gte: startOfWeek,
+						lte: endOfWeek,
 					},
-				}),
-				prisma.therapySession.count({
-					where: {
-						plan: { clinicId },
-						scheduledDate: {
-							gte: startOfWeek,
-							lte: endOfWeek,
-						},
-					},
-				}),
-				prisma.sensoryRoom.findMany({
-					where: { clinicId, status: "ACTIVE" },
-					select: { id: true },
-				}),
-			]);
+				},
+			}),
+		]);
 
-		const totalRooms = rooms.length;
-		const bookedToday = await prisma.roomBooking.count({
+		const todaySessionsByStatus = await prisma.therapySession.groupBy({
+			by: ["status"],
 			where: {
-				roomId: { in: rooms.map((r) => r.id) },
+				plan: { clinicId },
 				scheduledDate: { gte: today, lt: tomorrow },
 			},
+			_count: true,
+		});
+		const sessionsToday = {
+			total: todaySessionsByStatus.reduce((s, g) => s + g._count, 0),
+			pending:
+				todaySessionsByStatus.find((g) => g.status === "PENDING")?._count ?? 0,
+			inProgress:
+				todaySessionsByStatus.find((g) => g.status === "IN_PROGRESS")?._count ??
+				0,
+			completed:
+				todaySessionsByStatus.find((g) => g.status === "COMPLETED")?._count ??
+				0,
+		};
+
+		const allRooms = await prisma.sensoryRoom.findMany({
+			where: { clinicId },
+			select: { id: true, name: true, code: true, status: true },
+		});
+		const todayBookings = await prisma.roomBooking.findMany({
+			where: {
+				roomId: { in: allRooms.map((r) => r.id) },
+				scheduledDate: { gte: today, lt: tomorrow },
+			},
+			select: { roomId: true, claimedById: true },
 		});
 
-		const [therapistSessions, weekSessions, categoryActivity] =
-			await Promise.all([
-				prisma.therapySession.groupBy({
-					by: ["assignedTherapistId"],
-					where: {
-						plan: { clinicId },
-						scheduledDate: { gte: today, lt: tomorrow },
-						assignedTherapistId: { not: null },
+		const bookingByRoom = new Map(
+			todayBookings.map((b) => [b.roomId, b.claimedById]),
+		);
+		const bookedRoomIds = new Set(todayBookings.map((b) => b.roomId));
+
+		const therapistIdsAssigned = [
+			...new Set(
+				todayBookings
+					.map((b) => b.claimedById)
+					.filter((id): id is string => id !== null),
+			),
+		];
+		const therapistNamesMap =
+			therapistIdsAssigned.length > 0
+				? await prisma.user.findMany({
+						where: { id: { in: therapistIdsAssigned } },
+						select: { id: true, profile: { select: { name: true } } },
+					})
+				: [];
+		const therapistNameMap = new Map(
+			therapistNamesMap.map((u) => [u.id, u.profile?.name ?? u.id]),
+		);
+
+		const roomsData = allRooms.map((room) => ({
+			id: room.id,
+			name: room.name,
+			code: room.code,
+			status: room.status as "ACTIVE" | "MAINTENANCE",
+			bookedToday: bookedRoomIds.has(room.id),
+			occupyingTherapist: bookingByRoom.get(room.id)
+				? (therapistNameMap.get(bookingByRoom.get(room.id)!) ?? null)
+				: null,
+		}));
+
+		const assignedTherapistIds = [
+			...new Set(
+				todayBookings
+					.map((b) => b.claimedById)
+					.filter((id): id is string => id !== null),
+			),
+		];
+		const therapists =
+			assignedTherapistIds.length > 0
+				? await prisma.user.findMany({
+						where: { id: { in: assignedTherapistIds } },
+						select: { id: true, profile: { select: { name: true } } },
+					})
+				: [];
+		const therapistIdToName = new Map(
+			therapists.map((t) => [t.id, t.profile?.name ?? t.id]),
+		);
+
+		const assignedSessionsGrouped = await prisma.therapySession.groupBy({
+			by: ["assignedTherapistId"],
+			where: {
+				plan: { clinicId },
+				scheduledDate: { gte: today, lt: tomorrow },
+				assignedTherapistId: { not: null },
+			},
+			_count: true,
+		});
+
+		const completedSessionsGrouped = await prisma.therapySession.groupBy({
+			by: ["assignedTherapistId"],
+			where: {
+				plan: { clinicId },
+				scheduledDate: { gte: today, lt: tomorrow },
+				assignedTherapistId: { not: null },
+				status: "COMPLETED",
+			},
+			_count: true,
+		});
+
+		const completedByTherapist = new Map(
+			completedSessionsGrouped.map((g) => [g.assignedTherapistId, g._count]),
+		);
+
+		const therapistLoad = assignedSessionsGrouped.map((t) => ({
+			therapistId: t.assignedTherapistId ?? "",
+			name: therapistIdToName.get(t.assignedTherapistId ?? "") ?? "",
+			assignedToday: t._count,
+			completedToday:
+				completedByTherapist.get(t.assignedTherapistId ?? "") ?? 0,
+		}));
+
+		const [weekSessions, categoryActivity] = await Promise.all([
+			prisma.therapySession.groupBy({
+				by: ["status"],
+				where: {
+					plan: { clinicId },
+					scheduledDate: {
+						gte: startOfWeek,
+						lte: endOfWeek,
 					},
-					_count: true,
-				}),
-				prisma.therapySession.groupBy({
-					by: ["status"],
-					where: {
-						plan: { clinicId },
-						scheduledDate: {
-							gte: startOfWeek,
-							lte: endOfWeek,
-						},
-					},
-					_count: true,
-				}),
-				prisma.gameCategory.findMany({
-					where: { clinicId },
-					include: {
-						games: {
-							include: {
-								versions: {
-									include: {
-										sessionAssignments: {
-											where: {
-												session: {
-													scheduledDate: {
-														gte: startOfWeek,
-														lte: endOfWeek,
-													},
+				},
+				_count: true,
+			}),
+			prisma.gameCategory.findMany({
+				where: { clinicId },
+				include: {
+					games: {
+						include: {
+							versions: {
+								include: {
+									sessionAssignments: {
+										where: {
+											session: {
+												scheduledDate: {
+													gte: startOfWeek,
+													lte: endOfWeek,
 												},
 											},
-											select: { id: true },
 										},
+										select: { id: true },
 									},
 								},
 							},
 						},
 					},
-				}),
-			]);
-
-		const therapistIds = therapistSessions
-			.map((t) => t.assignedTherapistId)
-			.filter((id): id is string => id !== null);
-		const therapistNames =
-			therapistIds.length > 0
-				? await prisma.user.findMany({
-						where: { id: { in: therapistIds } },
-						select: { id: true, email: true },
-					})
-				: [];
-		const nameMap = new Map(therapistNames.map((u) => [u.id, u.email]));
-
-		const therapistLoad = therapistSessions.map((t) => ({
-			therapistId: t.assignedTherapistId ?? "",
-			name: nameMap.get(t.assignedTherapistId ?? "") ?? "",
-			count: t._count,
-		}));
+				},
+			}),
+		]);
 
 		const totalWeek = weekSessions.reduce((s, g) => s + g._count, 0);
 		const completedWeek =
@@ -498,17 +568,14 @@ export const dashboardRouter: ReturnType<typeof router> = router({
 			activeChildren,
 			sessionsToday,
 			sessionsThisWeek,
-			roomUtilisation: { booked: bookedToday, total: totalRooms },
+			roomUtilisation: {
+				booked: bookedRoomIds.size,
+				total: allRooms.length,
+				rooms: roomsData,
+			},
 			therapistLoad,
 			planAdherenceRate,
 			topCategoriesByActivity,
 		};
-	}),
-
-	// ── Platform summary (SuperAdmin only) ──────────────────────────────────
-
-	platformSummary: adminProcedure.query(async () => {
-		const summary = await computeClinicSummaries();
-		return PlatformSummarySchema.parse(summary);
 	}),
 });

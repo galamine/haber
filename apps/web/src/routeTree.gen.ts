@@ -22,6 +22,7 @@ import { Route as AuthenticatedChildrenIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedSettingsLibraryRouteImport } from './routes/_authenticated/settings/library'
 import { Route as AuthenticatedSessionsUncoveredRouteImport } from './routes/_authenticated/sessions/uncovered'
 import { Route as AuthenticatedSessionsSessionIdRouteImport } from './routes/_authenticated/sessions/$sessionId'
+import { Route as AuthenticatedPlatformDashboardRouteImport } from './routes/_authenticated/platform/dashboard'
 import { Route as AuthenticatedChildrenNewRouteImport } from './routes/_authenticated/children/new'
 import { Route as AuthenticatedSettingsStaffIndexRouteImport } from './routes/_authenticated/settings/staff/index'
 import { Route as AuthenticatedSettingsRoomsIndexRouteImport } from './routes/_authenticated/settings/rooms/index'
@@ -117,6 +118,12 @@ const AuthenticatedSessionsSessionIdRoute =
   AuthenticatedSessionsSessionIdRouteImport.update({
     id: '/sessions/$sessionId',
     path: '/sessions/$sessionId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedPlatformDashboardRoute =
+  AuthenticatedPlatformDashboardRouteImport.update({
+    id: '/platform/dashboard',
+    path: '/platform/dashboard',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedChildrenNewRoute =
@@ -291,6 +298,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/library': typeof AuthenticatedLibraryRoute
   '/children/new': typeof AuthenticatedChildrenNewRoute
+  '/platform/dashboard': typeof AuthenticatedPlatformDashboardRoute
   '/sessions/$sessionId': typeof AuthenticatedSessionsSessionIdRoute
   '/sessions/uncovered': typeof AuthenticatedSessionsUncoveredRoute
   '/settings/library': typeof AuthenticatedSettingsLibraryRoute
@@ -332,6 +340,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/library': typeof AuthenticatedLibraryRoute
   '/children/new': typeof AuthenticatedChildrenNewRoute
+  '/platform/dashboard': typeof AuthenticatedPlatformDashboardRoute
   '/sessions/$sessionId': typeof AuthenticatedSessionsSessionIdRoute
   '/sessions/uncovered': typeof AuthenticatedSessionsUncoveredRoute
   '/settings/library': typeof AuthenticatedSettingsLibraryRoute
@@ -375,6 +384,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/children/new': typeof AuthenticatedChildrenNewRoute
+  '/_authenticated/platform/dashboard': typeof AuthenticatedPlatformDashboardRoute
   '/_authenticated/sessions/$sessionId': typeof AuthenticatedSessionsSessionIdRoute
   '/_authenticated/sessions/uncovered': typeof AuthenticatedSessionsUncoveredRoute
   '/_authenticated/settings/library': typeof AuthenticatedSettingsLibraryRoute
@@ -418,6 +428,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/library'
     | '/children/new'
+    | '/platform/dashboard'
     | '/sessions/$sessionId'
     | '/sessions/uncovered'
     | '/settings/library'
@@ -459,6 +470,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/library'
     | '/children/new'
+    | '/platform/dashboard'
     | '/sessions/$sessionId'
     | '/sessions/uncovered'
     | '/settings/library'
@@ -501,6 +513,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/library'
     | '/_authenticated/children/new'
+    | '/_authenticated/platform/dashboard'
     | '/_authenticated/sessions/$sessionId'
     | '/_authenticated/sessions/uncovered'
     | '/_authenticated/settings/library'
@@ -634,6 +647,13 @@ declare module '@tanstack/react-router' {
       path: '/sessions/$sessionId'
       fullPath: '/sessions/$sessionId'
       preLoaderRoute: typeof AuthenticatedSessionsSessionIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/platform/dashboard': {
+      id: '/_authenticated/platform/dashboard'
+      path: '/platform/dashboard'
+      fullPath: '/platform/dashboard'
+      preLoaderRoute: typeof AuthenticatedPlatformDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/children/new': {
@@ -832,6 +852,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedChildrenNewRoute: typeof AuthenticatedChildrenNewRoute
+  AuthenticatedPlatformDashboardRoute: typeof AuthenticatedPlatformDashboardRoute
   AuthenticatedSessionsSessionIdRoute: typeof AuthenticatedSessionsSessionIdRoute
   AuthenticatedSessionsUncoveredRoute: typeof AuthenticatedSessionsUncoveredRoute
   AuthenticatedSettingsLibraryRoute: typeof AuthenticatedSettingsLibraryRoute
@@ -869,6 +890,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedChildrenNewRoute: AuthenticatedChildrenNewRoute,
+  AuthenticatedPlatformDashboardRoute: AuthenticatedPlatformDashboardRoute,
   AuthenticatedSessionsSessionIdRoute: AuthenticatedSessionsSessionIdRoute,
   AuthenticatedSessionsUncoveredRoute: AuthenticatedSessionsUncoveredRoute,
   AuthenticatedSettingsLibraryRoute: AuthenticatedSettingsLibraryRoute,
