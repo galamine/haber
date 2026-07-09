@@ -11,7 +11,7 @@ import {
 	SidebarMenuItem,
 	SidebarProvider,
 } from "@haber-final/ui/components/sidebar";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Outlet, useRouter } from "@tanstack/react-router";
 import {
 	Baby,
@@ -112,6 +112,11 @@ export function AppShell() {
 	const logoutMutation = useMutation(trpc.auth.logout.mutationOptions());
 	const logoutAllMutation = useMutation(trpc.auth.logoutAll.mutationOptions());
 
+	const { data: me } = useQuery({
+		...trpc.auth.me.queryOptions(),
+		enabled: role !== "SUPER_ADMIN",
+	});
+
 	const visibleNav = NAV_ITEMS.filter(
 		(item) => !item.roles || item.roles.includes(role ?? ""),
 	);
@@ -184,6 +189,16 @@ export function AppShell() {
 								<span className="text-on-surface-variant text-xs">
 									{role.replace("_", " ")}
 								</span>
+							)}
+							{me?.clinic && (
+								<>
+									<span className="truncate text-on-surface-variant text-xs">
+										{me.clinic.name}
+									</span>
+									<span className="truncate text-on-surface-variant text-xs">
+										{me.clinic.code && `(${me.clinic.code})`}
+									</span>
+								</>
 							)}
 						</div>
 						<button

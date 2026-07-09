@@ -49,6 +49,7 @@ export async function computeClinicSummaries() {
 				]);
 			return {
 				name: clinic.name,
+				code: clinic.code,
 				createdAt: clinic.createdAt,
 				activeChildren,
 				activeTherapists,

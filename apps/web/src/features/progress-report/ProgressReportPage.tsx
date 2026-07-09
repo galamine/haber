@@ -41,7 +41,7 @@ export function ProgressReportPage({ report, childId }: Props) {
 			</div>
 
 			<div className="mx-auto max-w-3xl space-y-8">
-				<ReportCover report={report} />
+				<ReportCover report={report} clinic={report.child.clinic} />
 				<ReportSummary report={report} />
 				<AssessmentSummary report={report} />
 				<GoalProgress goals={report.goals} />

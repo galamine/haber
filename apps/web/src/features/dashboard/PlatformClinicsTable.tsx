@@ -10,6 +10,7 @@ import { useState } from "react";
 
 type Clinic = {
 	name: string;
+	code: string | null;
 	createdAt: string;
 	activeChildren: number;
 	activeTherapists: number;
@@ -118,6 +119,11 @@ export function PlatformClinicsTable({ data }: PlatformClinicsTableProps) {
 								>
 									<td className="p-2 font-medium text-on-surface">
 										{clinic.name}
+										{clinic.code && (
+											<span className="ml-1 text-on-surface-variant">
+												({clinic.code})
+											</span>
+										)}
 									</td>
 									<td className="p-2 text-on-surface-variant">
 										{formatDate(clinic.createdAt)}

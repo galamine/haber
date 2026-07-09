@@ -1,8 +1,11 @@
 import { Stethoscope } from "lucide-react";
 
-type Props = { report: any };
+type Props = {
+	report: any;
+	clinic: { name: string; code: string | null } | null;
+};
 
-export function ReportCover({ report }: Props) {
+export function ReportCover({ report, clinic }: Props) {
 	const { child } = report;
 	const dob = new Date(child.dob);
 	const age = Math.floor(
@@ -39,7 +42,14 @@ export function ReportCover({ report }: Props) {
 				</div>
 				<div>
 					<p className="text-on-surface-variant">Clinic</p>
-					<p className="font-medium">Haber Clinic</p>
+					<p className="font-medium">
+						{clinic?.name ?? "Clinic"}
+						{clinic?.code && (
+							<span className="ml-1 text-on-surface-variant">
+								({clinic.code})
+							</span>
+						)}
+					</p>
 				</div>
 			</div>
 		</div>

@@ -412,6 +412,11 @@ export function GameForm({
 												className="cursor-pointer font-normal text-sm"
 											>
 												{clinic.name}
+												{clinic.code && (
+													<span className="ml-1 text-on-surface-variant">
+														({clinic.code})
+													</span>
+												)}
 											</Label>
 										</div>
 									))}

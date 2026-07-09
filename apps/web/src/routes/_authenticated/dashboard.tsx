@@ -1,8 +1,9 @@
 import { Badge } from "@haber-final/ui/components/badge";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { Calendar, TrendingUp, Users } from "lucide-react";
+import { useEffect } from "react";
 import { PlanAdherenceRing } from "@/features/dashboard/PlanAdherenceRing";
 import { RoomUtilisationTable } from "@/features/dashboard/RoomUtilisationTable";
 import { StatCard } from "@/features/dashboard/StatCard";
@@ -22,13 +23,29 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function DashboardPage() {
+	const router = useRouter();
 	const role = useAuthStore((s) => s.role);
 	const isAdmin = role === "CLINIC_ADMIN";
+
+	const { data: profile, isFetching } = useQuery({
+		...trpc.profile.get.queryOptions(),
+		enabled: role !== "SUPER_ADMIN",
+	});
 
 	const { data, isLoading } = useQuery({
 		...trpc.dashboard.clinicSummary.queryOptions(),
 		enabled: isAdmin,
 	});
+
+	useEffect(() => {
+		if (profile === null && !isFetching && role !== "SUPER_ADMIN") {
+			router.navigate({ to: "/user-profile" });
+		}
+	}, [profile, role, router, isFetching]);
+
+	if (profile === null && !isFetching && role !== "SUPER_ADMIN") {
+		return null;
+	}
 
 	if (!isAdmin) {
 		return (

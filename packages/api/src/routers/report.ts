@@ -10,6 +10,11 @@ export const reportRouter: ReturnType<typeof router> = router({
 			await assertAssignedTherapist(input.childId, ctx);
 			const child = await getChildForRead(input.childId, ctx);
 
+			const clinic = await prisma.clinic.findUnique({
+				where: { id: child.clinicId },
+				select: { name: true, code: true },
+			});
+
 			const [assessments, followUps, goals, sessions, activePlan] =
 				await Promise.all([
 					prisma.initialAssessment.findMany({
@@ -75,6 +80,7 @@ export const reportRouter: ReturnType<typeof router> = router({
 					opNumber: child.opNumber,
 					dob: child.dob,
 					sex: child.sex,
+					clinic,
 				},
 				activePlan: activePlan ?? null,
 				assignedTherapists: therapists
