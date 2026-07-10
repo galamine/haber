@@ -10,6 +10,7 @@ import { Textarea } from "@haber-final/ui/components/textarea";
 import { cn } from "@haber-final/ui/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Flag, Gamepad2 } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
@@ -85,9 +86,7 @@ export function ModifyPlanSheet({
 				>
 					<div className="space-y-4">
 						<h3 className="flex items-center gap-2 font-semibold text-on-background">
-							<span className="material-symbols-outlined text-brown-500">
-								flag
-							</span>
+							<Flag className="h-5 w-5 text-brown-500" />
 							Clinical Goals
 						</h3>
 						<div className="space-y-3">
@@ -165,9 +164,7 @@ export function ModifyPlanSheet({
 
 					<div className="space-y-3">
 						<h3 className="flex items-center gap-2 font-semibold text-on-background">
-							<span className="material-symbols-outlined text-brown-500">
-								videogame_asset
-							</span>
+							<Gamepad2 className="h-5 w-5 text-brown-500" />
 							Games
 						</h3>
 						<p className="text-on-surface-variant text-sm">

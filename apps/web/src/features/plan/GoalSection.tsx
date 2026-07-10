@@ -1,5 +1,6 @@
 import { Progress } from "@haber-final/ui/components/progress";
 import { cn } from "@haber-final/ui/lib/utils";
+import { Flag } from "lucide-react";
 
 type Goal = {
 	id: string;
@@ -25,21 +26,23 @@ export function GoalSection({ goals = [] }: GoalSectionProps) {
 	const activeGoals = goals.filter((g) => g.status !== "DISCONTINUED");
 
 	return (
-		<div className="h-full rounded-xl border border-surface-container-highest bg-surface-container-lowest p-6 shadow-sm">
+		<div className="flex h-full min-h-[200px] flex-col rounded-xl border border-surface-container-highest bg-surface-container-lowest p-6 shadow-sm">
 			<div className="mb-4 flex items-center justify-between">
 				<h2 className="flex items-center gap-2 font-medium text-on-surface">
-					<span className="material-symbols-outlined text-primary">flag</span>
+					<Flag className="h-5 w-5 text-primary" />
 					Clinical Goals
 				</h2>
 				<span className="rounded bg-surface-container px-2 py-1 text-on-surface-variant text-xs">
 					{activeGoals.length} Active
 				</span>
 			</div>
-			<div className="flex flex-col gap-4">
+			<div className="flex flex-1 flex-col gap-4">
 				{goals.length === 0 ? (
-					<p className="py-4 text-center text-on-surface-variant text-sm">
-						No goals configured.
-					</p>
+					<div className="flex flex-1 items-center justify-center">
+						<p className="text-center text-on-surface-variant text-sm">
+							No goals configured.
+						</p>
+					</div>
 				) : (
 					goals.map((goal) => (
 						<div key={goal.id} className="flex flex-col gap-2">

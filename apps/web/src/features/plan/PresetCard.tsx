@@ -1,4 +1,20 @@
 import { cn } from "@haber-final/ui/lib/utils";
+import {
+	Accessibility,
+	Activity,
+	Brain,
+	Heart,
+	type LucideIcon,
+	Zap,
+} from "lucide-react";
+
+const ICON_MAP: Record<string, LucideIcon> = {
+	Brain,
+	Accessibility,
+	Zap,
+	Heart,
+	Activity,
+};
 
 type PresetCardProps = {
 	preset: {
@@ -31,7 +47,10 @@ export function PresetCard({ preset, selected, onSelect }: PresetCardProps) {
 						: "text-brown-600 group-hover:bg-brown-100",
 				)}
 			>
-				<span className="material-symbols-outlined">{preset.icon}</span>
+				{(() => {
+					const Icon = ICON_MAP[preset.icon] ?? Activity;
+					return <Icon className="h-5 w-5" />;
+				})()}
 			</div>
 			<h4 className="font-medium text-on-surface text-sm">
 				{preset.case_label}

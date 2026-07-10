@@ -1,4 +1,5 @@
 import { cn } from "@haber-final/ui/lib/utils";
+import { Baby, Calendar, CalendarX, Clock } from "lucide-react";
 import { PLAN_STATUS_COLORS, PLAN_STATUS_LABELS } from "./constants";
 
 function formatDate(date: Date | string | null | undefined): string {
@@ -47,16 +48,14 @@ export function PlanHeader({ plan, childName }: PlanHeaderProps) {
 						</span>
 					</div>
 					{childName && (
-						<p className="mb-3 text-on-surface-variant text-sm">
-							<span className="material-symbols-outlined align-middle text-sm">
-								child_care
-							</span>{" "}
+						<p className="mb-3 flex items-center gap-1.5 text-on-surface-variant text-sm">
+							<Baby className="h-4 w-4" />
 							{childName}
 						</p>
 					)}
 					<div className="flex flex-wrap gap-x-6 gap-y-2">
 						<div className="flex items-center gap-2 text-on-surface-variant text-sm">
-							<span className="material-symbols-outlined text-base">timer</span>
+							<Clock className="h-4 w-4" />
 							<span>
 								Session Target:{" "}
 								<strong className="font-medium text-on-surface">
@@ -66,9 +65,7 @@ export function PlanHeader({ plan, childName }: PlanHeaderProps) {
 						</div>
 						{plan.startDate && (
 							<div className="flex items-center gap-2 text-on-surface-variant text-sm">
-								<span className="material-symbols-outlined text-base">
-									calendar_today
-								</span>
+								<Calendar className="h-4 w-4" />
 								<span>
 									Start:{" "}
 									<strong className="font-medium text-on-surface">
@@ -79,9 +76,7 @@ export function PlanHeader({ plan, childName }: PlanHeaderProps) {
 						)}
 						{plan.projectedEndDate && (
 							<div className="flex items-center gap-2 text-on-surface-variant text-sm">
-								<span className="material-symbols-outlined text-base">
-									event_busy
-								</span>
+								<CalendarX className="h-4 w-4" />
 								<span>
 									Review:{" "}
 									<strong className="font-medium text-on-surface">

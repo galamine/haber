@@ -1,6 +1,7 @@
 import { Button } from "@haber-final/ui/components/button";
 import { Input } from "@haber-final/ui/components/input";
 import { Textarea } from "@haber-final/ui/components/textarea";
+import { GripVertical, PlusCircle, Trash2 } from "lucide-react";
 import { type UseFormReturn, useFieldArray } from "react-hook-form";
 
 import type { PlanFormValues } from "./schema";
@@ -30,9 +31,7 @@ export function PhaseBuilder({ form }: PhaseBuilderProps) {
 					<div className="absolute top-0 bottom-0 left-0 w-1 rounded-l-lg bg-brown-500" />
 					<div className="mb-2 flex items-start justify-between">
 						<div className="flex items-center gap-2">
-							<span className="material-symbols-outlined cursor-grab text-lg text-on-surface-variant active:cursor-grabbing">
-								drag_indicator
-							</span>
+							<GripVertical className="cursor-grab text-lg text-on-surface-variant active:cursor-grabbing" />
 							<Input
 								{...register(`phases.${idx}.label`)}
 								className="w-48 border-transparent border-b bg-transparent px-0 py-0 font-medium hover:border-brown-300 focus:border-brown-600 focus:ring-0"
@@ -49,9 +48,7 @@ export function PhaseBuilder({ form }: PhaseBuilderProps) {
 								onClick={() => remove(idx)}
 								className="text-on-surface-variant opacity-0 hover:text-danger group-hover:opacity-100"
 							>
-								<span className="material-symbols-outlined text-lg">
-									delete
-								</span>
+								<Trash2 className="h-4 w-4" />
 							</Button>
 						</div>
 					</div>
@@ -77,7 +74,7 @@ export function PhaseBuilder({ form }: PhaseBuilderProps) {
 					})
 				}
 			>
-				<span className="material-symbols-outlined">add_circle</span>
+				<PlusCircle className="mr-2 h-4 w-4" />
 				Add Phase
 			</Button>
 		</ul>

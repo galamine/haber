@@ -1,6 +1,7 @@
 import { Button } from "@haber-final/ui/components/button";
 import { useNavigate, createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
+import { Plus, CheckCircle, FileText, ChevronRight } from "lucide-react";
 
 import { usePlanData } from "@/features/plan/use-plan-data";
 import { PlanListSkeleton } from "@/features/plan/skeletons/PlanListSkeleton";
@@ -41,11 +42,11 @@ function PlansListPage() {
 	const activePlanIds = new Set(activePlans.data?.map(p => p.id) ?? []);
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 pt-6">
 			<div className="flex justify-between items-center">
 				<h1 className="font-bold text-on-background">Treatment Plans</h1>
 				<Button onClick={() => navigate({ to: "/children/$childId/plans/new", params: { childId } })}>
-					<span className="material-symbols-outlined">add</span>
+					<Plus className="mr-2 h-4 w-4" />
 					New Plan
 				</Button>
 			</div>
@@ -79,9 +80,11 @@ function PlansListPage() {
 										)}
 									>
 										<div className="flex items-center gap-3">
-											<span className="material-symbols-outlined text-on-surface-variant">
-												{version.isActive ? "check_circle" : "description"}
-											</span>
+											{version.isActive ? (
+												<CheckCircle className="h-5 w-5 text-green-600" />
+											) : (
+												<FileText className="h-5 w-5 text-on-surface-variant" />
+											)}
 											<span className="text-sm font-medium text-on-surface">
 												Version {version.versionNumber}
 											</span>
@@ -89,7 +92,7 @@ function PlansListPage() {
 												{version.status}
 											</span>
 										</div>
-										<span className="material-symbols-outlined text-on-surface-variant text-lg">chevron_right</span>
+										<ChevronRight className="h-5 w-5 text-on-surface-variant" />
 									</button>
 								))}
 							</div>

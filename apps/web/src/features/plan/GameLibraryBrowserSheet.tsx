@@ -10,6 +10,7 @@ import {
 } from "@haber-final/ui/components/sheet";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { useQuery } from "@tanstack/react-query";
+import { Cpu, Gamepad2, SearchX } from "lucide-react";
 import { useState } from "react";
 import type { GameItem } from "@/components/game-library/GameCard";
 import { GameCard, GameCardSkeleton } from "@/components/game-library/GameCard";
@@ -120,9 +121,7 @@ export function GameLibraryBrowserSheet({
 						<div className="rounded-lg border bg-surface-container-low p-4">
 							<div className="flex items-center gap-3">
 								<div className="flex h-12 w-12 items-center justify-center rounded bg-brown-100 text-brown-600">
-									<span className="material-symbols-outlined text-2xl">
-										extension
-									</span>
+									<Cpu className="h-6 w-6" />
 								</div>
 								<div>
 									<h3 className="font-semibold text-on-surface">
@@ -258,9 +257,7 @@ export function GameLibraryBrowserSheet({
 						</div>
 					) : data?.items.length === 0 ? (
 						<div className="flex flex-col items-center justify-center py-12 text-center">
-							<span className="material-symbols-outlined mb-4 text-4xl text-on-surface-variant">
-								videogame_asset_off
-							</span>
+							<Gamepad2 className="mb-4 h-10 w-10 text-on-surface-variant" />
 							<p className="text-on-surface-variant text-sm">No games found.</p>
 						</div>
 					) : (

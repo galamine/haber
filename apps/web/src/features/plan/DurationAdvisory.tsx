@@ -3,6 +3,7 @@ import {
 	AlertDescription,
 	AlertTitle,
 } from "@haber-final/ui/components/alert";
+import { AlertTriangle } from "lucide-react";
 
 type DurationAdvisoryProps = {
 	totalMinutes: number;
@@ -16,7 +17,7 @@ export function DurationAdvisory({
 	return (
 		<Alert className="border-warning/30 bg-warning/10">
 			<AlertTitle className="flex items-center gap-2 text-warning">
-				<span className="material-symbols-outlined text-sm">warning</span>
+				<AlertTriangle className="h-4 w-4" />
 				Duration Mismatch
 			</AlertTitle>
 			<AlertDescription className="text-on-surface-variant text-sm">

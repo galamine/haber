@@ -5,6 +5,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Sparkles, PlusCircle } from "lucide-react";
 
 import { usePlanData } from "@/features/plan/use-plan-data";
 import { PlanFormSchema, type PlanFormValues } from "@/features/plan/schema";
@@ -37,7 +38,7 @@ function NewPlanPage() {
 	const selectedPresetId = form.watch("presetId");
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 pt-6">
 			<div className="flex justify-between items-center">
 				<div>
 					<h1 className="font-bold text-on-background">Create Treatment Plan</h1>
@@ -52,8 +53,8 @@ function NewPlanPage() {
 			</div>
 
 			<div>
-				<h3 className="font-medium text-on-background mb-3 flex items-center gap-2">
-					<span className="material-symbols-outlined text-brown-600">auto_awesome</span>
+				<h3 className="mb-4 flex items-center gap-2 font-medium text-on-background">
+					<Sparkles className="h-5 w-5 text-brown-600" />
 					Start with a Preset Template
 				</h3>
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
@@ -107,7 +108,7 @@ function NewPlanPage() {
 								const phases = form.getValues("phases") ?? [];
 								form.setValue("phases", [...phases, { phase: `phase_${Date.now()}`, weeks: 4, label: `Phase ${phases.length + 1}` }]);
 							}}>
-								<span className="material-symbols-outlined text-sm">add_circle</span>
+								<PlusCircle className="mr-1 h-4 w-4" />
 								Add Phase
 							</Button>
 						}

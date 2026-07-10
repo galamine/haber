@@ -7,6 +7,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@haber-final/ui/components/table";
+import { Cpu, Gamepad2, Pencil, Plus, Trash2 } from "lucide-react";
 
 type GameAssignment = {
 	id: string;
@@ -38,9 +39,7 @@ export function GameAssignmentsTable({
 		<div className="overflow-hidden rounded-xl border border-surface-container-highest bg-surface-container-lowest shadow-sm">
 			<div className="flex items-center justify-between border-surface-container-highest border-b bg-surface-container-low/50 p-4">
 				<h2 className="flex items-center gap-2 font-medium text-on-surface">
-					<span className="material-symbols-outlined text-primary">
-						videogame_asset
-					</span>
+					<Gamepad2 className="h-5 w-5 text-primary" />
 					Game Assignments
 				</h2>
 				<Button
@@ -50,7 +49,7 @@ export function GameAssignmentsTable({
 					onClick={onAddGame}
 					className="text-primary"
 				>
-					<span className="material-symbols-outlined text-sm">add</span>
+					<Plus className="mr-1 h-4 w-4" />
 					Add Game
 				</Button>
 			</div>
@@ -88,9 +87,7 @@ export function GameAssignmentsTable({
 									<TableCell>
 										<div className="flex items-center gap-3">
 											<div className="flex h-10 w-10 items-center justify-center rounded bg-brown-100 text-brown-600">
-												<span className="material-symbols-outlined">
-													extension
-												</span>
+												<Cpu className="h-5 w-5" />
 											</div>
 											<span className="font-medium text-on-surface text-sm">
 												{assignment.gameVersion.game.name}
@@ -127,9 +124,7 @@ export function GameAssignmentsTable({
 												size="sm"
 												onClick={() => onEdit(assignment.id)}
 											>
-												<span className="material-symbols-outlined text-lg">
-													edit
-												</span>
+												<Pencil className="h-4 w-4" />
 											</Button>
 											<Button
 												type="button"
@@ -138,9 +133,7 @@ export function GameAssignmentsTable({
 												onClick={() => onRemove(assignment.id)}
 												className="text-danger hover:text-danger"
 											>
-												<span className="material-symbols-outlined text-lg">
-													delete
-												</span>
+												<Trash2 className="h-4 w-4" />
 											</Button>
 										</div>
 									</TableCell>
