@@ -71,9 +71,14 @@ export function ModifyPlanSheet({
 
 	return (
 		<Sheet open={open} onOpenChange={onOpenChange}>
-			<SheetContent side="right" className="overflow-y-auto sm:max-w-2xl">
-				<SheetHeader>
-					<SheetTitle>Modify Treatment Plan</SheetTitle>
+			<SheetContent
+				side="right"
+				className="flex w-full flex-col p-6 sm:w-[640px] sm:max-w-[640px]"
+			>
+				<SheetHeader className="flex-shrink-0">
+					<SheetTitle className="font-semibold text-base">
+						Modify Treatment Plan
+					</SheetTitle>
 					<SheetDescription>
 						Update goals and game assignments for the upcoming period.
 					</SheetDescription>
@@ -82,98 +87,86 @@ export function ModifyPlanSheet({
 					onSubmit={form.handleSubmit((v) =>
 						modify.mutate({ planId: plan.id, ...v }),
 					)}
-					className="mt-6 space-y-6"
+					className="mt-4 flex flex-1 flex-col overflow-hidden"
 				>
-					<div className="space-y-4">
-						<h3 className="flex items-center gap-2 font-semibold text-on-background">
-							<Flag className="h-5 w-5 text-brown-500" />
-							Clinical Goals
-						</h3>
-						<div className="space-y-3">
-							{goalFields.map((field, idx) => {
-								const goal = goals.find((g) => g.id === field.goalId);
-								const action = form.watch(`goalDecisions.${idx}.action`);
-								return (
-									<div
-										key={field.id}
-										className={cn(
-											"rounded-lg border p-4",
-											action === "MODIFY"
-												? "border-primary-container bg-surface-container-low ring-1 ring-primary-container"
-												: "border-border bg-surface",
-										)}
-									>
-										<div className="mb-3 flex items-start justify-between gap-3">
-											<div>
-												<span className="mb-1 inline-block rounded bg-surface-container px-2 py-0.5 font-medium text-on-surface-variant text-xs">
-													Goal {idx + 1}
-												</span>
-												<p className="font-medium text-on-background text-sm">
-													{goal?.description}
-												</p>
-											</div>
-										</div>
-										<div className="flex items-center gap-4">
-											<label className="flex cursor-pointer items-center gap-2">
-												<input
-													type="radio"
-													{...form.register(`goalDecisions.${idx}.action`)}
-													value="CARRY_OVER"
-													className="text-primary"
-												/>
-												<span className="text-sm">Continue</span>
-											</label>
-											<label className="flex cursor-pointer items-center gap-2">
-												<input
-													type="radio"
-													{...form.register(`goalDecisions.${idx}.action`)}
-													value="MODIFY"
-													className="text-primary"
-												/>
-												<span className="text-sm">Modify</span>
-											</label>
-											<label className="flex cursor-pointer items-center gap-2">
-												<input
-													type="radio"
-													{...form.register(`goalDecisions.${idx}.action`)}
-													value="CLOSE"
-													className="text-primary"
-												/>
-												<span className="text-sm">Discontinue</span>
-											</label>
-										</div>
-										{action === "MODIFY" && (
-											<div className="mt-3 border-outline-variant border-t pt-3">
-												<p className="mb-2 font-semibold text-primary text-xs uppercase tracking-wider">
-													Modified Goal Description
-												</p>
-												<Textarea
-													{...form.register(
-														`goalDecisions.${idx}.newDescription`,
+					<div className="flex-1 space-y-6 overflow-y-auto py-1 pr-1">
+						<div className="space-y-4">
+							<h3 className="flex items-center gap-2 font-semibold text-on-background">
+								<Flag className="h-5 w-5 text-brown-500" />
+								Clinical Goals
+							</h3>
+							<div className="space-y-3">
+								{goalFields.map((field, idx) => {
+									const goal = goals.find((g) => g.id === field.goalId);
+									const action = form.watch(`goalDecisions.${idx}.action`);
+
+									return (
+										<div
+											key={field.id}
+											className="space-y-3 rounded-lg border bg-surface-container-lowest p-4"
+										>
+											<div className="flex items-start justify-between gap-4">
+												<div>
+													<p className="font-medium text-on-surface text-sm">
+														{goal?.description ?? "Unknown Goal"}
+													</p>
+													<p className="text-on-surface-variant text-xs">
+														Target: {goal?.targetAttainmentPct}%
+													</p>
+												</div>
+												<div className="flex gap-1">
+													{(["MAINTAIN", "MODIFY", "DISCONTINUE"] as const).map(
+														(act) => (
+															<Button
+																key={act}
+																type="button"
+																size="sm"
+																variant={action === act ? "default" : "outline"}
+																className="text-xs"
+																onClick={() =>
+																	form.setValue(
+																		`goalDecisions.${idx}.action`,
+																		act,
+																	)
+																}
+															>
+																{act}
+															</Button>
+														),
 													)}
-													placeholder="Describe modification..."
-													rows={2}
-												/>
+												</div>
 											</div>
-										)}
-									</div>
-								);
-							})}
+
+											{action === "MODIFY" && (
+												<div className="space-y-2 border-t pt-2">
+													<Textarea
+														placeholder="Updated goal description…"
+														{...form.register(
+															`goalDecisions.${idx}.newDescription`,
+														)}
+														className="text-sm"
+													/>
+												</div>
+											)}
+										</div>
+									);
+								})}
+							</div>
+						</div>
+
+						<div className="space-y-4">
+							<h3 className="flex items-center gap-2 font-semibold text-on-background">
+								<Gamepad2 className="h-5 w-5 text-brown-500" />
+								Game Assignments
+							</h3>
+							<p className="text-on-surface-variant text-sm">
+								{gameAssignments.length} game(s) assigned. Games are copied to
+								the new version.
+							</p>
 						</div>
 					</div>
 
-					<div className="space-y-3">
-						<h3 className="flex items-center gap-2 font-semibold text-on-background">
-							<Gamepad2 className="h-5 w-5 text-brown-500" />
-							Games
-						</h3>
-						<p className="text-on-surface-variant text-sm">
-							{gameAssignments.length} game(s) assigned. Games are copied to the
-							new version.
-						</p>
-					</div>
-
-					<div className="flex flex-col gap-2 sm:flex-row">
+					<div className="mt-auto flex flex-shrink-0 flex-col gap-2 border-t pt-4 sm:flex-row sm:justify-end">
 						<Button
 							type="button"
 							variant="outline"

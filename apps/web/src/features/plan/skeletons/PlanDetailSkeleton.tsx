@@ -2,7 +2,7 @@ import { Skeleton } from "@haber-final/ui/components/skeleton";
 
 export function PlanDetailSkeleton() {
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 p-8">
 			<div className="flex items-center gap-2 text-sm">
 				<Skeleton className="h-8 w-24" />
 			</div>

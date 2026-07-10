@@ -42,9 +42,9 @@ function PlansListPage() {
 	const activePlanIds = new Set(activePlans.data?.map(p => p.id) ?? []);
 
 	return (
-		<div className="space-y-6 pt-6">
+		<div className="space-y-6 p-8">
 			<div className="flex justify-between items-center">
-				<h1 className="font-bold text-on-background">Treatment Plans</h1>
+				<h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-on-surface">Treatment Plans</h1>
 				<Button onClick={() => navigate({ to: "/children/$childId/plans/new", params: { childId } })}>
 					<Plus className="mr-2 h-4 w-4" />
 					New Plan

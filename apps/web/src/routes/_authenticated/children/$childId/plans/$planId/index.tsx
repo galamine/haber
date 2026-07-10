@@ -111,7 +111,7 @@ function PlanDetailPage() {
 	const durationData = sessionDuration.data;
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 p-8">
 			<div className="flex items-center gap-2 text-sm">
 				<Button variant="ghost" size="sm" onClick={() => navigate({ to: "/children/$childId/plans", params: { childId } })}>
 					<ArrowLeft className="h-4 w-4" />

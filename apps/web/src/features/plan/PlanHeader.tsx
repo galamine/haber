@@ -31,8 +31,8 @@ export function PlanHeader({ plan, childName }: PlanHeaderProps) {
 		<section className="rounded-xl border border-surface-container-highest bg-surface-container-lowest p-6 shadow-sm">
 			<div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
 				<div className="flex-1">
-					<div className="mb-1 flex items-center gap-3">
-						<h1 className="font-bold text-on-surface tracking-tight">
+					<div className="mb-2 flex flex-wrap items-center gap-3">
+						<h1 className="font-bold text-2xl text-on-surface tracking-tight sm:text-3xl">
 							{plan.name}
 						</h1>
 						<span className="rounded border border-outline-variant bg-surface-container-highest px-2 py-0.5 font-medium text-on-surface text-xs">

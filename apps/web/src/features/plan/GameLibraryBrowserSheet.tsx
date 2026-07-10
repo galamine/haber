@@ -1,3 +1,4 @@
+import { Badge } from "@haber-final/ui/components/badge";
 import { Button } from "@haber-final/ui/components/button";
 import { Input } from "@haber-final/ui/components/input";
 import { Label } from "@haber-final/ui/components/label";
@@ -10,10 +11,9 @@ import {
 } from "@haber-final/ui/components/sheet";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { useQuery } from "@tanstack/react-query";
-import { Cpu, Gamepad2, SearchX } from "lucide-react";
+import { Gamepad2 } from "lucide-react";
 import { useState } from "react";
 import type { GameItem } from "@/components/game-library/GameCard";
-import { GameCard, GameCardSkeleton } from "@/components/game-library/GameCard";
 import { trpc } from "@/utils/trpc";
 
 type GameAssignmentData = {
@@ -64,6 +64,13 @@ export function GameLibraryBrowserSheet({
 		}),
 	);
 
+	const handleOpenChange = (newOpen: boolean) => {
+		if (!newOpen) {
+			setSelectedGame(null);
+		}
+		onOpenChange(newOpen);
+	};
+
 	const handlePinToPlan = (game: GameItem) => {
 		setSelectedGame(game);
 		setForm({
@@ -98,6 +105,7 @@ export function GameLibraryBrowserSheet({
 			instructions: form.instructions || undefined,
 			appliesToPhase: form.phase || undefined,
 		});
+		setSelectedGame(null);
 	};
 
 	const handleInputChange = (field: keyof FormState, value: string) => {
@@ -107,35 +115,26 @@ export function GameLibraryBrowserSheet({
 	if (selectedGame) {
 		const latestVersion = selectedGame.versions[0];
 		return (
-			<Sheet open={open} onOpenChange={onOpenChange}>
-				<SheetContent side="right" className="flex w-full flex-col sm:max-w-lg">
-					<SheetHeader>
-						<SheetTitle>Add Game to Plan</SheetTitle>
-						<SheetDescription>
-							Configure settings for {selectedGame.name}
-							{latestVersion && ` (v${latestVersion.versionNumber})`}
+			<Sheet open={open} onOpenChange={handleOpenChange}>
+				<SheetContent
+					side="right"
+					className="flex w-full flex-col p-6 sm:w-[520px] sm:max-w-[520px]"
+				>
+					<SheetHeader className="flex-shrink-0 pr-6">
+						<SheetTitle className="font-semibold text-base">
+							Add Game to Plan
+						</SheetTitle>
+						<SheetDescription className="flex items-center gap-2 pt-1 font-medium text-on-surface">
+							<span>{selectedGame.name}</span>
+							{latestVersion && (
+								<span className="rounded bg-surface-container px-1.5 py-0.5 text-on-surface-variant text-xs">
+									v{latestVersion.versionNumber}
+								</span>
+							)}
 						</SheetDescription>
 					</SheetHeader>
 
-					<div className="flex-1 space-y-6 overflow-y-auto py-6">
-						<div className="rounded-lg border bg-surface-container-low p-4">
-							<div className="flex items-center gap-3">
-								<div className="flex h-12 w-12 items-center justify-center rounded bg-brown-100 text-brown-600">
-									<Cpu className="h-6 w-6" />
-								</div>
-								<div>
-									<h3 className="font-semibold text-on-surface">
-										{selectedGame.name}
-									</h3>
-									{latestVersion && (
-										<p className="text-on-surface-variant text-sm">
-											Version {latestVersion.versionNumber}
-										</p>
-									)}
-								</div>
-							</div>
-						</div>
-
+					<div className="flex-1 space-y-4 overflow-y-auto py-4 pr-1">
 						<div className="space-y-4">
 							<div className="space-y-2">
 								<Label htmlFor="duration">
@@ -228,10 +227,15 @@ export function GameLibraryBrowserSheet({
 	}
 
 	return (
-		<Sheet open={open} onOpenChange={onOpenChange}>
-			<SheetContent side="right" className="flex w-full flex-col sm:max-w-lg">
-				<SheetHeader>
-					<SheetTitle>Game Library</SheetTitle>
+		<Sheet open={open} onOpenChange={handleOpenChange}>
+			<SheetContent
+				side="right"
+				className="flex w-full flex-col p-6 sm:w-[520px] sm:max-w-[520px]"
+			>
+				<SheetHeader className="flex-shrink-0">
+					<SheetTitle className="font-semibold text-base">
+						Game Library
+					</SheetTitle>
 					<SheetDescription>
 						Select a game to add to this plan.
 					</SheetDescription>
@@ -248,11 +252,20 @@ export function GameLibraryBrowserSheet({
 					/>
 				</div>
 
-				<div className="flex-1 overflow-y-auto">
+				<div className="flex-1 overflow-y-auto pr-1">
 					{isLoading ? (
-						<div className="grid grid-cols-2 gap-4">
-							{Array.from({ length: 6 }).map((_, i) => (
-								<GameCardSkeleton key={i} />
+						<div className="space-y-3">
+							{Array.from({ length: 5 }).map((_, i) => (
+								<div
+									key={i}
+									className="flex items-center justify-between rounded-xl border p-4"
+								>
+									<div className="flex-1 space-y-2">
+										<div className="h-5 w-48 animate-pulse rounded bg-muted" />
+										<div className="h-4 w-72 animate-pulse rounded bg-muted" />
+									</div>
+									<div className="ml-4 h-8 w-24 animate-pulse rounded bg-muted" />
+								</div>
 							))}
 						</div>
 					) : data?.items.length === 0 ? (
@@ -261,20 +274,55 @@ export function GameLibraryBrowserSheet({
 							<p className="text-on-surface-variant text-sm">No games found.</p>
 						</div>
 					) : (
-						<div className="grid grid-cols-2 gap-4">
+						<div className="space-y-3">
 							{data?.items.map((game) => (
-								<div key={game.id} className="relative">
-									<GameCard
-										game={game}
-										onViewDetails={() => handlePinToPlan(game)}
-									/>
-									<Button
-										size="sm"
-										className="absolute right-2 bottom-2"
-										onClick={() => handlePinToPlan(game)}
-									>
-										Pin to Plan
-									</Button>
+								<div
+									key={game.id}
+									className="flex flex-col justify-between gap-4 rounded-xl border border-outline-variant bg-surface-container-lowest p-4 transition-all hover:border-brown-400 sm:flex-row sm:items-center"
+								>
+									<div className="flex-1 space-y-1.5">
+										<div className="flex flex-wrap items-center gap-2">
+											<h4 className="font-semibold text-on-surface">
+												{game.name}
+											</h4>
+											<Badge variant="secondary" className="text-xs">
+												Level {game.difficulty || "N/A"}
+											</Badge>
+											{game.ageRangeMin !== null &&
+											game.ageRangeMax !== null ? (
+												<Badge variant="outline" className="text-xs">
+													Ages {game.ageRangeMin}-{game.ageRangeMax}
+												</Badge>
+											) : null}
+										</div>
+										{game.targetIssues && game.targetIssues.length > 0 ? (
+											<div className="flex flex-wrap gap-1">
+												{game.targetIssues.map((issue) => (
+													<Badge
+														key={issue}
+														variant="outline"
+														className="px-1.5 py-0 text-[11px]"
+													>
+														{issue}
+													</Badge>
+												))}
+											</div>
+										) : null}
+										{game.description ? (
+											<p className="line-clamp-2 text-muted-foreground text-xs">
+												{game.description}
+											</p>
+										) : null}
+									</div>
+									<div className="flex-shrink-0">
+										<Button
+											size="sm"
+											onClick={() => handlePinToPlan(game)}
+											className="w-full sm:w-auto"
+										>
+											Pin to Plan
+										</Button>
+									</div>
 								</div>
 							))}
 						</div>
