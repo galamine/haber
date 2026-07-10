@@ -25,6 +25,16 @@ async function getPlanForTherapist(planId: string, ctx: { auth: AuthUser }) {
 				? { clinicId: ctx.auth.tenantId ?? undefined }
 				: {}),
 		},
+		include: {
+			gameAssignments: {
+				include: {
+					gameVersion: {
+						include: { game: true },
+					},
+				},
+				orderBy: { order: "asc" },
+			},
+		},
 	});
 	if (!plan) throw new TRPCError({ code: "NOT_FOUND" });
 

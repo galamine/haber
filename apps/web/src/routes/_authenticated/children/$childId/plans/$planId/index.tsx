@@ -14,6 +14,7 @@ import { GameAssignmentsTable } from "@/features/plan/GameAssignmentsTable";
 import { GoalSection } from "@/features/plan/GoalSection";
 import { ModifyPlanSheet } from "@/features/plan/ModifyPlanSheet";
 import { GameLibraryBrowserSheet } from "@/features/plan/GameLibraryBrowserSheet";
+import { EditGameAssignmentSheet } from "@/features/plan/EditGameAssignmentSheet";
 import { PlanDetailSkeleton } from "@/features/plan/skeletons/PlanDetailSkeleton";
 import { GoalTabContent } from "@/features/goals/GoalTabContent";
 import { trpc, trpcClient } from "@/utils/trpc";
@@ -49,6 +50,7 @@ function PlanDetailPage() {
 
 	const [modifySheetOpen, setModifySheetOpen] = useState(false);
 	const [addGameSheetOpen, setAddGameSheetOpen] = useState(false);
+	const [editingAssignment, setEditingAssignment] = useState<typeof planData.gameAssignments[0] | null>(null);
 	const queryClient = useQueryClient();
 
 	const addGame = useMutation(trpc.plan.addGame.mutationOptions({
@@ -143,7 +145,10 @@ function PlanDetailPage() {
 						<div className="lg:col-span-2">
 							<GameAssignmentsTable
 								assignments={planData.gameAssignments}
-								onEdit={(id) => {}}
+								onEdit={(id) => {
+									const assignment = planData.gameAssignments.find((a) => a.id === id);
+									if (assignment) setEditingAssignment(assignment);
+								}}
 								onRemove={(id) => removeGame.mutate({ assignmentId: id })}
 								onAddGame={() => setAddGameSheetOpen(true)}
 							/>
@@ -173,7 +178,14 @@ function PlanDetailPage() {
 			<GameLibraryBrowserSheet
 				open={addGameSheetOpen}
 				onOpenChange={setAddGameSheetOpen}
-				onSelectGame={(gameVersionId) => addGame.mutate({ planId, gameVersionId })}
+				onSelectGame={(data) => addGame.mutate({ planId, ...data })}
+			/>
+
+			<EditGameAssignmentSheet
+				open={!!editingAssignment}
+				onOpenChange={(open) => !open && setEditingAssignment(null)}
+				assignment={editingAssignment}
+				planId={planId}
 			/>
 		</div>
 	);
