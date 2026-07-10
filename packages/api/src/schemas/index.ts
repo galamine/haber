@@ -18,6 +18,7 @@ export type JwtPayload = {
 
 export const RequestOtpInput = z.object({
 	email: z.string().email(),
+	clinicCode: z.string().optional(),
 });
 
 export const VerifyOtpInput = z.object({

@@ -47,6 +47,19 @@ export async function assertChildInClinic(childId: string, tenantId: string) {
 	return child;
 }
 
+export async function assertAssignedTherapist(
+	childId: string,
+	ctx: { auth: AuthUser },
+) {
+	if (ctx.auth.role !== "THERAPIST" && ctx.auth.role !== "STAFF") {
+		throw new TRPCError({ code: "FORBIDDEN" });
+	}
+	const assigned = await prisma.childTherapistAssignment.findFirst({
+		where: { childId, therapistId: ctx.auth.userId },
+	});
+	if (!assigned) throw new TRPCError({ code: "FORBIDDEN" });
+}
+
 export const childRouter: ReturnType<typeof router> = router({
 	create: protectedProcedure
 		.input(CreateChildInput)

@@ -23,6 +23,9 @@ function LoginPage() {
 	const [step, setStep] = useState<"email" | "otp">("email");
 	const [email, setEmail] = useState("");
 	const [otp, setOtp] = useState("");
+	const [clinicCode, setClinicCode] = useState("");
+	const [role, setRole] = useState<string | null>(null);
+	const [isClinicCodeDisabled, setIsClinicCodeDisabled] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [attemptsLeft, setAttemptsLeft] = useState<number | null>(null);
 
@@ -31,13 +34,30 @@ function LoginPage() {
 
 	const requestOtp = useMutation(
 		trpc.auth.requestOtp.mutationOptions({
-			onSuccess: () => setStep("otp"),
+			onSuccess: (data) => {
+				if (data.role === "SUPER_ADMIN") {
+					setIsClinicCodeDisabled(true);
+				}
+				if (data.role) setRole(data.role);
+				setStep("otp");
+			},
 			onError: (err) => {
 				const msg = err.message;
+				console.log("requestOtp error:", msg);
+
 				if (msg.includes("TOO_MANY_REQUESTS") || msg.includes("Too many")) {
 					setError("Too many requests, try again in 10 minutes");
+				} else if (
+					msg.includes("User not found") ||
+					msg.includes("not enabled")
+				) {
+					setError(msg);
+				} else if (msg.toLowerCase().includes("clinic")) {
+					setError(msg);
 				} else {
-					setError("Failed to send code. Check your email and try again.");
+					setError(
+						"Failed to send code. Check your email or clinic code and try again.",
+					);
 				}
 			},
 		}),
@@ -77,13 +97,16 @@ function LoginPage() {
 	async function handleRequestOtp(e: React.FormEvent) {
 		e.preventDefault();
 		setError(null);
-		requestOtp.mutate({ email });
+		requestOtp.mutate({ email, clinicCode: clinicCode || undefined });
 	}
 
 	async function handleVerifyOtp(e: React.FormEvent) {
 		e.preventDefault();
 		setError(null);
-		verifyOtp.mutate({ email, code: otp });
+		verifyOtp.mutate({
+			email,
+			code: otp,
+		});
 	}
 
 	return (
@@ -124,6 +147,25 @@ function LoginPage() {
 									onChange={(e) => setEmail(e.target.value)}
 									placeholder="doctor@clinic.com"
 									className="w-full rounded-lg border border-brown-300 bg-white px-4 py-2 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-brown-700"
+								/>
+							</div>
+
+							<div className="flex flex-col gap-1">
+								<label
+									htmlFor="clinicCode"
+									className="font-medium text-on-surface text-sm"
+								>
+									Clinic Code {role === "SUPER_ADMIN" && "(not required)"}
+								</label>
+								<input
+									id="clinicCode"
+									type="text"
+									disabled={isClinicCodeDisabled || role === "SUPER_ADMIN"}
+									value={clinicCode}
+									onChange={(e) => setClinicCode(e.target.value.toUpperCase())}
+									placeholder={role === "SUPER_ADMIN" ? "N/A" : "e.g. ABC123"}
+									maxLength={6}
+									className="w-full rounded-lg border border-brown-300 bg-white px-4 py-2 text-on-surface text-sm uppercase focus:outline-none focus:ring-2 focus:ring-brown-700 disabled:cursor-not-allowed disabled:opacity-50"
 								/>
 							</div>
 

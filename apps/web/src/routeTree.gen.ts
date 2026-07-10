@@ -22,6 +22,7 @@ import { Route as AuthenticatedChildrenIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedSettingsLibraryRouteImport } from './routes/_authenticated/settings/library'
 import { Route as AuthenticatedSessionsUncoveredRouteImport } from './routes/_authenticated/sessions/uncovered'
 import { Route as AuthenticatedSessionsSessionIdRouteImport } from './routes/_authenticated/sessions/$sessionId'
+import { Route as AuthenticatedPlatformDashboardRouteImport } from './routes/_authenticated/platform/dashboard'
 import { Route as AuthenticatedChildrenNewRouteImport } from './routes/_authenticated/children/new'
 import { Route as AuthenticatedSettingsStaffIndexRouteImport } from './routes/_authenticated/settings/staff/index'
 import { Route as AuthenticatedSettingsRoomsIndexRouteImport } from './routes/_authenticated/settings/rooms/index'
@@ -37,7 +38,9 @@ import { Route as AuthenticatedSettingsDepartmentsNewRouteImport } from './route
 import { Route as AuthenticatedSettingsDepartmentsDepartmentIdRouteImport } from './routes/_authenticated/settings/departments/$departmentId'
 import { Route as AuthenticatedPlatformGamesNewRouteImport } from './routes/_authenticated/platform/games/new'
 import { Route as AuthenticatedPlatformClinicsNewRouteImport } from './routes/_authenticated/platform/clinics/new'
+import { Route as AuthenticatedChildrenChildIdReportRouteImport } from './routes/_authenticated/children/$childId/report'
 import { Route as AuthenticatedChildrenChildIdEditRouteImport } from './routes/_authenticated/children/$childId/edit'
+import { Route as AuthenticatedChildrenChildIdDashboardRouteImport } from './routes/_authenticated/children/$childId/dashboard'
 import { Route as AuthenticatedChildrenChildIdConsentRouteImport } from './routes/_authenticated/children/$childId/consent'
 import { Route as AuthenticatedPlatformGamesGameIdIndexRouteImport } from './routes/_authenticated/platform/games/$gameId/index'
 import { Route as AuthenticatedChildrenChildIdPlansIndexRouteImport } from './routes/_authenticated/children/$childId/plans/index'
@@ -116,6 +119,12 @@ const AuthenticatedSessionsSessionIdRoute =
   AuthenticatedSessionsSessionIdRouteImport.update({
     id: '/sessions/$sessionId',
     path: '/sessions/$sessionId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedPlatformDashboardRoute =
+  AuthenticatedPlatformDashboardRouteImport.update({
+    id: '/platform/dashboard',
+    path: '/platform/dashboard',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedChildrenNewRoute =
@@ -208,10 +217,22 @@ const AuthenticatedPlatformClinicsNewRoute =
     path: '/platform/clinics/new',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedChildrenChildIdReportRoute =
+  AuthenticatedChildrenChildIdReportRouteImport.update({
+    id: '/children/$childId/report',
+    path: '/children/$childId/report',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedChildrenChildIdEditRoute =
   AuthenticatedChildrenChildIdEditRouteImport.update({
     id: '/children/$childId/edit',
     path: '/children/$childId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedChildrenChildIdDashboardRoute =
+  AuthenticatedChildrenChildIdDashboardRouteImport.update({
+    id: '/children/$childId/dashboard',
+    path: '/children/$childId/dashboard',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedChildrenChildIdConsentRoute =
@@ -284,13 +305,16 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/library': typeof AuthenticatedLibraryRoute
   '/children/new': typeof AuthenticatedChildrenNewRoute
+  '/platform/dashboard': typeof AuthenticatedPlatformDashboardRoute
   '/sessions/$sessionId': typeof AuthenticatedSessionsSessionIdRoute
   '/sessions/uncovered': typeof AuthenticatedSessionsUncoveredRoute
   '/settings/library': typeof AuthenticatedSettingsLibraryRoute
   '/children/': typeof AuthenticatedChildrenIndexRoute
   '/sessions/': typeof AuthenticatedSessionsIndexRoute
   '/children/$childId/consent': typeof AuthenticatedChildrenChildIdConsentRoute
+  '/children/$childId/dashboard': typeof AuthenticatedChildrenChildIdDashboardRoute
   '/children/$childId/edit': typeof AuthenticatedChildrenChildIdEditRoute
+  '/children/$childId/report': typeof AuthenticatedChildrenChildIdReportRoute
   '/platform/clinics/new': typeof AuthenticatedPlatformClinicsNewRoute
   '/platform/games/new': typeof AuthenticatedPlatformGamesNewRoute
   '/settings/departments/$departmentId': typeof AuthenticatedSettingsDepartmentsDepartmentIdRoute
@@ -324,13 +348,16 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/library': typeof AuthenticatedLibraryRoute
   '/children/new': typeof AuthenticatedChildrenNewRoute
+  '/platform/dashboard': typeof AuthenticatedPlatformDashboardRoute
   '/sessions/$sessionId': typeof AuthenticatedSessionsSessionIdRoute
   '/sessions/uncovered': typeof AuthenticatedSessionsUncoveredRoute
   '/settings/library': typeof AuthenticatedSettingsLibraryRoute
   '/children': typeof AuthenticatedChildrenIndexRoute
   '/sessions': typeof AuthenticatedSessionsIndexRoute
   '/children/$childId/consent': typeof AuthenticatedChildrenChildIdConsentRoute
+  '/children/$childId/dashboard': typeof AuthenticatedChildrenChildIdDashboardRoute
   '/children/$childId/edit': typeof AuthenticatedChildrenChildIdEditRoute
+  '/children/$childId/report': typeof AuthenticatedChildrenChildIdReportRoute
   '/platform/clinics/new': typeof AuthenticatedPlatformClinicsNewRoute
   '/platform/games/new': typeof AuthenticatedPlatformGamesNewRoute
   '/settings/departments/$departmentId': typeof AuthenticatedSettingsDepartmentsDepartmentIdRoute
@@ -366,13 +393,16 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/children/new': typeof AuthenticatedChildrenNewRoute
+  '/_authenticated/platform/dashboard': typeof AuthenticatedPlatformDashboardRoute
   '/_authenticated/sessions/$sessionId': typeof AuthenticatedSessionsSessionIdRoute
   '/_authenticated/sessions/uncovered': typeof AuthenticatedSessionsUncoveredRoute
   '/_authenticated/settings/library': typeof AuthenticatedSettingsLibraryRoute
   '/_authenticated/children/': typeof AuthenticatedChildrenIndexRoute
   '/_authenticated/sessions/': typeof AuthenticatedSessionsIndexRoute
   '/_authenticated/children/$childId/consent': typeof AuthenticatedChildrenChildIdConsentRoute
+  '/_authenticated/children/$childId/dashboard': typeof AuthenticatedChildrenChildIdDashboardRoute
   '/_authenticated/children/$childId/edit': typeof AuthenticatedChildrenChildIdEditRoute
+  '/_authenticated/children/$childId/report': typeof AuthenticatedChildrenChildIdReportRoute
   '/_authenticated/platform/clinics/new': typeof AuthenticatedPlatformClinicsNewRoute
   '/_authenticated/platform/games/new': typeof AuthenticatedPlatformGamesNewRoute
   '/_authenticated/settings/departments/$departmentId': typeof AuthenticatedSettingsDepartmentsDepartmentIdRoute
@@ -408,13 +438,16 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/library'
     | '/children/new'
+    | '/platform/dashboard'
     | '/sessions/$sessionId'
     | '/sessions/uncovered'
     | '/settings/library'
     | '/children/'
     | '/sessions/'
     | '/children/$childId/consent'
+    | '/children/$childId/dashboard'
     | '/children/$childId/edit'
+    | '/children/$childId/report'
     | '/platform/clinics/new'
     | '/platform/games/new'
     | '/settings/departments/$departmentId'
@@ -448,13 +481,16 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/library'
     | '/children/new'
+    | '/platform/dashboard'
     | '/sessions/$sessionId'
     | '/sessions/uncovered'
     | '/settings/library'
     | '/children'
     | '/sessions'
     | '/children/$childId/consent'
+    | '/children/$childId/dashboard'
     | '/children/$childId/edit'
+    | '/children/$childId/report'
     | '/platform/clinics/new'
     | '/platform/games/new'
     | '/settings/departments/$departmentId'
@@ -489,13 +525,16 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/library'
     | '/_authenticated/children/new'
+    | '/_authenticated/platform/dashboard'
     | '/_authenticated/sessions/$sessionId'
     | '/_authenticated/sessions/uncovered'
     | '/_authenticated/settings/library'
     | '/_authenticated/children/'
     | '/_authenticated/sessions/'
     | '/_authenticated/children/$childId/consent'
+    | '/_authenticated/children/$childId/dashboard'
     | '/_authenticated/children/$childId/edit'
+    | '/_authenticated/children/$childId/report'
     | '/_authenticated/platform/clinics/new'
     | '/_authenticated/platform/games/new'
     | '/_authenticated/settings/departments/$departmentId'
@@ -623,6 +662,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSessionsSessionIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/platform/dashboard': {
+      id: '/_authenticated/platform/dashboard'
+      path: '/platform/dashboard'
+      fullPath: '/platform/dashboard'
+      preLoaderRoute: typeof AuthenticatedPlatformDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/children/new': {
       id: '/_authenticated/children/new'
       path: '/children/new'
@@ -728,11 +774,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPlatformClinicsNewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/children/$childId/report': {
+      id: '/_authenticated/children/$childId/report'
+      path: '/children/$childId/report'
+      fullPath: '/children/$childId/report'
+      preLoaderRoute: typeof AuthenticatedChildrenChildIdReportRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/children/$childId/edit': {
       id: '/_authenticated/children/$childId/edit'
       path: '/children/$childId/edit'
       fullPath: '/children/$childId/edit'
       preLoaderRoute: typeof AuthenticatedChildrenChildIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/children/$childId/dashboard': {
+      id: '/_authenticated/children/$childId/dashboard'
+      path: '/children/$childId/dashboard'
+      fullPath: '/children/$childId/dashboard'
+      preLoaderRoute: typeof AuthenticatedChildrenChildIdDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/children/$childId/consent': {
@@ -812,13 +872,16 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedChildrenNewRoute: typeof AuthenticatedChildrenNewRoute
+  AuthenticatedPlatformDashboardRoute: typeof AuthenticatedPlatformDashboardRoute
   AuthenticatedSessionsSessionIdRoute: typeof AuthenticatedSessionsSessionIdRoute
   AuthenticatedSessionsUncoveredRoute: typeof AuthenticatedSessionsUncoveredRoute
   AuthenticatedSettingsLibraryRoute: typeof AuthenticatedSettingsLibraryRoute
   AuthenticatedChildrenIndexRoute: typeof AuthenticatedChildrenIndexRoute
   AuthenticatedSessionsIndexRoute: typeof AuthenticatedSessionsIndexRoute
   AuthenticatedChildrenChildIdConsentRoute: typeof AuthenticatedChildrenChildIdConsentRoute
+  AuthenticatedChildrenChildIdDashboardRoute: typeof AuthenticatedChildrenChildIdDashboardRoute
   AuthenticatedChildrenChildIdEditRoute: typeof AuthenticatedChildrenChildIdEditRoute
+  AuthenticatedChildrenChildIdReportRoute: typeof AuthenticatedChildrenChildIdReportRoute
   AuthenticatedPlatformClinicsNewRoute: typeof AuthenticatedPlatformClinicsNewRoute
   AuthenticatedPlatformGamesNewRoute: typeof AuthenticatedPlatformGamesNewRoute
   AuthenticatedSettingsDepartmentsDepartmentIdRoute: typeof AuthenticatedSettingsDepartmentsDepartmentIdRoute
@@ -848,6 +911,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedChildrenNewRoute: AuthenticatedChildrenNewRoute,
+  AuthenticatedPlatformDashboardRoute: AuthenticatedPlatformDashboardRoute,
   AuthenticatedSessionsSessionIdRoute: AuthenticatedSessionsSessionIdRoute,
   AuthenticatedSessionsUncoveredRoute: AuthenticatedSessionsUncoveredRoute,
   AuthenticatedSettingsLibraryRoute: AuthenticatedSettingsLibraryRoute,
@@ -855,7 +919,11 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedSessionsIndexRoute: AuthenticatedSessionsIndexRoute,
   AuthenticatedChildrenChildIdConsentRoute:
     AuthenticatedChildrenChildIdConsentRoute,
+  AuthenticatedChildrenChildIdDashboardRoute:
+    AuthenticatedChildrenChildIdDashboardRoute,
   AuthenticatedChildrenChildIdEditRoute: AuthenticatedChildrenChildIdEditRoute,
+  AuthenticatedChildrenChildIdReportRoute:
+    AuthenticatedChildrenChildIdReportRoute,
   AuthenticatedPlatformClinicsNewRoute: AuthenticatedPlatformClinicsNewRoute,
   AuthenticatedPlatformGamesNewRoute: AuthenticatedPlatformGamesNewRoute,
   AuthenticatedSettingsDepartmentsDepartmentIdRoute:

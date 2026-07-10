@@ -18,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/platform/clinics/")({
 
 type ClinicSummary = {
 	name: string;
+	code: string | null;
 	createdAt: string;
 	activeChildren: number;
 	activeTherapists: number;
@@ -27,7 +28,12 @@ type ClinicSummary = {
 function ClinicRow({ clinic }: { clinic: ClinicSummary }) {
 	return (
 		<div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] items-center gap-4 px-4 py-3">
-			<span className="font-medium text-on-surface text-sm">{clinic.name}</span>
+			<span className="font-medium text-on-surface text-sm">
+				{clinic.name}
+				{clinic.code && (
+					<span className="ml-1 text-on-surface-variant">({clinic.code})</span>
+				)}
+			</span>
 			<span className="text-on-surface-variant text-sm">
 				{clinic.activeChildren}
 			</span>
@@ -105,14 +111,14 @@ function ClinicsListPage() {
 
 				{isLoading ? (
 					<ClinicsListSkeleton />
-				) : !data?.length ? (
+				) : !data?.clinicData?.length ? (
 					<div className="flex flex-col items-center justify-center gap-3 py-16 text-on-surface-variant">
 						<Building2 className="h-8 w-8" />
 						<p className="text-sm">No clinics registered.</p>
 					</div>
 				) : (
 					<div className="divide-y divide-outline-variant">
-						{data.map((clinic, i) => (
+						{data.clinicData.map((clinic, i) => (
 							<ClinicRow key={i} clinic={clinic} />
 						))}
 					</div>

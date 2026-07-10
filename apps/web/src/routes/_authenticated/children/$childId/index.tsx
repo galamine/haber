@@ -12,7 +12,7 @@ import {
 	TabsTrigger,
 } from "@haber-final/ui/components/tabs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle2, Pencil, Shield, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
@@ -329,6 +329,15 @@ function ChildProfilePage() {
 								</p>
 							) : null}
 						</div>
+					</div>
+					<div className="mt-6 rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center">
+						<Link
+							to="/children/$childId/dashboard"
+							params={{ childId }}
+							className="text-primary hover:underline"
+						>
+							View Dashboard
+						</Link>
 					</div>
 				</TabsContent>
 

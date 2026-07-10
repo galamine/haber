@@ -1,6 +1,10 @@
 import { z } from "zod";
 
 export const CreateClinicInput = z.object({
+	code: z
+		.string()
+		.length(6)
+		.regex(/^[A-Z0-9]+$/, "Must be 6 alphanumeric characters"),
 	name: z.string().min(1).max(200),
 	address: z.string().min(1),
 	contactName: z.string().min(1),

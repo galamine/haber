@@ -45,8 +45,36 @@ export const authRouter = router({
 				where: { email: input.email },
 			});
 
-			if (!user?.loginEnabled) {
-				return { success: true };
+			if (!user) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "User not found",
+				});
+			}
+
+			if (!user.loginEnabled) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "Login not enabled for this user",
+				});
+			}
+
+			if (user.role !== "SUPER_ADMIN") {
+				if (!input.clinicCode) {
+					throw new TRPCError({
+						code: "BAD_REQUEST",
+						message: "Clinic code required",
+					});
+				}
+				const clinic = await prisma.clinic.findUnique({
+					where: { code: input.clinicCode },
+				});
+				if (!clinic || clinic.id !== user.clinicId) {
+					throw new TRPCError({
+						code: "UNAUTHORIZED",
+						message: "Invalid clinic code",
+					});
+				}
 			}
 
 			logger.info({ email: maskEmail(input.email) }, "auth: OTP requested");
@@ -85,7 +113,7 @@ export const authRouter = router({
 				console.log(`[DEV OTP] ${input.email}: ${code}`);
 			}
 
-			return { success: true };
+			return { success: true, role: user.role };
 		}),
 
 	verifyOtp: publicProcedure
@@ -274,6 +302,9 @@ export const authRouter = router({
 				email: true,
 				credentialsQualifications: true,
 				credentialsRegistrationNumber: true,
+				clinic: {
+					select: { name: true, code: true },
+				},
 			},
 		});
 	}),

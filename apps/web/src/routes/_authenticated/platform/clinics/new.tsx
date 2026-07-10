@@ -45,6 +45,7 @@ function NewClinicPage() {
 	const clinicForm = useForm<ClinicFormValues>({
 		resolver: zodResolver(CreateClinicInput),
 		defaultValues: {
+			code: "",
 			name: "",
 			address: "",
 			contactName: "",
@@ -115,6 +116,28 @@ function NewClinicPage() {
 									onSubmit={clinicForm.handleSubmit(onClinicSubmit)}
 									className="flex flex-col gap-5"
 								>
+									<FormField
+										control={clinicForm.control}
+										name="code"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Clinic Code</FormLabel>
+												<FormControl>
+													<Input
+														placeholder="e.g. ABC123"
+														maxLength={6}
+														// { ... field }
+														value={field.value?.toUpperCase() ?? ""}
+														onChange={(e) =>
+															field.onChange(e.target.value.toUpperCase())
+														}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+
 									<FormField
 										control={clinicForm.control}
 										name="name"
