@@ -3,7 +3,13 @@ import { PERMISSIONS } from "@haber-final/db/permissions";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import type { AuthUser } from "../context";
-import { hasPermission, protectedProcedure, router } from "../index";
+import {
+	adminProcedure,
+	clinicAdminProcedure,
+	hasPermission,
+	protectedProcedure,
+	router,
+} from "../index";
 import {
 	AssignTherapistInput,
 	ChildListInput,
@@ -204,7 +210,7 @@ export const childRouter: ReturnType<typeof router> = router({
 		}),
 
 	softDelete: protectedProcedure
-		.input(z.object({ childId: z.string() }))
+		.input(z.object({ childId: z.string(), reason: z.string().optional() }))
 		.mutation(async ({ input, ctx }) => {
 			const { role, tenantId } = ctx.auth;
 			if (role !== "CLINIC_ADMIN" && role !== "SUPER_ADMIN") {
@@ -220,9 +226,186 @@ export const childRouter: ReturnType<typeof router> = router({
 			});
 			if (!child) throw new TRPCError({ code: "NOT_FOUND" });
 
-			await prisma.child.update({
-				where: { id: input.childId },
-				data: { deletedAt: new Date() },
+			await prisma.$transaction(async (tx) => {
+				await tx.child.update({
+					where: { id: input.childId },
+					data: { deletedAt: new Date(), deletedReason: input.reason },
+				});
+				await tx.guardian.update({
+					where: { childId: input.childId },
+					data: { deletedAt: new Date() },
+				});
+			});
+		}),
+
+	listDeleted: clinicAdminProcedure
+		.input(ChildListInput)
+		.query(async ({ input, ctx }) => {
+			const where = {
+				...(ctx.auth.role !== "SUPER_ADMIN"
+					? { clinicId: ctx.auth.tenantId ?? undefined }
+					: {}),
+				deletedAt: { not: null },
+			};
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const [items, total] = await prisma.$transaction([
+				(prisma.child.findMany as any)({
+					where,
+					skip: (input.page - 1) * input.pageSize,
+					take: input.pageSize,
+					orderBy: { deletedAt: "desc" },
+					include: { guardian: true },
+				}),
+				(prisma.child.count as any)({ where }),
+			]);
+			return {
+				items,
+				total,
+				page: input.page,
+				totalPages: Math.ceil(total / input.pageSize),
+			};
+		}),
+
+	permanentDelete: adminProcedure
+		.input(z.object({ childId: z.string() }))
+		.mutation(async ({ input }) => {
+			const SEVEN_YEARS_MS = 7 * 365.25 * 24 * 60 * 60 * 1000;
+			const child = await prisma.child.findFirst({
+				where: { id: input.childId, deletedAt: { not: null } },
+			});
+
+			if (!child?.deletedAt) throw new TRPCError({ code: "NOT_FOUND" });
+
+			const retentionExpired =
+				Date.now() - child.deletedAt.getTime() > SEVEN_YEARS_MS;
+			if (!retentionExpired) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message:
+						"Cannot permanently delete: record is within 7-year retention window",
+				});
+			}
+
+			await prisma.$transaction(async (tx) => {
+				const sessionIds = (
+					await tx.therapySession.findMany({
+						where: { childId: input.childId },
+						select: { id: true },
+					})
+				).map((s) => s.id);
+
+				const planIds = (
+					await tx.treatmentPlan.findMany({
+						where: { childId: input.childId },
+						select: { id: true },
+					})
+				).map((p) => p.id);
+
+				const goalIds =
+					planIds.length > 0
+						? (
+								await tx.goal.findMany({
+									where: { treatmentPlanId: { in: planIds } },
+									select: { id: true },
+								})
+							).map((g) => g.id)
+						: [];
+
+				const assessmentIds = (
+					await tx.initialAssessment.findMany({
+						where: { childId: input.childId },
+						select: { id: true },
+					})
+				).map((a) => a.id);
+
+				const followUpIds = (
+					await tx.followUpAssessment.findMany({
+						where: { childId: input.childId },
+						select: { id: true },
+					})
+				).map((f) => f.id);
+
+				if (sessionIds.length > 0) {
+					await tx.roomBooking.deleteMany({
+						where: { sessionId: { in: sessionIds } },
+					});
+					await tx.gameResult.deleteMany({
+						where: { sessionId: { in: sessionIds } },
+					});
+					await tx.sessionGameAssignment.deleteMany({
+						where: { sessionId: { in: sessionIds } },
+					});
+				}
+				await tx.therapySession.deleteMany({
+					where: { childId: input.childId },
+				});
+
+				if (goalIds.length > 0) {
+					await tx.goalProgressEntry.deleteMany({
+						where: { goalId: { in: goalIds } },
+					});
+				}
+				if (planIds.length > 0) {
+					await tx.goal.deleteMany({
+						where: { treatmentPlanId: { in: planIds } },
+					});
+					await tx.planGameAssignment.deleteMany({
+						where: { planId: { in: planIds } },
+					});
+				}
+
+				const sensoryFilters: any[] = [];
+				if (assessmentIds.length > 0)
+					sensoryFilters.push({ assessmentId: { in: assessmentIds } });
+				if (followUpIds.length > 0)
+					sensoryFilters.push({ followUpId: { in: followUpIds } });
+				if (sensoryFilters.length > 0) {
+					await tx.sensoryProfile.deleteMany({
+						where: { OR: sensoryFilters },
+					});
+				}
+
+				await tx.treatmentPlan.deleteMany({
+					where: { childId: input.childId },
+				});
+				await tx.followUpAssessment.deleteMany({
+					where: { childId: input.childId },
+				});
+				await tx.consentRecord.deleteMany({
+					where: { childId: input.childId },
+				});
+				await tx.consentInvitation.deleteMany({
+					where: { childId: input.childId },
+				});
+				await tx.initialAssessment.deleteMany({
+					where: { childId: input.childId },
+				});
+				await tx.childTherapistAssignment.deleteMany({
+					where: { childId: input.childId },
+				});
+
+				const guardian = await tx.guardian.findFirst({
+					where: { childId: input.childId },
+					select: { userId: true },
+				});
+				if (guardian?.userId) {
+					await tx.session.deleteMany({
+						where: { userId: guardian.userId },
+					});
+					await tx.otp.deleteMany({
+						where: { userId: guardian.userId },
+					});
+					await tx.userProfile.deleteMany({
+						where: { userId: guardian.userId },
+					});
+					await tx.user.delete({
+						where: { id: guardian.userId },
+					});
+				}
+				await tx.guardian.deleteMany({
+					where: { childId: input.childId },
+				});
+				await tx.child.delete({ where: { id: input.childId } });
 			});
 		}),
 

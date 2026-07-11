@@ -6,6 +6,7 @@ import { clinicRouter } from "./clinic";
 import { consentRouter } from "./consent";
 import { consentInvitationRouter } from "./consentInvitation";
 import { dashboardRouter } from "./dashboard";
+import { dpdpRouter } from "./dpdp";
 import { gameRouter } from "./game";
 import { goalRouter } from "./goal";
 import { milestoneRouter } from "./milestone";
@@ -36,5 +37,6 @@ export const appRouter: ReturnType<typeof router> = router({
 	session: sessionRouter,
 	dashboard: dashboardRouter,
 	report: reportRouter,
+	dpdp: dpdpRouter,
 });
 export type AppRouter = typeof appRouter;

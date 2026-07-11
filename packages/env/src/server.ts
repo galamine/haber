@@ -14,6 +14,7 @@ export const env = createEnv({
 		RESEND_FROM_EMAIL: z.string().email(),
 		SUPER_ADMIN_EMAIL: z.string().email().optional(),
 		CLOUDINARY_URL: z.string().min(1),
+		DATA_REGION: z.enum(["india"]).default("india"),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,

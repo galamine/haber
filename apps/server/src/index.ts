@@ -266,5 +266,8 @@ serve(
 	},
 	(info) => {
 		console.log(`Server is running on http://localhost:${info.port}`);
+		if (env.DATA_REGION !== "india") {
+			logger.warn("DATA_REGION should be set to 'india' for DPDP compliance");
+		}
 	},
 );
