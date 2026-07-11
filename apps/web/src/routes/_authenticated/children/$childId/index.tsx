@@ -4,6 +4,15 @@ import {
 	AvatarImage,
 } from "@haber-final/ui/components/avatar";
 import { Button } from "@haber-final/ui/components/button";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@haber-final/ui/components/dialog";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
 import {
 	Tabs,
@@ -13,7 +22,15 @@ import {
 } from "@haber-final/ui/components/tabs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { ArrowLeft, CheckCircle2, Pencil, Shield, XCircle } from "lucide-react";
+import {
+	ArrowLeft,
+	CheckCircle2,
+	Pencil,
+	Shield,
+	Trash2,
+	XCircle,
+} from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { useAuthStore } from "@/stores/auth";
@@ -142,6 +159,19 @@ function ChildProfilePage() {
 				queryClient.invalidateQueries({
 					queryKey: trpc.child.list.queryOptions({}).queryKey,
 				});
+			},
+			onError: (err) => toast.error(err.message),
+		}),
+	);
+
+	const [deleteOpen, setDeleteOpen] = useState(false);
+	const [deleteReason, setDeleteReason] = useState("");
+
+	const softDeleteMutation = useMutation(
+		trpc.child.softDelete.mutationOptions({
+			onSuccess: () => {
+				toast.success("Child record deleted");
+				router.navigate({ to: "/children" });
 			},
 			onError: (err) => toast.error(err.message),
 		}),
@@ -319,6 +349,16 @@ function ChildProfilePage() {
 								>
 									Start Follow-up
 								</Button>
+								{isAdmin && (
+									<Button
+										variant="outline"
+										className="w-full gap-2 border-red-300 text-red-600 hover:bg-red-50"
+										onClick={() => setDeleteOpen(true)}
+									>
+										<Trash2 className="h-4 w-4" />
+										Delete Child Record
+									</Button>
+								)}
 							</div>
 							{!intake?.complete && intake?.missingFields.length ? (
 								<p className="mt-3 text-on-surface-variant text-xs">
@@ -489,6 +529,109 @@ function ChildProfilePage() {
 					</div>
 				</TabsContent>
 			</Tabs>
+
+			<DeleteChildDialog
+				open={deleteOpen}
+				onOpenChange={setDeleteOpen}
+				childName={c.fullName}
+				reason={deleteReason}
+				onReasonChange={setDeleteReason}
+				onDelete={() =>
+					softDeleteMutation.mutate({
+						childId,
+						reason: deleteReason || undefined,
+					})
+				}
+				isPending={softDeleteMutation.isPending}
+			/>
 		</div>
+	);
+}
+
+function DeleteChildDialog({
+	open,
+	onOpenChange,
+	childName,
+	reason,
+	onReasonChange,
+	onDelete,
+	isPending,
+}: {
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+	childName: string;
+	reason: string;
+	onReasonChange: (reason: string) => void;
+	onDelete: () => void;
+	isPending: boolean;
+}) {
+	const [deleteConfirmText, setDeleteConfirmText] = useState("");
+	const canDelete = deleteConfirmText === "DELETE";
+
+	return (
+		<Dialog open={open} onOpenChange={onOpenChange}>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Delete child record?</DialogTitle>
+					<DialogDescription>
+						This action permanently removes the child from active records.
+					</DialogDescription>
+				</DialogHeader>
+				<div className="space-y-4 py-4">
+					<div>
+						<p className="text-on-surface text-sm">
+							You are about to delete{" "}
+							<span className="font-semibold">{childName}</span>.
+						</p>
+					</div>
+					<div>
+						<label
+							htmlFor="delete-reason"
+							className="text-on-surface-variant text-xs"
+						>
+							Reason (optional)
+						</label>
+						<textarea
+							id="delete-reason"
+							value={reason}
+							onChange={(e) => onReasonChange(e.target.value)}
+							className="mt-1 w-full rounded-lg border border-outline-variant bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600"
+							placeholder="e.g. Duplicate record, parent request..."
+							rows={2}
+						/>
+					</div>
+					<div>
+						<label
+							htmlFor="delete-confirm"
+							className="text-on-surface-variant text-xs"
+						>
+							Type{" "}
+							<span className="font-semibold text-red-600 text-sm">DELETE</span>{" "}
+							to confirm
+						</label>
+						<input
+							id="delete-confirm"
+							type="text"
+							value={deleteConfirmText}
+							onChange={(e) => setDeleteConfirmText(e.target.value)}
+							className="mt-1 w-full rounded-lg border border-outline-variant bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brown-600"
+							placeholder="DELETE"
+						/>
+					</div>
+				</div>
+				<DialogFooter>
+					<DialogClose>
+						<Button variant="outline">Cancel</Button>
+					</DialogClose>
+					<Button
+						variant="destructive"
+						disabled={!canDelete || isPending}
+						onClick={onDelete}
+					>
+						Delete Record
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 	);
 }

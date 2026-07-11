@@ -22,6 +22,7 @@ import {
 	Settings,
 	Shield,
 	Stethoscope,
+	Trash2,
 	Users,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -102,6 +103,12 @@ const NAV_ITEMS: NavItem[] = [
 		to: "/settings/library",
 		icon: <Stethoscope className="h-4 w-4" />,
 		roles: ["CLINIC_ADMIN"],
+	},
+	{
+		label: "Deleted Records",
+		to: "/settings/deleted-records",
+		icon: <Trash2 className="h-4 w-4" />,
+		roles: ["CLINIC_ADMIN", "SUPER_ADMIN"],
 	},
 ];
 

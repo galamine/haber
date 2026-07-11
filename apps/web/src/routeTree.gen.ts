@@ -27,6 +27,7 @@ import { Route as AuthenticatedChildrenNewRouteImport } from './routes/_authenti
 import { Route as AuthenticatedSettingsStaffIndexRouteImport } from './routes/_authenticated/settings/staff/index'
 import { Route as AuthenticatedSettingsRoomsIndexRouteImport } from './routes/_authenticated/settings/rooms/index'
 import { Route as AuthenticatedSettingsDepartmentsIndexRouteImport } from './routes/_authenticated/settings/departments/index'
+import { Route as AuthenticatedSettingsDeletedRecordsIndexRouteImport } from './routes/_authenticated/settings/deleted-records/index'
 import { Route as AuthenticatedPlatformGamesIndexRouteImport } from './routes/_authenticated/platform/games/index'
 import { Route as AuthenticatedPlatformClinicsIndexRouteImport } from './routes/_authenticated/platform/clinics/index'
 import { Route as AuthenticatedChildrenChildIdIndexRouteImport } from './routes/_authenticated/children/$childId/index'
@@ -149,6 +150,12 @@ const AuthenticatedSettingsDepartmentsIndexRoute =
   AuthenticatedSettingsDepartmentsIndexRouteImport.update({
     id: '/settings/departments/',
     path: '/settings/departments/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsDeletedRecordsIndexRoute =
+  AuthenticatedSettingsDeletedRecordsIndexRouteImport.update({
+    id: '/settings/deleted-records/',
+    path: '/settings/deleted-records/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedPlatformGamesIndexRoute =
@@ -326,6 +333,7 @@ export interface FileRoutesByFullPath {
   '/children/$childId/': typeof AuthenticatedChildrenChildIdIndexRoute
   '/platform/clinics/': typeof AuthenticatedPlatformClinicsIndexRoute
   '/platform/games/': typeof AuthenticatedPlatformGamesIndexRoute
+  '/settings/deleted-records/': typeof AuthenticatedSettingsDeletedRecordsIndexRoute
   '/settings/departments/': typeof AuthenticatedSettingsDepartmentsIndexRoute
   '/settings/rooms/': typeof AuthenticatedSettingsRoomsIndexRoute
   '/settings/staff/': typeof AuthenticatedSettingsStaffIndexRoute
@@ -369,6 +377,7 @@ export interface FileRoutesByTo {
   '/children/$childId': typeof AuthenticatedChildrenChildIdIndexRoute
   '/platform/clinics': typeof AuthenticatedPlatformClinicsIndexRoute
   '/platform/games': typeof AuthenticatedPlatformGamesIndexRoute
+  '/settings/deleted-records': typeof AuthenticatedSettingsDeletedRecordsIndexRoute
   '/settings/departments': typeof AuthenticatedSettingsDepartmentsIndexRoute
   '/settings/rooms': typeof AuthenticatedSettingsRoomsIndexRoute
   '/settings/staff': typeof AuthenticatedSettingsStaffIndexRoute
@@ -414,6 +423,7 @@ export interface FileRoutesById {
   '/_authenticated/children/$childId/': typeof AuthenticatedChildrenChildIdIndexRoute
   '/_authenticated/platform/clinics/': typeof AuthenticatedPlatformClinicsIndexRoute
   '/_authenticated/platform/games/': typeof AuthenticatedPlatformGamesIndexRoute
+  '/_authenticated/settings/deleted-records/': typeof AuthenticatedSettingsDeletedRecordsIndexRoute
   '/_authenticated/settings/departments/': typeof AuthenticatedSettingsDepartmentsIndexRoute
   '/_authenticated/settings/rooms/': typeof AuthenticatedSettingsRoomsIndexRoute
   '/_authenticated/settings/staff/': typeof AuthenticatedSettingsStaffIndexRoute
@@ -459,6 +469,7 @@ export interface FileRouteTypes {
     | '/children/$childId/'
     | '/platform/clinics/'
     | '/platform/games/'
+    | '/settings/deleted-records/'
     | '/settings/departments/'
     | '/settings/rooms/'
     | '/settings/staff/'
@@ -502,6 +513,7 @@ export interface FileRouteTypes {
     | '/children/$childId'
     | '/platform/clinics'
     | '/platform/games'
+    | '/settings/deleted-records'
     | '/settings/departments'
     | '/settings/rooms'
     | '/settings/staff'
@@ -546,6 +558,7 @@ export interface FileRouteTypes {
     | '/_authenticated/children/$childId/'
     | '/_authenticated/platform/clinics/'
     | '/_authenticated/platform/games/'
+    | '/_authenticated/settings/deleted-records/'
     | '/_authenticated/settings/departments/'
     | '/_authenticated/settings/rooms/'
     | '/_authenticated/settings/staff/'
@@ -695,6 +708,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/departments'
       fullPath: '/settings/departments/'
       preLoaderRoute: typeof AuthenticatedSettingsDepartmentsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/deleted-records/': {
+      id: '/_authenticated/settings/deleted-records/'
+      path: '/settings/deleted-records'
+      fullPath: '/settings/deleted-records/'
+      preLoaderRoute: typeof AuthenticatedSettingsDeletedRecordsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/platform/games/': {
@@ -893,6 +913,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedChildrenChildIdIndexRoute: typeof AuthenticatedChildrenChildIdIndexRoute
   AuthenticatedPlatformClinicsIndexRoute: typeof AuthenticatedPlatformClinicsIndexRoute
   AuthenticatedPlatformGamesIndexRoute: typeof AuthenticatedPlatformGamesIndexRoute
+  AuthenticatedSettingsDeletedRecordsIndexRoute: typeof AuthenticatedSettingsDeletedRecordsIndexRoute
   AuthenticatedSettingsDepartmentsIndexRoute: typeof AuthenticatedSettingsDepartmentsIndexRoute
   AuthenticatedSettingsRoomsIndexRoute: typeof AuthenticatedSettingsRoomsIndexRoute
   AuthenticatedSettingsStaffIndexRoute: typeof AuthenticatedSettingsStaffIndexRoute
@@ -940,6 +961,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedPlatformClinicsIndexRoute:
     AuthenticatedPlatformClinicsIndexRoute,
   AuthenticatedPlatformGamesIndexRoute: AuthenticatedPlatformGamesIndexRoute,
+  AuthenticatedSettingsDeletedRecordsIndexRoute:
+    AuthenticatedSettingsDeletedRecordsIndexRoute,
   AuthenticatedSettingsDepartmentsIndexRoute:
     AuthenticatedSettingsDepartmentsIndexRoute,
   AuthenticatedSettingsRoomsIndexRoute: AuthenticatedSettingsRoomsIndexRoute,
