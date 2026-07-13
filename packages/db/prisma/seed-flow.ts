@@ -9,7 +9,9 @@ const allPermissions = Object.values(PERMISSIONS);
 
 const clinic = await prisma.clinic.upsert({
 	where: { id: "sf_clinic" },
-	update: {},
+	update: {
+		code: "SF-OT",
+	},
 	create: {
 		id: "sf_clinic",
 		name: "Sunshine Children's OT Clinic",
