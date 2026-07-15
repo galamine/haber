@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { randomBytes } from "node:crypto";
 import { createPrismaClient } from "../src/index";
 import { PERMISSIONS } from "../src/permissions";
 
@@ -2074,18 +2075,490 @@ console.log(
 	`Plan revision: ${planAaravV2.name} (v${planAaravV2.versionNumber}, DRAFT)`,
 );
 
+// ── 12. DEPARTMENTS + ASSIGNMENTS ────────────────────────────────────────────
+
+const deptOT = await prisma.department.upsert({
+	where: { id: "sf_dept_ot" },
+	update: {},
+	create: {
+		id: "sf_dept_ot",
+		clinicId: clinic.id,
+		name: "Occupational Therapy",
+		description: "General paediatric occupational therapy services.",
+	},
+});
+
+const deptSensory = await prisma.department.upsert({
+	where: { id: "sf_dept_sensory" },
+	update: {},
+	create: {
+		id: "sf_dept_sensory",
+		clinicId: clinic.id,
+		name: "Sensory Integration Therapy",
+		description: "Sensory processing and integration therapy services.",
+	},
+});
+
+await prisma.userDepartmentAssignment.upsert({
+	where: {
+		userId_departmentId: { userId: priyaUser.id, departmentId: deptSensory.id },
+	},
+	update: {},
+	create: { userId: priyaUser.id, departmentId: deptSensory.id },
+});
+
+await prisma.userDepartmentAssignment.upsert({
+	where: {
+		userId_departmentId: { userId: raviUser.id, departmentId: deptOT.id },
+	},
+	update: {},
+	create: { userId: raviUser.id, departmentId: deptOT.id },
+});
+
+await prisma.userDepartmentAssignment.upsert({
+	where: {
+		userId_departmentId: { userId: staffUser.id, departmentId: deptOT.id },
+	},
+	update: {},
+	create: { userId: staffUser.id, departmentId: deptOT.id },
+});
+
+await prisma.userDepartmentAssignment.upsert({
+	where: {
+		userId_departmentId: {
+			userId: staffUser.id,
+			departmentId: deptSensory.id,
+		},
+	},
+	update: {},
+	create: { userId: staffUser.id, departmentId: deptSensory.id },
+});
+
+console.log("Departments and staff assignments created");
+
+// ── 13. SENSORY ROOMS ────────────────────────────────────────────────────────
+
+const roomSensory = await prisma.sensoryRoom.upsert({
+	where: { id: "sf_room_sensory" },
+	update: {},
+	create: {
+		id: "sf_room_sensory",
+		clinicId: clinic.id,
+		departmentId: deptSensory.id,
+		code: "SF-ROOM-1",
+		name: "Sensory Gym",
+		equipmentList: [
+			"lycra_body_sock",
+			"weighted_lap_pad",
+			"linear_swing",
+			"tactile_bin_rice",
+		],
+		status: "ACTIVE",
+	},
+});
+
+await prisma.sensoryRoom.upsert({
+	where: { id: "sf_room_fine_motor" },
+	update: {},
+	create: {
+		id: "sf_room_fine_motor",
+		clinicId: clinic.id,
+		departmentId: deptOT.id,
+		code: "SF-ROOM-2",
+		name: "Fine Motor & Handwriting Room",
+		equipmentList: [
+			"slant_board",
+			"pencil_grips",
+			"balance_beam",
+			"catching_mitts",
+		],
+		status: "ACTIVE",
+	},
+});
+
+console.log("Sensory rooms created");
+
+// ── 14. CLINIC GAME ENABLEMENT ───────────────────────────────────────────────
+
+for (const game of [gameBubble, gameBalance, gameTrace, gameCatch]) {
+	await prisma.clinicGameEnable.upsert({
+		where: { clinicId_gameId: { clinicId: clinic.id, gameId: game.id } },
+		update: { enabled: true },
+		create: { clinicId: clinic.id, gameId: game.id, enabled: true },
+	});
+}
+
+console.log("Clinic game enablement created");
+
+// ── 15. CLINIC ADMIN ─────────────────────────────────────────────────────────
+
+const clinicAdminUser = await prisma.user.upsert({
+	where: { email: "admin.clinic@sf.seed.local" },
+	update: {
+		role: "CLINIC_ADMIN",
+		clinicId: clinic.id,
+		loginEnabled: true,
+		emailVerified: true,
+	},
+	create: {
+		id: "sf_clinic_admin",
+		email: "admin.clinic@sf.seed.local",
+		role: "CLINIC_ADMIN",
+		clinicId: clinic.id,
+		loginEnabled: true,
+		emailVerified: true,
+	},
+});
+
+await prisma.$transaction([
+	prisma.userPermission.deleteMany({ where: { userId: clinicAdminUser.id } }),
+	prisma.userPermission.createMany({
+		data: allPermissions.map((permission) => ({
+			userId: clinicAdminUser.id,
+			permission,
+		})),
+	}),
+]);
+
+await prisma.userProfile.upsert({
+	where: { userId: clinicAdminUser.id },
+	update: {},
+	create: {
+		userId: clinicAdminUser.id,
+		name: "Ms. Lakshmi Nair",
+		phoneNumber: "+91-9876543210",
+		district: "Chennai",
+		state: "Tamil Nadu",
+		dateOfBirth: new Date("1982-11-02"),
+	},
+});
+
+console.log(`Clinic admin: ${clinicAdminUser.email}`);
+
+// ── 16. FRESH PENDING SESSIONS (webhook curl demo) ───────────────────────────
+
+const pendingSessionSeeds = [
+	{
+		id: "sf_session_aarav_5",
+		planId: planAarav.id,
+		childId: "sf_child_aarav",
+		assignedTherapistId: priyaUser.id as string | null,
+		scheduledDate: new Date("2026-07-16"),
+		gameVersions: [
+			{
+				gv: gvBubble,
+				durationSeconds: 600,
+				repetitions: 3,
+				instructions:
+					"Use during sensory circuit. Encourage full-body movement. Allow breaks if dysregulated.",
+				order: 1,
+			},
+			{
+				gv: gvBalance,
+				durationSeconds: 480,
+				repetitions: 2,
+				instructions:
+					"Use during heavy work. Spot for safety. Increase challenge when 3/4 sessions stable.",
+				order: 2,
+			},
+		],
+	},
+	{
+		id: "sf_session_aarav_6",
+		planId: planAarav.id,
+		childId: "sf_child_aarav",
+		assignedTherapistId: null,
+		scheduledDate: new Date("2026-07-18"),
+		gameVersions: [
+			{
+				gv: gvBubble,
+				durationSeconds: 600,
+				repetitions: 3,
+				instructions:
+					"Use during sensory circuit. Encourage full-body movement. Allow breaks if dysregulated.",
+				order: 1,
+			},
+			{
+				gv: gvBalance,
+				durationSeconds: 480,
+				repetitions: 2,
+				instructions:
+					"Use during heavy work. Spot for safety. Increase challenge when 3/4 sessions stable.",
+				order: 2,
+			},
+		],
+	},
+	{
+		id: "sf_session_meera_5",
+		planId: planMeera.id,
+		childId: "sf_child_meera",
+		assignedTherapistId: raviUser.id as string | null,
+		scheduledDate: new Date("2026-07-17"),
+		gameVersions: [
+			{
+				gv: gvTrace,
+				durationSeconds: 900,
+				repetitions: 4,
+				instructions:
+					"Use during handwriting phase. Select letters matching school curriculum. Praise effort, not speed.",
+				order: 1,
+			},
+			{
+				gv: gvCatch,
+				durationSeconds: 600,
+				repetitions: 3,
+				instructions:
+					"Use during CO-OP phase. Apply Goal-Plan-Do-Check. Extend distance when 7/10 consistently.",
+				order: 2,
+			},
+		],
+	},
+	{
+		id: "sf_session_meera_6",
+		planId: planMeera.id,
+		childId: "sf_child_meera",
+		assignedTherapistId: raviUser.id as string | null,
+		scheduledDate: new Date("2026-07-24"),
+		gameVersions: [
+			{
+				gv: gvTrace,
+				durationSeconds: 900,
+				repetitions: 4,
+				instructions:
+					"Use during handwriting phase. Select letters matching school curriculum. Praise effort, not speed.",
+				order: 1,
+			},
+			{
+				gv: gvCatch,
+				durationSeconds: 600,
+				repetitions: 3,
+				instructions:
+					"Use during CO-OP phase. Apply Goal-Plan-Do-Check. Extend distance when 7/10 consistently.",
+				order: 2,
+			},
+		],
+	},
+];
+
+for (const s of pendingSessionSeeds) {
+	const session = await prisma.therapySession.upsert({
+		where: { id: s.id },
+		update: {},
+		create: {
+			id: s.id,
+			planId: s.planId,
+			childId: s.childId,
+			assignedTherapistId: s.assignedTherapistId,
+			scheduledDate: s.scheduledDate,
+			status: "PENDING",
+		},
+	});
+
+	for (const g of s.gameVersions) {
+		await prisma.sessionGameAssignment.upsert({
+			where: { id: `${s.id}_sga_${g.order}` },
+			update: {},
+			create: {
+				id: `${s.id}_sga_${g.order}`,
+				sessionId: session.id,
+				gameVersionId: g.gv.id,
+				durationSeconds: g.durationSeconds,
+				repetitions: g.repetitions,
+				instructions: g.instructions,
+				rubricVersion: "v1",
+				order: g.order,
+			},
+		});
+	}
+}
+
+console.log(
+	"Fresh PENDING sessions created: sf_session_aarav_5, sf_session_aarav_6 (unassigned), sf_session_meera_5, sf_session_meera_6",
+);
+
+// ── 17. ROOM BOOKING ─────────────────────────────────────────────────────────
+
+await prisma.roomBooking.upsert({
+	where: { sessionId: "sf_session_aarav_5" },
+	update: {},
+	create: {
+		sessionId: "sf_session_aarav_5",
+		roomId: roomSensory.id,
+		scheduledDate: new Date("2026-07-16"),
+		claimedById: priyaUser.id,
+	},
+});
+
+console.log("Room booking created");
+
+// ── 18. CHILD — KIRAN (consent granted, intake complete, no plan yet) ───────
+
+await prisma.child.upsert({
+	where: { id: "sf_child_kiran" },
+	update: {},
+	create: {
+		id: "sf_child_kiran",
+		clinicId: clinic.id,
+		opNumber: "SF-OP-003",
+		fullName: "Kiran Iyer",
+		dob: new Date("2019-11-10"),
+		sex: "male",
+		address: "18 Kilpauk Garden Road, Chennai 600010",
+		spokenLanguages: ["Tamil", "English"],
+		school: "Sunshine Montessori, Kilpauk",
+		consentStatus: "GRANTED",
+		medicalHistory: {
+			primaryDiagnoses: ["gdd"],
+			currentMedications: "None",
+			allergies: "None",
+			previousTherapies: "None",
+		},
+	},
+});
+
+await prisma.guardian.upsert({
+	where: { childId: "sf_child_kiran" },
+	update: {},
+	create: {
+		id: "sf_guardian_kiran",
+		childId: "sf_child_kiran",
+		name: "Anjali Iyer",
+		relation: "Mother",
+		phone: "+91-9898009012",
+		email: "anjali.iyer@example.com",
+	},
+});
+
+const kiranConsentTs = new Date("2026-07-10T09:30:00+05:30");
+for (const consentType of [
+	"TREATMENT",
+	"DATA_PROCESSING",
+	"IMAGE_VIDEO_CAPTURE",
+] as const) {
+	await prisma.consentRecord.upsert({
+		where: { childId_consentType: { childId: "sf_child_kiran", consentType } },
+		update: {},
+		create: {
+			childId: "sf_child_kiran",
+			consentType,
+			typedName: "Anjali Iyer",
+			checkbox: true,
+			timestamp: kiranConsentTs,
+			ip: "203.0.113.14",
+		},
+	});
+}
+
+await prisma.consentInvitation.upsert({
+	where: { id: "sf_invite_kiran" },
+	update: {},
+	create: {
+		id: "sf_invite_kiran",
+		childId: "sf_child_kiran",
+		tokenHash: randomBytes(32).toString("hex"),
+		expiresAt: new Date("2026-07-17T09:30:00+05:30"),
+		usedAt: kiranConsentTs,
+		createdBy: staffUser.id,
+	},
+});
+
+console.log(
+	"Child Kiran (consent granted, intake complete, no plan yet) created",
+);
+
+// ── 19. CHILD — ANANYA (withdrawn consent, soft-deleted — DPDP demo) ────────
+
+await prisma.child.upsert({
+	where: { id: "sf_child_deleted" },
+	update: {},
+	create: {
+		id: "sf_child_deleted",
+		clinicId: clinic.id,
+		opNumber: "SF-OP-004",
+		fullName: "Ananya Krishnan",
+		dob: new Date("2018-02-05"),
+		sex: "female",
+		address: "3 Adyar Club Gate Road, Chennai 600020",
+		spokenLanguages: ["Tamil", "English"],
+		school: "Chettinad Vidyashram",
+		consentStatus: "WITHDRAWN",
+		medicalHistory: {
+			primaryDiagnoses: ["adhd"],
+			currentMedications: "None",
+			allergies: "None",
+			previousTherapies: "OT for 3 months in 2025",
+		},
+		deletedAt: new Date("2026-06-15T10:00:00+05:30"),
+		deletedReason:
+			"Family relocated out of state; guardian requested data deletion under DPDP.",
+	},
+});
+
+await prisma.guardian.upsert({
+	where: { childId: "sf_child_deleted" },
+	update: {},
+	create: {
+		id: "sf_guardian_deleted",
+		childId: "sf_child_deleted",
+		name: "Vikram Krishnan",
+		relation: "Father",
+		phone: "+91-9898003456",
+		email: "vikram.krishnan@example.com",
+		deletedAt: new Date("2026-06-15T10:00:00+05:30"),
+	},
+});
+
+const ananyaConsentTs = new Date("2026-05-20T09:00:00+05:30");
+for (const consentType of [
+	"TREATMENT",
+	"DATA_PROCESSING",
+	"IMAGE_VIDEO_CAPTURE",
+] as const) {
+	await prisma.consentRecord.upsert({
+		where: {
+			childId_consentType: { childId: "sf_child_deleted", consentType },
+		},
+		update: {},
+		create: {
+			childId: "sf_child_deleted",
+			consentType,
+			typedName: "Vikram Krishnan",
+			checkbox: true,
+			timestamp: ananyaConsentTs,
+			ip: "203.0.113.20",
+		},
+	});
+}
+
+console.log(
+	"Child Ananya (withdrawn consent, soft-deleted) created for DPDP retention testing",
+);
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 await prisma.$disconnect();
 
 console.log(`
 Flow seed complete.
-  Clinic:     Sunshine Children's OT Clinic  (sf_clinic)
-  Staff:      staff.intake@sf.seed.local
-  Therapists: therapist.priya@sf.seed.local  (Aarav's therapist)
-              therapist.ravi@sf.seed.local   (Meera's therapist)
+  Clinic:      Sunshine Children's OT Clinic  (sf_clinic)
+  Staff:       staff.intake@sf.seed.local
+  Therapists:  therapist.priya@sf.seed.local  (Aarav's therapist, Sensory Integration dept)
+               therapist.ravi@sf.seed.local   (Meera's therapist, OT dept)
+  Clinic admin: admin.clinic@sf.seed.local
+  Departments: Occupational Therapy, Sensory Integration Therapy
+  Rooms:       SF-ROOM-1 (Sensory Gym), SF-ROOM-2 (Fine Motor & Handwriting Room)
   Children:
     Aarav Sharma  — ASD+SPD, 5 y, plan v1 ACTIVE + v2 DRAFT
+                    4 COMPLETED sessions + 2 fresh PENDING (sf_session_aarav_5/6)
     Meera Pillai  — DCD+Dyspraxia, 8 y, plan ACTIVE
-  Each child: 1 initial assessment + 4 COMPLETED sessions + 1 follow-up + goal progress
+                    4 COMPLETED sessions + 2 fresh PENDING (sf_session_meera_5/6)
+    Kiran Iyer    — consent granted, intake complete, no plan yet (sf_child_kiran)
+    Ananya Krishnan — withdrawn consent, soft-deleted (sf_child_deleted, DPDP demo)
+
+  Webhook curl demo (see plans/demo-webhook-curl.md):
+    Use sf_session_aarav_5 or sf_session_meera_5 — fetch their webhookSecret via
+    session.get (or Prisma Studio) and run the start/complete curl commands against
+    http://localhost:3000/api/sessions/<id>/start and /complete.
+    sf_session_aarav_6 is unassigned (tests listUncovered/claimCoverage).
+    sf_session_meera_6 is a spare (tests markAbsent/manualClose).
 `);
