@@ -1,6 +1,7 @@
 import type { FollowUpSectionDSchema } from "@haber-final/api/schemas/assessment";
 import type { z } from "zod";
 import { ReadOnlyField } from "../../assessment/read-only/ReadOnlyField";
+import { TagList } from "../../assessment/read-only/TagList";
 import { SectionCard } from "../../assessment/SectionCard";
 import { COMPLIANCE_OPTIONS, ENGAGEMENT_OPTIONS } from "../constants";
 
@@ -23,12 +24,12 @@ export function ReadOnlySectionD({ data }: ReadOnlySectionDProps) {
 		<SectionCard title="Section D — Follow-Up Clinical Questions">
 			<ReadOnlyField
 				label="Improvements at Home"
-				value={data.improvementsAtHome}
+				value={<TagList items={data.improvementsAtHome} />}
 				className="md:col-span-2"
 			/>
 			<ReadOnlyField
 				label="Improvements at School"
-				value={data.improvementsAtSchool}
+				value={<TagList items={data.improvementsAtSchool} />}
 				className="md:col-span-2"
 			/>
 			<ReadOnlyField
@@ -46,27 +47,27 @@ export function ReadOnlySectionD({ data }: ReadOnlySectionDProps) {
 			/>
 			<ReadOnlyField
 				label="School Performance Changes"
-				value={data.schoolPerformanceChanges}
+				value={<TagList items={data.schoolPerformanceChanges} />}
 				className="md:col-span-2"
 			/>
 			<ReadOnlyField
 				label="Behaviour Changes"
-				value={data.behaviourChanges}
+				value={<TagList items={data.behaviourChanges} />}
 				className="md:col-span-2"
 			/>
 			<ReadOnlyField
 				label="New Skills Observed"
-				value={data.newSkillsObserved}
+				value={<TagList items={data.newSkillsObserved} />}
 				className="md:col-span-2"
 			/>
 			<ReadOnlyField
 				label="Equipment Effectively Used"
-				value={data.equipmentEffectivelyUsed}
+				value={<TagList items={data.equipmentEffectivelyUsed} />}
 				className="md:col-span-2"
 			/>
 			<ReadOnlyField
 				label="Therapist Observations"
-				value={data.therapistObservations}
+				value={<TagList items={data.therapistObservations} />}
 				className="md:col-span-2"
 			/>
 		</SectionCard>

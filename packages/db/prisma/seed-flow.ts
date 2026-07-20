@@ -584,8 +584,11 @@ const assessmentAarav = await prisma.initialAssessment.upsert({
 					notes: "Limited awareness of toilet needs and hunger.",
 				},
 			],
-			behaviouralObservations:
-				"Sought weighted lap pad during transitions. Covered ears repeatedly. Avoided sand bin; tolerated rice bin for 2 min after modeling.",
+			behaviouralObservations: [
+				"Sought weighted lap pad during transitions",
+				"Covered ears repeatedly",
+				"Avoided sand bin; tolerated rice bin for 2 min after modeling",
+			],
 		},
 		sectionE: {
 			functionalConcerns: [
@@ -596,8 +599,12 @@ const assessmentAarav = await prisma.initialAssessment.upsert({
 				"adl_independence",
 				"emotional_regulation_behavior",
 			],
-			observations:
-				"Bilateral coordination at 2nd percentile (BOT-2). Rigid play schemas. Strong proprioceptive seeking. Refuses messy art tasks.",
+			observations: [
+				"Bilateral coordination at 2nd percentile (BOT-2)",
+				"Rigid play schemas",
+				"Strong proprioceptive seeking",
+				"Refuses messy art tasks",
+			],
 		},
 		sectionF: {
 			toolsAdministered: [
@@ -854,8 +861,11 @@ const assessmentMeera = await prisma.initialAssessment.upsert({
 				{ systemId: "olfactory_gustatory", rating: 3, notes: "Typical." },
 				{ systemId: "interoception", rating: 3, notes: "Typical." },
 			],
-			behaviouralObservations:
-				"Frequent collisions with furniture during clinic navigation. Reversed b/d during writing task. Very slow pencil speed; grip awkward and effortful.",
+			behaviouralObservations: [
+				"Frequent collisions with furniture during clinic navigation",
+				"Reversed b/d during writing task",
+				"Very slow pencil speed; grip awkward and effortful",
+			],
 		},
 		sectionE: {
 			functionalConcerns: [
@@ -865,8 +875,12 @@ const assessmentMeera = await prisma.initialAssessment.upsert({
 				"eye_hand_coordination_visual_motor",
 				"adl_independence",
 			],
-			observations:
-				"MABC-2: 3rd percentile. Beery VMI: 7th percentile. Handwriting speed 40% below class average. Avoids PE; negative self-talk about physical tasks.",
+			observations: [
+				"MABC-2: 3rd percentile",
+				"Beery VMI: 7th percentile",
+				"Handwriting speed 40% below class average",
+				"Avoids PE; negative self-talk about physical tasks",
+			],
 		},
 		sectionF: {
 			toolsAdministered: [
@@ -1571,20 +1585,31 @@ const followUpAarav = await prisma.followUpAssessment.upsert({
 			],
 		},
 		sectionD: {
-			improvementsAtHome:
-				"Mother reports child participated in messy art class twice. Less resistance to bath time.",
-			improvementsAtSchool:
-				"Mother reports child participated in messy art class twice. Less resistance to bath time.",
+			improvementsAtHome: [
+				"Mother reports child participated in messy art class twice",
+				"Less resistance to bath time",
+			],
+			improvementsAtSchool: [
+				"Mother reports child participated in messy art class twice",
+				"Less resistance to bath time",
+			],
 			regressions:
 				"New sleep onset difficulty correlating with school field trip. No skill regression.",
 			homeProgramCompliance: "good",
 			sessionEngagement: "good",
-			schoolPerformanceChanges: "",
-			behaviourChanges: "",
-			newSkillsObserved: "",
-			equipmentEffectivelyUsed: "",
-			therapistObservations:
-				"Child presented regulated. Engaged in tactile circuit 15 min including sand bin. Good carry-over of brushing protocol.",
+			schoolPerformanceChanges: [],
+			behaviourChanges: [],
+			newSkillsObserved: [],
+			equipmentEffectivelyUsed: [
+				"Lycra body sock",
+				"Weighted lap pad",
+				"Tactile bin with rice",
+			],
+			therapistObservations: [
+				"Child presented regulated",
+				"Engaged in tactile circuit 15 min including sand bin",
+				"Good carry-over of brushing protocol",
+			],
 		},
 		sectionE: {
 			goalStatusDecisions: ["modify_existing", "add_new", "continue_all"],
@@ -1829,17 +1854,19 @@ const followUpMeera = await prisma.followUpAssessment.upsert({
 			],
 		},
 		sectionD: {
-			improvementsAtHome: "Father reports Meera completing homework faster.",
-			improvementsAtSchool: "PE teacher notes increased group participation.",
+			improvementsAtHome: ["Father reports Meera completing homework faster"],
+			improvementsAtSchool: ["PE teacher notes increased group participation"],
 			regressions: "None.",
 			homeProgramCompliance: "excellent",
 			sessionEngagement: "excellent",
-			schoolPerformanceChanges: "",
-			behaviourChanges: "",
-			newSkillsObserved: "",
-			equipmentEffectivelyUsed: "",
-			therapistObservations:
-				"Child self-monitored during trace task using CO-OP check step independently. Positive self-talk about catching.",
+			schoolPerformanceChanges: [],
+			behaviourChanges: [],
+			newSkillsObserved: [],
+			equipmentEffectivelyUsed: ["Balance beam", "Pencil grips", "Graph paper"],
+			therapistObservations: [
+				"Child self-monitored during trace task using CO-OP check step independently",
+				"Positive self-talk about catching",
+			],
 		},
 		sectionE: {
 			goalStatusDecisions: ["continue_all", "modify_existing"],

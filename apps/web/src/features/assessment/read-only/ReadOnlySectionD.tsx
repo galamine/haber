@@ -11,6 +11,7 @@ import type { z } from "zod";
 
 import { SectionCard } from "../SectionCard";
 import { ReadOnlyField } from "./ReadOnlyField";
+import { TagList } from "./TagList";
 
 type SectionDData = z.infer<typeof SectionDSchema>;
 
@@ -50,7 +51,7 @@ export function ReadOnlySectionD({
 
 			<ReadOnlyField
 				label="Behavioural Observations"
-				value={data.behaviouralObservations}
+				value={<TagList items={data.behaviouralObservations} />}
 				className="md:col-span-2"
 			/>
 		</SectionCard>

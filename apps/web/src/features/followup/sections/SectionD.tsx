@@ -2,6 +2,7 @@ import {
 	RadioGroup,
 	RadioGroupItem,
 } from "@haber-final/ui/components/radio-group";
+import { TagInput } from "@haber-final/ui/components/tag-input";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { Controller } from "react-hook-form";
 import { MultiSelectCombobox } from "@/components/multi-select-combobox";
@@ -30,11 +31,16 @@ export function SectionD({
 				error={e?.improvementsAtHome?.message}
 				className="md:col-span-2"
 			>
-				<Textarea
-					id="sectionD.improvementsAtHome"
-					rows={3}
-					{...register("sectionD.improvementsAtHome")}
-					className={e?.improvementsAtHome ? "border-red-500" : ""}
+				<Controller
+					control={control}
+					name="sectionD.improvementsAtHome"
+					render={({ field }) => (
+						<TagInput
+							value={field.value ?? []}
+							onChange={field.onChange}
+							placeholder="What improvements did you notice at home?"
+						/>
+					)}
 				/>
 			</FieldWrapper>
 
@@ -44,11 +50,16 @@ export function SectionD({
 				error={e?.improvementsAtSchool?.message}
 				className="md:col-span-2"
 			>
-				<Textarea
-					id="sectionD.improvementsAtSchool"
-					rows={3}
-					{...register("sectionD.improvementsAtSchool")}
-					className={e?.improvementsAtSchool ? "border-red-500" : ""}
+				<Controller
+					control={control}
+					name="sectionD.improvementsAtSchool"
+					render={({ field }) => (
+						<TagInput
+							value={field.value ?? []}
+							onChange={field.onChange}
+							placeholder="What improvements were observed at school?"
+						/>
+					)}
 				/>
 			</FieldWrapper>
 
@@ -136,11 +147,16 @@ export function SectionD({
 				error={e?.schoolPerformanceChanges?.message}
 				className="md:col-span-2"
 			>
-				<Textarea
-					id="sectionD.schoolPerformanceChanges"
-					rows={2}
-					{...register("sectionD.schoolPerformanceChanges")}
-					className={e?.schoolPerformanceChanges ? "border-red-500" : ""}
+				<Controller
+					control={control}
+					name="sectionD.schoolPerformanceChanges"
+					render={({ field }) => (
+						<TagInput
+							value={field.value ?? []}
+							onChange={field.onChange}
+							placeholder="Describe any school performance changes"
+						/>
+					)}
 				/>
 			</FieldWrapper>
 
@@ -150,11 +166,16 @@ export function SectionD({
 				error={e?.behaviourChanges?.message}
 				className="md:col-span-2"
 			>
-				<Textarea
-					id="sectionD.behaviourChanges"
-					rows={2}
-					{...register("sectionD.behaviourChanges")}
-					className={e?.behaviourChanges ? "border-red-500" : ""}
+				<Controller
+					control={control}
+					name="sectionD.behaviourChanges"
+					render={({ field }) => (
+						<TagInput
+							value={field.value ?? []}
+							onChange={field.onChange}
+							placeholder="Describe any behaviour changes observed"
+						/>
+					)}
 				/>
 			</FieldWrapper>
 
@@ -164,11 +185,16 @@ export function SectionD({
 				error={e?.newSkillsObserved?.message}
 				className="md:col-span-2"
 			>
-				<Textarea
-					id="sectionD.newSkillsObserved"
-					rows={2}
-					{...register("sectionD.newSkillsObserved")}
-					className={e?.newSkillsObserved ? "border-red-500" : ""}
+				<Controller
+					control={control}
+					name="sectionD.newSkillsObserved"
+					render={({ field }) => (
+						<TagInput
+							value={field.value ?? []}
+							onChange={field.onChange}
+							placeholder="List any new skills the child learned"
+						/>
+					)}
 				/>
 			</FieldWrapper>
 
@@ -198,11 +224,16 @@ export function SectionD({
 				error={e?.therapistObservations?.message}
 				className="md:col-span-2"
 			>
-				<Textarea
-					id="sectionD.therapistObservations"
-					rows={4}
-					{...register("sectionD.therapistObservations")}
-					className={e?.therapistObservations ? "border-red-500" : ""}
+				<Controller
+					control={control}
+					name="sectionD.therapistObservations"
+					render={({ field }) => (
+						<TagInput
+							value={field.value ?? []}
+							onChange={field.onChange}
+							placeholder="Add any clinical observations"
+						/>
+					)}
 				/>
 			</FieldWrapper>
 		</SectionCard>

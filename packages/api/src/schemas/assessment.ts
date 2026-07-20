@@ -75,13 +75,15 @@ export const SectionCSchema = z.object({
 export const SectionDSchema = z.object({
 	sensoryProfile: z.array(SensoryRatingSchema).length(7),
 	behaviouralObservations: z
-		.string()
-		.min(1, "Behavioural observations are required"),
+		.array(z.string())
+		.min(1, "At least one behavioural observation is required"),
 });
 
 export const SectionESchema = z.object({
 	functionalConcerns: z.array(z.string()),
-	observations: z.string().min(1, "Clinical observations are required"),
+	observations: z
+		.array(z.string())
+		.min(1, "At least one observation is required"),
 });
 
 export const SectionFSchema = z.object({
@@ -183,16 +185,16 @@ export const FollowUpSectionCSchema = z.object({
 });
 
 export const FollowUpSectionDSchema = z.object({
-	improvementsAtHome: z.string(),
-	improvementsAtSchool: z.string(),
+	improvementsAtHome: z.array(z.string()),
+	improvementsAtSchool: z.array(z.string()),
 	regressions: z.string().optional(),
 	homeProgramCompliance: z.string(),
 	sessionEngagement: z.string(),
-	schoolPerformanceChanges: z.string(),
-	behaviourChanges: z.string(),
-	newSkillsObserved: z.string(),
-	equipmentEffectivelyUsed: z.string(),
-	therapistObservations: z.string(),
+	schoolPerformanceChanges: z.array(z.string()),
+	behaviourChanges: z.array(z.string()),
+	newSkillsObserved: z.array(z.string()),
+	equipmentEffectivelyUsed: z.array(z.string()),
+	therapistObservations: z.array(z.string()),
 });
 
 export const FollowUpSectionESchema = z.object({

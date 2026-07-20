@@ -3,25 +3,16 @@ import type { z } from "zod";
 
 import { SectionCard } from "../SectionCard";
 import { ReadOnlyField } from "./ReadOnlyField";
+import { TagList } from "./TagList";
 
 type SectionBData = z.infer<typeof SectionBSchema>;
 
-export function ReadOnlySectionB({
-	data,
-	diagnosisById,
-}: {
-	data: SectionBData;
-	diagnosisById: Record<string, string>;
-}) {
-	const diagnosisLabels = data.primaryDiagnoses
-		.map((id) => diagnosisById[id] ?? id)
-		.join(", ");
-
+export function ReadOnlySectionB({ data }: { data: SectionBData }) {
 	return (
 		<SectionCard title="Section B — Medical & Developmental History">
 			<ReadOnlyField
 				label="Primary Diagnoses"
-				value={diagnosisLabels}
+				value={<TagList items={data.primaryDiagnoses} />}
 				className="md:col-span-2"
 			/>
 			<ReadOnlyField

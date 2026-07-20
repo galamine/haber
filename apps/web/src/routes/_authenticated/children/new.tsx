@@ -15,6 +15,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@haber-final/ui/components/select";
+import { TagInput } from "@haber-final/ui/components/tag-input";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { cn } from "@haber-final/ui/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -387,18 +388,21 @@ function Step2Medical({
 	onNext: (data: MedicalValues) => void;
 	onBack: () => void;
 }) {
-	const { register, handleSubmit } = useForm<MedicalValues>({
+	const { register, control, handleSubmit } = useForm<MedicalValues>({
 		resolver: zodResolver(MedicalHistoryInput),
 		defaultValues: initial ?? {},
 	});
 
-	const fields: { key: keyof MedicalValues; label: string }[] = [
+	const textFields: { key: keyof MedicalValues; label: string }[] = [
 		{ key: "birthHistory", label: "Birth History" },
-		{ key: "immunisations", label: "Immunisations" },
-		{ key: "allergies", label: "Allergies" },
 		{ key: "currentMedications", label: "Current Medications" },
 		{ key: "priorDiagnoses", label: "Prior Diagnoses" },
 		{ key: "familyHistory", label: "Family History" },
+	];
+
+	const tagFields: { key: keyof MedicalValues; label: string }[] = [
+		{ key: "immunisations", label: "Immunisations" },
+		{ key: "allergies", label: "Allergies" },
 		{ key: "sensorySensitivities", label: "Sensory Sensitivities" },
 	];
 
@@ -415,7 +419,7 @@ function Step2Medical({
 				</div>
 
 				<div className="space-y-5 p-6">
-					{fields.map(({ key, label }) => (
+					{textFields.map(({ key, label }) => (
 						<div key={key} className="flex flex-col gap-1.5">
 							<Label htmlFor={key}>{label}</Label>
 							<Textarea
@@ -426,6 +430,32 @@ function Step2Medical({
 							/>
 						</div>
 					))}
+					{tagFields.map(({ key, label }) => {
+						const placeholders: Record<string, string> = {
+							immunisations: "e.g., Polio, MMR, Hepatitis B",
+							allergies: "e.g., Peanuts, Dust, Penicillin",
+							sensorySensitivities:
+								"e.g., Loud noises, Bright lights, Certain textures",
+						};
+						return (
+							<div key={key} className="flex flex-col gap-1.5">
+								<Label htmlFor={key}>{label}</Label>
+								<Controller
+									control={control}
+									name={key}
+									render={({ field }) => (
+										<TagInput
+											value={Array.isArray(field.value) ? field.value : []}
+											onChange={field.onChange}
+											placeholder={
+												placeholders[key] ?? `Add ${label.toLowerCase()}…`
+											}
+										/>
+									)}
+								/>
+							</div>
+						);
+					})}
 				</div>
 
 				<div className="flex justify-between border-outline-variant border-t px-6 py-4">

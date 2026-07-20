@@ -17,12 +17,12 @@ export const GuardianInput = z.object({
 
 export const MedicalHistoryInput = z.object({
 	birthHistory: z.string().optional(),
-	immunisations: z.string().optional(),
-	allergies: z.string().optional(),
+	immunisations: z.array(z.string()).optional(),
+	allergies: z.array(z.string()).optional(),
 	currentMedications: z.string().optional(),
 	priorDiagnoses: z.string().optional(),
 	familyHistory: z.string().optional(),
-	sensorySensitivities: z.string().optional(),
+	sensorySensitivities: z.array(z.string()).optional(),
 });
 
 export const CreateChildInput = z.object({

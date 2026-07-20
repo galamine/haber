@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-
+import { TagList } from "@/features/assessment/read-only/TagList";
 import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 
@@ -80,7 +80,7 @@ type ChildProfile = {
 	sex: string;
 	opNumber: string;
 	consentStatus: string;
-	medicalHistory: Record<string, string | undefined>;
+	medicalHistory: Record<string, string | string[] | undefined>;
 	guardian: ChildGuard | null;
 	photoUrl: string | null;
 };
@@ -390,13 +390,24 @@ function ChildProfilePage() {
 						<dl className="grid gap-5 md:grid-cols-2">
 							{MEDICAL_FIELDS.map(({ key, label }) => {
 								const value = medicalHistory[key];
+								const isArrayField = [
+									"immunisations",
+									"allergies",
+									"sensorySensitivities",
+								].includes(key);
 								return (
 									<div key={key}>
 										<dt className="font-medium text-on-surface-variant text-xs uppercase tracking-wider">
 											{label}
 										</dt>
 										<dd className="mt-1 text-on-surface text-sm">
-											{value || <span className="text-outline">—</span>}
+											{isArrayField && Array.isArray(value) ? (
+												<TagList items={value} />
+											) : value ? (
+												value
+											) : (
+												<span className="text-outline">—</span>
+											)}
 										</dd>
 									</div>
 								);

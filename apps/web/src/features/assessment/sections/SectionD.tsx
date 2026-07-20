@@ -1,4 +1,5 @@
 import { Slider } from "@haber-final/ui/components/slider";
+import { TagInput } from "@haber-final/ui/components/tag-input";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { Controller, useFieldArray } from "react-hook-form";
 
@@ -70,13 +71,16 @@ export function SectionD({
 				error={errors.sectionD?.behaviouralObservations?.message}
 				className="md:col-span-2"
 			>
-				<Textarea
-					id="sectionD.behaviouralObservations"
-					rows={3}
-					{...register("sectionD.behaviouralObservations")}
-					className={
-						errors.sectionD?.behaviouralObservations ? "border-red-500" : ""
-					}
+				<Controller
+					control={control}
+					name="sectionD.behaviouralObservations"
+					render={({ field }) => (
+						<TagInput
+							value={field.value}
+							onChange={field.onChange}
+							placeholder="Type observation...."
+						/>
+					)}
 				/>
 			</FieldWrapper>
 		</SectionCard>

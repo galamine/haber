@@ -15,6 +15,7 @@ import {
 	SelectValue,
 } from "@haber-final/ui/components/select";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
+import { TagInput } from "@haber-final/ui/components/tag-input";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -41,12 +42,12 @@ const EditSchema = z.object({
 	spokenLanguages: z.string().min(1, "At least one language is required"),
 	school: z.string().optional(),
 	birthHistory: z.string().optional(),
-	immunisations: z.string().optional(),
-	allergies: z.string().optional(),
+	immunisations: z.array(z.string()).optional(),
+	allergies: z.array(z.string()).optional(),
 	currentMedications: z.string().optional(),
 	priorDiagnoses: z.string().optional(),
 	familyHistory: z.string().optional(),
-	sensorySensitivities: z.string().optional(),
+	sensorySensitivities: z.array(z.string()).optional(),
 	photoUrl: z.string().optional(),
 });
 
@@ -86,7 +87,10 @@ function EditChildPage() {
 
 	useEffect(() => {
 		if (!child) return;
-		const medical = child.medicalHistory as Record<string, string | undefined>;
+		const medical = child.medicalHistory as Record<
+			string,
+			string | string[] | undefined
+		>;
 		setPhotoUrl(child.photoUrl ?? "");
 		reset({
 			fullName: child.fullName,
@@ -96,13 +100,13 @@ function EditChildPage() {
 			address: child.address ?? "",
 			spokenLanguages: child.spokenLanguages.join(", "),
 			school: child.school ?? "",
-			birthHistory: medical.birthHistory ?? "",
-			immunisations: medical.immunisations ?? "",
-			allergies: medical.allergies ?? "",
-			currentMedications: medical.currentMedications ?? "",
-			priorDiagnoses: medical.priorDiagnoses ?? "",
-			familyHistory: medical.familyHistory ?? "",
-			sensorySensitivities: medical.sensorySensitivities ?? "",
+			birthHistory: (medical.birthHistory as string) ?? "",
+			immunisations: (medical.immunisations as string[]) ?? [],
+			allergies: (medical.allergies as string[]) ?? [],
+			currentMedications: (medical.currentMedications as string) ?? "",
+			priorDiagnoses: (medical.priorDiagnoses as string) ?? "",
+			familyHistory: (medical.familyHistory as string) ?? "",
+			sensorySensitivities: (medical.sensorySensitivities as string[]) ?? [],
 			photoUrl: child.photoUrl ?? "",
 		});
 	}, [child, reset]);
@@ -159,12 +163,12 @@ function EditChildPage() {
 				childId,
 				history: {
 					birthHistory: values.birthHistory || undefined,
-					immunisations: values.immunisations || undefined,
-					allergies: values.allergies || undefined,
+					immunisations: values.immunisations,
+					allergies: values.allergies,
 					currentMedications: values.currentMedications || undefined,
 					priorDiagnoses: values.priorDiagnoses || undefined,
 					familyHistory: values.familyHistory || undefined,
-					sensorySensitivities: values.sensorySensitivities || undefined,
+					sensorySensitivities: values.sensorySensitivities,
 				},
 			});
 
@@ -352,7 +356,7 @@ function EditChildPage() {
 								</Label>
 								<Input
 									id="spokenLanguages"
-									placeholder="Comma-separated"
+									placeholder="e.g. English, Arabic"
 									{...register("spokenLanguages")}
 									className={errors.spokenLanguages ? "border-red-500" : ""}
 								/>
@@ -382,15 +386,9 @@ function EditChildPage() {
 							{(
 								[
 									{ key: "birthHistory", label: "Birth History" },
-									{ key: "immunisations", label: "Immunisations" },
-									{ key: "allergies", label: "Allergies" },
 									{ key: "currentMedications", label: "Current Medications" },
 									{ key: "priorDiagnoses", label: "Prior Diagnoses" },
 									{ key: "familyHistory", label: "Family History" },
-									{
-										key: "sensorySensitivities",
-										label: "Sensory Sensitivities",
-									},
 								] as const
 							).map(({ key, label }) => (
 								<div key={key} className="flex flex-col gap-1.5">
@@ -398,6 +396,41 @@ function EditChildPage() {
 									<Textarea id={key} rows={2} {...register(key)} />
 								</div>
 							))}
+							{(
+								[
+									{ key: "immunisations", label: "Immunisations" },
+									{ key: "allergies", label: "Allergies" },
+									{
+										key: "sensorySensitivities",
+										label: "Sensory Sensitivities",
+									},
+								] as const
+							).map(({ key, label }) => {
+								const placeholders: Record<string, string> = {
+									immunisations: "e.g., Polio, MMR, Hepatitis B",
+									allergies: "e.g., Peanuts, Dust, Penicillin",
+									sensorySensitivities:
+										"e.g., Loud noises, Bright lights, Certain textures",
+								};
+								return (
+									<div key={key} className="flex flex-col gap-1.5">
+										<Label htmlFor={key}>{label}</Label>
+										<Controller
+											control={control}
+											name={key}
+											render={({ field }) => (
+												<TagInput
+													value={Array.isArray(field.value) ? field.value : []}
+													onChange={field.onChange}
+													placeholder={
+														placeholders[key] ?? `Add ${label.toLowerCase()}…`
+													}
+												/>
+											)}
+										/>
+									</div>
+								);
+							})}
 						</div>
 
 						<div className="flex gap-3 border-outline-variant border-t px-6 py-4">

@@ -75,11 +75,11 @@ export const EMPTY_DEFAULTS: AssessmentFormValues = {
 			{ systemId: "", rating: 3, notes: "" },
 			{ systemId: "", rating: 3, notes: "" },
 		],
-		behaviouralObservations: "",
+		behaviouralObservations: [],
 	},
 	sectionE: {
 		functionalConcerns: [],
-		observations: "",
+		observations: [],
 	},
 	sectionF: {
 		toolsAdministered: [],

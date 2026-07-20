@@ -14,6 +14,7 @@ import type { z } from "zod";
 import { INTERVENTION_SETTINGS } from "../constants";
 import { SectionCard } from "../SectionCard";
 import { ReadOnlyField } from "./ReadOnlyField";
+import { TagList } from "./TagList";
 
 type SectionGData = z.infer<typeof SectionGSchema>;
 type GoalData = z.infer<typeof GoalTemplateSchema>;
@@ -46,20 +47,10 @@ function GoalTable({ title, goals }: { title: string; goals: GoalData[] }) {
 	);
 }
 
-export function ReadOnlySectionG({
-	data,
-	equipmentById,
-}: {
-	data: SectionGData;
-	equipmentById: Record<string, string>;
-}) {
+export function ReadOnlySectionG({ data }: { data: SectionGData }) {
 	const interventionSettingLabel =
 		INTERVENTION_SETTINGS.find((s) => s.value === data.interventionSetting)
 			?.label ?? data.interventionSetting;
-
-	const equipmentLabels = data.equipment
-		.map((id) => equipmentById[id] ?? id)
-		.join(", ");
 
 	return (
 		<SectionCard title="Section G — Initial Goals & Intervention Plan">
@@ -95,7 +86,7 @@ export function ReadOnlySectionG({
 			/>
 			<ReadOnlyField
 				label="Equipment / Sensory Diet Recommended"
-				value={equipmentLabels}
+				value={<TagList items={data.equipment} />}
 				className="md:col-span-2"
 			/>
 			<ReadOnlyField

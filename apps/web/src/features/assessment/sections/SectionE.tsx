@@ -1,5 +1,5 @@
 import { Checkbox } from "@haber-final/ui/components/checkbox";
-import { Textarea } from "@haber-final/ui/components/textarea";
+import { TagInput } from "@haber-final/ui/components/tag-input";
 import { Controller } from "react-hook-form";
 
 import { FieldWrapper } from "../FieldWrapper";
@@ -11,7 +11,6 @@ type SectionEProps = AssessmentSectionProps & {
 };
 
 export function SectionE({
-	register,
 	control,
 	errors,
 	functionalConcernOptions,
@@ -65,11 +64,16 @@ export function SectionE({
 				error={errors.sectionE?.observations?.message}
 				className="md:col-span-2"
 			>
-				<Textarea
-					id="sectionE.observations"
-					rows={3}
-					{...register("sectionE.observations")}
-					className={errors.sectionE?.observations ? "border-red-500" : ""}
+				<Controller
+					control={control}
+					name="sectionE.observations"
+					render={({ field }) => (
+						<TagInput
+							value={field.value}
+							onChange={field.onChange}
+							placeholder="Type observation...."
+						/>
+					)}
 				/>
 			</FieldWrapper>
 		</SectionCard>

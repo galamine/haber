@@ -3,6 +3,7 @@ import type { z } from "zod";
 
 import { SectionCard } from "../SectionCard";
 import { ReadOnlyField } from "./ReadOnlyField";
+import { TagList } from "./TagList";
 
 type SectionEData = z.infer<typeof SectionESchema>;
 
@@ -26,7 +27,7 @@ export function ReadOnlySectionE({
 			/>
 			<ReadOnlyField
 				label="Clinical Observations & Findings"
-				value={data.observations}
+				value={<TagList items={data.observations} />}
 				className="md:col-span-2"
 			/>
 		</SectionCard>
