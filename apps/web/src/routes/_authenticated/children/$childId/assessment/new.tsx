@@ -323,12 +323,20 @@ function NewAssessmentPage() {
 				onSubmit={handleSubmit(onValid, onInvalid)}
 				isSubmitting={createMutation.isPending}
 				sections={{
-					a: <SectionA register={register} control={control} errors={errors} />,
+					a: (
+						<SectionA
+							register={register}
+							control={control}
+							errors={errors}
+							trigger={trigger}
+						/>
+					),
 					b: (
 						<SectionB
 							register={register}
 							control={control}
 							errors={errors}
+							trigger={trigger}
 							diagnosisOptions={diagnosisOptions}
 						/>
 					),
@@ -337,6 +345,7 @@ function NewAssessmentPage() {
 							register={register}
 							control={control}
 							errors={errors}
+							trigger={trigger}
 							milestoneById={milestoneById}
 						/>
 					),
@@ -345,6 +354,7 @@ function NewAssessmentPage() {
 							register={register}
 							control={control}
 							errors={errors}
+							trigger={trigger}
 							sensorySystemById={sensorySystemById}
 						/>
 					),
@@ -353,6 +363,7 @@ function NewAssessmentPage() {
 							register={register}
 							control={control}
 							errors={errors}
+							trigger={trigger}
 							functionalConcernOptions={taxonomy.functionalConcerns.data ?? []}
 						/>
 					),
@@ -361,6 +372,7 @@ function NewAssessmentPage() {
 							register={register}
 							control={control}
 							errors={errors}
+							trigger={trigger}
 							assessmentToolOptions={taxonomy.assessmentTools.data ?? []}
 						/>
 					),
@@ -369,6 +381,7 @@ function NewAssessmentPage() {
 							register={register}
 							control={control}
 							errors={errors}
+							trigger={trigger}
 							equipmentOptions={equipmentOptions}
 						/>
 					),
@@ -377,6 +390,7 @@ function NewAssessmentPage() {
 							register={register}
 							control={control}
 							errors={errors}
+							trigger={trigger}
 							therapistCredentials={therapistCredentials}
 						/>
 					),

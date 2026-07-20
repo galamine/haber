@@ -5,7 +5,13 @@ export const ConsentStatusSchema = z.enum(["PENDING", "GRANTED", "WITHDRAWN"]);
 export const GuardianInput = z.object({
 	name: z.string(),
 	relation: z.string(),
-	phone: z.string(),
+	phone: z
+		.string()
+		.min(1, "Phone is required")
+		.regex(
+			/^(\+91[\s-]?)?(91|0)?[6-9]\d{9}$/,
+			"Enter a valid 10-digit Indian mobile number",
+		),
 	email: z.string().email(),
 });
 

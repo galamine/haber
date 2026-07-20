@@ -17,6 +17,7 @@ export function SectionA({
 	register,
 	control,
 	errors,
+	trigger,
 }: AssessmentSectionProps) {
 	const e = errors.sectionA;
 
@@ -188,8 +189,11 @@ export function SectionA({
 			>
 				<Input
 					id="sectionA.caregiverContact"
-					type="number"
-					{...register("sectionA.caregiverContact")}
+					type="tel"
+					placeholder="+91 98765 43210"
+					{...register("sectionA.caregiverContact", {
+						onBlur: () => trigger("sectionA.caregiverContact"),
+					})}
 					className={e?.caregiverContact ? "border-red-500" : ""}
 				/>
 			</FieldWrapper>

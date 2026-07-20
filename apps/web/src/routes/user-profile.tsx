@@ -7,15 +7,23 @@ import {
 import { Button } from "@haber-final/ui/components/button";
 import { Input } from "@haber-final/ui/components/input";
 import { Label } from "@haber-final/ui/components/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@haber-final/ui/components/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { Upload } from "lucide-react";
-import { useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useMemo, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import statesDistricts from "@/data/states-districts.json";
 import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 
@@ -24,7 +32,13 @@ const ProfileSchema = z.object({
 	dateOfBirth: z.string().min(1, "Date of birth is required"),
 	district: z.string().min(1, "District is required"),
 	state: z.string().min(1, "State is required"),
-	phoneNumber: z.string().min(1, "Phone number is required"),
+	phoneNumber: z
+		.string()
+		.min(1, "Phone number is required")
+		.regex(
+			/^(\+91[\s-]?)?(91|0)?[6-9]\d{9}$/,
+			"Enter a valid 10-digit Indian mobile number",
+		),
 	photoUrl: z.string().optional(),
 });
 
@@ -46,9 +60,19 @@ function UserProfilePage() {
 	const [photoUrl, setPhotoUrl] = useState<string>("");
 	const [isUploading, setIsUploading] = useState(false);
 
+	const [selectedState, setSelectedState] = useState<string>("");
+
+	const districts = useMemo(
+		() =>
+			statesDistricts.find((s) => s.state === selectedState)?.districts ?? [],
+		[selectedState],
+	);
+
 	const {
 		register,
 		handleSubmit,
+		control,
+		trigger,
 		formState: { errors },
 	} = useForm<ProfileValues>({
 		resolver: zodResolver(ProfileSchema),
@@ -182,32 +206,76 @@ function UserProfilePage() {
 					</div>
 
 					<div className="flex flex-col gap-1.5">
-						<Label htmlFor="district">
-							District <span className="text-red-500">*</span>
+						<Label htmlFor="state">
+							State <span className="text-red-500">*</span>
 						</Label>
-						<Input
-							id="district"
-							placeholder="Your district"
-							{...register("district")}
-							className={errors.district ? "border-red-500" : ""}
+						<Controller
+							control={control}
+							name="state"
+							render={({ field }) => (
+								<Select
+									value={field.value}
+									onValueChange={(val) => {
+										field.onChange(val);
+										setSelectedState(val);
+									}}
+								>
+									<SelectTrigger
+										id="state"
+										className={errors.state ? "border-red-500" : ""}
+									>
+										<SelectValue placeholder="Select state" />
+									</SelectTrigger>
+									<SelectContent>
+										{statesDistricts.map((s) => (
+											<SelectItem key={s.state} value={s.state}>
+												{s.state}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							)}
 						/>
-						{errors.district && (
-							<p className="text-red-600 text-xs">{errors.district.message}</p>
+						{errors.state && (
+							<p className="text-red-600 text-xs">{errors.state.message}</p>
 						)}
 					</div>
 
 					<div className="flex flex-col gap-1.5">
-						<Label htmlFor="state">
-							State <span className="text-red-500">*</span>
+						<Label htmlFor="district">
+							District <span className="text-red-500">*</span>
 						</Label>
-						<Input
-							id="state"
-							placeholder="Your state"
-							{...register("state")}
-							className={errors.state ? "border-red-500" : ""}
+						<Controller
+							control={control}
+							name="district"
+							render={({ field }) => (
+								<Select
+									value={field.value}
+									onValueChange={field.onChange}
+									disabled={!selectedState}
+								>
+									<SelectTrigger
+										id="district"
+										className={errors.district ? "border-red-500" : ""}
+									>
+										<SelectValue
+											placeholder={
+												selectedState ? "Select district" : "Select state first"
+											}
+										/>
+									</SelectTrigger>
+									<SelectContent>
+										{districts.map((d) => (
+											<SelectItem key={d} value={d}>
+												{d}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							)}
 						/>
-						{errors.state && (
-							<p className="text-red-600 text-xs">{errors.state.message}</p>
+						{errors.district && (
+							<p className="text-red-600 text-xs">{errors.district.message}</p>
 						)}
 					</div>
 
@@ -218,8 +286,10 @@ function UserProfilePage() {
 						<Input
 							id="phoneNumber"
 							type="tel"
-							placeholder="+971 50 000 0000"
-							{...register("phoneNumber")}
+							placeholder="+91 98765 43210"
+							{...register("phoneNumber", {
+								onBlur: () => trigger("phoneNumber"),
+							})}
 							className={errors.phoneNumber ? "border-red-500" : ""}
 						/>
 						{errors.phoneNumber && (

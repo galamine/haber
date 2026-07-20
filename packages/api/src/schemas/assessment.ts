@@ -45,7 +45,10 @@ export const SectionASchema = z.object({
 	caregiverContact: z
 		.string()
 		.min(1, "Contact number is required")
-		.regex(/^[+\d][+\d\s\-()]*$/, "Invalid contact number format"),
+		.regex(
+			/^(\+91[\s-]?)?(91|0)?[6-9]\d{9}$/,
+			"Enter a valid 10-digit Indian mobile number",
+		),
 	caregiverEmail: z
 		.string()
 		.min(1, "Email is required")

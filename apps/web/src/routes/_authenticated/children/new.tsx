@@ -54,7 +54,13 @@ type MedicalValues = z.infer<typeof MedicalHistoryInput>;
 const GuardianSchema = z.object({
 	name: z.string().min(1, "Name is required"),
 	relation: z.string().min(1, "Relation is required"),
-	phone: z.string().min(1, "Phone is required"),
+	phone: z
+		.string()
+		.min(1, "Phone is required")
+		.regex(
+			/^(\+91[\s-]?)?(91|0)?[6-9]\d{9}$/,
+			"Enter a valid 10-digit Indian mobile number",
+		),
 	email: z.string().email("Valid email required"),
 });
 
@@ -450,6 +456,7 @@ function Step3Guardians({
 	const {
 		register,
 		handleSubmit,
+		trigger,
 		formState: { errors },
 	} = useForm<GuardianValues>({
 		resolver: zodResolver(GuardianSchema),
@@ -510,8 +517,10 @@ function Step3Guardians({
 								</Label>
 								<Input
 									type="tel"
-									placeholder="+971 50 000 0000"
-									{...register("phone")}
+									placeholder="+91 98765 43210"
+									{...register("phone", {
+										onBlur: () => trigger("phone"),
+									})}
 									className={errors.phone ? "border-red-500" : ""}
 								/>
 								{errors.phone && (
