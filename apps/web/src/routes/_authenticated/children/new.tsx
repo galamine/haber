@@ -15,6 +15,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@haber-final/ui/components/select";
+import { Steps } from "@haber-final/ui/components/steps";
 import { TagInput } from "@haber-final/ui/components/tag-input";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { cn } from "@haber-final/ui/lib/utils";
@@ -22,7 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Check, ChevronRight, Upload, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -86,61 +87,6 @@ type CreatedChild = {
 		email: string | null;
 	};
 };
-
-// ─── Stepper ─────────────────────────────────────────────────────────────────
-
-const STEPS = [
-	"Profile",
-	"Medical History",
-	"Guardian",
-	"Therapist",
-	"Consent",
-];
-
-function WizardStepper({ currentStep }: { currentStep: number }) {
-	return (
-		<div className="relative mx-auto flex max-w-2xl items-center justify-between py-2">
-			<div className="absolute top-7 right-0 left-0 -z-10 h-0.5 bg-surface-variant" />
-			<div
-				className="absolute top-7 left-0 -z-10 h-0.5 bg-brown-600 transition-all duration-300"
-				style={{
-					width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%`,
-				}}
-			/>
-			{STEPS.map((label, idx) => {
-				const stepNum = idx + 1;
-				const isActive = stepNum === currentStep;
-				const isDone = stepNum < currentStep;
-				return (
-					<div key={label} className="flex flex-col items-center gap-2">
-						<div
-							className={cn(
-								"flex h-10 w-10 items-center justify-center rounded-full font-bold text-sm transition-all",
-								isActive && "bg-brown-600 text-white ring-4 ring-brown-50",
-								isDone && "bg-brown-600 text-white",
-								!isActive &&
-									!isDone &&
-									"bg-surface-variant text-on-surface-variant",
-							)}
-						>
-							{isDone ? <Check className="h-4 w-4" /> : stepNum}
-						</div>
-						<span
-							className={cn(
-								"text-center text-xs",
-								isActive
-									? "font-medium text-on-surface"
-									: "text-on-surface-variant",
-							)}
-						>
-							{label}
-						</span>
-					</div>
-				);
-			})}
-		</div>
-	);
-}
 
 // ─── Step 1: Profile ─────────────────────────────────────────────────────────
 
@@ -805,6 +751,14 @@ function Step5SendConsentLink({
 
 // ─── Top-level wizard ─────────────────────────────────────────────────────────
 
+const STEPS = [
+	"Profile",
+	"Medical History",
+	"Guardian",
+	"Therapist",
+	"Consent",
+];
+
 function NewChildPage() {
 	const router = useRouter();
 	const queryClient = useQueryClient();
@@ -816,6 +770,10 @@ function NewChildPage() {
 	const [therapistData, setTherapistData] =
 		useState<TherapistAssignmentValues | null>(null);
 	const [isCreating, setIsCreating] = useState(false);
+
+	useEffect(() => {
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	}, [step]);
 
 	const createChildMutation = useMutation(trpc.child.create.mutationOptions());
 	const updateChildMutation = useMutation(trpc.child.update.mutationOptions());
@@ -927,22 +885,19 @@ function NewChildPage() {
 	return (
 		<div className="flex min-h-screen flex-col bg-brown-50">
 			{/* Header */}
-			<header className="sticky top-0 z-50 flex items-center justify-between border-outline-variant border-b bg-surface-container-lowest px-6 py-3">
-				<button
-					type="button"
+			<header className="sticky top-0 z-50 flex items-center justify-between border-outline-variant border-b bg-brown-50 px-6 py-3">
+				<Button
+					variant="outline"
+					size="sm"
+					className="border-brown-300 text-brown-700 hover:bg-brown-100"
 					onClick={() => router.navigate({ to: "/children" })}
-					className="flex items-center gap-1.5 text-brown-600 text-sm hover:text-brown-800"
 				>
 					<X className="h-4 w-4" />
 					Cancel Intake
-				</button>
-				<button
-					type="button"
-					disabled
-					className="rounded-lg border border-outline-variant px-4 py-1.5 text-on-surface-variant text-sm opacity-50"
-				>
+				</Button>
+				<Button variant="outline" size="sm" disabled>
 					Save as Draft
-				</button>
+				</Button>
 			</header>
 
 			{/* Content */}
@@ -951,7 +906,7 @@ function NewChildPage() {
 					Register New Child
 				</h1>
 
-				<WizardStepper currentStep={step} />
+				<Steps steps={STEPS} currentStep={step} />
 
 				<div className="mt-8">
 					{step === 1 && (

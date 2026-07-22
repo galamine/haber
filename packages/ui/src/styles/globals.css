@@ -95,6 +95,10 @@
 	--brown-800: #4d3232;
 	--brown-900: #3d2626;
 
+	/* Gray Scale - for UI consistency */
+	--gray-300: #d1d5db;
+	--gray-500: #6b7280;
+
 	/* Success Color Scale (Green) */
 	--success-50: #f0fdf4;
 	--success-100: #dcfce7;
@@ -308,6 +312,10 @@
 	--sidebar-accent-foreground: var(--color-text-primary);
 	--sidebar-border: var(--color-border-primary);
 	--sidebar-ring: var(--color-focus-ring);
+
+	/* Gray Scale - Dark Mode */
+	--gray-300: #4b5563;
+	--gray-500: #9ca3af;
 }
 
 @theme inline {
@@ -359,6 +367,10 @@
 	--color-brown-700: var(--brown-700);
 	--color-brown-800: var(--brown-800);
 	--color-brown-900: var(--brown-900);
+
+	/* Gray Color Scale */
+	--color-gray-300: var(--gray-300);
+	--color-gray-500: var(--gray-500);
 
 	/* Success Color Scale */
 	--color-success-50: var(--success-50);

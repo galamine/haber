@@ -20,7 +20,7 @@ import { Textarea } from "@haber-final/ui/components/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { ArrowLeft, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -194,12 +194,27 @@ function EditChildPage() {
 	if (isLoading) {
 		return (
 			<div className="p-8">
-				<Skeleton className="mb-6 h-5 w-24" />
-				<Skeleton className="mb-6 h-8 w-48" />
-				<div className="max-w-2xl space-y-4">
-					{Array.from({ length: 6 }).map((_, i) => (
-						<Skeleton key={i} className="h-10 w-full" />
-					))}
+				<div className="rounded-xl border border-brown-200 bg-white shadow-sm">
+					<div className="border-brown-100 border-b px-6 py-4">
+						<Skeleton className="h-6 w-48" />
+						<Skeleton className="mt-1 h-4 w-64" />
+					</div>
+					<div className="p-6">
+						<div className="grid gap-8 md:grid-cols-2">
+							<div className="space-y-6">
+								<div className="flex items-center gap-4">
+									<Skeleton className="h-20 w-20 rounded-full" />
+									<Skeleton className="h-9 w-28" />
+								</div>
+								<Skeleton className="h-11 w-full" />
+								<Skeleton className="h-11 w-full" />
+							</div>
+							<div className="space-y-6">
+								<Skeleton className="min-h-20 w-full" />
+								<Skeleton className="min-h-20 w-full" />
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		);
@@ -209,246 +224,311 @@ function EditChildPage() {
 
 	return (
 		<div className="p-8">
-			<button
-				type="button"
-				onClick={() =>
-					router.navigate({
-						to: "/children/$childId",
-						params: { childId },
-					})
-				}
-				className="mb-6 flex items-center gap-1.5 text-on-surface-variant text-sm hover:text-on-surface"
-			>
-				<ArrowLeft className="h-4 w-4" />
-				Back to Profile
-			</button>
-
-			<h1 className="mb-6 font-semibold text-2xl text-on-surface">
-				Edit Child Record
-			</h1>
-
-			<div className="mb-6 flex flex-col items-center gap-3">
-				<Avatar className="h-24 w-24">
-					{photoUrl && <AvatarImage src={photoUrl} alt={child?.fullName} />}
-					<AvatarFallback className="bg-brown-200 text-2xl text-brown-800">
-						{photoUrl
-							? ""
-							: (child?.fullName
-									?.split(" ")
-									.map((n) => n[0])
-									.join("")
-									.slice(0, 2)
-									.toUpperCase() ?? "?")}
-					</AvatarFallback>
-				</Avatar>
-				<input
-					type="file"
-					accept="image/*"
-					className="hidden"
-					ref={fileInputRef}
-					onChange={(e) => {
-						const file = e.target.files?.[0];
-						if (file) handleUpload(file);
-					}}
-				/>
-				<Button
-					type="button"
-					variant="outline"
-					size="sm"
-					className="gap-2"
-					onClick={() => fileInputRef.current?.click()}
-					disabled={isUploading}
-				>
-					<Upload className="h-4 w-4" />
-					{isUploading ? "Uploading…" : "Upload Photo"}
-				</Button>
-			</div>
-
-			<div className="max-w-2xl">
+			<div className="rounded-xl border border-brown-200 bg-white shadow-sm">
+				<div className="border-brown-100 border-b px-6 py-4">
+					<h2 className="font-semibold text-lg">Edit Child Record</h2>
+					<p className="text-muted-foreground text-sm">
+						Update profile and medical information
+					</p>
+				</div>
 				<form onSubmit={handleSubmit(onSubmit)}>
-					<div className="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
-						{/* Profile section */}
-						<div className="border-outline-variant border-b px-6 py-4">
-							<h2 className="font-medium text-on-surface">Profile</h2>
-						</div>
-						<div className="grid grid-cols-1 gap-x-6 gap-y-5 p-6 md:grid-cols-2">
-							<div className="flex flex-col gap-1.5 md:col-span-2">
-								<Label htmlFor="fullName">
-									Full Name <span className="text-red-500">*</span>
-								</Label>
-								<Input
-									id="fullName"
-									{...register("fullName")}
-									className={errors.fullName ? "border-red-500" : ""}
-								/>
-								{errors.fullName && (
-									<p className="text-red-600 text-xs">
-										{errors.fullName.message}
-									</p>
-								)}
-							</div>
-
-							<div className="flex flex-col gap-1.5">
-								<Label htmlFor="dob">
-									Date of Birth <span className="text-red-500">*</span>
-								</Label>
-								<Input
-									id="dob"
-									type="date"
-									{...register("dob")}
-									className={errors.dob ? "border-red-500" : ""}
-								/>
-								{errors.dob && (
-									<p className="text-red-600 text-xs">{errors.dob.message}</p>
-								)}
-							</div>
-
-							<div className="flex flex-col gap-1.5">
-								<Label htmlFor="sex">
-									Legal Sex <span className="text-red-500">*</span>
-								</Label>
-								<Controller
-									control={control}
-									name="sex"
-									render={({ field }) => (
-										<Select value={field.value} onValueChange={field.onChange}>
-											<SelectTrigger
-												id="sex"
-												className={errors.sex ? "border-red-500" : ""}
-											>
-												<SelectValue placeholder="Select sex" />
-											</SelectTrigger>
-											<SelectContent>
-												<SelectItem value="Male">Male</SelectItem>
-												<SelectItem value="Female">Female</SelectItem>
-												<SelectItem value="Other">Other</SelectItem>
-												<SelectItem value="Prefer not to say">
-													Prefer not to say
-												</SelectItem>
-											</SelectContent>
-										</Select>
-									)}
-								/>
-								{errors.sex && (
-									<p className="text-red-600 text-xs">{errors.sex.message}</p>
-								)}
-							</div>
-
-							<div className="flex flex-col gap-1.5">
-								<Label htmlFor="opNumber">
-									OP Number <span className="text-red-500">*</span>
-								</Label>
-								<Input
-									id="opNumber"
-									{...register("opNumber")}
-									className={errors.opNumber ? "border-red-500" : ""}
-								/>
-								{errors.opNumber && (
-									<p className="text-red-600 text-xs">
-										{errors.opNumber.message}
-									</p>
-								)}
-							</div>
-
-							<div className="flex flex-col gap-1.5">
-								<Label htmlFor="spokenLanguages">
-									Languages Spoken <span className="text-red-500">*</span>
-								</Label>
-								<Input
-									id="spokenLanguages"
-									placeholder="e.g. English, Arabic"
-									{...register("spokenLanguages")}
-									className={errors.spokenLanguages ? "border-red-500" : ""}
-								/>
-								{errors.spokenLanguages && (
-									<p className="text-red-600 text-xs">
-										{errors.spokenLanguages.message}
-									</p>
-								)}
-							</div>
-
-							<div className="flex flex-col gap-1.5">
-								<Label htmlFor="address">Address</Label>
-								<Input id="address" {...register("address")} />
-							</div>
-
-							<div className="flex flex-col gap-1.5">
-								<Label htmlFor="school">School</Label>
-								<Input id="school" {...register("school")} />
-							</div>
-						</div>
-
-						{/* Medical history section */}
-						<div className="border-outline-variant border-y px-6 py-4">
-							<h2 className="font-medium text-on-surface">Medical History</h2>
-						</div>
-						<div className="space-y-5 p-6">
-							{(
-								[
-									{ key: "birthHistory", label: "Birth History" },
-									{ key: "currentMedications", label: "Current Medications" },
-									{ key: "priorDiagnoses", label: "Prior Diagnoses" },
-									{ key: "familyHistory", label: "Family History" },
-								] as const
-							).map(({ key, label }) => (
-								<div key={key} className="flex flex-col gap-1.5">
-									<Label htmlFor={key}>{label}</Label>
-									<Textarea id={key} rows={2} {...register(key)} />
-								</div>
-							))}
-							{(
-								[
-									{ key: "immunisations", label: "Immunisations" },
-									{ key: "allergies", label: "Allergies" },
-									{
-										key: "sensorySensitivities",
-										label: "Sensory Sensitivities",
-									},
-								] as const
-							).map(({ key, label }) => {
-								const placeholders: Record<string, string> = {
-									immunisations: "e.g., Polio, MMR, Hepatitis B",
-									allergies: "e.g., Peanuts, Dust, Penicillin",
-									sensorySensitivities:
-										"e.g., Loud noises, Bright lights, Certain textures",
-								};
-								return (
-									<div key={key} className="flex flex-col gap-1.5">
-										<Label htmlFor={key}>{label}</Label>
-										<Controller
-											control={control}
-											name={key}
-											render={({ field }) => (
-												<TagInput
-													value={Array.isArray(field.value) ? field.value : []}
-													onChange={field.onChange}
-													placeholder={
-														placeholders[key] ?? `Add ${label.toLowerCase()}…`
-													}
-												/>
-											)}
+					<div className="p-6">
+						<div className="grid gap-8 md:grid-cols-2">
+							<div className="space-y-6">
+								<div className="flex items-center gap-4">
+									<Avatar className="h-20 w-20 border-2 border-brown-200">
+										{photoUrl && (
+											<AvatarImage src={photoUrl} alt={child?.fullName} />
+										)}
+										<AvatarFallback className="bg-brown-200 text-brown-800 text-xl">
+											{photoUrl
+												? ""
+												: (child?.fullName
+														?.split(" ")
+														.map((n) => n[0])
+														.join("")
+														.slice(0, 2)
+														.toUpperCase() ?? "?")}
+										</AvatarFallback>
+									</Avatar>
+									<div>
+										<input
+											type="file"
+											accept="image/*"
+											className="hidden"
+											ref={fileInputRef}
+											onChange={(e) => {
+												const file = e.target.files?.[0];
+												if (file) handleUpload(file);
+											}}
 										/>
+										<Button
+											type="button"
+											variant="outline"
+											size="sm"
+											className="border-brown-300 hover:bg-brown-50"
+											onClick={() => fileInputRef.current?.click()}
+											disabled={isUploading}
+										>
+											<Upload className="mr-2 h-4 w-4" />
+											{isUploading ? "Uploading…" : "Change Photo"}
+										</Button>
+										<p className="mt-1 text-muted-foreground text-xs">
+											JPG, PNG up to 2MB
+										</p>
 									</div>
-								);
-							})}
-						</div>
+								</div>
 
-						<div className="flex gap-3 border-outline-variant border-t px-6 py-4">
-							<Button
-								type="button"
-								variant="outline"
-								onClick={() =>
-									router.navigate({
-										to: "/children/$childId",
-										params: { childId },
-									})
-								}
-							>
-								Cancel
-							</Button>
-							<Button type="submit" disabled={isPending} className="w-full">
-								{isPending ? "Saving…" : "Save Changes"}
-							</Button>
+								<div>
+									<Label htmlFor="fullName" className="mb-2">
+										Full Name <span className="text-red-500">*</span>
+									</Label>
+									<Input
+										id="fullName"
+										{...register("fullName")}
+										className={`h-11 border-brown-300 focus:border-brown-500 ${
+											errors.fullName ? "border-red-500" : ""
+										}`}
+									/>
+									{errors.fullName && (
+										<p className="mt-1 text-red-600 text-xs">
+											{errors.fullName.message}
+										</p>
+									)}
+								</div>
+
+								<div>
+									<Label htmlFor="dob" className="mb-2">
+										Date of Birth <span className="text-red-500">*</span>
+									</Label>
+									<Input
+										id="dob"
+										type="date"
+										{...register("dob")}
+										className={`h-11 border-brown-300 focus:border-brown-500 ${
+											errors.dob ? "border-red-500" : ""
+										}`}
+									/>
+									{errors.dob && (
+										<p className="mt-1 text-red-600 text-xs">
+											{errors.dob.message}
+										</p>
+									)}
+								</div>
+
+								<div>
+									<Label htmlFor="sex" className="mb-2">
+										Legal Sex <span className="text-red-500">*</span>
+									</Label>
+									<Controller
+										control={control}
+										name="sex"
+										render={({ field }) => (
+											<Select
+												value={field.value}
+												onValueChange={field.onChange}
+											>
+												<SelectTrigger
+													id="sex"
+													className={`h-11 border-brown-300 focus:border-brown-500 ${
+														errors.sex ? "border-red-500" : ""
+													}`}
+												>
+													<SelectValue placeholder="Select sex" />
+												</SelectTrigger>
+												<SelectContent>
+													<SelectItem value="Male">Male</SelectItem>
+													<SelectItem value="Female">Female</SelectItem>
+													<SelectItem value="Other">Other</SelectItem>
+													<SelectItem value="Prefer not to say">
+														Prefer not to say
+													</SelectItem>
+												</SelectContent>
+											</Select>
+										)}
+									/>
+									{errors.sex && (
+										<p className="mt-1 text-red-600 text-xs">
+											{errors.sex.message}
+										</p>
+									)}
+								</div>
+
+								<div>
+									<Label htmlFor="opNumber" className="mb-2">
+										OP Number <span className="text-red-500">*</span>
+									</Label>
+									<Input
+										id="opNumber"
+										{...register("opNumber")}
+										className={`h-11 border-brown-300 focus:border-brown-500 ${
+											errors.opNumber ? "border-red-500" : ""
+										}`}
+									/>
+									{errors.opNumber && (
+										<p className="mt-1 text-red-600 text-xs">
+											{errors.opNumber.message}
+										</p>
+									)}
+								</div>
+
+								<div>
+									<Label htmlFor="spokenLanguages" className="mb-2">
+										Languages Spoken <span className="text-red-500">*</span>
+									</Label>
+									<Input
+										id="spokenLanguages"
+										placeholder="e.g. English, Arabic"
+										{...register("spokenLanguages")}
+										className={`h-11 border-brown-300 focus:border-brown-500 ${
+											errors.spokenLanguages ? "border-red-500" : ""
+										}`}
+									/>
+									{errors.spokenLanguages && (
+										<p className="mt-1 text-red-600 text-xs">
+											{errors.spokenLanguages.message}
+										</p>
+									)}
+								</div>
+
+								<div>
+									<Label htmlFor="address" className="mb-2">
+										Address
+									</Label>
+									<Input
+										id="address"
+										{...register("address")}
+										className="h-11 border-brown-300 focus:border-brown-500"
+									/>
+								</div>
+
+								<div>
+									<Label htmlFor="school" className="mb-2">
+										School
+									</Label>
+									<Input
+										id="school"
+										{...register("school")}
+										className="h-11 border-brown-300 focus:border-brown-500"
+									/>
+								</div>
+							</div>
+
+							<div className="space-y-6">
+								<div>
+									<Label htmlFor="birthHistory" className="mb-2">
+										Birth History
+									</Label>
+									<Textarea
+										id="birthHistory"
+										{...register("birthHistory")}
+										className="field-sizing-content min-h-20 border-brown-300 focus:border-brown-500"
+									/>
+								</div>
+
+								<div>
+									<Label htmlFor="currentMedications" className="mb-2">
+										Current Medications
+									</Label>
+									<Textarea
+										id="currentMedications"
+										{...register("currentMedications")}
+										className="field-sizing-content min-h-20 border-brown-300 focus:border-brown-500"
+									/>
+								</div>
+
+								<div>
+									<Label htmlFor="priorDiagnoses" className="mb-2">
+										Prior Diagnoses
+									</Label>
+									<Textarea
+										id="priorDiagnoses"
+										{...register("priorDiagnoses")}
+										className="field-sizing-content min-h-20 border-brown-300 focus:border-brown-500"
+									/>
+								</div>
+
+								<div>
+									<Label htmlFor="familyHistory" className="mb-2">
+										Family History
+									</Label>
+									<Textarea
+										id="familyHistory"
+										{...register("familyHistory")}
+										className="field-sizing-content min-h-20 border-brown-300 focus:border-brown-500"
+									/>
+								</div>
+
+								<div>
+									<Label className="mb-2">Immunisations</Label>
+									<Controller
+										control={control}
+										name="immunisations"
+										render={({ field }) => (
+											<TagInput
+												value={Array.isArray(field.value) ? field.value : []}
+												onChange={field.onChange}
+												placeholder="e.g., Polio, MMR, Hepatitis B"
+											/>
+										)}
+									/>
+								</div>
+
+								<div>
+									<Label className="mb-2">Allergies</Label>
+									<Controller
+										control={control}
+										name="allergies"
+										render={({ field }) => (
+											<TagInput
+												value={Array.isArray(field.value) ? field.value : []}
+												onChange={field.onChange}
+												placeholder="e.g., Peanuts, Dust, Penicillin"
+											/>
+										)}
+									/>
+								</div>
+
+								<div>
+									<Label className="mb-2">Sensory Sensitivities</Label>
+									<Controller
+										control={control}
+										name="sensorySensitivities"
+										render={({ field }) => (
+											<TagInput
+												value={Array.isArray(field.value) ? field.value : []}
+												onChange={field.onChange}
+												placeholder="e.g., Loud noises, Bright lights, Certain textures"
+											/>
+										)}
+									/>
+								</div>
+
+								<div className="flex gap-3">
+									<Button
+										type="button"
+										variant="outline"
+										size="lg"
+										className="flex-1 border-brown-300 hover:bg-brown-50"
+										onClick={() =>
+											router.navigate({
+												to: "/children/$childId",
+												params: { childId },
+											})
+										}
+									>
+										Cancel
+									</Button>
+									<Button
+										type="submit"
+										size="lg"
+										className="flex-1 bg-brown-700 hover:bg-brown-800"
+										disabled={isPending}
+									>
+										{isPending ? "Saving…" : "Save Changes"}
+									</Button>
+								</div>
+							</div>
 						</div>
 					</div>
 				</form>
