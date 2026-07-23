@@ -135,18 +135,18 @@ function ChildDashboardPage() {
 
 				<div className="grid gap-6 lg:grid-cols-3">
 					<div className="space-y-6 lg:col-span-2">
-						<MilestoneRadarChart data={milestones ?? []} />
-						<SensoryTrendChart data={sensory ?? []} />
-						<GameScoreTrendChart data={gameScores ?? []} />
-					</div>
-
-					<div className="space-y-6">
 						<SessionCalendar
 							data={calendar ?? {}}
 							month={month}
 							year={year}
 							onMonthChange={handleMonthChange}
 						/>
+						<SensoryTrendChart data={sensory ?? []} />
+						<GameScoreTrendChart data={gameScores ?? []} />
+					</div>
+
+					<div className="space-y-6">
+						<MilestoneRadarChart data={milestones ?? []} />
 						<NotesTimeline data={notes ?? []} />
 					</div>
 				</div>
