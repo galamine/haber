@@ -1,7 +1,7 @@
 import type { SectionESchema } from "@haber-final/api/schemas/assessment";
 import type { z } from "zod";
 
-import { SectionCard } from "../SectionCard";
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 import { ReadOnlyField } from "./ReadOnlyField";
 import { TagList } from "./TagList";
 
@@ -19,7 +19,7 @@ export function ReadOnlySectionE({
 		.join(", ");
 
 	return (
-		<SectionCard title="Section E — Functional & Fine Motor Skills">
+		<AssessmentSectionCard title="Section E — Functional & Fine Motor Skills">
 			<ReadOnlyField
 				label="Areas of Concern"
 				value={concernLabels}
@@ -30,6 +30,6 @@ export function ReadOnlySectionE({
 				value={<TagList items={data.observations} />}
 				className="md:col-span-2"
 			/>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

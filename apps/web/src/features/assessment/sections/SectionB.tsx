@@ -5,9 +5,8 @@ import { Plus, Trash2 } from "lucide-react";
 import { Controller, useFieldArray } from "react-hook-form";
 
 import { MultiSelectCombobox } from "@/components/multi-select-combobox";
-
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 import { FieldWrapper } from "../FieldWrapper";
-import { SectionCard } from "../SectionCard";
 import type { AssessmentSectionProps } from "../types";
 
 type SectionBProps = AssessmentSectionProps & {
@@ -28,7 +27,7 @@ export function SectionB({
 	});
 
 	return (
-		<SectionCard
+		<AssessmentSectionCard
 			title="Section B — Medical & Developmental History"
 			description="Diagnoses, pre/peri-natal history, medical background, and previous therapies"
 		>
@@ -216,6 +215,6 @@ export function SectionB({
 					Add Therapy
 				</Button>
 			</div>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

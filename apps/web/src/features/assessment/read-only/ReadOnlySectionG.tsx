@@ -11,8 +11,8 @@ import {
 	TableRow,
 } from "@haber-final/ui/components/table";
 import type { z } from "zod";
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 import { INTERVENTION_SETTINGS } from "../constants";
-import { SectionCard } from "../SectionCard";
 import { ReadOnlyField } from "./ReadOnlyField";
 import { TagList } from "./TagList";
 
@@ -53,7 +53,7 @@ export function ReadOnlySectionG({ data }: { data: SectionGData }) {
 			?.label ?? data.interventionSetting;
 
 	return (
-		<SectionCard title="Section G — Initial Goals & Intervention Plan">
+		<AssessmentSectionCard title="Section G — Initial Goals & Intervention Plan">
 			<GoalTable
 				title="Short-Term Goals (4–6 weeks)"
 				goals={data.shortTermGoals}
@@ -94,6 +94,6 @@ export function ReadOnlySectionG({ data }: { data: SectionGData }) {
 				value={data.referrals}
 				className="md:col-span-2"
 			/>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

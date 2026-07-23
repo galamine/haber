@@ -9,7 +9,7 @@ import {
 } from "@haber-final/ui/components/table";
 import type { z } from "zod";
 
-import { SectionCard } from "../SectionCard";
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 import { ReadOnlyField } from "./ReadOnlyField";
 import { TagList } from "./TagList";
 
@@ -23,7 +23,7 @@ export function ReadOnlySectionD({
 	sensorySystemById: Record<string, string>;
 }) {
 	return (
-		<SectionCard title="Section D — Sensory Processing Profile">
+		<AssessmentSectionCard title="Section D — Sensory Processing Profile">
 			<div className="overflow-x-auto md:col-span-2">
 				<Table>
 					<TableHeader>
@@ -54,6 +54,6 @@ export function ReadOnlySectionD({
 				value={<TagList items={data.behaviouralObservations} />}
 				className="md:col-span-2"
 			/>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

@@ -1,8 +1,8 @@
 import type { FollowUpSectionDSchema } from "@haber-final/api/schemas/assessment";
 import type { z } from "zod";
+import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
 import { ReadOnlyField } from "../../assessment/read-only/ReadOnlyField";
 import { TagList } from "../../assessment/read-only/TagList";
-import { SectionCard } from "../../assessment/SectionCard";
 import { COMPLIANCE_OPTIONS, ENGAGEMENT_OPTIONS } from "../constants";
 
 type SectionDData = z.infer<typeof FollowUpSectionDSchema>;
@@ -21,7 +21,7 @@ function getEngagementLabel(value: string): string {
 
 export function ReadOnlySectionD({ data }: ReadOnlySectionDProps) {
 	return (
-		<SectionCard title="Section D — Follow-Up Clinical Questions">
+		<AssessmentSectionCard title="Section D — Follow-Up Clinical Questions">
 			<ReadOnlyField
 				label="Improvements at Home"
 				value={<TagList items={data.improvementsAtHome} />}
@@ -70,6 +70,6 @@ export function ReadOnlySectionD({ data }: ReadOnlySectionDProps) {
 				value={<TagList items={data.therapistObservations} />}
 				className="md:col-span-2"
 			/>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

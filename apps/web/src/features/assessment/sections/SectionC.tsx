@@ -10,7 +10,7 @@ import {
 } from "@haber-final/ui/components/table";
 import { Controller, useFieldArray } from "react-hook-form";
 
-import { SectionCard } from "../SectionCard";
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 import type { AssessmentSectionProps } from "../types";
 
 type SectionCProps = AssessmentSectionProps & {
@@ -24,7 +24,7 @@ export function SectionC({ register, control, milestoneById }: SectionCProps) {
 	});
 
 	return (
-		<SectionCard title="Section C — Developmental Milestones">
+		<AssessmentSectionCard title="Section C — Developmental Milestones">
 			<div className="overflow-x-auto md:col-span-2">
 				<Table>
 					<TableHeader>
@@ -72,6 +72,6 @@ export function SectionC({ register, control, milestoneById }: SectionCProps) {
 					</TableBody>
 				</Table>
 			</div>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

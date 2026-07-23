@@ -9,8 +9,8 @@ import {
 } from "@haber-final/ui/components/table";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { Controller, useFieldArray, useWatch } from "react-hook-form";
+import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
 import { FieldWrapper } from "../../assessment/FieldWrapper";
-import { SectionCard } from "../../assessment/SectionCard";
 import { DeltaBadge } from "../delta-badge";
 import type { FollowUpSectionProps } from "../types";
 
@@ -33,7 +33,7 @@ export function SectionC({
 	const watchedCheck = useWatch({ control, name: "sectionC.sensoryCheck" });
 
 	return (
-		<SectionCard title="Section C — Sensory Progress Check">
+		<AssessmentSectionCard title="Section C — Sensory Progress Check">
 			<div className="overflow-x-auto md:col-span-2">
 				<Table>
 					<TableHeader>
@@ -99,6 +99,6 @@ export function SectionC({
 					/>
 				</FieldWrapper>
 			))}
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

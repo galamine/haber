@@ -9,7 +9,7 @@ import {
 } from "@haber-final/ui/components/table";
 import type { z } from "zod";
 
-import { SectionCard } from "../SectionCard";
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 
 type SectionCData = z.infer<typeof SectionCSchema>;
 
@@ -21,7 +21,7 @@ export function ReadOnlySectionC({
 	milestoneById: Record<string, string>;
 }) {
 	return (
-		<SectionCard title="Section C — Developmental Milestones">
+		<AssessmentSectionCard title="Section C — Developmental Milestones">
 			<div className="overflow-x-auto md:col-span-2">
 				<Table>
 					<TableHeader>
@@ -52,6 +52,6 @@ export function ReadOnlySectionC({
 					</TableBody>
 				</Table>
 			</div>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

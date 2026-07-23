@@ -1,7 +1,7 @@
 import type { SectionBSchema } from "@haber-final/api/schemas/assessment";
 import type { z } from "zod";
 
-import { SectionCard } from "../SectionCard";
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 import { ReadOnlyField } from "./ReadOnlyField";
 import { TagList } from "./TagList";
 
@@ -9,7 +9,7 @@ type SectionBData = z.infer<typeof SectionBSchema>;
 
 export function ReadOnlySectionB({ data }: { data: SectionBData }) {
 	return (
-		<SectionCard title="Section B — Medical & Developmental History">
+		<AssessmentSectionCard title="Section B — Medical & Developmental History">
 			<ReadOnlyField
 				label="Primary Diagnoses"
 				value={<TagList items={data.primaryDiagnoses} />}
@@ -58,6 +58,6 @@ export function ReadOnlySectionB({ data }: { data: SectionBData }) {
 				}
 				className="md:col-span-2"
 			/>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

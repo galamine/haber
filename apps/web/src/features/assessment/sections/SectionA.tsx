@@ -8,9 +8,8 @@ import {
 } from "@haber-final/ui/components/select";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { Controller } from "react-hook-form";
-
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 import { FieldWrapper } from "../FieldWrapper";
-import { SectionCard } from "../SectionCard";
 import type { AssessmentSectionProps } from "../types";
 
 export function SectionA({
@@ -22,7 +21,7 @@ export function SectionA({
 	const e = errors.sectionA;
 
 	return (
-		<SectionCard
+		<AssessmentSectionCard
 			title="Section A — Patient & Referral Information"
 			description="Patient identity, referral details, and presenting complaint"
 		>
@@ -226,6 +225,6 @@ export function SectionA({
 					className={e?.chiefComplaint ? "border-red-500" : ""}
 				/>
 			</FieldWrapper>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

@@ -115,7 +115,7 @@ function FollowUpDetailPage() {
 			<FollowUpTabsShell
 				activeTab={activeTab}
 				onTabChange={setActiveTab}
-				readOnly
+				mode="view"
 				sections={{
 					a: (
 						<ReadOnlySectionA

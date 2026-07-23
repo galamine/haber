@@ -11,8 +11,8 @@ import {
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { Plus, Trash2 } from "lucide-react";
 import { Controller, useFieldArray } from "react-hook-form";
+import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
 import { FieldWrapper } from "../../assessment/FieldWrapper";
-import { SectionCard } from "../../assessment/SectionCard";
 import {
 	GOAL_STATUS_DECISION_OPTIONS,
 	NEXT_ASSESSMENT_TYPE_OPTIONS,
@@ -28,7 +28,7 @@ export function SectionE({ register, control, errors }: FollowUpSectionProps) {
 	const e = errors.sectionE;
 
 	return (
-		<SectionCard title="Section E — Plan Adjustments & Next Steps">
+		<AssessmentSectionCard title="Section E — Plan Adjustments & Next Steps">
 			<div className="md:col-span-2">
 				<p className="mb-3 font-medium text-on-surface text-sm">
 					Goal Status Decisions
@@ -181,6 +181,6 @@ export function SectionE({ register, control, errors }: FollowUpSectionProps) {
 					className={e?.clinicalNotes ? "border-red-500" : ""}
 				/>
 			</FieldWrapper>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

@@ -2,8 +2,8 @@ import { Checkbox } from "@haber-final/ui/components/checkbox";
 import { Input } from "@haber-final/ui/components/input";
 import { Controller } from "react-hook-form";
 
+import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
 import { FieldWrapper } from "../../assessment/FieldWrapper";
-import { SectionCard } from "../../assessment/SectionCard";
 import type { FollowUpSectionProps } from "../types";
 
 type SectionFProps = FollowUpSectionProps & {
@@ -19,7 +19,7 @@ export function SectionF({
 	const e = errors.sectionF;
 
 	return (
-		<SectionCard title="Section F — Signatures & Consent">
+		<AssessmentSectionCard title="Section F — Signatures & Consent">
 			<FieldWrapper
 				label="Therapist Name"
 				htmlFor="sectionF.therapistName"
@@ -76,6 +76,6 @@ export function SectionF({
 					<p className="text-red-600 text-xs">Consent is required.</p>
 				)}
 			</div>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

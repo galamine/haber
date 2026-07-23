@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FieldErrors } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -54,7 +54,6 @@ function NewAssessmentPage() {
 	const taxonomy = useAssessmentTaxonomy();
 
 	const [activeTab, setActiveTab] = useState<SectionTabValue>("a");
-	const [submitAttempted, setSubmitAttempted] = useState(false);
 	const [visitedTabs, setVisitedTabs] = useState<Set<SectionTabValue>>(
 		new Set(["a"]),
 	);
@@ -109,7 +108,6 @@ function NewAssessmentPage() {
 		const isValid = await trigger(currentTabConfig.field);
 
 		if (!isValid) {
-			setSubmitAttempted(true);
 			toast.error(
 				"Please fill short term goal and long term goal fields before proceeding",
 			);
@@ -170,18 +168,10 @@ function NewAssessmentPage() {
 	}
 
 	function onInvalid(formErrors: FieldErrors<AssessmentFormValues>) {
-		setSubmitAttempted(true);
 		const firstErrorTab = SECTION_TABS.find((tab) => formErrors[tab.field]);
 		if (firstErrorTab) setActiveTab(firstErrorTab.value);
 		toast.error("Please fix the highlighted errors before submitting.");
 	}
-
-	const errorTabs = useMemo(() => {
-		if (!submitAttempted) return new Set<string>();
-		return new Set(
-			SECTION_TABS.filter((tab) => errors[tab.field]).map((tab) => tab.value),
-		);
-	}, [submitAttempted, errors]);
 
 	if (
 		childQuery.isLoading ||
@@ -290,10 +280,6 @@ function NewAssessmentPage() {
 		(taxonomy.sensorySystems.data ?? []).map((s) => [s.id, s.label]),
 	);
 
-	const lockedTabs = new Set(
-		SECTION_TABS.map((t) => t.value).filter((v) => !visitedTabs.has(v)),
-	);
-
 	return (
 		<div className="p-8">
 			<button
@@ -317,11 +303,10 @@ function NewAssessmentPage() {
 			<AssessmentTabsShell
 				activeTab={activeTab}
 				onTabChange={setActiveTab}
-				errorTabs={errorTabs}
-				lockedTabs={lockedTabs}
 				onNext={handleNext}
 				onSubmit={handleSubmit(onValid, onInvalid)}
 				isSubmitting={createMutation.isPending}
+				visitedTabs={visitedTabs}
 				sections={{
 					a: (
 						<SectionA

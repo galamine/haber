@@ -1,9 +1,8 @@
 import { Checkbox } from "@haber-final/ui/components/checkbox";
 import { TagInput } from "@haber-final/ui/components/tag-input";
 import { Controller } from "react-hook-form";
-
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 import { FieldWrapper } from "../FieldWrapper";
-import { SectionCard } from "../SectionCard";
 import type { AssessmentSectionProps } from "../types";
 
 type SectionEProps = AssessmentSectionProps & {
@@ -16,7 +15,7 @@ export function SectionE({
 	functionalConcernOptions,
 }: SectionEProps) {
 	return (
-		<SectionCard title="Section E — Functional & Fine Motor Skills">
+		<AssessmentSectionCard title="Section E — Functional & Fine Motor Skills">
 			<div className="md:col-span-2">
 				<p className="mb-3 font-medium text-on-surface text-sm">
 					Areas of Concern
@@ -76,6 +75,6 @@ export function SectionE({
 					)}
 				/>
 			</FieldWrapper>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

@@ -49,6 +49,8 @@ function AssessmentDetailPage() {
 
 	const [activeTab, setActiveTab] = useState<SectionTabValue>("a");
 
+	const allTabs = new Set(["a", "b", "c", "d", "e", "f", "g", "h"]);
+
 	if (assessmentQuery.isLoading || taxonomy.isLoading) {
 		return (
 			<div className="p-8">
@@ -130,6 +132,8 @@ function AssessmentDetailPage() {
 			<AssessmentTabsShell
 				activeTab={activeTab}
 				onTabChange={setActiveTab}
+				mode="view"
+				visitedTabs={allTabs}
 				sections={{
 					a: (
 						<ReadOnlySectionA

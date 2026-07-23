@@ -2,9 +2,8 @@ import { Slider } from "@haber-final/ui/components/slider";
 import { TagInput } from "@haber-final/ui/components/tag-input";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { Controller, useFieldArray } from "react-hook-form";
-
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 import { FieldWrapper } from "../FieldWrapper";
-import { SectionCard } from "../SectionCard";
 import type { AssessmentSectionProps } from "../types";
 
 type SectionDProps = AssessmentSectionProps & {
@@ -23,7 +22,7 @@ export function SectionD({
 	});
 
 	return (
-		<SectionCard title="Section D — Sensory Processing Profile">
+		<AssessmentSectionCard title="Section D — Sensory Processing Profile">
 			<div className="flex flex-col gap-6 md:col-span-2">
 				{fields.map((field, idx) => (
 					<div
@@ -83,6 +82,6 @@ export function SectionD({
 					)}
 				/>
 			</FieldWrapper>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

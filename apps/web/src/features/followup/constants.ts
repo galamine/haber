@@ -1,11 +1,47 @@
-export const FOLLOWUP_TABS = [
-	{ value: "a", label: "Session Info", field: "sectionA" },
-	{ value: "b", label: "Goal Progress", field: "sectionB" },
-	{ value: "c", label: "Sensory Progress", field: "sectionC" },
-	{ value: "d", label: "Clinical Questions", field: "sectionD" },
-	{ value: "e", label: "Plan Adjustments", field: "sectionE" },
-	{ value: "f", label: "Signatures & Consent", field: "sectionF" },
-] as const;
+import {
+	Accessibility,
+	Calendar,
+	Clipboard,
+	FileSignature,
+	type LucideIcon,
+	TrendingUp,
+} from "lucide-react";
+
+type FollowUpTabEntry = {
+	value: string;
+	label: string;
+	field: string;
+	icon: LucideIcon;
+};
+
+export const FOLLOWUP_TABS: readonly FollowUpTabEntry[] = [
+	{ value: "a", label: "Session Info", field: "sectionA", icon: Calendar },
+	{ value: "b", label: "Goal Progress", field: "sectionB", icon: TrendingUp },
+	{
+		value: "c",
+		label: "Sensory Progress",
+		field: "sectionC",
+		icon: Accessibility,
+	},
+	{
+		value: "d",
+		label: "Clinical Questions",
+		field: "sectionD",
+		icon: Clipboard,
+	},
+	{
+		value: "e",
+		label: "Plan Adjustments",
+		field: "sectionE",
+		icon: TrendingUp,
+	},
+	{
+		value: "f",
+		label: "Signatures & Consent",
+		field: "sectionF",
+		icon: FileSignature,
+	},
+];
 export type FollowUpTabValue = (typeof FOLLOWUP_TABS)[number]["value"];
 
 export const COMPLIANCE_OPTIONS = [

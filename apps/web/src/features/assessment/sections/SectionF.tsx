@@ -1,9 +1,8 @@
 import { Checkbox } from "@haber-final/ui/components/checkbox";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { useFieldArray } from "react-hook-form";
-
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 import { FieldWrapper } from "../FieldWrapper";
-import { SectionCard } from "../SectionCard";
 import type { AssessmentSectionProps } from "../types";
 
 type SectionFProps = AssessmentSectionProps & {
@@ -22,7 +21,7 @@ export function SectionF({
 	});
 
 	return (
-		<SectionCard title="Section F — Standardized Assessment Tools">
+		<AssessmentSectionCard title="Section F — Standardized Assessment Tools">
 			<div className="flex flex-col gap-2.5 md:col-span-2">
 				{assessmentToolOptions.map((tool) => {
 					const idx = fields.findIndex((f) => f.toolId === tool.id);
@@ -77,6 +76,6 @@ export function SectionF({
 					className={errors.sectionF?.overallSummary ? "border-red-500" : ""}
 				/>
 			</FieldWrapper>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

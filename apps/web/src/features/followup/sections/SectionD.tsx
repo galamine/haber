@@ -6,8 +6,8 @@ import { TagInput } from "@haber-final/ui/components/tag-input";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { Controller } from "react-hook-form";
 import { MultiSelectCombobox } from "@/components/multi-select-combobox";
+import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
 import { FieldWrapper } from "../../assessment/FieldWrapper";
-import { SectionCard } from "../../assessment/SectionCard";
 import { COMPLIANCE_OPTIONS, ENGAGEMENT_OPTIONS } from "../constants";
 import type { FollowUpSectionProps } from "../types";
 
@@ -24,7 +24,7 @@ export function SectionD({
 	const e = errors.sectionD;
 
 	return (
-		<SectionCard title="Section D — Follow-Up Clinical Questions">
+		<AssessmentSectionCard title="Section D — Follow-Up Clinical Questions">
 			<FieldWrapper
 				label="Improvements at Home"
 				htmlFor="sectionD.improvementsAtHome"
@@ -236,6 +236,6 @@ export function SectionD({
 					)}
 				/>
 			</FieldWrapper>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

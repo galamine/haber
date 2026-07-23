@@ -2,8 +2,8 @@ import { Input } from "@haber-final/ui/components/input";
 import { Switch } from "@haber-final/ui/components/switch";
 import { Controller } from "react-hook-form";
 
+import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
 import { FieldWrapper } from "../../assessment/FieldWrapper";
-import { SectionCard } from "../../assessment/SectionCard";
 import type { FollowUpSectionProps } from "../types";
 
 type SectionAProps = FollowUpSectionProps & {
@@ -19,7 +19,7 @@ export function SectionA({
 	const e = errors.sectionA;
 
 	return (
-		<SectionCard title="Section A — Session Information">
+		<AssessmentSectionCard title="Section A — Session Information">
 			<FieldWrapper
 				label="Date"
 				htmlFor="sectionA.date"
@@ -87,6 +87,6 @@ export function SectionA({
 					</span>
 				</div>
 			</FieldWrapper>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

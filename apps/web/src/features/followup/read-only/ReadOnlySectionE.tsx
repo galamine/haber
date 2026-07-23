@@ -1,7 +1,7 @@
 import type { FollowUpSectionESchema } from "@haber-final/api/schemas/assessment";
 import type { z } from "zod";
+import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
 import { ReadOnlyField } from "../../assessment/read-only/ReadOnlyField";
-import { SectionCard } from "../../assessment/SectionCard";
 import {
 	GOAL_STATUS_DECISION_OPTIONS,
 	NEXT_ASSESSMENT_TYPE_OPTIONS,
@@ -30,7 +30,7 @@ function getNextAssessmentLabel(value: string): string {
 
 export function ReadOnlySectionE({ data }: ReadOnlySectionEProps) {
 	return (
-		<SectionCard title="Section E — Plan Adjustments & Next Steps">
+		<AssessmentSectionCard title="Section E — Plan Adjustments & Next Steps">
 			<ReadOnlyField
 				label="Goal Status Decisions"
 				value={getDecisionLabels(data.goalStatusDecisions)}
@@ -70,6 +70,6 @@ export function ReadOnlySectionE({ data }: ReadOnlySectionEProps) {
 				value={data.clinicalNotes}
 				className="md:col-span-2"
 			/>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

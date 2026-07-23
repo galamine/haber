@@ -1,7 +1,7 @@
 import type { SectionFSchema } from "@haber-final/api/schemas/assessment";
 import type { z } from "zod";
 
-import { SectionCard } from "../SectionCard";
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 import { ReadOnlyField } from "./ReadOnlyField";
 
 type SectionFData = z.infer<typeof SectionFSchema>;
@@ -14,7 +14,7 @@ export function ReadOnlySectionF({
 	assessmentToolById: Record<string, string>;
 }) {
 	return (
-		<SectionCard title="Section F — Standardized Assessment Tools">
+		<AssessmentSectionCard title="Section F — Standardized Assessment Tools">
 			<div className="flex flex-col gap-4 md:col-span-2">
 				{data.toolsAdministered.length === 0 ? (
 					<p className="text-on-surface-variant text-sm">
@@ -42,6 +42,6 @@ export function ReadOnlySectionF({
 				value={data.overallSummary}
 				className="md:col-span-2"
 			/>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

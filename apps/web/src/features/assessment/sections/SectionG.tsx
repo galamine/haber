@@ -12,9 +12,9 @@ import { Plus, Trash2 } from "lucide-react";
 import { Controller, useFieldArray } from "react-hook-form";
 
 import { MultiSelectCombobox } from "@/components/multi-select-combobox";
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 import { INTERVENTION_SETTINGS } from "../constants";
 import { FieldWrapper } from "../FieldWrapper";
-import { SectionCard } from "../SectionCard";
 import type { AssessmentFormValues } from "../schema";
 import type { AssessmentSectionProps } from "../types";
 
@@ -98,7 +98,7 @@ export function SectionG({
 	const e = errors.sectionG;
 
 	return (
-		<SectionCard title="Section G — Initial Goals & Intervention Plan">
+		<AssessmentSectionCard title="Section G — Initial Goals & Intervention Plan">
 			<GoalList
 				title="Short-Term Goals (4–6 weeks)"
 				name="sectionG.shortTermGoals"
@@ -236,6 +236,6 @@ export function SectionG({
 					className={e?.referrals ? "border-red-500" : ""}
 				/>
 			</FieldWrapper>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

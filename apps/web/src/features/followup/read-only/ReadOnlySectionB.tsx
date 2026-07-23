@@ -10,7 +10,7 @@ import {
 } from "@haber-final/ui/components/table";
 import type { z } from "zod";
 
-import { SectionCard } from "../../assessment/SectionCard";
+import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
 
 type SectionBData = z.infer<typeof FollowUpSectionBSchema>;
 
@@ -32,18 +32,18 @@ export function ReadOnlySectionB({
 }: ReadOnlySectionBProps) {
 	if (data.goalProgress.length === 0) {
 		return (
-			<SectionCard title="Section B — Goal Progress Review">
+			<AssessmentSectionCard title="Section B — Goal Progress Review">
 				<div className="rounded-lg border border-outline-variant p-6 text-center md:col-span-2">
 					<p className="text-on-surface-variant text-sm">
 						No goal progress entries recorded.
 					</p>
 				</div>
-			</SectionCard>
+			</AssessmentSectionCard>
 		);
 	}
 
 	return (
-		<SectionCard title="Section B — Goal Progress Review">
+		<AssessmentSectionCard title="Section B — Goal Progress Review">
 			<div className="overflow-x-auto md:col-span-2">
 				<Table>
 					<TableHeader>
@@ -77,6 +77,6 @@ export function ReadOnlySectionB({
 					</TableBody>
 				</Table>
 			</div>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

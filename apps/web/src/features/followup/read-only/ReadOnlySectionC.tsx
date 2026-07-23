@@ -8,7 +8,7 @@ import {
 	TableRow,
 } from "@haber-final/ui/components/table";
 import type { z } from "zod";
-import { SectionCard } from "../../assessment/SectionCard";
+import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
 import { DeltaBadge } from "../delta-badge";
 
 type ReadOnlySectionCProps = {
@@ -21,7 +21,7 @@ export function ReadOnlySectionC({
 	sensorySystemById,
 }: ReadOnlySectionCProps) {
 	return (
-		<SectionCard title="Section C — Sensory Progress Check">
+		<AssessmentSectionCard title="Section C — Sensory Progress Check">
 			<div className="overflow-x-auto md:col-span-2">
 				<Table>
 					<TableHeader>
@@ -48,6 +48,6 @@ export function ReadOnlySectionC({
 					</TableBody>
 				</Table>
 			</div>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

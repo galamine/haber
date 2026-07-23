@@ -1,14 +1,14 @@
 import type { SectionASchema } from "@haber-final/api/schemas/assessment";
 import type { z } from "zod";
 
-import { SectionCard } from "../SectionCard";
+import { AssessmentSectionCard } from "../AssessmentSectionCard";
 import { ReadOnlyField } from "./ReadOnlyField";
 
 type SectionAData = z.infer<typeof SectionASchema>;
 
 export function ReadOnlySectionA({ data }: { data: SectionAData }) {
 	return (
-		<SectionCard title="Section A — Patient & Referral Information">
+		<AssessmentSectionCard title="Section A — Patient & Referral Information">
 			<ReadOnlyField label="Patient Name" value={data.patientName} />
 			<ReadOnlyField label="Date of Birth" value={data.dob} />
 			<ReadOnlyField
@@ -38,6 +38,6 @@ export function ReadOnlySectionA({ data }: { data: SectionAData }) {
 				value={data.chiefComplaint}
 				className="md:col-span-2"
 			/>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }

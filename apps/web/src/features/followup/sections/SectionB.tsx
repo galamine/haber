@@ -8,8 +8,8 @@ import {
 import { Slider } from "@haber-final/ui/components/slider";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { Controller, useFieldArray } from "react-hook-form";
+import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
 import { FieldWrapper } from "../../assessment/FieldWrapper";
-import { SectionCard } from "../../assessment/SectionCard";
 import { GOAL_STATUS_OPTIONS } from "../constants";
 import type { FollowUpSectionProps } from "../types";
 
@@ -29,19 +29,19 @@ export function SectionB({
 
 	if (fields.length === 0) {
 		return (
-			<SectionCard title="Section B — Goal Progress Review">
+			<AssessmentSectionCard title="Section B — Goal Progress Review">
 				<div className="rounded-lg border border-outline-variant p-6 text-center md:col-span-2">
 					<p className="text-on-surface-variant text-sm">
 						No active treatment plan goals found. Goals will auto-populate once
 						an active plan with goals is configured.
 					</p>
 				</div>
-			</SectionCard>
+			</AssessmentSectionCard>
 		);
 	}
 
 	return (
-		<SectionCard title="Section B — Goal Progress Review">
+		<AssessmentSectionCard title="Section B — Goal Progress Review">
 			<div className="flex flex-col gap-6 md:col-span-2">
 				{fields.map((field, idx) => (
 					<div
@@ -118,6 +118,6 @@ export function SectionB({
 					</div>
 				))}
 			</div>
-		</SectionCard>
+		</AssessmentSectionCard>
 	);
 }
