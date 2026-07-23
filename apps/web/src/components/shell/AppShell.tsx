@@ -160,7 +160,7 @@ export function AppShell() {
 							<span className="font-black text-brown-800 leading-tight dark:text-brown-100">
 								HaberApp
 							</span>
-							<span className="text-on-surface-variant text-xs tracking-wide">
+							<span className="text-muted-foreground text-xs tracking-wide">
 								Clinical Excellence
 							</span>
 						</div>
@@ -189,20 +189,20 @@ export function AppShell() {
 				<SidebarFooter>
 					<div className="flex flex-col gap-1 px-2 pb-2">
 						<div className="mb-1 flex flex-col gap-0.5 rounded-lg bg-muted p-2">
-							<span className="truncate font-medium text-on-surface text-sm">
+							<span className="truncate font-medium text-foreground text-sm">
 								{userId ?? "User"}
 							</span>
 							{role && (
-								<span className="text-on-surface-variant text-xs">
+								<span className="text-muted-foreground text-xs">
 									{role.replace("_", " ")}
 								</span>
 							)}
 							{me?.clinic && (
 								<>
-									<span className="truncate text-on-surface-variant text-xs">
+									<span className="truncate text-muted-foreground text-xs">
 										{me.clinic.name}
 									</span>
-									<span className="truncate text-on-surface-variant text-xs">
+									<span className="truncate text-muted-foreground text-xs">
 										{me.clinic.code && `(${me.clinic.code})`}
 									</span>
 								</>
@@ -211,7 +211,7 @@ export function AppShell() {
 						<button
 							type="button"
 							onClick={handleLogout}
-							className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-on-surface-variant text-sm transition-colors hover:bg-accent"
+							className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-muted-foreground text-sm transition-colors hover:bg-accent"
 						>
 							<LogOut className="h-4 w-4" />
 							Log out
@@ -219,7 +219,7 @@ export function AppShell() {
 						<button
 							type="button"
 							onClick={handleLogoutAll}
-							className="px-2 py-1 text-left text-on-surface-variant text-xs hover:underline"
+							className="px-2 py-1 text-left text-muted-foreground text-xs hover:underline"
 						>
 							Log out everywhere
 						</button>

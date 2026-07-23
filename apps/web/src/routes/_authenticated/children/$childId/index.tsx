@@ -24,17 +24,35 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import {
 	ArrowLeft,
+	Calendar,
 	CheckCircle2,
+	ClipboardCheck,
+	FileSpreadsheet,
+	FileText,
+	Heart,
 	Pencil,
 	Shield,
 	Trash2,
+	User,
+	Users,
 	XCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { IconTabs } from "@/components/IconTabs";
 import { TagList } from "@/features/assessment/read-only/TagList";
 import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
+
+const CHILD_TABS = [
+	{ value: "overview", label: "Overview", icon: User },
+	{ value: "medical", label: "Medical History", icon: Heart },
+	{ value: "guardians", label: "Guardians", icon: Users },
+	{ value: "consent", label: "Consent Records", icon: FileText },
+	{ value: "assessments", label: "Assessments", icon: ClipboardCheck },
+	{ value: "plans", label: "Plans", icon: FileSpreadsheet },
+	{ value: "sessions", label: "Sessions", icon: Calendar },
+] as const;
 
 export const Route = createFileRoute("/_authenticated/children/$childId/")({
 	component: ChildProfilePage,
@@ -253,17 +271,7 @@ function ChildProfilePage() {
 			</div>
 
 			{/* Tabs */}
-			<Tabs defaultValue="overview">
-				<TabsList className="mb-6">
-					<TabsTrigger value="overview">Overview</TabsTrigger>
-					<TabsTrigger value="medical">Medical History</TabsTrigger>
-					<TabsTrigger value="guardians">Guardians</TabsTrigger>
-					<TabsTrigger value="consent">Consent Records</TabsTrigger>
-					<TabsTrigger value="assessments">Assessments</TabsTrigger>
-					<TabsTrigger value="plans">Plans</TabsTrigger>
-					<TabsTrigger value="sessions">Sessions</TabsTrigger>
-				</TabsList>
-
+			<IconTabs tabs={[...CHILD_TABS]} defaultValue="overview">
 				{/* Overview */}
 				<TabsContent value="overview">
 					<div className="grid gap-6 md:grid-cols-2">
@@ -539,7 +547,7 @@ function ChildProfilePage() {
 						</a>
 					</div>
 				</TabsContent>
-			</Tabs>
+			</IconTabs>
 
 			<DeleteChildDialog
 				open={deleteOpen}

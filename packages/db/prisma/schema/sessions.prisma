@@ -25,6 +25,7 @@ model TherapySession {
   updatedAt           DateTime      @updatedAt
 
   plan            TreatmentPlan          @relation(fields: [planId], references: [id])
+  child           Child                   @relation(fields: [childId], references: [id])
   gameAssignments SessionGameAssignment[]
   result          GameResult?
 

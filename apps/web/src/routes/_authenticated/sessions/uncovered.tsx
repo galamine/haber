@@ -17,6 +17,11 @@ type Session = {
 	scheduledDate: Date;
 	status: string;
 	gameAssignments: { id: string; order: number }[];
+	child?: {
+		id: string;
+		fullName: string;
+		photoUrl: string | null;
+	};
 };
 
 function SessionCard({
@@ -32,10 +37,10 @@ function SessionCard({
 		<div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-4">
 			<div className="mb-2 flex items-start justify-between">
 				<div>
-					<p className="font-medium text-on-surface text-sm">
-						Child ID: {session.childId}
+					<p className="font-medium text-foreground text-sm">
+						{session.child?.fullName ?? "Unknown Child"}
 					</p>
-					<p className="mt-0.5 flex items-center gap-1 text-on-surface-variant text-xs">
+					<p className="mt-0.5 flex items-center gap-1 text-muted-foreground text-xs">
 						<CalendarDays className="h-3 w-3" />
 						{new Date(session.scheduledDate).toLocaleTimeString([], {
 							hour: "2-digit",
@@ -47,7 +52,7 @@ function SessionCard({
 					Uncovered
 				</span>
 			</div>
-			<div className="mt-3 flex items-center gap-1 text-on-surface-variant text-xs">
+			<div className="mt-3 flex items-center gap-1 text-muted-foreground text-xs">
 				<Gamepad2 className="h-3 w-3" />
 				{session.gameAssignments.length} game
 				{session.gameAssignments.length !== 1 ? "s" : ""}
@@ -109,10 +114,10 @@ function UncoveredSessionsPage() {
 		<div className="p-8">
 			<div className="mb-6 flex items-center justify-between">
 				<div>
-					<h1 className="font-semibold text-2xl text-on-surface">
+					<h1 className="font-semibold text-2xl text-foreground">
 						Uncovered Sessions
 					</h1>
-					<p className="mt-1 text-on-surface-variant text-sm">
+					<p className="mt-1 text-muted-foreground text-sm">
 						Sessions without an assigned therapist for today
 					</p>
 				</div>
@@ -131,7 +136,7 @@ function UncoveredSessionsPage() {
 					))}
 				</div>
 			) : !sessions || sessions.length === 0 ? (
-				<div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest py-16 text-on-surface-variant">
+				<div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-outline-variant bg-surface-container-lowest py-16 text-muted-foreground">
 					<UserPlus className="h-8 w-8" />
 					<p className="text-sm">No uncovered sessions today.</p>
 				</div>

@@ -52,7 +52,7 @@ export const sessionRouter: ReturnType<typeof router> = router({
 				},
 			},
 			orderBy: { scheduledDate: "asc" },
-			include: { gameAssignments: { orderBy: { order: "asc" } } },
+			include: { gameAssignments: { orderBy: { order: "asc" } }, child: true },
 		});
 	}),
 
@@ -97,6 +97,8 @@ export const sessionRouter: ReturnType<typeof router> = router({
 						include: { gameVersion: { include: { game: true } } },
 					},
 					result: true,
+					child: true,
+					plan: true,
 				},
 			});
 			if (!session) {
@@ -271,7 +273,7 @@ export const sessionRouter: ReturnType<typeof router> = router({
 				},
 			},
 			orderBy: { scheduledDate: "asc" },
-			include: { gameAssignments: { orderBy: { order: "asc" } } },
+			include: { gameAssignments: { orderBy: { order: "asc" } }, child: true },
 		});
 	}),
 });

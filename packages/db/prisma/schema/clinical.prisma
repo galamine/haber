@@ -37,6 +37,7 @@ model Child {
   consents       ConsentRecord[]
   invitations    ConsentInvitation[]
   assessments    InitialAssessment[]
+  sessions       TherapySession[]
 
   @@map("child")
 }
