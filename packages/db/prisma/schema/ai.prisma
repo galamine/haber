@@ -1,0 +1,62 @@
+enum ConversationStatus {
+  active
+  paused
+  completed
+}
+
+enum DraftStatus {
+  active
+  superseded
+}
+
+enum Confidence {
+  high
+  medium
+  low
+}
+
+model ConversationSession {
+  id                String             @id @default(cuid())
+  assessmentId      String
+  assessmentType    String
+  status            ConversationStatus @default(active)
+  transcriptHistory String?
+  startedAt         DateTime           @default(now())
+  endedAt           DateTime?
+
+  draftValues AIDraftValue[]
+  overrides   AIFieldOverride[]
+
+  @@index([assessmentId, status])
+  @@map("conversation_session")
+}
+
+model AIDraftValue {
+  id         String     @id @default(cuid())
+  sessionId  String
+  fieldId    String
+  value      Json
+  confidence Confidence
+  sourceText String?
+  status     DraftStatus @default(active)
+  createdAt  DateTime   @default(now())
+
+  session ConversationSession @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId, fieldId])
+  @@map("ai_draft_value")
+}
+
+model AIFieldOverride {
+  id            String   @id @default(cuid())
+  sessionId     String
+  fieldId       String
+  aiValue       Json
+  overrideValue Json
+  overrideAt    DateTime @default(now())
+
+  session ConversationSession @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId, fieldId])
+  @@map("ai_field_override")
+}
