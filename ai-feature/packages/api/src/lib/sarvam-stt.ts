@@ -24,7 +24,7 @@ export class SarvamSTTClient {
 			apiSubscriptionKey: env.SARVAM_SUBSCRIPTION_KEY,
 		});
 		this.model = options?.model ?? "saaras:v3";
-		this.language = options?.language ?? "mai-IN";
+		this.language = options?.language ?? "ml-IN";
 	}
 
 	async transcribeFile(audioBuffer: Buffer): Promise<TranscriptChunk[]> {

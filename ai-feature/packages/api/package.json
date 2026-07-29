@@ -6,8 +6,12 @@
 	"exports": {
 		"./*": "./src/*.ts"
 	},
+	"scripts": {
+		"test:stt": "tsx ../../src/test-sarvam.ts"
+	},
 	"dependencies": {
 		"@ai-feature/env": "workspace:*",
+		"@google/generative-ai": "^0.21.0",
 		"@haber-final/db": "workspace:*",
 		"ffmpeg-static": "^5.2.0",
 		"fluent-ffmpeg": "^2.1.3",

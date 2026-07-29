@@ -15,9 +15,13 @@ export const env = createEnv({
 			.string()
 			.min(1, "SARVAM_SUBSCRIPTION_KEY is required"),
 		SARVAM_API_URL: z.string().url().default("https://api.sarvam.ai"),
-		LLM_PROVIDER: z.enum(["gemini"]).default("gemini"),
+		LLM_PROVIDER: z
+			.enum(["gemini", "openai", "anthropic", "azure"])
+			.default("gemini"),
 		GEMINI_API_KEY: z.string().min(1, "GEMINI_API_KEY is required"),
 		GEMINI_MODEL: z.string().default("gemini-2.0-flash"),
+		OPENAI_API_KEY: z.string().optional(),
+		ANTHROPIC_API_KEY: z.string().optional(),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,
