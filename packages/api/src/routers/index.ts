@@ -1,3 +1,4 @@
+import { aiRouter } from "@ai-feature/api";
 import { publicProcedure, router } from "../index";
 import { assessmentRouter } from "./assessment";
 import { authRouter } from "./auth";
@@ -21,6 +22,7 @@ export const appRouter: ReturnType<typeof router> = router({
 	healthCheck: publicProcedure.query(() => {
 		return "OK";
 	}),
+	ai: aiRouter,
 	auth: authRouter,
 	clinic: clinicRouter,
 	game: gameRouter,

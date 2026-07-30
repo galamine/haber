@@ -28,11 +28,15 @@ export class SarvamSTTClient {
 	}
 
 	async transcribeFile(audioBuffer: Buffer): Promise<TranscriptChunk[]> {
+		const wavBuffer = await audioService.convertToWav(audioBuffer);
+
 		const response = await this.client.speechToText.transcribe({
-			file: audioBuffer,
-			model: this.model,
+			file: wavBuffer,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			model: this.model as any,
 			mode: "transcribe",
-			languageCode: this.language,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			language_code: this.language as any,
 		});
 
 		return [
@@ -47,29 +51,29 @@ export class SarvamSTTClient {
 
 	async transcribeStream(
 		audioBuffer: Buffer,
-		onTranscript: (chunk: TranscriptChunk) => void,
+		_onTranscript: (chunk: TranscriptChunk) => void,
 	): Promise<string> {
 		const wavBuffer = await audioService.convertToWav(audioBuffer);
 
-		const response = await this.client.speechToText.streaming({
+		const response = await this.client.speechToText.transcribe({
 			file: wavBuffer,
-			model: this.model,
-			languageCode: this.language,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			model: this.model as any,
+			mode: "transcribe",
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			language_code: this.language as any,
 		});
 
-		let fullTranscript = "";
+		const transcript = response.transcript ?? "";
 
-		for (const segment of response.segments ?? []) {
-			fullTranscript += segment.text + " ";
-			onTranscript({
-				text: segment.text,
-				startTime: segment.start ?? 0,
-				endTime: segment.end ?? 0,
-				isFinal: true,
-			});
-		}
+		_onTranscript({
+			text: transcript,
+			startTime: 0,
+			endTime: 0,
+			isFinal: true,
+		});
 
-		return fullTranscript.trim();
+		return transcript;
 	}
 }
 

@@ -11,6 +11,7 @@
 	},
 	"scripts": {},
 	"dependencies": {
+		"@ai-feature/api": "workspace:*",
 		"@haber-final/db": "workspace:*",
 		"@haber-final/env": "workspace:*",
 		"@prisma/client": "catalog:",

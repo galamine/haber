@@ -1,5 +1,6 @@
 import ffstatic from "ffmpeg-static";
 import ffmpeg from "fluent-ffmpeg";
+import { PassThrough, Writable } from "stream";
 
 interface AudioServiceOptions {
 	sampleRate?: number;
@@ -13,21 +14,35 @@ export class AudioService {
 	constructor(options?: AudioServiceOptions) {
 		this.sampleRate = options?.sampleRate ?? 16000;
 		this.channels = options?.channels ?? 1;
-		ffmpeg.setFfmpegPath(ffstatic);
+		const ffmpegPath = ffstatic;
+		if (!ffmpegPath) {
+			throw new Error("ffmpeg-static path not found");
+		}
+		ffmpeg.setFfmpegPath(ffmpegPath);
 	}
 
 	async convertToWav(webmBuffer: Buffer): Promise<Buffer> {
 		return new Promise((resolve, reject) => {
 			const chunks: Buffer[] = [];
 
-			ffmpeg({ source: webmBuffer, timeout: 30000 })
+			const passThrough = new PassThrough();
+			passThrough.write(webmBuffer);
+			passThrough.end();
+
+			const writable = new Writable({
+				write(chunk: Buffer, _encoding, callback) {
+					chunks.push(chunk);
+					callback();
+				},
+			});
+
+			ffmpeg(passThrough)
 				.toFormat("wav")
 				.audioChannels(this.channels)
 				.audioFrequency(this.sampleRate)
-				.on("data", (chunk: Buffer) => chunks.push(chunk))
-				.on("end", () => resolve(Buffer.concat(chunks)))
-				.on("error", reject)
-				.run();
+				.pipe(writable)
+				.on("finish", () => resolve(Buffer.concat(chunks)))
+				.on("error", reject);
 		});
 	}
 
