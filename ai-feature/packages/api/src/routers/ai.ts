@@ -1,118 +1,143 @@
 import { protectedProcedure, router } from "@haber-final/api";
 import prisma from "@haber-final/db";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 import { aiExtractor } from "../lib/ai-extractor";
 import { sarvamSTT } from "../lib/sarvam-stt";
 import {
+	CaptureIdInput,
 	GetFormSchemaInput,
 	LogOverrideInput,
 	ProcessAudioChunkInput,
-	SessionIdInput,
-	StartSessionInput,
+	StartCaptureInput,
 } from "../schemas/ai";
 import { formRegistry } from "../schemas/form-registry";
 
-async function getTranscriptHistory(sessionId: string): Promise<string | null> {
-	const session = await prisma.conversationSession.findUnique({
-		where: { id: sessionId },
+async function getTranscriptHistory(captureId: string): Promise<string | null> {
+	const capture = await prisma.assessmentCapture.findUnique({
+		where: { id: captureId },
 		select: { transcriptHistory: true },
 	});
-	return session?.transcriptHistory as string | null;
+	return capture?.transcriptHistory as string | null;
 }
 
 async function saveTranscriptHistory(
-	sessionId: string,
+	captureId: string,
 	transcript: string,
 ): Promise<void> {
-	await prisma.conversationSession.update({
-		where: { id: sessionId },
+	await prisma.assessmentCapture.update({
+		where: { id: captureId },
 		data: { transcriptHistory: transcript },
 	});
 }
 
 export const aiRouter = router({
-	startSession: protectedProcedure
-		.input(StartSessionInput)
+	startCapture: protectedProcedure
+		.input(StartCaptureInput)
 		.mutation(async ({ input }) => {
-			return prisma.conversationSession.create({
+			return prisma.assessmentCapture.create({
 				data: {
+					childId: input.childId,
 					assessmentId: input.assessmentId,
 					assessmentType: input.assessmentType,
 				},
 			});
 		}),
 
-	pauseSession: protectedProcedure
-		.input(SessionIdInput)
+	pauseCapture: protectedProcedure
+		.input(CaptureIdInput)
 		.mutation(async ({ input }) => {
-			const session = await prisma.conversationSession.findUnique({
-				where: { id: input.sessionId },
+			const capture = await prisma.assessmentCapture.findUnique({
+				where: { id: input.captureId },
 			});
-			if (!session) {
+			if (!capture) {
 				throw new TRPCError({
 					code: "NOT_FOUND",
-					message: "Session not found",
+					message: "Capture not found",
 				});
 			}
-			return prisma.conversationSession.update({
-				where: { id: input.sessionId },
+			return prisma.assessmentCapture.update({
+				where: { id: input.captureId },
 				data: { status: "paused" },
 			});
 		}),
 
-	resumeSession: protectedProcedure
-		.input(SessionIdInput)
+	resumeCapture: protectedProcedure
+		.input(CaptureIdInput)
 		.mutation(async ({ input }) => {
-			const session = await prisma.conversationSession.findUnique({
-				where: { id: input.sessionId },
+			const capture = await prisma.assessmentCapture.findUnique({
+				where: { id: input.captureId },
 			});
-			if (!session) {
+			if (!capture) {
 				throw new TRPCError({
 					code: "NOT_FOUND",
-					message: "Session not found",
+					message: "Capture not found",
 				});
 			}
-			return prisma.conversationSession.update({
-				where: { id: input.sessionId },
+			return prisma.assessmentCapture.update({
+				where: { id: input.captureId },
 				data: { status: "active" },
 			});
 		}),
 
-	endSession: protectedProcedure
-		.input(SessionIdInput)
+	endCapture: protectedProcedure
+		.input(CaptureIdInput)
 		.mutation(async ({ input }) => {
-			const session = await prisma.conversationSession.findUnique({
-				where: { id: input.sessionId },
+			const capture = await prisma.assessmentCapture.findUnique({
+				where: { id: input.captureId },
 			});
-			if (!session) {
+			if (!capture) {
 				throw new TRPCError({
 					code: "NOT_FOUND",
-					message: "Session not found",
+					message: "Capture not found",
 				});
 			}
-			return prisma.conversationSession.update({
-				where: { id: input.sessionId },
+			return prisma.assessmentCapture.update({
+				where: { id: input.captureId },
 				data: { status: "completed", endedAt: new Date() },
 			});
 		}),
 
-	getSession: protectedProcedure
-		.input(SessionIdInput)
+	getCapture: protectedProcedure
+		.input(CaptureIdInput)
 		.query(async ({ input }) => {
-			const session = await prisma.conversationSession.findUnique({
-				where: { id: input.sessionId },
+			const capture = await prisma.assessmentCapture.findUnique({
+				where: { id: input.captureId },
 				include: {
 					draftValues: { where: { status: "active" } },
 					overrides: { orderBy: { overrideAt: "desc" } },
 				},
 			});
-			if (!session) {
+			if (!capture) {
 				throw new TRPCError({
 					code: "NOT_FOUND",
-					message: "Session not found",
+					message: "Capture not found",
 				});
 			}
-			return session;
+			return capture;
+		}),
+
+	getActiveCapture: protectedProcedure
+		.input(
+			z.object({
+				childId: z.string(),
+				assessmentType: z.enum(["initial", "follow-up"]),
+			}),
+		)
+		.query(async ({ input }) => {
+			const capture = await prisma.assessmentCapture.findFirst({
+				where: {
+					childId: input.childId,
+					assessmentType: input.assessmentType,
+					status: { in: ["active", "paused"] },
+				},
+				include: {
+					draftValues: { where: { status: "active" } },
+					overrides: { orderBy: { overrideAt: "desc" } },
+				},
+				orderBy: { startedAt: "desc" },
+			});
+			return capture;
 		}),
 
 	getFormSchema: protectedProcedure
@@ -126,16 +151,16 @@ export const aiRouter = router({
 	processAudioChunk: protectedProcedure
 		.input(ProcessAudioChunkInput)
 		.mutation(async ({ input }) => {
-			const session = await prisma.conversationSession.findUnique({
-				where: { id: input.sessionId },
+			const capture = await prisma.assessmentCapture.findUnique({
+				where: { id: input.captureId },
 			});
-			if (!session) {
+			if (!capture) {
 				throw new TRPCError({
 					code: "NOT_FOUND",
-					message: "Session not found",
+					message: "Capture not found",
 				});
 			}
-			if (session.status !== "active") {
+			if (capture.status !== "active") {
 				return { drafts: [], transcriptSoFar: "" };
 			}
 
@@ -146,26 +171,34 @@ export const aiRouter = router({
 				() => {},
 			);
 
-			const existingTranscript = await getTranscriptHistory(input.sessionId);
+			const existingTranscript = await getTranscriptHistory(input.captureId);
 			const fullTranscript = existingTranscript
 				? `${existingTranscript} ${transcriptText}`
 				: transcriptText;
 
-			await saveTranscriptHistory(input.sessionId, fullTranscript);
-
-			const assessment =
-				session.assessmentType === "initial"
-					? await prisma.initialAssessment.findUnique({
-							where: { id: session.assessmentId },
-						})
-					: await prisma.followUpAssessment.findUnique({
-							where: { id: session.assessmentId },
-						});
+			await saveTranscriptHistory(input.captureId, fullTranscript);
 
 			let childName: string | undefined;
-			if (assessment) {
+			if (capture.assessmentId) {
+				const assessment =
+					capture.assessmentType === "initial"
+						? await prisma.initialAssessment.findUnique({
+								where: { id: capture.assessmentId },
+							})
+						: await prisma.followUpAssessment.findUnique({
+								where: { id: capture.assessmentId },
+							});
+
+				if (assessment) {
+					const child = await prisma.child.findUnique({
+						where: { id: assessment.childId },
+						select: { fullName: true },
+					});
+					childName = child?.fullName;
+				}
+			} else {
 				const child = await prisma.child.findUnique({
-					where: { id: assessment.childId },
+					where: { id: capture.childId },
 					select: { fullName: true },
 				});
 				childName = child?.fullName;
@@ -173,12 +206,12 @@ export const aiRouter = router({
 
 			const facts = await aiExtractor.extractFacts(
 				fullTranscript,
-				session.assessmentType as "initial" | "follow-up",
+				capture.assessmentType as "initial" | "follow-up",
 				{ childName },
 			);
 
-			const existingDrafts = await prisma.aIDraftValue.findMany({
-				where: { sessionId: input.sessionId, status: "active" },
+			const existingDrafts = await prisma.captureDraftValue.findMany({
+				where: { captureId: input.captureId, status: "active" },
 			});
 
 			const fieldMap = aiExtractor.mapToFields(facts);
@@ -191,15 +224,15 @@ export const aiRouter = router({
 					);
 
 					if (existingDraft) {
-						await tx.aIDraftValue.update({
+						await tx.captureDraftValue.update({
 							where: { id: existingDraft.id },
 							data: { status: "superseded" },
 						});
 					}
 
-					const newDraft = await tx.aIDraftValue.create({
+					const newDraft = await tx.captureDraftValue.create({
 						data: {
-							sessionId: input.sessionId,
+							captureId: input.captureId,
 							fieldId,
 							value: fact.value as object,
 							confidence: fact.confidence,
@@ -228,13 +261,42 @@ export const aiRouter = router({
 	logOverride: protectedProcedure
 		.input(LogOverrideInput)
 		.mutation(async ({ input }) => {
-			return prisma.aIFieldOverride.create({
+			return prisma.captureOverride.create({
 				data: {
-					sessionId: input.sessionId,
+					captureId: input.captureId,
 					fieldId: input.fieldId,
 					aiValue: input.aiValue as object,
 					overrideValue: input.overrideValue as object,
 				},
 			});
+		}),
+
+	testTranscribe: protectedProcedure
+		.input(
+			z.object({
+				audioData: z.string(),
+				assessmentType: z.enum(["initial", "follow-up"]),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			const audioBuffer = Buffer.from(input.audioData, "base64");
+			const transcript = await sarvamSTT.transcribeFile(audioBuffer);
+			const facts = await aiExtractor.extractFacts(
+				transcript,
+				input.assessmentType,
+				{},
+			);
+			const fieldMap = aiExtractor.mapToFields(facts);
+			return {
+				transcript,
+				extractedFacts: Array.from(fieldMap.entries()).map(
+					([fieldId, fact]) => ({
+						fieldId,
+						value: fact.value,
+						confidence: fact.confidence,
+						sourceText: fact.sourceText,
+					}),
+				),
+			};
 		}),
 });

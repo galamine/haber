@@ -1,6 +1,5 @@
 import { env } from "@ai-feature/env";
 import { SarvamAIClient } from "sarvamai";
-import { audioService } from "./audio-service";
 
 interface TranscriptChunk {
 	text: string;
@@ -27,11 +26,9 @@ export class SarvamSTTClient {
 		this.language = options?.language ?? "ml-IN";
 	}
 
-	async transcribeFile(audioBuffer: Buffer): Promise<TranscriptChunk[]> {
-		const wavBuffer = await audioService.convertToWav(audioBuffer);
-
+	async transcribeFile(audioBuffer: Buffer): Promise<string> {
 		const response = await this.client.speechToText.transcribe({
-			file: wavBuffer,
+			file: audioBuffer,
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			model: this.model as any,
 			mode: "transcribe",
@@ -39,24 +36,15 @@ export class SarvamSTTClient {
 			language_code: this.language as any,
 		});
 
-		return [
-			{
-				text: response.transcript ?? "",
-				startTime: 0,
-				endTime: 0,
-				isFinal: true,
-			},
-		];
+		return response.transcript ?? "";
 	}
 
 	async transcribeStream(
 		audioBuffer: Buffer,
 		_onTranscript: (chunk: TranscriptChunk) => void,
 	): Promise<string> {
-		const wavBuffer = await audioService.convertToWav(audioBuffer);
-
 		const response = await this.client.speechToText.transcribe({
-			file: wavBuffer,
+			file: audioBuffer,
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			model: this.model as any,
 			mode: "transcribe",

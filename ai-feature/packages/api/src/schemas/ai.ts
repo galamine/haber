@@ -1,22 +1,22 @@
 import { z } from "zod";
 
-export const StartSessionInput = z.object({
-	assessmentId: z.string(),
+export const StartCaptureInput = z.object({
+	childId: z.string(),
+	assessmentId: z.string().optional(),
 	assessmentType: z.enum(["initial", "follow-up"]),
 });
 
-export const SessionIdInput = z.object({
-	sessionId: z.string(),
+export const CaptureIdInput = z.object({
+	captureId: z.string(),
 });
 
 export const ProcessAudioChunkInput = z.object({
-	sessionId: z.string(),
+	captureId: z.string(),
 	audioData: z.string(),
-	chunkIndex: z.number().int().min(0),
 });
 
 export const LogOverrideInput = z.object({
-	sessionId: z.string(),
+	captureId: z.string(),
 	fieldId: z.string(),
 	aiValue: z.unknown(),
 	overrideValue: z.unknown(),
@@ -26,9 +26,9 @@ export const GetFormSchemaInput = z.object({
 	assessmentType: z.enum(["initial", "follow-up"]),
 });
 
-export const AIDraftValueSchema = z.object({
+export const CaptureDraftValueSchema = z.object({
 	id: z.string(),
-	sessionId: z.string(),
+	captureId: z.string(),
 	fieldId: z.string(),
 	value: z.unknown(),
 	confidence: z.enum(["high", "medium", "low"]),
@@ -37,24 +37,25 @@ export const AIDraftValueSchema = z.object({
 	createdAt: z.date(),
 });
 
-export const AIFieldOverrideSchema = z.object({
+export const CaptureOverrideSchema = z.object({
 	id: z.string(),
-	sessionId: z.string(),
+	captureId: z.string(),
 	fieldId: z.string(),
 	aiValue: z.unknown(),
 	overrideValue: z.unknown(),
 	overrideAt: z.date(),
 });
 
-export const ConversationSessionSchema = z.object({
+export const AssessmentCaptureSchema = z.object({
 	id: z.string(),
-	assessmentId: z.string(),
+	childId: z.string(),
+	assessmentId: z.string().nullable(),
 	assessmentType: z.enum(["initial", "follow-up"]),
 	status: z.enum(["active", "paused", "completed"]),
 	startedAt: z.date(),
 	endedAt: z.date().nullable(),
-	draftValues: z.array(AIDraftValueSchema),
-	overrides: z.array(AIFieldOverrideSchema),
+	draftValues: z.array(CaptureDraftValueSchema),
+	overrides: z.array(CaptureOverrideSchema),
 });
 
 export const ProcessAudioChunkOutputSchema = z.object({

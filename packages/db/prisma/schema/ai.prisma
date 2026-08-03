@@ -15,25 +15,26 @@ enum Confidence {
   low
 }
 
-model ConversationSession {
+model AssessmentCapture {
   id                String             @id @default(cuid())
-  assessmentId      String
+  childId           String
+  assessmentId      String?
   assessmentType    String
   status            ConversationStatus @default(active)
   transcriptHistory String?
   startedAt         DateTime           @default(now())
   endedAt           DateTime?
 
-  draftValues AIDraftValue[]
-  overrides   AIFieldOverride[]
+  draftValues CaptureDraftValue[]
+  overrides   CaptureOverride[]
 
-  @@index([assessmentId, status])
-  @@map("conversation_session")
+  @@index([childId, assessmentType, status])
+  @@map("assessment_capture")
 }
 
-model AIDraftValue {
+model CaptureDraftValue {
   id         String     @id @default(cuid())
-  sessionId  String
+  captureId  String
   fieldId    String
   value      Json
   confidence Confidence
@@ -41,22 +42,22 @@ model AIDraftValue {
   status     DraftStatus @default(active)
   createdAt  DateTime   @default(now())
 
-  session ConversationSession @relation(fields: [sessionId], references: [id])
+  capture AssessmentCapture @relation(fields: [captureId], references: [id])
 
-  @@index([sessionId, fieldId])
-  @@map("ai_draft_value")
+  @@index([captureId, fieldId])
+  @@map("capture_draft_value")
 }
 
-model AIFieldOverride {
+model CaptureOverride {
   id            String   @id @default(cuid())
-  sessionId     String
+  captureId     String
   fieldId       String
   aiValue       Json
   overrideValue Json
   overrideAt    DateTime @default(now())
 
-  session ConversationSession @relation(fields: [sessionId], references: [id])
+  capture AssessmentCapture @relation(fields: [captureId], references: [id])
 
-  @@index([sessionId, fieldId])
-  @@map("ai_field_override")
+  @@index([captureId, fieldId])
+  @@map("capture_field_override")
 }
