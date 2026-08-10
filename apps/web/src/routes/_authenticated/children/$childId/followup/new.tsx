@@ -1,13 +1,24 @@
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@haber-final/ui/components/alert-dialog";
 import { Button } from "@haber-final/ui/components/button";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { createFileRoute, useBlocker, useRouter } from "@tanstack/react-router";
+import { AlertTriangle, ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FieldErrors } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { AIAssistPanel, recordingManager } from "@/features/ai-assist";
 import {
 	FOLLOWUP_TABS,
 	type FollowUpTabValue,
@@ -54,6 +65,16 @@ function NewFollowUpPage() {
 		reset,
 	} = form;
 
+	const {
+		proceed,
+		reset: resetBlocker,
+		status: blockerStatus,
+	} = useBlocker({
+		shouldBlockFn: () => recordingManager.isActive,
+		withResolver: true,
+		enableBeforeUnload: () => recordingManager.isActive,
+	});
+
 	const seededRef = useRef(false);
 
 	useEffect(() => {
@@ -88,7 +109,7 @@ function NewFollowUpPage() {
 				toast.success("Follow-up assessment created");
 				queryClient.invalidateQueries({
 					queryKey: trpc.goal.list.queryOptions({
-						treatmentPlanId: data.activePlan.data!.id,
+						treatmentPlanId: data.activePlan.data?.id,
 					}).queryKey,
 				});
 				router.navigate({
@@ -249,6 +270,14 @@ function NewFollowUpPage() {
 				New Follow-Up Assessment
 			</h1>
 
+			<AIAssistPanel
+				childId={childId}
+				assessmentType="follow-up"
+				form={form}
+				milestoneById={{}}
+				sensorySystemById={sensorySystemById}
+			/>
+
 			<FollowUpTabsShell
 				activeTab={activeTab}
 				onTabChange={setActiveTab}
@@ -300,6 +329,37 @@ function NewFollowUpPage() {
 					),
 				}}
 			/>
+
+			<AlertDialog
+				open={blockerStatus === "blocked"}
+				onOpenChange={(open) => {
+					if (!open) resetBlocker?.();
+				}}
+			>
+				<AlertDialogContent className="data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 top-4 left-1/2 -translate-x-1/2 translate-y-0 duration-300">
+					<AlertDialogHeader>
+						<AlertDialogTitle className="flex items-center gap-2">
+							<AlertTriangle className="h-5 w-5 text-destructive" />
+							Recording in Progress
+						</AlertDialogTitle>
+						<AlertDialogDescription>
+							AI documentation is actively recording. Leaving this page will
+							stop the recording. Are you sure you want to leave?
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel onClick={() => resetBlocker?.()}>
+							Stay
+						</AlertDialogCancel>
+						<AlertDialogAction
+							variant="destructive"
+							onClick={() => proceed?.()}
+						>
+							Leave & Stop Recording
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

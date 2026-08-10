@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UserProfileRouteImport } from './routes/user-profile'
-import { Route as TestAudioRouteImport } from './routes/test-audio'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as AcceptInviteRouteImport } from './routes/accept-invite'
@@ -57,11 +56,6 @@ import { Route as AuthenticatedChildrenChildIdPlansPlanIdIndexRouteImport } from
 const UserProfileRoute = UserProfileRouteImport.update({
   id: '/user-profile',
   path: '/user-profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TestAudioRoute = TestAudioRouteImport.update({
-  id: '/test-audio',
-  path: '/test-audio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -314,7 +308,6 @@ export interface FileRoutesByFullPath {
   '/accept-invite': typeof AcceptInviteRoute
   '/consent': typeof ConsentRoute
   '/login': typeof LoginRoute
-  '/test-audio': typeof TestAudioRoute
   '/user-profile': typeof UserProfileRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/library': typeof AuthenticatedLibraryRoute
@@ -359,7 +352,6 @@ export interface FileRoutesByTo {
   '/accept-invite': typeof AcceptInviteRoute
   '/consent': typeof ConsentRoute
   '/login': typeof LoginRoute
-  '/test-audio': typeof TestAudioRoute
   '/user-profile': typeof UserProfileRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/library': typeof AuthenticatedLibraryRoute
@@ -406,7 +398,6 @@ export interface FileRoutesById {
   '/accept-invite': typeof AcceptInviteRoute
   '/consent': typeof ConsentRoute
   '/login': typeof LoginRoute
-  '/test-audio': typeof TestAudioRoute
   '/user-profile': typeof UserProfileRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
@@ -453,7 +444,6 @@ export interface FileRouteTypes {
     | '/accept-invite'
     | '/consent'
     | '/login'
-    | '/test-audio'
     | '/user-profile'
     | '/dashboard'
     | '/library'
@@ -498,7 +488,6 @@ export interface FileRouteTypes {
     | '/accept-invite'
     | '/consent'
     | '/login'
-    | '/test-audio'
     | '/user-profile'
     | '/dashboard'
     | '/library'
@@ -544,7 +533,6 @@ export interface FileRouteTypes {
     | '/accept-invite'
     | '/consent'
     | '/login'
-    | '/test-audio'
     | '/user-profile'
     | '/_authenticated/dashboard'
     | '/_authenticated/library'
@@ -591,7 +579,6 @@ export interface RootRouteChildren {
   AcceptInviteRoute: typeof AcceptInviteRoute
   ConsentRoute: typeof ConsentRoute
   LoginRoute: typeof LoginRoute
-  TestAudioRoute: typeof TestAudioRoute
   UserProfileRoute: typeof UserProfileRoute
 }
 
@@ -602,13 +589,6 @@ declare module '@tanstack/react-router' {
       path: '/user-profile'
       fullPath: '/user-profile'
       preLoaderRoute: typeof UserProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/test-audio': {
-      id: '/test-audio'
-      path: '/test-audio'
-      fullPath: '/test-audio'
-      preLoaderRoute: typeof TestAudioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -1017,7 +997,6 @@ const rootRouteChildren: RootRouteChildren = {
   AcceptInviteRoute: AcceptInviteRoute,
   ConsentRoute: ConsentRoute,
   LoginRoute: LoginRoute,
-  TestAudioRoute: TestAudioRoute,
   UserProfileRoute: UserProfileRoute,
 }
 export const routeTree = rootRouteImport

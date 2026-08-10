@@ -1,14 +1,24 @@
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@haber-final/ui/components/alert-dialog";
 import { Button } from "@haber-final/ui/components/button";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { createFileRoute, useBlocker, useRouter } from "@tanstack/react-router";
+import { AlertTriangle, ArrowLeft } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { FieldErrors } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
+import { AIAssistPanel, recordingManager } from "@/features/ai-assist";
 import { AssessmentTabsShell } from "@/features/assessment/AssessmentTabsShell";
 import {
 	SECTION_TABS,
@@ -69,6 +79,16 @@ function NewAssessmentPage() {
 		trigger,
 		formState: { errors },
 	} = form;
+
+	const {
+		proceed,
+		reset: resetBlocker,
+		status: blockerStatus,
+	} = useBlocker({
+		shouldBlockFn: () => recordingManager.isActive,
+		withResolver: true,
+		enableBeforeUnload: () => recordingManager.isActive,
+	});
 
 	const seededRef = useRef(false);
 
@@ -300,6 +320,15 @@ function NewAssessmentPage() {
 				New Initial Assessment
 			</h1>
 
+			<AIAssistPanel
+				childId={childId}
+				assessmentType="initial"
+				form={form}
+				milestoneById={milestoneById}
+				sensorySystemById={sensorySystemById}
+				functionalConcernOptions={taxonomy.functionalConcerns.data ?? []}
+			/>
+
 			<AssessmentTabsShell
 				activeTab={activeTab}
 				onTabChange={setActiveTab}
@@ -381,6 +410,37 @@ function NewAssessmentPage() {
 					),
 				}}
 			/>
+
+			<AlertDialog
+				open={blockerStatus === "blocked"}
+				onOpenChange={(open) => {
+					if (!open) resetBlocker?.();
+				}}
+			>
+				<AlertDialogContent className="data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 top-4 left-1/2 -translate-x-1/2 translate-y-0 duration-300">
+					<AlertDialogHeader>
+						<AlertDialogTitle className="flex items-center gap-2">
+							<AlertTriangle className="h-5 w-5 text-destructive" />
+							Recording in Progress
+						</AlertDialogTitle>
+						<AlertDialogDescription>
+							AI documentation is actively recording. Leaving this page will
+							stop the recording. Are you sure you want to leave?
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel onClick={() => resetBlocker?.()}>
+							Stay
+						</AlertDialogCancel>
+						<AlertDialogAction
+							variant="destructive"
+							onClick={() => proceed?.()}
+						>
+							Leave & Stop Recording
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }
