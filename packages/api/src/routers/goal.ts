@@ -29,7 +29,11 @@ async function getPlanForTherapist(planId: string, ctx: { auth: AuthUser }) {
 			(await prisma.childTherapistAssignment.findFirst({
 				where: { childId: plan.childId, therapistId: ctx.auth.userId },
 			})) !== null;
-		if (!isAssigned) throw new TRPCError({ code: "FORBIDDEN" });
+		if (!isAssigned)
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "You are not assigned to this child",
+			});
 	}
 	return plan;
 }

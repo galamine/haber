@@ -1,8 +1,9 @@
+import { Alert, AlertDescription } from "@haber-final/ui/components/alert";
 import { Button } from "@haber-final/ui/components/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@haber-final/ui/components/tabs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { AlertCircle, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -82,6 +83,31 @@ function PlanDetailPage() {
 	}));
 
 	if (isLoading) return <PlanDetailSkeleton />;
+	if (plan.isError) {
+		return (
+			<div className="p-8">
+				<div className="mb-6 flex items-center gap-2 text-sm">
+					<Button
+						variant="ghost"
+						size="sm"
+						onClick={() =>
+							navigate({
+								to: "/children/$childId/plans",
+								params: { childId },
+							})
+						}
+					>
+						<ArrowLeft className="h-4 w-4" />
+						Back to Plans
+					</Button>
+				</div>
+				<Alert variant="destructive">
+					<AlertCircle />
+					<AlertDescription>{plan.error.message}</AlertDescription>
+				</Alert>
+			</div>
+		);
+	}
 	if (!plan.data) return <div>Plan not found</div>;
 
 	const planData = plan.data as {

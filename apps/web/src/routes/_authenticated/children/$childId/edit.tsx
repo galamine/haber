@@ -39,7 +39,9 @@ const EditSchema = z.object({
 	sex: z.string().min(1, "Sex is required"),
 	opNumber: z.string().min(1, "OP number is required"),
 	address: z.string().optional(),
-	spokenLanguages: z.string().min(1, "At least one language is required"),
+	spokenLanguages: z
+		.array(z.string())
+		.min(1, "At least one language is required"),
 	school: z.string().optional(),
 	birthHistory: z.string().optional(),
 	immunisations: z.array(z.string()).optional(),
@@ -79,7 +81,7 @@ function EditChildPage() {
 			sex: "",
 			opNumber: "",
 			address: "",
-			spokenLanguages: "",
+			spokenLanguages: [],
 			school: "",
 			photoUrl: "",
 		},
@@ -98,7 +100,7 @@ function EditChildPage() {
 			sex: child.sex,
 			opNumber: child.opNumber,
 			address: child.address ?? "",
-			spokenLanguages: child.spokenLanguages.join(", "),
+			spokenLanguages: child.spokenLanguages,
 			school: child.school ?? "",
 			birthHistory: (medical.birthHistory as string) ?? "",
 			immunisations: (medical.immunisations as string[]) ?? [],
@@ -151,10 +153,7 @@ function EditChildPage() {
 				sex: values.sex,
 				opNumber: values.opNumber,
 				address: values.address || undefined,
-				spokenLanguages: values.spokenLanguages
-					.split(",")
-					.map((s) => s.trim())
-					.filter(Boolean),
+				spokenLanguages: values.spokenLanguages,
 				school: values.school || undefined,
 				photoUrl: photoUrl || undefined,
 			});
@@ -376,13 +375,16 @@ function EditChildPage() {
 									<Label htmlFor="spokenLanguages" className="mb-2">
 										Languages Spoken <span className="text-red-500">*</span>
 									</Label>
-									<Input
-										id="spokenLanguages"
-										placeholder="e.g. English, Arabic"
-										{...register("spokenLanguages")}
-										className={`h-11 border-brown-300 focus:border-brown-500 ${
-											errors.spokenLanguages ? "border-red-500" : ""
-										}`}
+									<Controller
+										control={control}
+										name="spokenLanguages"
+										render={({ field }) => (
+											<TagInput
+												value={Array.isArray(field.value) ? field.value : []}
+												onChange={field.onChange}
+												placeholder="e.g. English, Hindi, Arabic"
+											/>
+										)}
 									/>
 									{errors.spokenLanguages && (
 										<p className="mt-1 text-red-600 text-xs">

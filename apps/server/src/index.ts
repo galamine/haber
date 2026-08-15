@@ -35,7 +35,7 @@ app.use(async (c, next) => {
 		let errorBody: string | undefined;
 		try {
 			if (c.res.body) {
-				errorBody = await c.res.text();
+				errorBody = await c.res.clone().text();
 			}
 		} catch {
 			/* ignore - body already consumed */
