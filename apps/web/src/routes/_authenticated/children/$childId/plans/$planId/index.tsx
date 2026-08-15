@@ -17,6 +17,7 @@ import { GameLibraryBrowserSheet } from "@/features/plan/GameLibraryBrowserSheet
 import { EditGameAssignmentSheet } from "@/features/plan/EditGameAssignmentSheet";
 import { PlanDetailSkeleton } from "@/features/plan/skeletons/PlanDetailSkeleton";
 import { GoalTabContent } from "@/features/goals/GoalTabContent";
+import { SessionsTab } from "@/features/plan/SessionsTab";
 import { trpc, trpcClient } from "@/utils/trpc";
 import type { GoalWithLatestNote } from "@/features/goals/types";
 
@@ -136,9 +137,10 @@ function PlanDetailPage() {
 			/>
 
 			<Tabs defaultValue="overview">
-				<TabsList className="grid w-full grid-cols-2">
+				<TabsList className="grid w-full grid-cols-3">
 					<TabsTrigger value="overview">Overview</TabsTrigger>
 					<TabsTrigger value="goals">Goals</TabsTrigger>
+					<TabsTrigger value="sessions">Sessions</TabsTrigger>
 				</TabsList>
 				<TabsContent value="overview">
 					<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -165,6 +167,9 @@ function PlanDetailPage() {
 						planId={planId}
 						isLoading={goalsWithLatestNote.isLoading}
 					/>
+				</TabsContent>
+				<TabsContent value="sessions">
+					<SessionsTab planId={planId} />
 				</TabsContent>
 			</Tabs>
 

@@ -1,3 +1,4 @@
+import type { GameResultSummary } from "@haber-final/api/lib/game-result-summary";
 import { env } from "@haber-final/env/web";
 import { Button } from "@haber-final/ui/components/button";
 import { Card, CardContent } from "@haber-final/ui/components/card";
@@ -14,17 +15,11 @@ import { Skeleton } from "@haber-final/ui/components/skeleton";
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import {
-	ArrowLeft,
-	CheckCircle2,
-	ExternalLink,
-	Gamepad2,
-	MapPin,
-	UserX,
-} from "lucide-react";
+import { ArrowLeft, ExternalLink, Gamepad2, MapPin, UserX } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { GameResultCard } from "@/features/session/game-result/GameResultCard";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/_authenticated/sessions/$sessionId")({
@@ -64,6 +59,8 @@ type GameAssignment = {
 	durationSeconds: number | null;
 	repetitions: number | null;
 	instructions: string | null;
+	resultSummary: GameResultSummary | null;
+	scored: unknown;
 	gameVersion: {
 		id: string;
 		versionNumber: string;
@@ -88,10 +85,6 @@ type Session = {
 	notes: string | null;
 	qualityTag: string | null;
 	gameAssignments: GameAssignment[];
-	result: {
-		id: string;
-		scored: { score: number; rubric_version: string };
-	} | null;
 	child?: {
 		fullName: string;
 		photoUrl: string | null;
@@ -408,28 +401,18 @@ function SessionDetailPage() {
 				</CardContent>
 			</Card>
 
-			{/* Game Result */}
-			{s.status === "COMPLETED" && s.result && (
-				<Card className="mb-6">
-					<SectionHeader
-						icon={<CheckCircle2 className="h-5 w-5 text-green-600" />}
-						title="Game Result"
-					/>
-					<CardContent>
-						<div className="grid gap-4 sm:grid-cols-2">
-							<div>
-								<p className="text-muted-foreground text-xs">Score</p>
-								<p className="font-medium text-lg">{s.result.scored.score}</p>
-							</div>
-							<div>
-								<p className="text-muted-foreground text-xs">Rubric Version</p>
-								<p className="font-medium text-sm">
-									{s.result.scored.rubric_version}
-								</p>
-							</div>
-						</div>
-					</CardContent>
-				</Card>
+			{/* Game Results */}
+			{s.status === "COMPLETED" && s.gameAssignments.length > 0 && (
+				<div className="mb-6 grid gap-4 lg:grid-cols-2">
+					{s.gameAssignments.map((assignment) => (
+						<GameResultCard
+							key={assignment.id}
+							gameName={assignment.gameVersion.game.name}
+							resultSummary={assignment.resultSummary}
+							scored={assignment.scored}
+						/>
+					))}
+				</div>
 			)}
 
 			{/* Notes */}

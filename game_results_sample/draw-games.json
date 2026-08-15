@@ -1,0 +1,45 @@
+{
+  "id": "dev",
+  "gameName": "trace-walk-number",
+  "level": 1,
+  "version": "1-0-0",
+  "startedAt": "2026-08-14T17:16:51.568Z",
+  "endedAt": "2026-08-14T17:17:09.726Z",
+  "durationMs": 1973,
+  "timeTakenSec": 1.973,
+  "meanFps": 36.94565684970253,
+  "meanInferenceMs": 2089.504444444444,
+  "number": "1",
+  "color": "#89CFF0",
+  "mode": "both",
+  "brushSize": 96,
+  "stampCount": 42,
+  "milestones": [
+    {
+      "pct": 25,
+      "elapsedSec": 0.04166599999999998
+    },
+    {
+      "pct": 50,
+      "elapsedSec": 0.7600040000000009
+    },
+    {
+      "pct": 75,
+      "elapsedSec": 1.078332000000001
+    },
+    {
+      "pct": 100,
+      "elapsedSec": 1.973318000000001
+    }
+  ],
+  "hardware": {
+    "cameraLabel": "unknown",
+    "cameraDeviceId": "unknown",
+    "cameraWidth": 640,
+    "cameraHeight": 480,
+    "projectorWidth": 1280,
+    "projectorHeight": 720,
+    "calibrationVersion": "1.0.0",
+    "calibrationCreatedAt": "2026-08-14T17:16:34.075Z"
+  }
+}

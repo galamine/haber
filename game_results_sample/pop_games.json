@@ -1,0 +1,32 @@
+{
+  "game": {
+    "id": "dev",
+    "gameName": "ball-pop",
+    "level": 1,
+    "version": "1-0-0",
+    "startedAt": "2026-08-14T16:51:20.045Z",
+    "endedAt": "2026-08-14T16:52:20.048Z",
+    "durationMs": 60003,
+    "urlTotalTimeSec": 60
+  },
+  "hardware": {
+    "cameraLabel": "unknown",
+    "cameraDeviceId": "unknown",
+    "projectorWidth": 1280,
+    "projectorHeight": 720,
+    "cameraWidth": 640,
+    "cameraHeight": 480,
+    "calibrationVersion": "1.0.0",
+    "calibrationCreatedAt": "2026-08-14T16:51:08.350Z",
+    "meanFps": 60.3,
+    "meanInferenceMs": 0
+  },
+  "stats": {
+    "score": 250,
+    "popped": 25,
+    "missed": 5,
+    "accuracyPct": 83,
+    "bestStreak": 25,
+    "timePlayedSec": 60
+  }
+}

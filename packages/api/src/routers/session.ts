@@ -2,6 +2,7 @@ import prisma from "@haber-final/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { protectedProcedure, router } from "../index";
+import { matchResultToAssignments } from "../lib/game-result-summary";
 import { GetCalendarInput, ListForPlanInput } from "../schemas/session";
 import {
 	AssignRoomInput,
@@ -9,6 +10,21 @@ import {
 	GetWebhookUrlInput,
 	ManualCloseInput,
 } from "../schemas/session-execution";
+
+function attachResultSummary<
+	T extends {
+		result: { scored: unknown; rawMetrics: unknown } | null;
+		gameAssignments: { gameVersion: { game: { name: string } } }[];
+	},
+>(session: T) {
+	return {
+		...session,
+		gameAssignments: matchResultToAssignments(
+			session.gameAssignments,
+			session.result,
+		),
+	};
+}
 
 export const sessionRouter = router({
 	listForPlan: protectedProcedure
@@ -30,11 +46,19 @@ export const sessionRouter = router({
 				}
 			}
 
-			return prisma.therapySession.findMany({
+			const sessions = await prisma.therapySession.findMany({
 				where,
 				orderBy: { scheduledDate: "asc" },
-				include: { gameAssignments: { orderBy: { order: "asc" } } },
+				include: {
+					result: true,
+					gameAssignments: {
+						orderBy: { order: "asc" },
+						include: { gameVersion: { include: { game: true } } },
+					},
+				},
 			});
+
+			return sessions.map(attachResultSummary);
 		}),
 
 	listForToday: protectedProcedure.query(async ({ ctx }) => {
@@ -104,7 +128,7 @@ export const sessionRouter = router({
 			if (!session) {
 				throw new TRPCError({ code: "NOT_FOUND" });
 			}
-			return session;
+			return attachResultSummary(session);
 		}),
 
 	assignRoom: protectedProcedure

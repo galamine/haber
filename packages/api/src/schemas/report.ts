@@ -78,6 +78,13 @@ export const ChildProgressReportSchema = z.object({
 			status: z.string(),
 			notes: z.string().nullable(),
 			score: z.number().nullable(),
+			games: z.array(
+				z.object({
+					name: z.string(),
+					score: z.number().nullable(),
+					resultSummary: z.any(),
+				}),
+			),
 		}),
 	),
 });

@@ -1,5 +1,6 @@
 import prisma from "@haber-final/db";
 import { protectedProcedure, router } from "../index";
+import { matchResultToAssignments } from "../lib/game-result-summary";
 import { ChildDashboardInput } from "../schemas/dashboard";
 import { assertAssignedTherapist, getChildForRead } from "./child";
 
@@ -44,8 +45,8 @@ export const reportRouter = router({
 						include: {
 							result: true,
 							gameAssignments: {
+								orderBy: { order: "asc" },
 								include: {
-									result: true,
 									gameVersion: {
 										include: { game: { select: { name: true } } },
 									},
@@ -142,16 +143,20 @@ export const reportRouter = router({
 				})),
 				sessions: sessions.map((s) => {
 					const scored = s.result?.scored as { score: number } | null;
+					const assignments = matchResultToAssignments(
+						s.gameAssignments,
+						s.result,
+					);
 					return {
 						id: s.id,
 						scheduledDate: s.scheduledDate,
 						status: s.status,
 						notes: s.notes,
 						score: scored?.score ?? null,
-						games: s.gameAssignments.map((ga) => ({
+						games: assignments.map((ga) => ({
 							name: ga.gameVersion.game.name,
-							score:
-								(ga.result?.scored as { score: number } | null)?.score ?? null,
+							score: (ga.scored as { score: number } | null)?.score ?? null,
+							resultSummary: ga.resultSummary,
 						})),
 					};
 				}),
