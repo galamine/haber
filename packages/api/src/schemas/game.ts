@@ -11,6 +11,13 @@ export const CreateGameInput = z.object({
 	ageRangeMax: z.number().int().nonnegative().optional(),
 	isGlobal: z.boolean().default(true),
 	clinicIds: z.array(z.string()).optional(),
+	initialVersionNumber: z.string().default("1"),
+	initialRubricVersion: z.string().default("1"),
+	initialScoringSchema: z.record(z.string(), z.unknown()).default({}),
+	path: z.string().optional(),
+	entryScenes: z.array(z.string()).default([]),
+	supportedLevels: z.array(z.number().int()).default([]),
+	totalTimeSec: z.number().int().positive().optional(),
 });
 
 export const UpdateGameInput = z.object({
@@ -32,6 +39,10 @@ export const CreateGameVersionInput = z.object({
 	versionNumber: z.string(),
 	rubricVersion: z.string(),
 	scoringSchema: z.record(z.string(), z.unknown()).default({}),
+	path: z.string().optional(),
+	entryScenes: z.array(z.string()).default([]),
+	supportedLevels: z.array(z.number().int()).default([]),
+	totalTimeSec: z.number().int().positive().optional(),
 });
 
 export const GameListInput = z.object({

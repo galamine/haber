@@ -54,7 +54,7 @@ async function checkAllConsentsGranted(childId: string): Promise<boolean> {
 	);
 }
 
-export const consentRouter: ReturnType<typeof router> = router({
+export const consentRouter = router({
 	record: protectedProcedure
 		.input(RecordConsentInput)
 		.mutation(async ({ input, ctx }) => {

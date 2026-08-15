@@ -23,7 +23,8 @@
 		"seed:superadmin": "cross-env DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-super-admin.ts",
 		"seed:clinical": "cross-env DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-clinical.ts",
 		"seed:dev": "cross-env DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-dev.ts",
-		"seed:flow": "cross-env DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-flow.ts"
+		"seed:flow": "cross-env DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-flow.ts",
+		"seed:games": "cross-env DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-games.ts"
 	},
 	"dependencies": {
 		"@haber-final/env": "workspace:*",

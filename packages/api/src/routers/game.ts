@@ -19,15 +19,29 @@ import {
 export const gameRouter = router({
 	create: adminProcedure.input(CreateGameInput).mutation(async ({ input }) => {
 		return prisma.$transaction(async (tx) => {
-			const { clinicIds, ...gameData } = input;
+			const {
+				clinicIds,
+				initialVersionNumber,
+				initialRubricVersion,
+				initialScoringSchema,
+				path,
+				entryScenes,
+				supportedLevels,
+				totalTimeSec,
+				...gameData
+			} = input;
 			const game = await tx.game.create({ data: gameData });
 			await tx.gameVersion.create({
 				data: {
 					gameId: game.id,
-					versionNumber: "1",
-					rubricVersion: "1",
-					scoringSchema: {},
+					versionNumber: initialVersionNumber,
+					rubricVersion: initialRubricVersion,
+					scoringSchema: JSON.parse(JSON.stringify(initialScoringSchema)),
 					isLatest: true,
+					path,
+					entryScenes,
+					supportedLevels,
+					totalTimeSec,
 				},
 			});
 			if (!input.isGlobal && clinicIds?.length) {
@@ -58,6 +72,10 @@ export const gameRouter = router({
 						rubricVersion: input.rubricVersion,
 						scoringSchema: JSON.parse(JSON.stringify(input.scoringSchema)),
 						isLatest: true,
+						path: input.path,
+						entryScenes: input.entryScenes,
+						supportedLevels: input.supportedLevels,
+						totalTimeSec: input.totalTimeSec,
 					},
 				});
 			});

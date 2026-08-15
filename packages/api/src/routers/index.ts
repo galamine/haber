@@ -17,7 +17,7 @@ import { sessionRouter } from "./session";
 import { staffRouter } from "./staff";
 import { taxonomyRouter } from "./taxonomy";
 
-export const appRouter: ReturnType<typeof router> = router({
+export const appRouter = router({
 	healthCheck: publicProcedure.query(() => {
 		return "OK";
 	}),

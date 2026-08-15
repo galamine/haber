@@ -3,7 +3,7 @@ import prisma from "@haber-final/db";
 import { clinicAdminProcedure, protectedProcedure, router } from "../index";
 import { AddTaxonomyItemInput } from "../schemas/taxonomy";
 
-export const taxonomyRouter: ReturnType<typeof router> = router({
+export const taxonomyRouter = router({
 	listDiagnoses: protectedProcedure.query(async ({ ctx }) => {
 		return prisma.diagnosis.findMany({
 			where: {

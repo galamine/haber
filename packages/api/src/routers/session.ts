@@ -10,7 +10,7 @@ import {
 	ManualCloseInput,
 } from "../schemas/session-execution";
 
-export const sessionRouter: ReturnType<typeof router> = router({
+export const sessionRouter = router({
 	listForPlan: protectedProcedure
 		.input(ListForPlanInput)
 		.query(async ({ input }) => {
@@ -76,7 +76,7 @@ export const sessionRouter: ReturnType<typeof router> = router({
 
 			const grouped: Record<string, typeof sessions> = {};
 			for (const session of sessions) {
-				const dateKey = session.scheduledDate.toISOString().split("T")[0];
+				const dateKey = session.scheduledDate.toISOString().split("T")[0]!;
 				if (!grouped[dateKey]) {
 					grouped[dateKey] = [];
 				}

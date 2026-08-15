@@ -73,7 +73,7 @@ export async function computeClinicSummaries() {
 	};
 }
 
-export const clinicRouter: ReturnType<typeof router> = router({
+export const clinicRouter = router({
 	// ── SuperAdmin procedures ────────────────────────────────────────────────
 
 	create: adminProcedure

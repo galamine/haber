@@ -3,7 +3,7 @@ import { protectedProcedure, router } from "../index";
 import { ChildDashboardInput } from "../schemas/dashboard";
 import { assertAssignedTherapist, getChildForRead } from "./child";
 
-export const reportRouter: ReturnType<typeof router> = router({
+export const reportRouter = router({
 	childProgress: protectedProcedure
 		.input(ChildDashboardInput)
 		.query(async ({ input, ctx }) => {
@@ -45,6 +45,7 @@ export const reportRouter: ReturnType<typeof router> = router({
 							result: true,
 							gameAssignments: {
 								include: {
+									result: true,
 									gameVersion: {
 										include: { game: { select: { name: true } } },
 									},

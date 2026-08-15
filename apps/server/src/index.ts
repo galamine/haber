@@ -126,8 +126,8 @@ app.post("/api/sessions/:id/complete", async (c) => {
 			sessionId,
 			scored: parsed.data.scored,
 			rubricVersion: parsed.data.scored.rubric_version,
-			rawMetrics: parsed.data.raw_metrics,
-			events: parsed.data.events,
+			rawMetrics: JSON.parse(JSON.stringify(parsed.data.raw_metrics)),
+			events: JSON.parse(JSON.stringify(parsed.data.events)),
 		},
 	});
 

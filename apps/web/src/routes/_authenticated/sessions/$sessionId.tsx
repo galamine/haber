@@ -1,3 +1,4 @@
+import { env } from "@haber-final/env/web";
 import { Button } from "@haber-final/ui/components/button";
 import { Card, CardContent } from "@haber-final/ui/components/card";
 import { CloseSessionSheet } from "@haber-final/ui/components/close-session-sheet";
@@ -66,6 +67,8 @@ type GameAssignment = {
 	gameVersion: {
 		id: string;
 		versionNumber: string;
+		path: string | null;
+		totalTimeSec: number | null;
 		game: {
 			id: string;
 			name: string;
@@ -209,8 +212,23 @@ function SessionDetailPage() {
 		}),
 	);
 
-	function handleOpenGame(gameId: string, gameVersionId: string) {
-		const webhookUrl = `https://game-server.example.com/?game_id=${gameId}&version=${gameVersionId}&session_id=${sessionId}&webhook_secret=${session?.webhookSecret}`;
+	function handleOpenGame(assignment: GameAssignment) {
+		if (!assignment.gameVersion.path) {
+			toast.error("This game version has no launch path configured");
+			return;
+		}
+		const totalTime =
+			assignment.durationSeconds ?? assignment.gameVersion.totalTimeSec;
+		const params = new URLSearchParams({
+			game_id: assignment.gameVersion.game.id,
+			version: assignment.gameVersion.id,
+			session_id: sessionId,
+			webhook_secret: session?.webhookSecret ?? "",
+		});
+		if (totalTime != null) {
+			params.set("totalTime", String(totalTime));
+		}
+		const webhookUrl = `${env.VITE_GAME_SERVER_URL}${assignment.gameVersion.path}?${params.toString()}`;
 		window.open(webhookUrl, "_blank");
 	}
 
@@ -379,12 +397,7 @@ function SessionDetailPage() {
 									size="sm"
 									variant="outline"
 									className="w-full gap-1.5"
-									onClick={() =>
-										handleOpenGame(
-											assignment.gameVersion.game.id,
-											assignment.gameVersion.id,
-										)
-									}
+									onClick={() => handleOpenGame(assignment)}
 								>
 									<ExternalLink className="h-4 w-4" />
 									Open Game

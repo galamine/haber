@@ -131,6 +131,7 @@ model GameCategory {
 
 model Game {
   id           String   @id @default(cuid())
+  key          String?  @unique
   name         String
   description  String?
   categoryId   String
@@ -150,13 +151,17 @@ model Game {
 }
 
 model GameVersion {
-  id            String   @id @default(cuid())
-  gameId        String
-  versionNumber String
-  isLatest      Boolean  @default(false)
-  rubricVersion String
-  scoringSchema Json     @default("{}")
-  createdAt     DateTime @default(now())
+  id              String   @id @default(cuid())
+  gameId          String
+  versionNumber   String
+  isLatest        Boolean  @default(false)
+  rubricVersion   String
+  scoringSchema   Json     @default("{}")
+  path            String?
+  entryScenes     String[] @default([])
+  supportedLevels Int[]    @default([])
+  totalTimeSec    Int?
+  createdAt       DateTime @default(now())
 
   game            Game                 @relation(fields: [gameId], references: [id])
   planAssignments PlanGameAssignment[]

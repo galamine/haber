@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { protectedProcedure, router } from "../index";
 import { CreateProfileInput, UpdateProfileInput } from "../schemas/profile";
 
-export const profileRouter: ReturnType<typeof router> = router({
+export const profileRouter = router({
 	get: protectedProcedure.query(async ({ ctx }) => {
 		return prisma.userProfile.findUnique({
 			where: { userId: ctx.auth.userId },

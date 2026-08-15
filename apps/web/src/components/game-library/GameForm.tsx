@@ -33,12 +33,17 @@ import { DIFFICULTY_LEVELS, TARGET_ISSUES } from "./constants";
 export const gameFormSchema = CreateGameInput.omit({
 	isGlobal: true,
 	clinicIds: true,
+	initialScoringSchema: true,
+	entryScenes: true,
+	supportedLevels: true,
 }).extend({
 	isGlobal: z.boolean().default(true),
 	clinicIds: z.array(z.string()).default([]),
 	initialVersionNumber: z.string().default("1"),
 	initialRubricVersion: z.string().default("1"),
 	initialScoringSchema: z.string().default("{}"),
+	entryScenes: z.string().default(""),
+	supportedLevels: z.string().default(""),
 });
 
 export type GameFormValues = z.infer<typeof gameFormSchema>;
@@ -83,6 +88,10 @@ export function GameForm({
 			initialVersionNumber: initialValues?.initialVersionNumber || "1",
 			initialRubricVersion: initialValues?.initialRubricVersion || "1",
 			initialScoringSchema: initialValues?.initialScoringSchema || "{}",
+			path: initialValues?.path || "",
+			entryScenes: initialValues?.entryScenes || "",
+			supportedLevels: initialValues?.supportedLevels || "",
+			totalTimeSec: initialValues?.totalTimeSec,
 		},
 	});
 
@@ -131,6 +140,14 @@ export function GameForm({
 				clinicIds: values.isGlobal ? undefined : values.clinicIds,
 			});
 		} else {
+			let initialScoringSchema: Record<string, unknown> = {};
+			try {
+				initialScoringSchema = JSON.parse(values.initialScoringSchema);
+			} catch {
+				toast.error("Invalid JSON in scoring schema");
+				return;
+			}
+
 			createMutation.mutate({
 				name: values.name,
 				description: values.description,
@@ -142,6 +159,23 @@ export function GameForm({
 				ageRangeMax: values.ageRangeMax,
 				isGlobal: values.isGlobal,
 				clinicIds: values.isGlobal ? undefined : values.clinicIds,
+				initialVersionNumber: values.initialVersionNumber,
+				initialRubricVersion: values.initialRubricVersion,
+				initialScoringSchema,
+				path: values.path || undefined,
+				entryScenes: values.entryScenes
+					? values.entryScenes
+							.split(",")
+							.map((s) => s.trim())
+							.filter(Boolean)
+					: [],
+				supportedLevels: values.supportedLevels
+					? values.supportedLevels
+							.split(",")
+							.map((s) => Number.parseInt(s.trim(), 10))
+							.filter((n) => !Number.isNaN(n))
+					: [],
+				totalTimeSec: values.totalTimeSec,
 			});
 		}
 	}
@@ -466,6 +500,81 @@ export function GameForm({
 										<FormControl>
 											<Input placeholder="{}" {...field} />
 										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+
+						<div className="mt-4 grid grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="path"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Game Path</FormLabel>
+										<FormControl>
+											<Input
+												placeholder="/activity_games/pop-games/ball-pop.html"
+												{...field}
+											/>
+										</FormControl>
+										<FormDescription>
+											Path on the game server this version launches.
+										</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="totalTimeSec"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Total Time (sec)</FormLabel>
+										<FormControl>
+											<Input
+												type="number"
+												min={0}
+												placeholder="90"
+												{...field}
+												onChange={(e) =>
+													field.onChange(
+														e.target.value
+															? Number.parseInt(e.target.value)
+															: undefined,
+													)
+												}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="entryScenes"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Entry Scenes</FormLabel>
+										<FormControl>
+											<Input placeholder="GameScene, GameScene" {...field} />
+										</FormControl>
+										<FormDescription>Comma-separated.</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="supportedLevels"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Supported Levels</FormLabel>
+										<FormControl>
+											<Input placeholder="1, 2, 3" {...field} />
+										</FormControl>
+										<FormDescription>Comma-separated.</FormDescription>
 										<FormMessage />
 									</FormItem>
 								)}

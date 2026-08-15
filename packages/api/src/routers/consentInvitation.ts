@@ -28,7 +28,7 @@ async function requireIntakePermission(ctx: { auth: AuthUser }) {
 	if (!allowed) throw new TRPCError({ code: "FORBIDDEN" });
 }
 
-export const consentInvitationRouter: ReturnType<typeof router> = router({
+export const consentInvitationRouter = router({
 	send: protectedProcedure
 		.input(SendConsentInput)
 		.mutation(async ({ input, ctx }) => {

@@ -100,7 +100,7 @@ async function applyPlanModificationDecisions(
 	}
 }
 
-export const planRouter: ReturnType<typeof router> = router({
+export const planRouter = router({
 	create: protectedProcedure
 		.input(CreatePlanInput)
 		.mutation(async ({ input, ctx }) => {

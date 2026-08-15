@@ -1,20 +1,13 @@
 import prisma from "@haber-final/db";
-import {
-	adminProcedure,
-	clinicAdminProcedure,
-	protectedProcedure,
-	router,
-} from "../index";
+import { clinicAdminProcedure, protectedProcedure, router } from "../index";
 import {
 	ChildDashboardInput,
 	GameScoreTrendsInput,
-	PlatformSummarySchema,
 } from "../schemas/dashboard";
 import { GetCalendarInput } from "../schemas/session";
 import { assertAssignedTherapist, getChildForRead } from "./child";
-import { computeClinicSummaries } from "./clinic";
 
-export const dashboardRouter: ReturnType<typeof router> = router({
+export const dashboardRouter = router({
 	// ── Child procedures (assigned-therapist only) ──────────────────────────
 
 	childSnapshot: protectedProcedure

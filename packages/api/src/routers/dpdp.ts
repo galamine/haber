@@ -18,7 +18,7 @@ interface RetentionChild {
 	} | null;
 }
 
-export const dpdpRouter: ReturnType<typeof router> = router({
+export const dpdpRouter = router({
 	retentionReport: protectedProcedure
 		.input(ChildListInput)
 		.query(async ({ input, ctx }) => {

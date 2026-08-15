@@ -44,7 +44,7 @@ async function getGoalForTherapist(goalId: string, ctx: { auth: AuthUser }) {
 	return goal;
 }
 
-export const goalRouter: ReturnType<typeof router> = router({
+export const goalRouter = router({
 	list: protectedProcedure
 		.input(z.object({ treatmentPlanId: z.string() }))
 		.query(async ({ input, ctx }) => {

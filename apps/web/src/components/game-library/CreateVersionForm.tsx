@@ -30,6 +30,10 @@ const createVersionSchema = z.object({
 	versionNumber: z.string().min(1, "Version number is required"),
 	rubricVersion: z.string().min(1, "Rubric version is required"),
 	scoringSchema: z.string().default("{}"),
+	path: z.string().default(""),
+	totalTimeSec: z.number().int().positive().optional(),
+	entryScenes: z.string().default(""),
+	supportedLevels: z.string().default(""),
 });
 
 type CreateVersionValues = z.infer<typeof createVersionSchema>;
@@ -58,6 +62,10 @@ export function CreateVersionForm({
 			versionNumber: "",
 			rubricVersion: "",
 			scoringSchema: "{}",
+			path: "",
+			totalTimeSec: undefined,
+			entryScenes: "",
+			supportedLevels: "",
 		},
 	});
 
@@ -90,6 +98,20 @@ export function CreateVersionForm({
 			versionNumber: values.versionNumber,
 			rubricVersion: values.rubricVersion,
 			scoringSchema,
+			path: values.path || undefined,
+			totalTimeSec: values.totalTimeSec,
+			entryScenes: values.entryScenes
+				? values.entryScenes
+						.split(",")
+						.map((s) => s.trim())
+						.filter(Boolean)
+				: [],
+			supportedLevels: values.supportedLevels
+				? values.supportedLevels
+						.split(",")
+						.map((s) => Number.parseInt(s.trim(), 10))
+						.filter((n) => !Number.isNaN(n))
+				: [],
 		});
 	}
 
@@ -151,6 +173,77 @@ export function CreateVersionForm({
 											rows={3}
 											{...(field as React.ComponentProps<"textarea">)}
 										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="path"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Game Path</FormLabel>
+									<FormControl>
+										<Input
+											placeholder="/activity_games/pop-games/ball-pop.html"
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="totalTimeSec"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Total Time (sec)</FormLabel>
+									<FormControl>
+										<Input
+											type="number"
+											min={0}
+											placeholder="90"
+											{...field}
+											onChange={(e) =>
+												field.onChange(
+													e.target.value
+														? Number.parseInt(e.target.value)
+														: undefined,
+												)
+											}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="entryScenes"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Entry Scenes</FormLabel>
+									<FormControl>
+										<Input placeholder="GameScene, GameScene" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="supportedLevels"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Supported Levels</FormLabel>
+									<FormControl>
+										<Input placeholder="1, 2, 3" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>

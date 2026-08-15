@@ -66,7 +66,7 @@ export async function assertAssignedTherapist(
 	if (!assigned) throw new TRPCError({ code: "FORBIDDEN" });
 }
 
-export const childRouter: ReturnType<typeof router> = router({
+export const childRouter = router({
 	create: protectedProcedure
 		.input(CreateChildInput)
 		.mutation(async ({ input, ctx }) => {
@@ -452,7 +452,7 @@ export const childRouter: ReturnType<typeof router> = router({
 	assignTherapist: protectedProcedure
 		.input(AssignTherapistInput)
 		.mutation(async ({ input, ctx }) => {
-			const { role, tenantId } = ctx.auth;
+			const { tenantId } = ctx.auth;
 			const hasIntake = await hasPermission(ctx, PERMISSIONS.CHILD_INTAKE);
 			if (!hasIntake) {
 				throw new TRPCError({ code: "FORBIDDEN" });
