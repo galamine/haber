@@ -66,6 +66,7 @@ type GameAssignment = {
 		versionNumber: string;
 		path: string | null;
 		totalTimeSec: number | null;
+		supportedLevels: number[];
 		game: {
 			id: string;
 			name: string;
@@ -212,10 +213,11 @@ function SessionDetailPage() {
 		}
 		const totalTime =
 			assignment.durationSeconds ?? assignment.gameVersion.totalTimeSec;
+		const level = assignment.gameVersion.supportedLevels[0] ?? 1;
 		const params = new URLSearchParams({
-			game_id: assignment.gameVersion.game.id,
-			version: assignment.gameVersion.id,
-			session_id: sessionId,
+			session: sessionId,
+			level: String(level),
+			version: assignment.gameVersion.versionNumber,
 			webhook_secret: session?.webhookSecret ?? "",
 		});
 		if (totalTime != null) {
