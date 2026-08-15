@@ -45,7 +45,9 @@ const ProfileSchema = z.object({
 	sex: z.string().min(1, "Sex is required"),
 	opNumber: z.string().min(1, "OP number is required"),
 	addressStreet: z.string().optional(),
-	spokenLanguages: z.string().min(1, "At least one language is required"),
+	spokenLanguages: z
+		.array(z.string())
+		.min(1, "At least one language is required"),
 	school: z.string().optional(),
 	photoUrl: z.string().optional(),
 });
@@ -125,7 +127,7 @@ function Step1Profile({
 			sex: "",
 			opNumber: "",
 			addressStreet: "",
-			spokenLanguages: "",
+			spokenLanguages: [],
 			school: "",
 			photoUrl: "",
 		},
@@ -285,11 +287,16 @@ function Step1Profile({
 						<Label htmlFor="spokenLanguages">
 							Languages Spoken <span className="text-red-500">*</span>
 						</Label>
-						<Input
-							id="spokenLanguages"
-							placeholder="e.g. English, Arabic"
-							{...register("spokenLanguages")}
-							className={errors.spokenLanguages ? "border-red-500" : ""}
+						<Controller
+							control={control}
+							name="spokenLanguages"
+							render={({ field }) => (
+								<TagInput
+									value={Array.isArray(field.value) ? field.value : []}
+									onChange={field.onChange}
+									placeholder="e.g. English, Hindi, Arabic"
+								/>
+							)}
 						/>
 						{errors.spokenLanguages ? (
 							<p className="text-red-600 text-xs">
@@ -297,7 +304,7 @@ function Step1Profile({
 							</p>
 						) : (
 							<p className="text-on-surface-variant text-xs">
-								Comma-separated list
+								Add at least one language
 							</p>
 						)}
 					</div>
@@ -823,10 +830,7 @@ function NewChildPage() {
 				dob: new Date(profileData.dob),
 				sex: profileData.sex,
 				address: profileData.addressStreet || undefined,
-				spokenLanguages: profileData.spokenLanguages
-					.split(",")
-					.map((s) => s.trim())
-					.filter(Boolean),
+				spokenLanguages: profileData.spokenLanguages,
 				school: profileData.school || undefined,
 				guardian,
 				medicalHistory: medicalData ?? {},

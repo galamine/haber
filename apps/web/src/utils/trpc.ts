@@ -7,10 +7,24 @@ import { toast } from "sonner";
 
 import { useAuthStore } from "@/stores/auth";
 
+const shownErrors = new Map<string, number>();
+
 export const queryClient = new QueryClient({
 	queryCache: new QueryCache({
 		onError: (error, query) => {
 			if (query.meta?.suppressErrorToast) return;
+
+			const now = Date.now();
+			const key = error.message;
+			const lastShown = shownErrors.get(key) ?? 0;
+
+			if (now - lastShown < 2000) return;
+
+			shownErrors.set(key, now);
+			for (const [k, t] of shownErrors) {
+				if (now - t > 5000) shownErrors.delete(k);
+			}
+
 			toast.error(error.message, {
 				action: {
 					label: "retry",
