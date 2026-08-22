@@ -34,23 +34,6 @@ export const SensoryDeltaHistorySchema = z.array(
 	}),
 );
 
-// ── Game score trends ──────────────────────────────────────────────────────
-
-export const GameScoreTrendsInput = z.object({
-	childId: z.string(),
-	gameId: z.string().optional(),
-});
-
-export const GameScoreTrendSchema = z.array(
-	z.object({
-		date: z.date(),
-		gameId: z.string(),
-		gameName: z.string(),
-		score: z.number(),
-		rawMetrics: z.any().nullable(),
-	}),
-);
-
 // ── Session calendar ───────────────────────────────────────────────────────
 
 export const SessionCalendarDataSchema = z.record(

@@ -13,7 +13,7 @@ import {
 
 function attachResultSummary<
 	T extends {
-		result: { scored: unknown; rawMetrics: unknown } | null;
+		result: { rawMetrics: unknown } | null;
 		gameAssignments: { gameVersion: { game: { name: string } } }[];
 	},
 >(session: T) {

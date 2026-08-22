@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Printer } from "lucide-react";
 import { useState } from "react";
-import { GameScoreTrendChart } from "@/features/child-dashboard/GameScoreTrendChart";
 import { MilestoneRadarChart } from "@/features/child-dashboard/MilestoneRadarChart";
 import { NotesTimeline } from "@/features/child-dashboard/NotesTimeline";
 import { PlanTimeline } from "@/features/child-dashboard/PlanTimeline";
@@ -56,9 +55,6 @@ function ChildDashboardPage() {
 	const { data: sensory, isLoading: sensoryLoading } = useQuery(
 		trpc.dashboard.sensoryDeltaHistory.queryOptions({ childId }),
 	);
-	const { data: gameScores, isLoading: gameScoresLoading } = useQuery(
-		trpc.dashboard.gameScoreTrends.queryOptions({ childId }),
-	);
 	const { data: calendar, isLoading: calendarLoading } = useQuery(
 		trpc.dashboard.sessionCalendar.queryOptions({ childId, month, year }),
 	);
@@ -74,7 +70,6 @@ function ChildDashboardPage() {
 		childLoading ||
 		milestonesLoading ||
 		sensoryLoading ||
-		gameScoresLoading ||
 		notesLoading ||
 		plansLoading;
 
@@ -142,7 +137,6 @@ function ChildDashboardPage() {
 							onMonthChange={handleMonthChange}
 						/>
 						<SensoryTrendChart data={sensory ?? []} />
-						<GameScoreTrendChart data={gameScores ?? []} />
 					</div>
 
 					<div className="space-y-6">

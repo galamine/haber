@@ -199,8 +199,8 @@ export function matchResultToAssignments<
 	A extends { gameVersion: { game: { name: string } } },
 >(
 	assignments: A[],
-	result: { scored: unknown; rawMetrics: unknown } | null,
-): (A & { resultSummary: GameResultSummary | null; scored: unknown })[] {
+	result: { rawMetrics: unknown } | null,
+): (A & { resultSummary: GameResultSummary | null })[] {
 	const resultSummary = result ? summarizeGameResult(result.rawMetrics) : null;
 	const resultGameName =
 		resultSummary && resultSummary.family !== "UNKNOWN"
@@ -215,7 +215,6 @@ export function matchResultToAssignments<
 		return {
 			...assignment,
 			resultSummary: isMatch ? resultSummary : null,
-			scored: isMatch ? (result?.scored ?? null) : null,
 		};
 	});
 }

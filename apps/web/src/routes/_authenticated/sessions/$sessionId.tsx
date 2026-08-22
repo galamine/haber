@@ -60,7 +60,6 @@ type GameAssignment = {
 	repetitions: number | null;
 	instructions: string | null;
 	resultSummary: GameResultSummary | null;
-	scored: unknown;
 	gameVersion: {
 		id: string;
 		versionNumber: string;
@@ -411,7 +410,6 @@ function SessionDetailPage() {
 							key={assignment.id}
 							gameName={assignment.gameVersion.game.name}
 							resultSummary={assignment.resultSummary}
-							scored={assignment.scored}
 						/>
 					))}
 				</div>

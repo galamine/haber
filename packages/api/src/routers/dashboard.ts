@@ -1,9 +1,6 @@
 import prisma from "@haber-final/db";
 import { clinicAdminProcedure, protectedProcedure, router } from "../index";
-import {
-	ChildDashboardInput,
-	GameScoreTrendsInput,
-} from "../schemas/dashboard";
+import { ChildDashboardInput } from "../schemas/dashboard";
 import { GetCalendarInput } from "../schemas/session";
 import { assertAssignedTherapist, getChildForRead } from "./child";
 
@@ -137,46 +134,6 @@ export const dashboardRouter = router({
 				systemId,
 				dataPoints,
 			}));
-		}),
-
-	gameScoreTrends: protectedProcedure
-		.input(GameScoreTrendsInput)
-		.query(async ({ input, ctx }) => {
-			await assertAssignedTherapist(input.childId, ctx);
-
-			const sessionsWithResults = await prisma.therapySession.findMany({
-				where: {
-					childId: input.childId,
-					status: "COMPLETED",
-					result: { isNot: null },
-					...(input.gameId && {
-						gameAssignments: {
-							some: {
-								gameVersion: { gameId: input.gameId },
-							},
-						},
-					}),
-				},
-				include: {
-					result: true,
-					gameAssignments: {
-						include: {
-							gameVersion: { include: { game: true } },
-						},
-					},
-				},
-			});
-
-			return sessionsWithResults.map((s) => {
-				const scored = s.result?.scored as { score: number } | null;
-				return {
-					date: s.scheduledDate,
-					gameId: s.gameAssignments[0]?.gameVersion.gameId ?? "",
-					gameName: s.gameAssignments[0]?.gameVersion.game.name ?? "",
-					score: scored?.score ?? 0,
-					rawMetrics: s.result?.rawMetrics ?? null,
-				};
-			});
 		}),
 
 	sessionCalendar: protectedProcedure

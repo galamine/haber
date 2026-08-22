@@ -27,7 +27,5 @@ export const WebhookStartBody = z.object({
 
 export const WebhookCompleteBody = z.object({
 	webhook_secret: z.string(),
-	scored: z.object({ score: z.number(), rubric_version: z.string() }),
 	raw_metrics: z.record(z.string(), z.unknown()),
-	events: z.array(z.unknown()),
 });

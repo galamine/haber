@@ -56,10 +56,7 @@ model GameResult {
   id                  String   @id @default(cuid())
   sessionId           String   @unique
   sessionAssignmentId String?  @unique
-  scored              Json
-  rubricVersion       String
   rawMetrics          Json     @default("{}")
-  events              Json     @default("[]")
   recordedAt          DateTime @default(now())
 
   session    TherapySession         @relation(fields: [sessionId], references: [id])

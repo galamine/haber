@@ -142,7 +142,6 @@ export const reportRouter = router({
 					})),
 				})),
 				sessions: sessions.map((s) => {
-					const scored = s.result?.scored as { score: number } | null;
 					const assignments = matchResultToAssignments(
 						s.gameAssignments,
 						s.result,
@@ -152,10 +151,8 @@ export const reportRouter = router({
 						scheduledDate: s.scheduledDate,
 						status: s.status,
 						notes: s.notes,
-						score: scored?.score ?? null,
 						games: assignments.map((ga) => ({
 							name: ga.gameVersion.game.name,
-							score: (ga.scored as { score: number } | null)?.score ?? null,
 							resultSummary: ga.resultSummary,
 						})),
 					};

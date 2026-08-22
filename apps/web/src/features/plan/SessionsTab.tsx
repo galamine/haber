@@ -31,7 +31,6 @@ type SessionListItem = {
 	gameAssignments: {
 		id: string;
 		resultSummary: GameResultSummary | null;
-		scored: unknown;
 		gameVersion: { game: { name: string } };
 	}[];
 };
@@ -79,7 +78,6 @@ export function SessionsTab({ planId }: { planId: string }) {
 										key={assignment.id}
 										gameName={assignment.gameVersion.game.name}
 										resultSummary={assignment.resultSummary}
-										scored={assignment.scored}
 									/>
 								))}
 							</div>
