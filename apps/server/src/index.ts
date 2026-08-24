@@ -124,7 +124,7 @@ app.post("/api/sessions/:id/complete", async (c) => {
 	const result = await prisma.gameResult.create({
 		data: {
 			sessionId,
-			rawMetrics: JSON.parse(JSON.stringify(parsed.data.raw_metrics)),
+			rawMetrics: JSON.parse(JSON.stringify(parsed.data.data)),
 		},
 	});
 

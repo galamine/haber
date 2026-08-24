@@ -27,5 +27,5 @@ export const WebhookStartBody = z.object({
 
 export const WebhookCompleteBody = z.object({
 	webhook_secret: z.string(),
-	raw_metrics: z.record(z.string(), z.unknown()),
+	data: z.record(z.string(), z.unknown()),
 });
