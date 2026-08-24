@@ -13,6 +13,7 @@ import { trpcServer } from "@hono/trpc-server";
 import { v2 as cloudinary } from "cloudinary";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { BUILD_DATE, BUILD_VERSION, GIT_SHA } from "./lib/build-info";
 
 cloudinary.config({
 	cloudinary_url: env.CLOUDINARY_URL,
@@ -252,6 +253,14 @@ app.onError((err, c) => {
 
 app.get("/", (c) => {
 	return c.text("OK");
+});
+
+app.get("/version", (c) => {
+	return c.json({
+		version: BUILD_VERSION,
+		buildDate: BUILD_DATE,
+		gitSha: GIT_SHA,
+	});
 });
 
 import { serve } from "@hono/node-server";

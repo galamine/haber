@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { APP_VERSION, BUILD_DATE, GIT_SHA } from "@/lib/build-info";
 import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 
@@ -223,6 +224,12 @@ export function AppShell() {
 						>
 							Log out everywhere
 						</button>
+						<span
+							className="px-2 text-muted-foreground text-xs"
+							title={`Built ${BUILD_DATE} (${GIT_SHA})`}
+						>
+							v{APP_VERSION}
+						</span>
 					</div>
 				</SidebarFooter>
 			</Sidebar>
