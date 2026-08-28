@@ -313,11 +313,13 @@ function ChildProfilePage() {
 							<div className="space-y-3">
 								<Button
 									className="w-full"
-									disabled={!intake?.complete}
+									disabled={!intake?.complete || !!initialAssessment.data}
 									title={
-										!intake?.complete
-											? "Complete intake before starting an assessment"
-											: undefined
+										initialAssessment.data
+											? "Assessment already completed"
+											: !intake?.complete
+												? "Complete intake before starting an assessment"
+												: undefined
 									}
 									onClick={() =>
 										router.navigate({
@@ -529,8 +531,47 @@ function ChildProfilePage() {
 					</div>
 				</TabsContent>
 
+				{/* Assessments */}
+				<TabsContent value="assessments">
+					{initialAssessment.data ? (
+						<div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-5">
+							<div className="flex items-center justify-between">
+								<div>
+									<p className="font-medium text-on-surface text-sm">
+										Initial Assessment (v{initialAssessment.data.versionNumber})
+									</p>
+									<p className="text-on-surface-variant text-xs">
+										Completed{" "}
+										{new Date(
+											initialAssessment.data.createdAt,
+										).toLocaleDateString()}
+									</p>
+								</div>
+								<Button
+									variant="outline"
+									onClick={() =>
+										router.navigate({
+											to: "/children/$childId/assessment/$assessmentId",
+											params: {
+												childId,
+												assessmentId: initialAssessment.data.id,
+											},
+										})
+									}
+								>
+									View Assessment
+								</Button>
+							</div>
+						</div>
+					) : (
+						<div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center text-on-surface-variant text-sm">
+							No assessment completed yet.
+						</div>
+					)}
+				</TabsContent>
+
 				{/* Placeholder tabs */}
-				{(["assessments", "sessions"] as const).map((tab) => (
+				{(["sessions"] as const).map((tab) => (
 					<TabsContent key={tab} value={tab}>
 						<div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center text-on-surface-variant text-sm">
 							{tab.charAt(0).toUpperCase() + tab.slice(1)} coming soon.

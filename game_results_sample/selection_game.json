@@ -1,230 +1,200 @@
 {
-  "session": {
-    "id": "",
-    "gameName": "template",
-    "level": 1,
-    "levelCardsCount": 2,
-    "levelRoundTimeSec": 30,
-    "levelTotalTimeSec": 200,
-    "version": "1-0-0",
-    "startedAt": "2026-07-28T07:50:19.493Z",
-    "endedAt": "2026-07-28T07:50:56.415Z",
-    "durationMs": 36922,
-    "budgetMs": 60000,
-    "urlTotalTimeSec": 60,
-    "resolvedTotalTimeSec": 60
-  },
-  "rounds": [
-    {
-      "index": 1,
-      "startedAtMs": 8053.46,
-      "promptItem": "apple",
-      "itemsOffered": [
-        "apple",
-        "star"
-      ],
-      "firstSelectionMs": 12836.78,
-      "result": "correct",
-      "decisionTimeMs": 4783.320000000001,
-      "selectedFoot": "left",
-      "selectionPos": {
-        "x": 539.7001410061242,
-        "y": 434.6749226006192
-      }
-    },
-    {
-      "index": 2,
-      "startedAtMs": 18420.08,
-      "promptItem": "apple",
-      "itemsOffered": [
-        "apple",
-        "banana"
-      ],
-      "firstSelectionMs": 18786.76,
-      "result": "wrong",
-      "decisionTimeMs": 366.67999999999665,
-      "selectedFoot": "left",
-      "selectionPos": {
-        "x": 897.4693233555503,
-        "y": 453.6222910216718
-      }
-    },
-    {
-      "index": 3,
-      "startedAtMs": 24336.72,
-      "promptItem": "ball",
-      "itemsOffered": [
-        "star",
-        "ball"
-      ],
-      "firstSelectionMs": 24703.4,
-      "result": "wrong",
-      "decisionTimeMs": 366.6800000000003,
-      "selectedFoot": "left",
-      "selectionPos": {
-        "x": 412.6419267138047,
-        "y": 458.08049535603715
-      }
-    },
-    {
-      "index": 4,
-      "startedAtMs": 30570.04,
-      "promptItem": "apple",
-      "itemsOffered": [
-        "banana",
-        "apple"
-      ],
-      "firstSelectionMs": 31086.7,
-      "result": "correct",
-      "decisionTimeMs": 516.6599999999999,
-      "selectedFoot": "left",
-      "selectionPos": {
-        "x": 872.9493170886115,
-        "y": 488.1733746130031
-      }
-    },
-    {
-      "index": 5,
-      "startedAtMs": 37253.34,
-      "promptItem": "banana",
-      "itemsOffered": [
-        "banana",
-        "apple"
-      ],
-      "firstSelectionMs": 37570,
-      "result": "correct",
-      "decisionTimeMs": 316.6600000000035,
-      "selectedFoot": "left",
-      "selectionPos": {
-        "x": 471.71285090233926,
-        "y": 426.8730650154799
-      }
-    }
-  ],
-  "aggregate": {
-    "totalRounds": 5,
-    "correct": 3,
-    "wrong": 2,
-    "timeouts": 0,
-    "accuracy": 0.6,
-    "meanDecisionTimeMs": 1270.0000000000002,
-    "minDecisionTimeMs": 316.6600000000035,
-    "maxDecisionTimeMs": 4783.320000000001,
-    "meanFps": 60.60555191013694,
-    "meanInferenceMs": 0,
-    "pauseCount": 0,
-    "pauseTotalMs": 0
-  },
-  "events": [
-    {
-      "t": 8053.46,
-      "type": "round_start",
-      "data": {
-        "round": 1,
-        "promptItem": "apple",
-        "items": [
-          "apple",
-          "star"
-        ]
-      }
-    },
-    {
-      "t": 12836.78,
-      "type": "round_end",
-      "data": {
-        "round": 1,
-        "result": "correct"
-      }
-    },
-    {
-      "t": 18420.08,
-      "type": "round_start",
-      "data": {
-        "round": 2,
-        "promptItem": "apple",
-        "items": [
-          "apple",
-          "banana"
-        ]
-      }
-    },
-    {
-      "t": 18786.76,
-      "type": "round_end",
-      "data": {
-        "round": 2,
-        "result": "wrong"
-      }
-    },
-    {
-      "t": 24336.72,
-      "type": "round_start",
-      "data": {
-        "round": 3,
-        "promptItem": "ball",
-        "items": [
-          "star",
-          "ball"
-        ]
-      }
-    },
-    {
-      "t": 24703.4,
-      "type": "round_end",
-      "data": {
-        "round": 3,
-        "result": "wrong"
-      }
-    },
-    {
-      "t": 30570.04,
-      "type": "round_start",
-      "data": {
-        "round": 4,
-        "promptItem": "apple",
-        "items": [
-          "banana",
-          "apple"
-        ]
-      }
-    },
-    {
-      "t": 31086.7,
-      "type": "round_end",
-      "data": {
-        "round": 4,
-        "result": "correct"
-      }
-    },
-    {
-      "t": 37253.34,
-      "type": "round_start",
-      "data": {
-        "round": 5,
-        "promptItem": "banana",
-        "items": [
-          "banana",
-          "apple"
-        ]
-      }
-    },
-    {
-      "t": 37570,
-      "type": "round_end",
-      "data": {
-        "round": 5,
-        "result": "correct"
-      }
-    }
-  ],
-  "hardware": {
-    "cameraLabel": "",
-    "cameraDeviceId": "",
-    "projectorWidth": 1280,
-    "projectorHeight": 720,
-    "cameraWidth": 640,
-    "cameraHeight": 480,
-    "calibrationVersion": "1.0.0",
-    "calibrationCreatedAt": "2026-07-28T07:48:44.010Z"
-  }
+	"session": {
+		"id": "",
+		"gameName": "template",
+		"level": 1,
+		"levelCardsCount": 2,
+		"levelRoundTimeSec": 30,
+		"levelTotalTimeSec": 200,
+		"version": "1-0-0",
+		"startedAt": "2026-07-28T07:50:19.493Z",
+		"endedAt": "2026-07-28T07:50:56.415Z",
+		"durationMs": 36922,
+		"budgetMs": 60000,
+		"urlTotalTimeSec": 60,
+		"resolvedTotalTimeSec": 60
+	},
+	"rounds": [
+		{
+			"index": 1,
+			"startedAtMs": 8053.46,
+			"promptItem": "apple",
+			"itemsOffered": ["apple", "star"],
+			"firstSelectionMs": 12836.78,
+			"result": "correct",
+			"decisionTimeMs": 4783.320000000001,
+			"selectedFoot": "left",
+			"selectionPos": {
+				"x": 539.7001410061242,
+				"y": 434.6749226006192
+			}
+		},
+		{
+			"index": 2,
+			"startedAtMs": 18420.08,
+			"promptItem": "apple",
+			"itemsOffered": ["apple", "banana"],
+			"firstSelectionMs": 18786.76,
+			"result": "wrong",
+			"decisionTimeMs": 366.67999999999665,
+			"selectedFoot": "left",
+			"selectionPos": {
+				"x": 897.4693233555503,
+				"y": 453.6222910216718
+			}
+		},
+		{
+			"index": 3,
+			"startedAtMs": 24336.72,
+			"promptItem": "ball",
+			"itemsOffered": ["star", "ball"],
+			"firstSelectionMs": 24703.4,
+			"result": "wrong",
+			"decisionTimeMs": 366.6800000000003,
+			"selectedFoot": "left",
+			"selectionPos": {
+				"x": 412.6419267138047,
+				"y": 458.08049535603715
+			}
+		},
+		{
+			"index": 4,
+			"startedAtMs": 30570.04,
+			"promptItem": "apple",
+			"itemsOffered": ["banana", "apple"],
+			"firstSelectionMs": 31086.7,
+			"result": "correct",
+			"decisionTimeMs": 516.6599999999999,
+			"selectedFoot": "left",
+			"selectionPos": {
+				"x": 872.9493170886115,
+				"y": 488.1733746130031
+			}
+		},
+		{
+			"index": 5,
+			"startedAtMs": 37253.34,
+			"promptItem": "banana",
+			"itemsOffered": ["banana", "apple"],
+			"firstSelectionMs": 37570,
+			"result": "correct",
+			"decisionTimeMs": 316.6600000000035,
+			"selectedFoot": "left",
+			"selectionPos": {
+				"x": 471.71285090233926,
+				"y": 426.8730650154799
+			}
+		}
+	],
+	"aggregate": {
+		"totalRounds": 5,
+		"correct": 3,
+		"wrong": 2,
+		"timeouts": 0,
+		"accuracy": 0.6,
+		"meanDecisionTimeMs": 1270.0000000000002,
+		"minDecisionTimeMs": 316.6600000000035,
+		"maxDecisionTimeMs": 4783.320000000001,
+		"meanFps": 60.60555191013694,
+		"meanInferenceMs": 0,
+		"pauseCount": 0,
+		"pauseTotalMs": 0
+	},
+	"events": [
+		{
+			"t": 8053.46,
+			"type": "round_start",
+			"data": {
+				"round": 1,
+				"promptItem": "apple",
+				"items": ["apple", "star"]
+			}
+		},
+		{
+			"t": 12836.78,
+			"type": "round_end",
+			"data": {
+				"round": 1,
+				"result": "correct"
+			}
+		},
+		{
+			"t": 18420.08,
+			"type": "round_start",
+			"data": {
+				"round": 2,
+				"promptItem": "apple",
+				"items": ["apple", "banana"]
+			}
+		},
+		{
+			"t": 18786.76,
+			"type": "round_end",
+			"data": {
+				"round": 2,
+				"result": "wrong"
+			}
+		},
+		{
+			"t": 24336.72,
+			"type": "round_start",
+			"data": {
+				"round": 3,
+				"promptItem": "ball",
+				"items": ["star", "ball"]
+			}
+		},
+		{
+			"t": 24703.4,
+			"type": "round_end",
+			"data": {
+				"round": 3,
+				"result": "wrong"
+			}
+		},
+		{
+			"t": 30570.04,
+			"type": "round_start",
+			"data": {
+				"round": 4,
+				"promptItem": "apple",
+				"items": ["banana", "apple"]
+			}
+		},
+		{
+			"t": 31086.7,
+			"type": "round_end",
+			"data": {
+				"round": 4,
+				"result": "correct"
+			}
+		},
+		{
+			"t": 37253.34,
+			"type": "round_start",
+			"data": {
+				"round": 5,
+				"promptItem": "banana",
+				"items": ["banana", "apple"]
+			}
+		},
+		{
+			"t": 37570,
+			"type": "round_end",
+			"data": {
+				"round": 5,
+				"result": "correct"
+			}
+		}
+	],
+	"hardware": {
+		"cameraLabel": "",
+		"cameraDeviceId": "",
+		"projectorWidth": 1280,
+		"projectorHeight": 720,
+		"cameraWidth": 640,
+		"cameraHeight": 480,
+		"calibrationVersion": "1.0.0",
+		"calibrationCreatedAt": "2026-07-28T07:48:44.010Z"
+	}
 }

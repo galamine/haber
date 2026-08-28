@@ -14,7 +14,7 @@ export async function signAccessToken(payload: JwtPayload): Promise<string> {
 		.setProtectedHeader({ alg: "HS256" })
 		.setSubject(payload.sub)
 		.setIssuedAt()
-		.setExpirationTime("15m")
+		.setExpirationTime("8h")
 		.sign(secret);
 }
 

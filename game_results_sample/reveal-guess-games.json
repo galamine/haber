@@ -1,39 +1,39 @@
 {
-  "id": "dev",
-  "gameName": "guess-animals",
-  "level": 1,
-  "version": "1-0-0",
-  "startedAt": "2026-08-14T17:23:14.510Z",
-  "endedAt": "2026-08-14T17:23:48.771Z",
-  "durationMs": 7032,
-  "timeTakenSec": 7.032,
-  "meanFps": 42.07117648618814,
-  "meanInferenceMs": 66.75161572052409,
-  "image": "panda.jpg",
-  "color": "#000000",
-  "mode": "both",
-  "brushSize": 96,
-  "stampCount": 291,
-  "milestones": [
-    {
-      "pct": 25,
-      "elapsedSec": 7.015610666666718
-    }
-  ],
-  "quiz": {
-    "attempts": 1,
-    "answered": true,
-    "correct": true,
-    "answeredAtSec": 7.032276666666718
-  },
-  "hardware": {
-    "cameraLabel": "unknown",
-    "cameraDeviceId": "unknown",
-    "cameraWidth": 640,
-    "cameraHeight": 480,
-    "projectorWidth": 1280,
-    "projectorHeight": 720,
-    "calibrationVersion": "1.0.0",
-    "calibrationCreatedAt": "2026-08-14T17:16:34.075Z"
-  }
+	"id": "dev",
+	"gameName": "guess-animals",
+	"level": 1,
+	"version": "1-0-0",
+	"startedAt": "2026-08-14T17:23:14.510Z",
+	"endedAt": "2026-08-14T17:23:48.771Z",
+	"durationMs": 7032,
+	"timeTakenSec": 7.032,
+	"meanFps": 42.07117648618814,
+	"meanInferenceMs": 66.75161572052409,
+	"image": "panda.jpg",
+	"color": "#000000",
+	"mode": "both",
+	"brushSize": 96,
+	"stampCount": 291,
+	"milestones": [
+		{
+			"pct": 25,
+			"elapsedSec": 7.015610666666718
+		}
+	],
+	"quiz": {
+		"attempts": 1,
+		"answered": true,
+		"correct": true,
+		"answeredAtSec": 7.032276666666718
+	},
+	"hardware": {
+		"cameraLabel": "unknown",
+		"cameraDeviceId": "unknown",
+		"cameraWidth": 640,
+		"cameraHeight": 480,
+		"projectorWidth": 1280,
+		"projectorHeight": 720,
+		"calibrationVersion": "1.0.0",
+		"calibrationCreatedAt": "2026-08-14T17:16:34.075Z"
+	}
 }

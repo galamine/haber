@@ -1,45 +1,45 @@
 {
-  "id": "dev",
-  "gameName": "template-reveal",
-  "level": 1,
-  "version": "1-0-0",
-  "startedAt": "2026-08-08T12:00:09.378Z",
-  "endedAt": "2026-08-08T12:00:46.950Z",
-  "durationMs": 16700,
-  "timeTakenSec": 16.7,
-  "meanFps": 47.844580251553964,
-  "meanInferenceMs": 56.737536000000034,
-  "image": "sunny-face",
-  "color": "#000000",
-  "mode": "both",
-  "brushSize": 128,
-  "stampCount": 1194,
-  "milestones": [
-    {
-      "pct": 25,
-      "elapsedSec": 4.499866000000003
-    },
-    {
-      "pct": 50,
-      "elapsedSec": 6.516526000000034
-    },
-    {
-      "pct": 75,
-      "elapsedSec": 7.499854000000046
-    },
-    {
-      "pct": 100,
-      "elapsedSec": 16.68337999999991
-    }
-  ],
-  "hardware": {
-    "cameraLabel": "unknown",
-    "cameraDeviceId": "unknown",
-    "cameraWidth": 640,
-    "cameraHeight": 480,
-    "projectorWidth": 1280,
-    "projectorHeight": 720,
-    "calibrationVersion": "1.0.0",
-    "calibrationCreatedAt": "2026-08-08T11:59:46.523Z"
-  }
+	"id": "dev",
+	"gameName": "template-reveal",
+	"level": 1,
+	"version": "1-0-0",
+	"startedAt": "2026-08-08T12:00:09.378Z",
+	"endedAt": "2026-08-08T12:00:46.950Z",
+	"durationMs": 16700,
+	"timeTakenSec": 16.7,
+	"meanFps": 47.844580251553964,
+	"meanInferenceMs": 56.737536000000034,
+	"image": "sunny-face",
+	"color": "#000000",
+	"mode": "both",
+	"brushSize": 128,
+	"stampCount": 1194,
+	"milestones": [
+		{
+			"pct": 25,
+			"elapsedSec": 4.499866000000003
+		},
+		{
+			"pct": 50,
+			"elapsedSec": 6.516526000000034
+		},
+		{
+			"pct": 75,
+			"elapsedSec": 7.499854000000046
+		},
+		{
+			"pct": 100,
+			"elapsedSec": 16.68337999999991
+		}
+	],
+	"hardware": {
+		"cameraLabel": "unknown",
+		"cameraDeviceId": "unknown",
+		"cameraWidth": 640,
+		"cameraHeight": 480,
+		"projectorWidth": 1280,
+		"projectorHeight": 720,
+		"calibrationVersion": "1.0.0",
+		"calibrationCreatedAt": "2026-08-08T11:59:46.523Z"
+	}
 }

@@ -1,32 +1,32 @@
 {
-  "game": {
-    "id": "dev",
-    "gameName": "apple-catch",
-    "level": 1,
-    "version": "1-0-0",
-    "startedAt": "2026-08-14T17:06:56.755Z",
-    "endedAt": "2026-08-14T17:08:05.583Z",
-    "durationMs": 68828,
-    "urlTotalTimeSec": 60
-  },
-  "hardware": {
-    "cameraLabel": "unknown",
-    "cameraDeviceId": "unknown",
-    "projectorWidth": 1280,
-    "projectorHeight": 720,
-    "cameraWidth": 640,
-    "cameraHeight": 480,
-    "calibrationVersion": "1.0.0",
-    "calibrationCreatedAt": "2026-08-14T16:51:08.350Z",
-    "meanFps": 60.5,
-    "meanInferenceMs": 0
-  },
-  "stats": {
-    "score": 90,
-    "caught": 9,
-    "missed": 4,
-    "accuracyPct": 69,
-    "bestStreak": 6,
-    "timePlayedSec": 60
-  }
+	"game": {
+		"id": "dev",
+		"gameName": "apple-catch",
+		"level": 1,
+		"version": "1-0-0",
+		"startedAt": "2026-08-14T17:06:56.755Z",
+		"endedAt": "2026-08-14T17:08:05.583Z",
+		"durationMs": 68828,
+		"urlTotalTimeSec": 60
+	},
+	"hardware": {
+		"cameraLabel": "unknown",
+		"cameraDeviceId": "unknown",
+		"projectorWidth": 1280,
+		"projectorHeight": 720,
+		"cameraWidth": 640,
+		"cameraHeight": 480,
+		"calibrationVersion": "1.0.0",
+		"calibrationCreatedAt": "2026-08-14T16:51:08.350Z",
+		"meanFps": 60.5,
+		"meanInferenceMs": 0
+	},
+	"stats": {
+		"score": 90,
+		"caught": 9,
+		"missed": 4,
+		"accuracyPct": 69,
+		"bestStreak": 6,
+		"timePlayedSec": 60
+	}
 }
