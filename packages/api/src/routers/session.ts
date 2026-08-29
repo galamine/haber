@@ -3,7 +3,11 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { protectedProcedure, router } from "../index";
 import { matchResultToAssignments } from "../lib/game-result-summary";
-import { GetCalendarInput, ListForPlanInput } from "../schemas/session";
+import {
+	GetCalendarInput,
+	ListForChildInput,
+	ListForPlanInput,
+} from "../schemas/session";
 import {
 	AssignRoomInput,
 	ClaimCoverageInput,
@@ -31,6 +35,40 @@ export const sessionRouter = router({
 		.input(ListForPlanInput)
 		.query(async ({ input }) => {
 			const where: Record<string, unknown> = { planId: input.planId };
+
+			if (input.status) {
+				where.status = input.status;
+			}
+
+			if (input.fromDate || input.toDate) {
+				where.scheduledDate = {};
+				if (input.fromDate) {
+					(where.scheduledDate as Record<string, Date>).gte = input.fromDate;
+				}
+				if (input.toDate) {
+					(where.scheduledDate as Record<string, Date>).lte = input.toDate;
+				}
+			}
+
+			const sessions = await prisma.therapySession.findMany({
+				where,
+				orderBy: { scheduledDate: "asc" },
+				include: {
+					result: true,
+					gameAssignments: {
+						orderBy: { order: "asc" },
+						include: { gameVersion: { include: { game: true } } },
+					},
+				},
+			});
+
+			return sessions.map(attachResultSummary);
+		}),
+
+	listForChild: protectedProcedure
+		.input(ListForChildInput)
+		.query(async ({ input }) => {
+			const where: Record<string, unknown> = { childId: input.childId };
 
 			if (input.status) {
 				where.status = input.status;

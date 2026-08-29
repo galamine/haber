@@ -41,6 +41,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { IconTabs } from "@/components/IconTabs";
 import { TagList } from "@/features/assessment/read-only/TagList";
+import { SessionsTab } from "@/features/plan/SessionsTab";
 import { useAuthStore } from "@/stores/auth";
 import { trpc } from "@/utils/trpc";
 
@@ -570,14 +571,9 @@ function ChildProfilePage() {
 					)}
 				</TabsContent>
 
-				{/* Placeholder tabs */}
-				{(["sessions"] as const).map((tab) => (
-					<TabsContent key={tab} value={tab}>
-						<div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center text-on-surface-variant text-sm">
-							{tab.charAt(0).toUpperCase() + tab.slice(1)} coming soon.
-						</div>
-					</TabsContent>
-				))}
+				<TabsContent value="sessions">
+					<SessionsTab scope="child" childId={childId} />
+				</TabsContent>
 				<TabsContent value="plans">
 					<div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center text-on-surface-variant text-sm">
 						<a

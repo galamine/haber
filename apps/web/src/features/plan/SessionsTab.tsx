@@ -35,9 +35,15 @@ type SessionListItem = {
 	}[];
 };
 
-export function SessionsTab({ planId }: { planId: string }) {
+type SessionsTabProps =
+	| { scope: "plan"; planId: string }
+	| { scope: "child"; childId: string };
+
+export function SessionsTab(props: SessionsTabProps) {
 	const { data: sessions, isLoading } = useQuery(
-		trpc.session.listForPlan.queryOptions({ planId }),
+		props.scope === "plan"
+			? trpc.session.listForPlan.queryOptions({ planId: props.planId })
+			: trpc.session.listForChild.queryOptions({ childId: props.childId }),
 	);
 
 	if (isLoading) {

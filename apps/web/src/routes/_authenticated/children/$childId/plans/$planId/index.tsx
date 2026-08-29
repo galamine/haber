@@ -152,7 +152,7 @@ function PlanDetailPage() {
 
 			{durationData?.exceeds && (
 				<DurationAdvisory
-					totalMinutes={Math.round(durationData.totalSeconds / 60)}
+					totalMinutes={Math.round(durationData.maxSeconds / 60)}
 					limitMinutes={Math.round(durationData.limitSeconds / 60)}
 				/>
 			)}
@@ -195,7 +195,7 @@ function PlanDetailPage() {
 					/>
 				</TabsContent>
 				<TabsContent value="sessions">
-					<SessionsTab planId={planId} />
+					<SessionsTab scope="plan" planId={planId} />
 				</TabsContent>
 			</Tabs>
 

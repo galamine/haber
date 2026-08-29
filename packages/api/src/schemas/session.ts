@@ -15,6 +15,13 @@ export const ListForPlanInput = z.object({
 	toDate: z.coerce.date().optional(),
 });
 
+export const ListForChildInput = z.object({
+	childId: z.string(),
+	status: SessionStatusEnum.optional(),
+	fromDate: z.coerce.date().optional(),
+	toDate: z.coerce.date().optional(),
+});
+
 export const GetCalendarInput = z.object({
 	childId: z.string(),
 	month: z.number().int().min(1).max(12),

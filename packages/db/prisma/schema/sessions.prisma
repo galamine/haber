@@ -49,6 +49,7 @@ model SessionGameAssignment {
   gameVersion GameVersion    @relation(fields: [gameVersionId], references: [id])
   result      GameResult?
 
+  @@unique([sessionId])
   @@map("session_game_assignment")
 }
 

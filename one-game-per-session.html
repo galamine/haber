@@ -1,0 +1,611 @@
+<title>Plan, Session &amp; Game</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --bg:#f5f4f0;
+    --surface:#ffffff;
+    --surface-2:#efeee8;
+    --ink:#201f1c;
+    --ink-dim:#5c584f;
+    --ink-faint:#8b877c;
+    --line:#dfdbd0;
+    --line-strong:#c9c4b6;
+    --accent:#33499e;
+    --accent-ink:#ffffff;
+    --accent-soft:#e7eaf6;
+    --amber:#a8641c;
+    --amber-soft:#f5e9d8;
+    --danger:#a3402f;
+    --danger-soft:#f6e4df;
+    --success:#3c6e4d;
+    --success-soft:#e2ede3;
+    --shadow: 0 1px 2px rgba(32,31,28,0.06), 0 8px 24px -12px rgba(32,31,28,0.18);
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#17181b;
+      --surface:#1e2024;
+      --surface-2:#25272c;
+      --ink:#ece9e2;
+      --ink-dim:#a7a294;
+      --ink-faint:#7c7869;
+      --line:#34363b;
+      --line-strong:#454750;
+      --accent:#7d92e8;
+      --accent-ink:#12141c;
+      --accent-soft:#242b45;
+      --amber:#d9a25c;
+      --amber-soft:#3a2e1c;
+      --danger:#e08a78;
+      --danger-soft:#3a2420;
+      --success:#8bc79e;
+      --success-soft:#1f2f24;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#17181b;
+    --surface:#1e2024;
+    --surface-2:#25272c;
+    --ink:#ece9e2;
+    --ink-dim:#a7a294;
+    --ink-faint:#7c7869;
+    --line:#34363b;
+    --line-strong:#454750;
+    --accent:#7d92e8;
+    --accent-ink:#12141c;
+    --accent-soft:#242b45;
+    --amber:#d9a25c;
+    --amber-soft:#3a2e1c;
+    --danger:#e08a78;
+    --danger-soft:#3a2420;
+    --success:#8bc79e;
+    --success-soft:#1f2f24;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+    font-size:17px;
+    line-height:1.65;
+    margin:0;
+  }
+  code, .mono, .tag, .idbadge, .kbd{
+    font-family:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  h1,h2,h3,h4{
+    font-family:"IBM Plex Sans", -apple-system, sans-serif;
+    color:var(--ink);
+    text-wrap:balance;
+    line-height:1.15;
+    margin:0;
+  }
+  a{color:var(--accent);}
+
+  .shell{
+    max-width:1180px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:230px minmax(0,1fr);
+    gap:56px;
+    padding:48px 32px 120px;
+  }
+  @media (max-width:920px){
+    .shell{grid-template-columns:1fr; padding:28px 18px 80px;}
+    .toc{position:static !important; order:2; margin-top:40px;}
+  }
+
+  .toc{
+    position:sticky;
+    top:32px;
+    align-self:start;
+    font-family:"IBM Plex Sans", sans-serif;
+    font-size:13px;
+  }
+  .toc .kicker{
+    font-size:11px;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    font-weight:600;
+    margin-bottom:12px;
+  }
+  .toc ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px;}
+  .toc li a{
+    display:block;
+    padding:7px 10px;
+    border-radius:6px;
+    color:var(--ink-dim);
+    text-decoration:none;
+    border-left:2px solid transparent;
+  }
+  .toc li a:hover{color:var(--ink); background:var(--surface-2);}
+  .toc .num{
+    color:var(--ink-faint);
+    font-family:"IBM Plex Mono", monospace;
+    font-size:11px;
+    margin-right:8px;
+  }
+
+  main{min-width:0;}
+
+  header.hero{
+    margin-bottom:56px;
+    padding-bottom:32px;
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px; height:7px;
+    background:var(--accent);
+    border-radius:2px;
+    display:inline-block;
+  }
+  h1.title{
+    font-size:clamp(30px,4.4vw,44px);
+    font-weight:700;
+    letter-spacing:-0.01em;
+    margin-bottom:16px;
+  }
+  .dek{
+    font-family:"IBM Plex Serif", serif;
+    font-size:18px;
+    color:var(--ink-dim);
+    max-width:62ch;
+    margin-bottom:20px;
+  }
+  .meta-row{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    font-family:"IBM Plex Sans", sans-serif;
+    font-size:12.5px;
+    color:var(--ink-faint);
+  }
+  .meta-row b{color:var(--ink-dim); font-weight:600;}
+
+  section{margin-bottom:64px; scroll-margin-top:24px;}
+  section > .sec-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:20px;
+  }
+  .sec-num{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:13px;
+    color:var(--ink-faint);
+    padding-top:3px;
+  }
+  h2{font-size:24px; font-weight:700;}
+  h3{font-size:17px; font-weight:600; margin:28px 0 12px; font-family:"IBM Plex Sans",sans-serif;}
+
+  p{max-width:68ch; margin:0 0 16px;}
+  p.wide{max-width:none;}
+  ul.prose, ol.prose{max-width:66ch; margin:0 0 16px; padding-left:22px;}
+  ul.prose li, ol.prose li{margin-bottom:8px;}
+
+  .callout{
+    border:1px solid var(--line);
+    background:var(--surface);
+    border-left:3px solid var(--accent);
+    border-radius:8px;
+    padding:16px 20px;
+    margin:20px 0;
+    max-width:66ch;
+    font-family:"IBM Plex Sans", sans-serif;
+    font-size:14.5px;
+    color:var(--ink-dim);
+  }
+  .callout.tldr{border-left-color:var(--amber); background:var(--amber-soft); max-width:none;}
+  .callout.tldr strong{color:var(--ink);}
+  .callout.danger{border-left-color:var(--danger); background:var(--danger-soft);}
+  .callout.success{border-left-color:var(--success); background:var(--success-soft);}
+
+  .figure{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:24px 24px 18px;
+    margin:24px 0;
+    box-shadow:var(--shadow);
+    overflow-x:auto;
+  }
+  .figure svg{display:block; margin:0 auto; max-width:100%; height:auto;}
+  figcaption{
+    font-family:"IBM Plex Sans", sans-serif;
+    font-size:13px;
+    color:var(--ink-faint);
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px dashed var(--line);
+    max-width:70ch;
+  }
+  figcaption b{color:var(--ink-dim);}
+
+  svg text{font-family:"IBM Plex Sans", sans-serif; fill:currentColor;}
+  svg .mono-t{font-family:"IBM Plex Mono", monospace;}
+
+  table{
+    border-collapse:collapse;
+    width:100%;
+    font-family:"IBM Plex Sans", sans-serif;
+    font-size:14px;
+    margin:20px 0;
+  }
+  table caption{caption-side:bottom; text-align:left; font-size:12.5px; color:var(--ink-faint); padding-top:8px;}
+  th,td{
+    text-align:left;
+    padding:9px 12px;
+    border-bottom:1px solid var(--line);
+    font-variant-numeric:tabular-nums;
+  }
+  th{
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    color:var(--ink-faint);
+    font-weight:600;
+    border-bottom:1px solid var(--line-strong);
+  }
+  tr:last-child td{border-bottom:none;}
+  td .idbadge{
+    font-size:12px;
+    background:var(--surface-2);
+    padding:2px 7px;
+    border-radius:5px;
+    color:var(--ink-dim);
+  }
+
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-family:"IBM Plex Sans", sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:3px 9px;
+    border-radius:99px;
+  }
+  .pill.a{background:var(--accent-soft); color:var(--accent);}
+  .pill.amber{background:var(--amber-soft); color:var(--amber);}
+  .pill.danger{background:var(--danger-soft); color:var(--danger);}
+  .pill.success{background:var(--success-soft); color:var(--success);}
+
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:20px 0;}
+  @media (max-width:720px){.cards{grid-template-columns:1fr;}}
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 18px;
+  }
+  .card h4{font-family:"IBM Plex Sans",sans-serif; font-size:14px; font-weight:600; margin-bottom:6px; display:flex; align-items:center; gap:8px;}
+  .card p{font-size:13.5px; color:var(--ink-dim); margin:0; max-width:none;}
+  .card .swatch{width:9px; height:9px; border-radius:3px; display:inline-block;}
+
+  code.field{
+    background:var(--surface-2);
+    padding:1.5px 6px;
+    border-radius:4px;
+    font-size:0.88em;
+    color:var(--ink);
+  }
+
+  footer{
+    margin-top:70px;
+    padding-top:24px;
+    border-top:1px solid var(--line);
+    font-family:"IBM Plex Sans", sans-serif;
+    font-size:12.5px;
+    color:var(--ink-faint);
+  }
+</style>
+
+<div class="shell">
+  <nav class="toc">
+    <div class="kicker">On this page</div>
+    <ol>
+      <li><a href="#entities"><span class="num">01</span>The three entities</a></li>
+      <li><a href="#problem"><span class="num">02</span>The problem</a></li>
+      <li><a href="#fix"><span class="num">03</span>The fix: round robin</a></li>
+      <li><a href="#example"><span class="num">04</span>Worked example</a></li>
+      <li><a href="#edges"><span class="num">05</span>Edge cases</a></li>
+      <li><a href="#scope"><span class="num">06</span>What didn't change</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">Engineering note &middot; scheduling model</div>
+      <h1 class="title">One game per session</h1>
+      <p class="dek">How a treatment plan's games get scheduled onto sessions, why a session used to break when it held more than one game, and how round&#8209;robin distribution fixes it.</p>
+      <div class="meta-row">
+        <span><b>Audience</b> Clinic ops &amp; engineering</span>
+        <span><b>Touches</b> <code class="mono">session-generator.ts</code>, <code class="mono">plan.ts</code>, Prisma schema</span>
+        <span><b>Status</b> Implemented</span>
+      </div>
+    </header>
+
+    <div class="callout tldr">
+      <strong>In one sentence:</strong> a <em>plan</em> can still hold several games, but each generated <em>session</em> now gets exactly one of them &mdash; assigned by cycling through the plan's game list in order, so game&nbsp;1 goes to session&nbsp;1, game&nbsp;2 to session&nbsp;2, and so on, wrapping back to game&nbsp;1 once the list runs out.
+    </div>
+
+    <section id="entities">
+      <div class="sec-head"><span class="sec-num">01</span><h2>The three entities</h2></div>
+      <p>A therapist builds a <b>Plan</b> for a child and attaches one or more <b>Games</b> to it &mdash; that's the game library the plan draws from. The system then generates a run of <b>Sessions</b> (the actual scheduled appointments). Each session needs to know which single game to play.</p>
+
+      <figure class="figure">
+        <svg viewBox="0 0 920 300" role="img" aria-label="A plan holds a list of games; the plan generates several sessions; each session is assigned exactly one game from the plan's list.">
+          <defs>
+            <marker id="arrow1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <!-- Plan box -->
+          <rect x="24" y="30" width="180" height="240" rx="10" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <text x="114" y="56" text-anchor="middle" font-weight="600" font-size="14">Plan</text>
+          <text x="114" y="74" text-anchor="middle" font-size="11" class="mono-t" fill-opacity="0.55">TreatmentPlan</text>
+
+          <g class="mono-t" font-size="11.5">
+            <rect x="40" y="92" width="148" height="26" rx="5" fill="var(--accent-soft)" />
+            <text x="114" y="109" text-anchor="middle" fill="var(--accent)">Game A</text>
+            <rect x="40" y="124" width="148" height="26" rx="5" fill="var(--accent-soft)" />
+            <text x="114" y="141" text-anchor="middle" fill="var(--accent)">Game B</text>
+            <rect x="40" y="156" width="148" height="26" rx="5" fill="var(--accent-soft)" />
+            <text x="114" y="173" text-anchor="middle" fill="var(--accent)">Game C</text>
+          </g>
+          <text x="114" y="204" text-anchor="middle" font-size="10.5" fill-opacity="0.55">PlanGameAssignment</text>
+          <text x="114" y="219" text-anchor="middle" font-size="10.5" fill-opacity="0.55">(ordered list, many allowed)</text>
+
+          <line x1="204" y1="150" x2="270" y2="150" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrow1)"/>
+          <text x="237" y="140" text-anchor="middle" font-size="10.5" class="mono-t">generates</text>
+
+          <!-- Sessions column -->
+          <g font-size="11.5">
+            <rect x="278" y="34" width="150" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="1.1"/>
+            <text x="353" y="58" text-anchor="middle" class="mono-t">Session 1</text>
+
+            <rect x="278" y="86" width="150" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="1.1"/>
+            <text x="353" y="110" text-anchor="middle" class="mono-t">Session 2</text>
+
+            <rect x="278" y="138" width="150" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="1.1"/>
+            <text x="353" y="162" text-anchor="middle" class="mono-t">Session 3</text>
+
+            <rect x="278" y="190" width="150" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="1.1"/>
+            <text x="353" y="214" text-anchor="middle" class="mono-t">Session 4</text>
+
+            <text x="353" y="250" text-anchor="middle" fill-opacity="0.5">&hellip;</text>
+          </g>
+
+          <!-- arrows to single assignment -->
+          <line x1="428" y1="54" x2="500" y2="54" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrow1)"/>
+          <line x1="428" y1="106" x2="500" y2="106" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrow1)"/>
+          <line x1="428" y1="158" x2="500" y2="158" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrow1)"/>
+          <line x1="428" y1="210" x2="500" y2="210" stroke="currentColor" stroke-width="1.3" marker-end="url(#arrow1)"/>
+
+          <g class="mono-t" font-size="11.5" font-weight="600">
+            <rect x="504" y="38" width="92" height="32" rx="6" fill="var(--amber-soft)"/>
+            <text x="550" y="59" text-anchor="middle" fill="var(--amber)">Game A</text>
+            <rect x="504" y="90" width="92" height="32" rx="6" fill="var(--amber-soft)"/>
+            <text x="550" y="111" text-anchor="middle" fill="var(--amber)">Game B</text>
+            <rect x="504" y="142" width="92" height="32" rx="6" fill="var(--amber-soft)"/>
+            <text x="550" y="163" text-anchor="middle" fill="var(--amber)">Game C</text>
+            <rect x="504" y="194" width="92" height="32" rx="6" fill="var(--amber-soft)"/>
+            <text x="550" y="215" text-anchor="middle" fill="var(--amber)">Game A</text>
+          </g>
+          <text x="550" y="20" text-anchor="middle" font-size="10.5" fill-opacity="0.55">exactly one game each</text>
+
+          <!-- Result -->
+          <line x1="596" y1="54" x2="660" y2="54" stroke="currentColor" stroke-width="1.1" stroke-dasharray="3 3" marker-end="url(#arrow1)"/>
+          <line x1="596" y1="106" x2="660" y2="106" stroke="currentColor" stroke-width="1.1" stroke-dasharray="3 3" marker-end="url(#arrow1)"/>
+          <line x1="596" y1="158" x2="660" y2="158" stroke="currentColor" stroke-width="1.1" stroke-dasharray="3 3" marker-end="url(#arrow1)"/>
+          <line x1="596" y1="210" x2="660" y2="210" stroke="currentColor" stroke-width="1.1" stroke-dasharray="3 3" marker-end="url(#arrow1)"/>
+
+          <g font-size="11" class="mono-t" fill-opacity="0.7">
+            <rect x="666" y="38" width="230" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3"/>
+            <text x="781" y="59" text-anchor="middle">GameResult (webhook)</text>
+            <rect x="666" y="90" width="230" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3"/>
+            <text x="781" y="111" text-anchor="middle">GameResult (webhook)</text>
+            <rect x="666" y="142" width="230" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3"/>
+            <text x="781" y="163" text-anchor="middle">GameResult (webhook)</text>
+            <rect x="666" y="194" width="230" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 3"/>
+            <text x="781" y="215" text-anchor="middle">GameResult (webhook)</text>
+          </g>
+        </svg>
+        <figcaption><b>Plan &rarr; Sessions &rarr; one Game each.</b> The plan keeps its ordered list of games. Each generated session is assigned a single game from that list, and each session produces exactly one webhook completion result &mdash; one-to-one, all the way across.</figcaption>
+      </figure>
+    </section>
+
+    <section id="problem">
+      <div class="sec-head"><span class="sec-num">02</span><h2>The problem this replaces</h2></div>
+      <p>Until now, session generation did the opposite of the diagram above: it took <em>every</em> game on the plan and attached it to <em>every</em> session &mdash; a full cross join. A plan with 3 games meant every single session carried all 3.</p>
+      <p>That collided with how completion actually works. A session can only ever record <b>one</b> result, and finishing any one game fires a webhook that marks the <em>whole session</em> complete immediately.</p>
+
+      <div class="figure">
+        <svg viewBox="0 0 920 320" role="img" aria-label="Before the fix: every session held all three games. Finishing game A triggered the completion webhook, which marked the whole session complete and silently discarded games B and C.">
+          <defs>
+            <marker id="arrowD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--danger)"/>
+            </marker>
+          </defs>
+          <text x="20" y="28" font-size="12" font-weight="600" fill="var(--danger)">Session 1 &mdash; before the fix</text>
+
+          <!-- three game cards -->
+          <g font-size="12.5" class="mono-t">
+            <rect x="20" y="46" width="150" height="54" rx="8" fill="var(--success-soft)" stroke="var(--success)" stroke-width="1.2"/>
+            <text x="95" y="68" text-anchor="middle" font-weight="600" fill="var(--success)">Game A</text>
+            <text x="95" y="86" text-anchor="middle" font-size="10.5" fill="var(--success)">played, finished</text>
+
+            <rect x="190" y="46" width="150" height="54" rx="8" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.2"/>
+            <text x="265" y="68" text-anchor="middle" font-weight="600" fill-opacity="0.7">Game B</text>
+            <text x="265" y="86" text-anchor="middle" font-size="10.5" fill-opacity="0.6">not started yet</text>
+
+            <rect x="360" y="46" width="150" height="54" rx="8" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.2"/>
+            <text x="435" y="68" text-anchor="middle" font-weight="600" fill-opacity="0.7">Game C</text>
+            <text x="435" y="86" text-anchor="middle" font-size="10.5" fill-opacity="0.6">not started yet</text>
+          </g>
+
+          <line x1="95" y1="100" x2="95" y2="140" stroke="var(--danger)" stroke-width="1.4" marker-end="url(#arrowD)"/>
+          <text x="106" y="124" font-size="10.5" fill="var(--danger)">webhook: complete</text>
+
+          <rect x="20" y="150" width="330" height="46" rx="8" fill="var(--danger-soft)" stroke="var(--danger)" stroke-width="1.3"/>
+          <text x="185" y="178" text-anchor="middle" font-weight="600" fill="var(--danger)" class="mono-t">TherapySession.status = COMPLETED</text>
+
+          <line x1="265" y1="196" x2="265" y2="228" stroke="var(--danger)" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrowD)"/>
+          <line x1="435" y1="100" x2="330" y2="228" stroke="var(--danger)" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrowD)"/>
+
+          <g font-size="11.5" class="mono-t">
+            <rect x="150" y="236" width="180" height="44" rx="8" fill="none" stroke="var(--danger)" stroke-width="1.2" stroke-dasharray="3 3"/>
+            <text x="240" y="254" text-anchor="middle" fill="var(--danger)">Games B &amp; C</text>
+            <text x="240" y="270" text-anchor="middle" fill="var(--danger)" font-size="10.5">can never record a result</text>
+          </g>
+
+          <text x="600" y="80" font-size="12.5" fill-opacity="0.75" text-anchor="middle">One session &rarr; one GameResult (DB rule)</text>
+          <text x="600" y="150" font-size="12.5" fill-opacity="0.75" text-anchor="middle">so B &amp; C's completion calls just</text>
+          <text x="600" y="170" font-size="12.5" fill-opacity="0.75" text-anchor="middle">re-return A's stored result</text>
+        </svg>
+      </div>
+      <div class="callout danger">Net effect: playing game&nbsp;A ended the session before B and C were ever reachable in practice, and if a child did play them anyway, their results were silently dropped &mdash; not stored, not shown, not scored.</div>
+    </section>
+
+    <section id="fix">
+      <div class="sec-head"><span class="sec-num">03</span><h2>The fix: round&#8209;robin distribution</h2></div>
+      <p>Rather than reworking completion and results to handle several in-flight games per session, we removed the actual source of the conflict: a session generated for a plan now receives only <em>one</em> of the plan's games. Which one is decided by <b>cycling through the plan's game list</b>, in the order they were added, one game per session, wrapping back to the start once the list is exhausted.</p>
+
+      <h3>The rule</h3>
+      <div class="callout">
+        <code class="field">session's game = plan.games[ session_index % number_of_games ]</code>
+      </div>
+      <p>Session 0 gets the plan's 1st game, session 1 gets the 2nd, and so on; once every game has had a turn, it starts over from the 1st. This keeps every game in rotation across the course of the plan instead of piling them all into every visit.</p>
+
+      <div class="figure">
+        <svg viewBox="0 0 920 260" role="img" aria-label="After the fix: sessions 1 through 6 each receive exactly one game, cycling A, B, C, A, B, C in order.">
+          <defs>
+            <marker id="arrowR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+            </marker>
+          </defs>
+          <text x="20" y="26" font-size="12" font-weight="600" fill="var(--success)">Sessions 1&ndash;6 &mdash; after the fix</text>
+
+          <g class="mono-t" font-size="12.5">
+            <!-- 6 session slots -->
+            <!-- generate manually -->
+            <g>
+              <rect x="20" y="50" width="130" height="60" rx="9" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.3"/>
+              <text x="85" y="72" text-anchor="middle" fill-opacity="0.7" font-size="10.5">Session 1</text>
+              <text x="85" y="94" text-anchor="middle" fill="var(--accent)" font-weight="700">Game A</text>
+            </g>
+            <g>
+              <rect x="164" y="50" width="130" height="60" rx="9" fill="var(--amber-soft)" stroke="var(--amber)" stroke-width="1.3"/>
+              <text x="229" y="72" text-anchor="middle" fill-opacity="0.7" font-size="10.5">Session 2</text>
+              <text x="229" y="94" text-anchor="middle" fill="var(--amber)" font-weight="700">Game B</text>
+            </g>
+            <g>
+              <rect x="308" y="50" width="130" height="60" rx="9" fill="var(--success-soft)" stroke="var(--success)" stroke-width="1.3"/>
+              <text x="373" y="72" text-anchor="middle" fill-opacity="0.7" font-size="10.5">Session 3</text>
+              <text x="373" y="94" text-anchor="middle" fill="var(--success)" font-weight="700">Game C</text>
+            </g>
+            <g>
+              <rect x="452" y="50" width="130" height="60" rx="9" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.3"/>
+              <text x="517" y="72" text-anchor="middle" fill-opacity="0.7" font-size="10.5">Session 4</text>
+              <text x="517" y="94" text-anchor="middle" fill="var(--accent)" font-weight="700">Game A</text>
+            </g>
+            <g>
+              <rect x="596" y="50" width="130" height="60" rx="9" fill="var(--amber-soft)" stroke="var(--amber)" stroke-width="1.3"/>
+              <text x="661" y="72" text-anchor="middle" fill-opacity="0.7" font-size="10.5">Session 5</text>
+              <text x="661" y="94" text-anchor="middle" fill="var(--amber)" font-weight="700">Game B</text>
+            </g>
+            <g>
+              <rect x="740" y="50" width="130" height="60" rx="9" fill="var(--success-soft)" stroke="var(--success)" stroke-width="1.3"/>
+              <text x="805" y="72" text-anchor="middle" fill-opacity="0.7" font-size="10.5">Session 6</text>
+              <text x="805" y="94" text-anchor="middle" fill="var(--success)" font-weight="700">Game C</text>
+            </g>
+          </g>
+
+          <!-- cycle-back arrow -->
+          <path d="M 150 130 C 150 175, 452 175, 452 122" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#arrowR)"/>
+          <text x="301" y="192" text-anchor="middle" font-size="11" fill-opacity="0.6">list of 3 games wraps back to Game A at session 4</text>
+
+          <!-- each session -> one result -->
+          <g font-size="10.5" fill-opacity="0.65">
+            <text x="85" y="130" text-anchor="middle">&darr; one result</text>
+            <text x="373" y="130" text-anchor="middle">&darr; one result</text>
+            <text x="805" y="130" text-anchor="middle">&darr; one result</text>
+          </g>
+        </svg>
+        <figcaption><b>Round robin over the plan's game list.</b> Colors repeat because the games repeat &mdash; game A (blue) reappears at session&nbsp;4, exactly where <code class="field">index % 3</code> wraps back to 0.</figcaption>
+      </div>
+
+      <div class="cards">
+        <div class="card"><h4><span class="swatch" style="background:var(--success)"></span>Completion still works</h4><p>Every session has exactly one game, so the existing one&#8209;result&#8209;per&#8209;session webhook logic needed no changes at all &mdash; it already assumed this.</p></div>
+        <div class="card"><h4><span class="swatch" style="background:var(--accent)"></span>Plans stay flexible</h4><p>A plan can still hold as many games as a therapist wants; they just get spread across the plan's sessions instead of stacked into each one.</p></div>
+        <div class="card"><h4><span class="swatch" style="background:var(--amber)"></span>Enforced in the database</h4><p>A uniqueness rule on the session&#8211;game link makes it structurally impossible for a future code change to reintroduce more than one game per session.</p></div>
+      </div>
+    </section>
+
+    <section id="example">
+      <div class="sec-head"><span class="sec-num">04</span><h2>Worked example</h2></div>
+      <p>A plan has <b>3 games</b> (in this order: Balance Beam, Sound Match, Star Catcher) and runs for a course of <b>7 sessions</b>. Here is exactly what each session is assigned:</p>
+
+      <table>
+        <thead>
+          <tr><th>Session</th><th>Index (0&#8209;based)</th><th>index % 3</th><th>Assigned game</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">Session 1</td><td class="mono">0</td><td class="mono">0</td><td><span class="pill a">Balance Beam</span></td></tr>
+          <tr><td class="mono">Session 2</td><td class="mono">1</td><td class="mono">1</td><td><span class="pill amber">Sound Match</span></td></tr>
+          <tr><td class="mono">Session 3</td><td class="mono">2</td><td class="mono">2</td><td><span class="pill success">Star Catcher</span></td></tr>
+          <tr><td class="mono">Session 4</td><td class="mono">3</td><td class="mono">0</td><td><span class="pill a">Balance Beam</span></td></tr>
+          <tr><td class="mono">Session 5</td><td class="mono">4</td><td class="mono">1</td><td><span class="pill amber">Sound Match</span></td></tr>
+          <tr><td class="mono">Session 6</td><td class="mono">5</td><td class="mono">2</td><td><span class="pill success">Star Catcher</span></td></tr>
+          <tr><td class="mono">Session 7</td><td class="mono">6</td><td class="mono">0</td><td><span class="pill a">Balance Beam</span></td></tr>
+        </tbody>
+        <caption>7 sessions over 3 games: the rotation lands on 4 / 2 / 1 &mdash; as even a split as 7 &divide; 3 allows, always favoring the games earlier in the plan's list.</caption>
+      </table>
+    </section>
+
+    <section id="edges">
+      <div class="sec-head"><span class="sec-num">05</span><h2>Edge cases</h2></div>
+      <ul class="prose">
+        <li><b>No games on the plan.</b> Sessions still generate on schedule; none get a game assignment until one is added &mdash; same as before.</li>
+        <li><b>Exactly one game.</b> Every session gets that one game. Identical to what already happened for single&#8209;game plans, so nothing changes for the common case.</li>
+        <li><b>Games that don't divide evenly</b> (e.g. 3 games over 7 sessions, above). The remainder always falls to the games earlier in the list, since the cycle restarts from index 0 each time it wraps.</li>
+      </ul>
+
+      <h3>Duration check, adjusted to match</h3>
+      <p>The plan editor warns when a game's runtime doesn't fit the session's target duration. That check used to <b>sum every game's duration together</b> &mdash; which made sense when every game played in the same session. Now that a session only ever plays one game, the check instead flags the plan's <b>single longest game</b> against the session length, since that is the one case that could actually overrun a visit.</p>
+    </section>
+
+    <section id="scope">
+      <div class="sec-head"><span class="sec-num">06</span><h2>What didn't change</h2></div>
+      <p>Everything downstream of "a session has one game" was already built around that assumption, so none of it needed to move:</p>
+      <ul class="prose">
+        <li>The completion webhook still creates one <code class="field">GameResult</code> per session and marks it complete on that call &mdash; that behavior is now simply always correct instead of only correct by accident.</li>
+        <li>The session detail screen and the plan's sessions list already render per&#8209;assignment; with one assignment per session, they just show one card instead of several.</li>
+        <li>Nothing about how results are scored, stored, or displayed changed.</li>
+      </ul>
+    </section>
+
+    <footer>
+      Internal engineering note &middot; scheduling model for treatment&#8209;plan sessions.
+    </footer>
+  </main>
+</div>

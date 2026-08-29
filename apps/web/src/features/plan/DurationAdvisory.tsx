@@ -21,8 +21,8 @@ export function DurationAdvisory({
 				Duration Mismatch
 			</AlertTitle>
 			<AlertDescription className="text-on-surface-variant text-sm">
-				Total game time ({totalMinutes} min) exceeds session target duration (
-				{limitMinutes} min). This is advisory only.
+				Longest game duration ({totalMinutes} min) exceeds session target
+				duration ({limitMinutes} min). This is advisory only.
 			</AlertDescription>
 		</Alert>
 	);

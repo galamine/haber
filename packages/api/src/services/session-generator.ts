@@ -2,7 +2,11 @@ import { randomUUID } from "node:crypto";
 
 import prisma from "@haber-final/db";
 
-export async function generateSessionsForPlan(planId: string) {
+export async function generateSessionsForPlan(
+	planId: string,
+): Promise<
+	Awaited<ReturnType<typeof prisma.therapySession.createManyAndReturn>>
+> {
 	const plan = await prisma.treatmentPlan.findUniqueOrThrow({
 		where: { id: planId },
 		include: {
@@ -54,18 +58,25 @@ export async function generateSessionsForPlan(planId: string) {
 		data: batch,
 	});
 
-	await prisma.sessionGameAssignment.createMany({
-		data: plan.gameAssignments.flatMap((assignment) =>
-			createdSessions.map((s) => ({
-				sessionId: s.id,
-				gameVersionId: assignment.gameVersionId,
-				durationSeconds: assignment.durationSeconds,
-				repetitions: assignment.repetitions,
-				instructions: assignment.instructions,
-				order: assignment.order,
-			})),
-		),
-	});
+	if (plan.gameAssignments.length > 0) {
+		const assignments = plan.gameAssignments;
+		await prisma.sessionGameAssignment.createMany({
+			data: createdSessions.map((s, index) => {
+				const assignment = assignments[index % assignments.length];
+				if (!assignment) {
+					throw new Error("Game assignment missing for generated session");
+				}
+				return {
+					sessionId: s.id,
+					gameVersionId: assignment.gameVersionId,
+					durationSeconds: assignment.durationSeconds,
+					repetitions: assignment.repetitions,
+					instructions: assignment.instructions,
+					order: 0,
+				};
+			}),
+		});
+	}
 
 	return createdSessions;
 }
@@ -74,7 +85,7 @@ export async function regenerateFutureSessions(
 	oldPlanId: string,
 	newPlanId: string,
 	fromDate: Date,
-) {
+): Promise<Awaited<ReturnType<typeof generateSessionsForPlan>>> {
 	await prisma.therapySession.deleteMany({
 		where: {
 			planId: oldPlanId,

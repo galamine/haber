@@ -302,16 +302,16 @@ export const planRouter = router({
 				where: { planId: input.planId },
 			});
 
-			const totalSeconds = assignments.reduce(
-				(sum, a) => sum + (a.durationSeconds ?? 0),
+			const maxSeconds = assignments.reduce(
+				(max, a) => Math.max(max, a.durationSeconds ?? 0),
 				0,
 			);
 			const limitSeconds = plan.sessionDurationMinutes * 60;
 
 			return {
-				totalSeconds,
+				maxSeconds,
 				limitSeconds,
-				exceeds: totalSeconds > limitSeconds,
+				exceeds: maxSeconds > limitSeconds,
 			};
 		}),
 
