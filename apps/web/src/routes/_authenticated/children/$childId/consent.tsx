@@ -2,7 +2,15 @@ import { Button } from "@haber-final/ui/components/button";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { ArrowLeft, CheckCircle2, Mail, Shield, XCircle } from "lucide-react";
+import {
+	ArrowLeft,
+	CheckCircle2,
+	ExternalLink,
+	Mail,
+	Shield,
+	XCircle,
+} from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { useAuthStore } from "@/stores/auth";
@@ -44,6 +52,10 @@ function ConsentPage() {
 
 	const isAdmin = role === "CLINIC_ADMIN" || role === "SUPER_ADMIN";
 
+	const [openableConsentUrl, setOpenableConsentUrl] = useState<string | null>(
+		null,
+	);
+
 	const { data: child, isLoading: childLoading } = useQuery(
 		trpc.child.get.queryOptions({ childId }),
 	);
@@ -56,8 +68,9 @@ function ConsentPage() {
 
 	const sendMutation = useMutation(
 		trpc.consentInvitation.send.mutationOptions({
-			onSuccess: () => {
+			onSuccess: (data) => {
 				toast.success("Consent link sent!");
+				setOpenableConsentUrl(data.consentUrl);
 				queryClient.invalidateQueries({
 					queryKey: trpc.consentInvitation.list.queryOptions({ childId })
 						.queryKey,
@@ -254,6 +267,23 @@ function ConsentPage() {
 											the consent link.
 										</p>
 									)}
+									{openableConsentUrl && (
+										<>
+											<Button
+												variant="outline"
+												className="w-full gap-2"
+												onClick={() =>
+													window.open(openableConsentUrl, "_blank")
+												}
+											>
+												<ExternalLink className="h-4 w-4" />
+												Open Consent Page
+											</Button>
+											<p className="text-on-surface-variant text-xs">
+												Or open it now to complete consent together.
+											</p>
+										</>
+									)}
 								</div>
 							) : activeInvitation ? (
 								<div className="space-y-2">
@@ -271,6 +301,22 @@ function ConsentPage() {
 											? `Expires in ${Math.ceil((new Date(activeInvitation.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days`
 											: "Link has expired"}
 									</p>
+									{openableConsentUrl && (
+										<>
+											<Button
+												className="w-full gap-2"
+												onClick={() =>
+													window.open(openableConsentUrl, "_blank")
+												}
+											>
+												<ExternalLink className="h-4 w-4" />
+												Open Consent Page
+											</Button>
+											<p className="text-on-surface-variant text-xs">
+												Or open it now to complete consent together.
+											</p>
+										</>
+									)}
 									<Button
 										variant="outline"
 										className="w-full gap-2"

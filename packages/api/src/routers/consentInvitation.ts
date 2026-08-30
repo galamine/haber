@@ -87,7 +87,7 @@ export const consentInvitationRouter = router({
 				console.log(`[DEV CONSENT LINK] ${guardian.email}: ${consentUrl}`);
 			}
 
-			return { id: invitation.id, expiresAt };
+			return { id: invitation.id, expiresAt, consentUrl };
 		}),
 
 	validate: publicProcedure
