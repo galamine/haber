@@ -32,6 +32,7 @@ model TherapySession {
   @@index([planId])
   @@index([childId])
   @@index([scheduledDate])
+  @@index([assignedTherapistId])
   @@map("therapy_session")
 }
 

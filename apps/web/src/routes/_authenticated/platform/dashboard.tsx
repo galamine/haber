@@ -1,7 +1,7 @@
 import { Skeleton } from "@haber-final/ui/components/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { Building2, Calendar, TrendingUp, Users } from "lucide-react";
+import { Building2, Calendar, Gamepad2, TrendingUp, Users } from "lucide-react";
 import { PlatformClinicsTable } from "@/features/dashboard/PlatformClinicsTable";
 import { StatCard } from "@/features/dashboard/StatCard";
 import { useAuthStore } from "@/stores/auth";
@@ -20,14 +20,18 @@ function PlatformDashboardPage() {
 	const { data, isLoading } = useQuery(
 		trpc.clinic.platformSummary.queryOptions(),
 	);
+	const { data: gameCatalog, isLoading: gameCatalogLoading } = useQuery(
+		trpc.game.catalogSummary.queryOptions(),
+	);
 
-	if (isLoading) {
+	if (isLoading || gameCatalogLoading) {
 		return (
 			<div className="space-y-6 p-8">
 				<h1 className="font-semibold text-2xl text-on-surface">
 					Platform Dashboard
 				</h1>
-				<div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+				<div className="grid grid-cols-1 gap-4 md:grid-cols-5">
+					<Skeleton className="h-32" />
 					<Skeleton className="h-32" />
 					<Skeleton className="h-32" />
 					<Skeleton className="h-32" />
@@ -47,7 +51,7 @@ function PlatformDashboardPage() {
 			<h1 className="font-semibold text-2xl text-on-surface">
 				Platform Dashboard
 			</h1>
-			<div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+			<div className="grid grid-cols-1 gap-4 md:grid-cols-5">
 				<StatCard
 					title="Total Clinics"
 					value={data.clinicData.length}
@@ -68,6 +72,14 @@ function PlatformDashboardPage() {
 					value={data.newClinicsThisMonth}
 					icon={TrendingUp}
 				/>
+				{gameCatalog && (
+					<StatCard
+						title="Game Catalog"
+						value={gameCatalog.totalGames}
+						subtitle={`${gameCatalog.totalCategories} categories, ${gameCatalog.deprecatedVersionCount} deprecated versions`}
+						icon={Gamepad2}
+					/>
+				)}
 			</div>
 			<PlatformClinicsTable data={data.clinicData} />
 		</div>

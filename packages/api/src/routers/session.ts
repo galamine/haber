@@ -118,6 +118,44 @@ export const sessionRouter = router({
 		});
 	}),
 
+	listForWeek: protectedProcedure.query(async ({ ctx }) => {
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		const dayOfWeek = today.getDay();
+		const startOfWeek = new Date(today);
+		startOfWeek.setDate(today.getDate() - dayOfWeek);
+		const endOfWeek = new Date(startOfWeek);
+		endOfWeek.setDate(startOfWeek.getDate() + 6);
+		endOfWeek.setHours(23, 59, 59, 999);
+
+		return prisma.therapySession.findMany({
+			where: {
+				assignedTherapistId: ctx.auth.userId,
+				scheduledDate: {
+					gte: startOfWeek,
+					lte: endOfWeek,
+				},
+			},
+			orderBy: { scheduledDate: "asc" },
+			include: {
+				gameAssignments: { orderBy: { order: "asc" } },
+				child: { select: { fullName: true } },
+			},
+		});
+	}),
+
+	listNeedingNotes: protectedProcedure.query(async ({ ctx }) => {
+		return prisma.therapySession.findMany({
+			where: {
+				assignedTherapistId: ctx.auth.userId,
+				status: { in: ["COMPLETED", "MANUALLY_CLOSED"] },
+				notes: null,
+			},
+			orderBy: { scheduledDate: "desc" },
+			include: { child: { select: { fullName: true } } },
+		});
+	}),
+
 	getCalendar: protectedProcedure
 		.input(GetCalendarInput)
 		.query(async ({ input }) => {

@@ -177,6 +177,17 @@ export const gameRouter = router({
 		});
 	}),
 
+	catalogSummary: adminProcedure.query(async () => {
+		const [totalGames, totalCategories, deprecatedVersionCount] =
+			await Promise.all([
+				prisma.game.count(),
+				prisma.gameCategory.count(),
+				prisma.gameVersion.count({ where: { isLatest: false } }),
+			]);
+
+		return { totalGames, totalCategories, deprecatedVersionCount };
+	}),
+
 	listEnabledForClinic: protectedProcedure.query(async ({ ctx }) => {
 		return prisma.game.findMany({
 			where: {

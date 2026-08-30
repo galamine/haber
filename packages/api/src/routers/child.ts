@@ -534,4 +534,26 @@ export const childRouter = router({
 				totalPages: Math.ceil(total / input.pageSize),
 			};
 		}),
+
+	listReviewsDue: protectedProcedure.query(async ({ ctx }) => {
+		const assignments = await prisma.childTherapistAssignment.findMany({
+			where: {
+				therapistId: ctx.auth.userId,
+				reviewDueAt: { lte: new Date() },
+				reviewClaimed: false,
+			},
+			orderBy: { reviewDueAt: "asc" },
+		});
+
+		const children = await prisma.child.findMany({
+			where: { id: { in: assignments.map((a) => a.childId) } },
+			select: { id: true, fullName: true, opNumber: true },
+		});
+		const childById = new Map(children.map((c) => [c.id, c]));
+
+		return assignments.map((a) => ({
+			...a,
+			child: childById.get(a.childId) ?? null,
+		}));
+	}),
 });

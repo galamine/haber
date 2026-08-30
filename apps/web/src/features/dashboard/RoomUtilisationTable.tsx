@@ -28,12 +28,14 @@ type RoomUtilisationTableProps = {
 	rooms: Room[];
 	booked: number;
 	total: number;
+	maintenanceCount: number;
 };
 
 export function RoomUtilisationTable({
 	rooms,
 	booked,
 	total,
+	maintenanceCount,
 }: RoomUtilisationTableProps) {
 	const bookedRatio = total > 0 ? (booked / total) * 100 : 0;
 
@@ -91,6 +93,12 @@ export function RoomUtilisationTable({
 						<span>{bookedRatio.toFixed(0)}%</span>
 					</div>
 					<Progress value={bookedRatio} />
+					{maintenanceCount > 0 && (
+						<p className="text-on-surface-variant text-xs">
+							{maintenanceCount} room{maintenanceCount === 1 ? "" : "s"} in
+							maintenance
+						</p>
+					)}
 				</div>
 			</CardContent>
 		</Card>

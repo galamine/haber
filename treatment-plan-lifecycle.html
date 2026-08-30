@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Treatment Plan Lifecycle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1c2624;
+    --paper: #f4f6f4;
+    --paper-raised: #ffffff;
+    --accent: #2f7d63;
+    --accent-dark: #235e4b;
+    --accent-soft: #dcece4;
+    --line: #d6dbd8;
+    --muted: #5c6b66;
+    --warn: #b5762b;
+    --warn-soft: #f5e8d6;
+    --shadow: 0 1px 2px rgba(28,38,36,0.06), 0 6px 20px rgba(28,38,36,0.05);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #e9efec;
+      --paper: #101614;
+      --paper-raised: #17201d;
+      --accent: #5cbb9a;
+      --accent-dark: #7fd0b3;
+      --accent-soft: #1d3129;
+      --line: #2a3833;
+      --muted: #9db1aa;
+      --warn: #e0a862;
+      --warn-soft: #332615;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #e9efec;
+    --paper: #101614;
+    --paper-raised: #17201d;
+    --accent: #5cbb9a;
+    --accent-dark: #7fd0b3;
+    --accent-soft: #1d3129;
+    --line: #2a3833;
+    --muted: #9db1aa;
+    --warn: #e0a862;
+    --warn-soft: #332615;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--accent-soft); }
+
+  h1, h2, h3 { font-family: "Fraunces", Georgia, serif; text-wrap: balance; margin: 0; }
+
+  code, .mono, .procedure, .status {
+    font-family: "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  a { color: var(--accent-dark); }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 4rem 1.75rem 6rem;
+  }
+
+  header.page {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-bottom: 3rem;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+  }
+  header.page h1 {
+    font-size: clamp(2rem, 4.5vw, 2.9rem);
+    font-weight: 600;
+    max-width: 20ch;
+  }
+  header.page p.dek {
+    max-width: 62ch;
+    color: var(--muted);
+    font-size: 1.05rem;
+    margin: 0;
+  }
+
+  /* status legend chips */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.28rem 0.7rem;
+    border-radius: 999px;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+
+  /* ---- lifecycle spine ---- */
+  .spine {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .spine::before {
+    content: "";
+    position: absolute;
+    left: 21px;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--line), var(--accent-soft) 8%, var(--accent-soft) 92%, var(--line));
+  }
+
+  .stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 0 1.25rem;
+    padding-bottom: 2.6rem;
+  }
+  .stage:last-child { padding-bottom: 0; }
+
+  .stage-marker {
+    position: relative;
+    width: 44px;
+    display: flex;
+    justify-content: center;
+    padding-top: 0.15rem;
+  }
+  .stage-marker .node {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--paper-raised);
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent-dark);
+    z-index: 1;
+    box-shadow: var(--shadow);
+  }
+  .stage.terminal .stage-marker .node {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+
+  .stage-body {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.4rem 1.5rem 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  .stage-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.3rem;
+  }
+  .stage-head h2 {
+    font-size: 1.32rem;
+    font-weight: 600;
+  }
+  .status-badge {
+    font-size: 0.72rem;
+    padding: 0.22rem 0.6rem;
+    border-radius: 6px;
+    background: var(--accent-soft);
+    color: var(--accent-dark);
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .stage-sub {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0.15rem 0 1rem;
+    max-width: 60ch;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .action {
+    display: grid;
+    grid-template-columns: minmax(130px, 180px) 1fr;
+    gap: 0.25rem 1rem;
+    padding: 0.75rem 0.9rem;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    align-items: start;
+  }
+  .action .name {
+    font-weight: 600;
+    font-size: 0.92rem;
+  }
+  .action .name small {
+    display: block;
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin-top: 0.15rem;
+  }
+  .action .detail { font-size: 0.88rem; color: var(--ink); }
+  .action .detail .procedure {
+    color: var(--accent-dark);
+    font-size: 0.82rem;
+  }
+  .action .transition {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.35rem;
+  }
+  .action .transition .from, .action .transition .to {
+    font-family: "IBM Plex Mono", monospace;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    background: var(--accent-soft);
+    color: var(--accent-dark);
+  }
+
+  @media (max-width: 620px) {
+    .action { grid-template-columns: 1fr; }
+  }
+
+  /* branch for pause/resume loop indicator */
+  .loop-note {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 0.9rem;
+    padding-top: 0.9rem;
+    border-top: 1px dashed var(--line);
+  }
+
+  /* callouts */
+  aside.callout {
+    margin: 1.1rem 0 0;
+    padding: 1rem 1.15rem;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+  }
+  aside.callout h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent-dark);
+    margin-bottom: 0.5rem;
+    font-family: "Public Sans", sans-serif;
+  }
+  aside.callout p, aside.callout ul { margin: 0; font-size: 0.88rem; color: var(--ink); }
+  aside.callout ul { padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.3rem; }
+  aside.callout code {
+    background: var(--paper-raised);
+    padding: 0.05rem 0.35rem;
+    border-radius: 4px;
+    font-size: 0.85em;
+  }
+
+  aside.callout.warn {
+    background: var(--warn-soft);
+    border-color: color-mix(in srgb, var(--warn) 30%, var(--line));
+  }
+  aside.callout.warn h3 { color: var(--warn); }
+
+  /* supporting section: sessions + permissions */
+  .support-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-top: 3.2rem;
+  }
+  @media (max-width: 700px) { .support-grid { grid-template-columns: 1fr; } }
+
+  .support-card {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.3rem 1.4rem;
+    box-shadow: var(--shadow);
+  }
+  .support-card h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.7rem;
+  }
+  .support-card p { font-size: 0.9rem; color: var(--muted); margin: 0 0 0.7rem; }
+
+  .flow-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.8rem;
+  }
+  .flow-row .pill {
+    padding: 0.22rem 0.55rem;
+    border-radius: 6px;
+    background: var(--accent-soft);
+    color: var(--accent-dark);
+  }
+  .flow-row .pill.alt { background: var(--warn-soft); color: var(--warn); }
+  .flow-row .arrow { color: var(--muted); }
+
+  section.section-title {
+    margin: 3.2rem 0 1.2rem;
+  }
+  section.section-title h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-family: "Public Sans", sans-serif;
+  }
+
+  footer.page {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .stage { animation: rise 0.5s ease backwards; }
+    .stage:nth-child(1) { animation-delay: 0.02s; }
+    .stage:nth-child(2) { animation-delay: 0.08s; }
+    .stage:nth-child(3) { animation-delay: 0.14s; }
+    .stage:nth-child(4) { animation-delay: 0.2s; }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <span class="eyebrow">Reference · Treatment Plan Lifecycle</span>
+    <h1>From draft to closed: every action on a treatment plan</h1>
+    <p class="dek">A plan moves through four statuses — <code>DRAFT</code>, <code>ACTIVE</code>, <code>PAUSED</code>, <code>CLOSED</code> — but the interesting behavior lives in the actions that trigger, gate, or branch off those transitions. This maps every one of them, procedure by procedure, as they exist in <code>plan.ts</code> and <code>goal.ts</code> today.</p>
+    <div class="legend">
+      <span class="chip"><span class="dot"></span>tenant-scoped by clinic</span>
+      <span class="chip"><span class="dot"></span>therapist/staff need a child assignment</span>
+      <span class="chip"><span class="dot"></span>super-admin bypasses both</span>
+    </div>
+  </header>
+
+  <div class="spine">
+
+    <!-- STAGE 1: DRAFT -->
+    <div class="stage">
+      <div class="stage-marker"><div class="node">01</div></div>
+      <div class="stage-body">
+        <div class="stage-head">
+          <h2>Draft</h2>
+          <span class="status-badge">status: DRAFT</span>
+        </div>
+        <p class="stage-sub">The plan exists but nothing is running yet. It can be freely reshaped — activities and goals added, removed, reordered — before it ever reaches a family or a session calendar.</p>
+
+        <div class="actions">
+          <div class="action">
+            <div class="name">Create<small>starts the plan</small></div>
+            <div class="detail">
+              <span class="procedure">plan.create</span> — creates the record at <code>versionNumber: 1</code>, optionally seeded from a preset. UI: <em>plans/new</em>.
+              <div class="transition"><span class="to">— → DRAFT</span></div>
+            </div>
+          </div>
+          <div class="action">
+            <div class="name">Manage activities<small>build-out</small></div>
+            <div class="detail">
+              <span class="procedure">plan.addGame · removeGame · updateGame · reorderGames</span> — attach, remove, edit, or resequence assigned games/activities.
+            </div>
+          </div>
+          <div class="action">
+            <div class="name">Add goals<small>build-out</small></div>
+            <div class="detail">
+              <span class="procedure">goal.create</span> — short-term or long-term goals, each starting at <code>IN_PROGRESS</code>.
+            </div>
+          </div>
+          <div class="action">
+            <div class="name">Check duration<small>validation</small></div>
+            <div class="detail">
+              <span class="procedure">plan.checkSessionDuration</span> — read-only check that assigned activity durations fit inside the configured session length.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 2: ACTIVE / PAUSED loop -->
+    <div class="stage">
+      <div class="stage-marker"><div class="node">02</div></div>
+      <div class="stage-body">
+        <div class="stage-head">
+          <h2>Active ⇄ Paused</h2>
+          <span class="status-badge">status: ACTIVE / PAUSED</span>
+        </div>
+        <p class="stage-sub">Once activated, the plan is live: sessions exist, activities are being delivered, and progress is being tracked. It can be paused and resumed any number of times without losing history.</p>
+
+        <div class="actions">
+          <div class="action">
+            <div class="name">Activate<small>enter live state</small></div>
+            <div class="detail">
+              <span class="procedure">plan.activate</span> — flips <code>isActive: true</code> and calls <code>generateSessionsForPlan</code>, which creates the <code>TherapySession</code> rows the plan will run on.
+              <div class="transition"><span class="from">DRAFT / PAUSED</span><span>→</span><span class="to">ACTIVE</span></div>
+            </div>
+          </div>
+          <div class="action">
+            <div class="name">Pause<small>hold delivery</small></div>
+            <div class="detail">
+              <span class="procedure">plan.pause</span> — stops the plan without closing it out; nothing is deleted or finalized.
+              <div class="transition"><span class="from">ACTIVE</span><span>→</span><span class="to">PAUSED</span></div>
+            </div>
+          </div>
+          <div class="action">
+            <div class="name">Resume<small>re-enter live state</small></div>
+            <div class="detail">
+              <span class="procedure">plan.resume</span> — the mirror of pause.
+              <div class="transition"><span class="from">PAUSED</span><span>→</span><span class="to">ACTIVE</span></div>
+            </div>
+          </div>
+          <div class="action">
+            <div class="name">Extend<small>no status change</small></div>
+            <div class="detail">
+              <span class="procedure">plan.extend</span> — lengthens <code>programLengthWeeks</code> via a 4 / 6 / 8 / 12-week picker in the UI. Doesn't touch status.
+            </div>
+          </div>
+          <div class="action">
+            <div class="name">Record progress<small>no status change</small></div>
+            <div class="detail">
+              <span class="procedure">goal.updateAttainment</span> — logs a <code>GoalProgressEntry</code> against a <code>FollowUpAssessment</code>, updating each goal's attainment percentage over the life of the plan.
+            </div>
+          </div>
+        </div>
+
+        <div class="loop-note">↻ Pause and resume can repeat indefinitely — this is the only two-way transition in the lifecycle.</div>
+
+        <aside class="callout">
+          <h3>Modify plan — the one action that forks, not flips</h3>
+          <p>Unlike every other action here, <code>plan.modify</code> doesn't just change a status field. While the plan is <code>ACTIVE</code>, it:</p>
+          <ul>
+            <li>Marks the current version <code>isActive: false</code> (its status field is untouched)</li>
+            <li>Creates a <strong>new plan row</strong> at <code>versionNumber + 1</code>, <code>status: ACTIVE</code>, linked back via <code>parentPlanId</code></li>
+            <li>Copies over the activity assignments, then calls <code>regenerateFutureSessions</code></li>
+            <li>Runs <code>goal.applyPlanModificationDecisions</code> for every existing goal — see below</li>
+          </ul>
+          <p style="margin-top:0.6rem">Blocked entirely once the plan is <code>CLOSED</code>.</p>
+        </aside>
+
+        <aside class="callout">
+          <h3>Per-goal decisions inside a Modify</h3>
+          <div class="flow-row">
+            <span class="pill">continue</span><span style="color:var(--muted)">copied as-is</span>
+          </div>
+          <div class="flow-row" style="margin-top:0.5rem">
+            <span class="pill">modify</span><span style="color:var(--muted)">old goal → </span><span class="pill alt">DISCONTINUED</span><span class="arrow">+</span><span style="color:var(--muted)">new goal → </span><span class="pill">IN_PROGRESS</span><span style="color:var(--muted)">(linked via <code>supersededByGoalId</code>)</span>
+          </div>
+          <div class="flow-row" style="margin-top:0.5rem">
+            <span class="pill alt">discontinue</span><span style="color:var(--muted)">→ </span><span class="pill alt">DISCONTINUED</span>
+          </div>
+          <div class="flow-row" style="margin-top:0.5rem">
+            <span class="pill">add</span><span style="color:var(--muted)">brand-new goal created on the new version</span>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- STAGE 3: CLOSED -->
+    <div class="stage terminal">
+      <div class="stage-marker"><div class="node">03</div></div>
+      <div class="stage-body">
+        <div class="stage-head">
+          <h2>Closed</h2>
+          <span class="status-badge" style="background:var(--ink); color:var(--paper);">status: CLOSED — terminal</span>
+        </div>
+        <p class="stage-sub">The plan is done. No further actions are exposed in the UI once a plan reaches this state — it's a dead end by design.</p>
+
+        <div class="actions">
+          <div class="action">
+            <div class="name">Close<small>end the plan</small></div>
+            <div class="detail">
+              <span class="procedure">plan.close</span> — sets <code>closureReason</code> and <code>outcomeSummary</code>, flips <code>isActive: false</code>.
+              <div class="transition"><span class="from">any non-CLOSED</span><span>→</span><span class="to">CLOSED</span></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="callout warn">
+          <h3>Known gap — worth a fix</h3>
+          <p>The Close button in <code>PlanLifecycleButtons.tsx</code> currently submits <code>closureReason</code> and <code>outcomeSummary</code> as empty strings instead of prompting the clinician for them. The fields exist in the schema and are meant to capture why a plan ended — right now that context is silently lost every time a plan is closed.</p>
+        </aside>
+      </div>
+    </div>
+
+  </div>
+
+  <section class="section-title"><h2>Supporting lifecycles</h2></section>
+
+  <div class="support-grid">
+    <div class="support-card">
+      <h3>Sessions (spawned by an active plan)</h3>
+      <p>Each activation or modification generates <code>TherapySession</code> rows, which run their own independent state machine:</p>
+      <div class="flow-row">
+        <span class="pill">PENDING</span><span class="arrow">→</span><span class="pill">IN_PROGRESS</span><span class="arrow">→</span><span class="pill">COMPLETED</span>
+      </div>
+      <div class="flow-row" style="margin-top:0.6rem">
+        <span class="pill alt">ABSENT</span><span style="color:var(--muted)">(only from PENDING)</span>
+      </div>
+      <div class="flow-row" style="margin-top:0.6rem">
+        <span class="pill alt">MANUALLY_CLOSED</span><span style="color:var(--muted)">(from PENDING or IN_PROGRESS)</span>
+      </div>
+    </div>
+
+    <div class="support-card">
+      <h3>Who can act on a plan</h3>
+      <p>Every mutation above resolves through the same guard before anything else runs:</p>
+      <ul style="margin:0; padding-left:1.1rem; font-size:0.9rem; color:var(--ink); display:flex; flex-direction:column; gap:0.4rem;">
+        <li>Scoped to the caller's <code>clinicId</code> — never cross-tenant</li>
+        <li><strong>THERAPIST</strong> / <strong>STAFF</strong> also need a <code>ChildTherapistAssignment</code> linking them to the child, or the call fails with <code>FORBIDDEN</code></li>
+        <li><strong>SUPER_ADMIN</strong> bypasses both checks</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer class="page">
+    Source: <code>packages/api/src/routers/plan.ts</code>, <code>goal.ts</code> · <code>packages/db/prisma/schema/plans.prisma</code> · <code>apps/web/src/features/plan/PlanLifecycleButtons.tsx</code>
+  </footer>
+
+</div>
+</body>
+</html>

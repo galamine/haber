@@ -1,4 +1,5 @@
 import prisma from "@haber-final/db";
+import { TRPCError } from "@trpc/server";
 import { clinicAdminProcedure, protectedProcedure, router } from "../index";
 import { ChildDashboardInput } from "../schemas/dashboard";
 import { GetCalendarInput } from "../schemas/session";
@@ -300,6 +301,77 @@ export const dashboardRouter = router({
 			return entries;
 		}),
 
+	// ── Therapist caseload summary ──────────────────────────────────────────
+
+	myCaseloadSummary: protectedProcedure.query(async ({ ctx }) => {
+		if (ctx.auth.role !== "THERAPIST" && ctx.auth.role !== "STAFF") {
+			throw new TRPCError({ code: "FORBIDDEN" });
+		}
+
+		const assignments = await prisma.childTherapistAssignment.findMany({
+			where: { therapistId: ctx.auth.userId },
+			select: { childId: true },
+		});
+		const childIds = assignments.map((a) => a.childId);
+
+		const now = new Date();
+		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+		const tomorrow = new Date(today);
+		tomorrow.setDate(tomorrow.getDate() + 1);
+
+		const dayOfWeek = today.getDay();
+		const startOfWeek = new Date(today);
+		startOfWeek.setDate(today.getDate() - dayOfWeek);
+		const endOfWeek = new Date(startOfWeek);
+		endOfWeek.setDate(startOfWeek.getDate() + 6);
+		endOfWeek.setHours(23, 59, 59, 999);
+
+		const [
+			activeChildrenCount,
+			sessionsTodayCount,
+			sessionsThisWeekCount,
+			attendanceSessions,
+		] = await Promise.all([
+			prisma.child.count({
+				where: { id: { in: childIds }, deletedAt: null },
+			}),
+			prisma.therapySession.count({
+				where: {
+					assignedTherapistId: ctx.auth.userId,
+					scheduledDate: { gte: today, lt: tomorrow },
+				},
+			}),
+			prisma.therapySession.count({
+				where: {
+					assignedTherapistId: ctx.auth.userId,
+					scheduledDate: { gte: startOfWeek, lte: endOfWeek },
+				},
+			}),
+			prisma.therapySession.findMany({
+				where: {
+					assignedTherapistId: ctx.auth.userId,
+					status: { in: ["COMPLETED", "ABSENT"] },
+				},
+				select: { status: true },
+			}),
+		]);
+
+		const completed = attendanceSessions.filter(
+			(s) => s.status === "COMPLETED",
+		).length;
+		const attendancePct =
+			attendanceSessions.length > 0
+				? (completed / attendanceSessions.length) * 100
+				: 0;
+
+		return {
+			activeChildrenCount,
+			sessionsTodayCount,
+			sessionsThisWeekCount,
+			attendancePct,
+		};
+	}),
+
 	// ── Clinic summary (clinicAdmin only) ───────────────────────────────────
 
 	clinicSummary: clinicAdminProcedure.query(async ({ ctx }) => {
@@ -350,6 +422,11 @@ export const dashboardRouter = router({
 			completed:
 				todaySessionsByStatus.find((g) => g.status === "COMPLETED")?._count ??
 				0,
+			absent:
+				todaySessionsByStatus.find((g) => g.status === "ABSENT")?._count ?? 0,
+			manuallyClosed:
+				todaySessionsByStatus.find((g) => g.status === "MANUALLY_CLOSED")
+					?._count ?? 0,
 		};
 
 		const allRooms = await prisma.sensoryRoom.findMany({
@@ -514,6 +591,48 @@ export const dashboardRouter = router({
 			.filter((c) => c.sessionCount > 0)
 			.sort((a, b) => b.sessionCount - a.sessionCount);
 
+		const maintenanceCount = allRooms.filter(
+			(r) => r.status === "MAINTENANCE",
+		).length;
+
+		const clinicChildIds = await prisma.child
+			.findMany({ where: { clinicId }, select: { id: true } })
+			.then((rows) => rows.map((r) => r.id));
+
+		const [
+			pendingConsent,
+			expiredInvitations,
+			reviewsDueCount,
+			deletedChildren,
+		] = await Promise.all([
+			prisma.child.count({
+				where: { clinicId, deletedAt: null, consentStatus: "PENDING" },
+			}),
+			prisma.consentInvitation.count({
+				where: {
+					expiresAt: { lt: now },
+					usedAt: null,
+					childId: { in: clinicChildIds },
+				},
+			}),
+			prisma.childTherapistAssignment.count({
+				where: {
+					reviewDueAt: { lte: now },
+					reviewClaimed: false,
+					childId: { in: clinicChildIds },
+				},
+			}),
+			prisma.child.findMany({
+				where: { clinicId, deletedAt: { not: null } },
+				select: { deletedAt: true },
+			}),
+		]);
+
+		const SEVEN_YEARS_MS = 7 * 365.25 * 24 * 60 * 60 * 1000;
+		const retentionRecordsCount = deletedChildren.filter(
+			(c) => now.getTime() - c.deletedAt!.getTime() > SEVEN_YEARS_MS,
+		).length;
+
 		return {
 			activeChildren,
 			sessionsToday,
@@ -521,11 +640,18 @@ export const dashboardRouter = router({
 			roomUtilisation: {
 				booked: bookedRoomIds.size,
 				total: allRooms.length,
+				maintenanceCount,
 				rooms: roomsData,
 			},
 			therapistLoad,
 			planAdherenceRate,
 			topCategoriesByActivity,
+			consentBacklog: {
+				pendingConsent,
+				expiredInvitations,
+			},
+			reviewsDueCount,
+			retentionRecordsCount,
 		};
 	}),
 });

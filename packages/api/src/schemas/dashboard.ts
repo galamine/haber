@@ -78,11 +78,14 @@ export const ClinicSummarySchema = z.object({
 		pending: z.number(),
 		inProgress: z.number(),
 		completed: z.number(),
+		absent: z.number(),
+		manuallyClosed: z.number(),
 	}),
 	sessionsThisWeek: z.number(),
 	roomUtilisation: z.object({
 		booked: z.number(),
 		total: z.number(),
+		maintenanceCount: z.number(),
 		rooms: z.array(
 			z.object({
 				id: z.string(),
@@ -110,4 +113,19 @@ export const ClinicSummarySchema = z.object({
 			sessionCount: z.number(),
 		}),
 	),
+	consentBacklog: z.object({
+		pendingConsent: z.number(),
+		expiredInvitations: z.number(),
+	}),
+	reviewsDueCount: z.number(),
+	retentionRecordsCount: z.number(),
+});
+
+// ── Therapist caseload summary ─────────────────────────────────────────────
+
+export const MyCaseloadSummarySchema = z.object({
+	activeChildrenCount: z.number(),
+	sessionsTodayCount: z.number(),
+	sessionsThisWeekCount: z.number(),
+	attendancePct: z.number(),
 });
