@@ -210,7 +210,8 @@ function SessionDetailPage() {
 			toast.error("This game version has no launch path configured");
 			return;
 		}
-		if (!localStorage.getItem("pf_calibration")) {
+		if (!localStorage.getItem("calibration_launched")) {
+			localStorage.setItem("calibration_launched", "true");
 			window.open(
 				`${env.VITE_GAME_SERVER_URL}/trail_games/calibration.html`,
 				"_blank",
