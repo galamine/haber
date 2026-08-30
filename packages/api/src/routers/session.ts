@@ -230,13 +230,20 @@ export const sessionRouter = router({
 				});
 			}
 
-			return prisma.roomBooking.create({
-				data: {
-					sessionId: input.sessionId,
-					roomId: input.roomId,
-					scheduledDate: session.scheduledDate,
-					claimedById: session.assignedTherapistId ?? "",
-				},
+			return prisma.$transaction(async (tx) => {
+				const booking = await tx.roomBooking.create({
+					data: {
+						sessionId: input.sessionId,
+						roomId: input.roomId,
+						scheduledDate: session.scheduledDate,
+						claimedById: session.assignedTherapistId ?? "",
+					},
+				});
+				await tx.therapySession.update({
+					where: { id: input.sessionId },
+					data: { roomId: input.roomId },
+				});
+				return booking;
 			});
 		}),
 
