@@ -4,7 +4,6 @@ export const CreatePlanInput = z.object({
 	childId: z.string(),
 	name: z.string(),
 	programLengthWeeks: z.number().int().positive(),
-	phases: z.array(z.record(z.string(), z.unknown())).optional(),
 	startDate: z.coerce.date().optional(),
 	targetMilestones: z.array(z.string()).optional(),
 	sessionDurationMinutes: z.number().int().positive().optional(),
@@ -18,7 +17,6 @@ export const AddGameInput = z.object({
 	repetitions: z.number().int().positive().optional(),
 	frequencyPerWeek: z.number().int().positive().optional(),
 	instructions: z.string().optional(),
-	appliesToPhase: z.string().optional(),
 });
 
 export const UpdateGameInput = z.object({
@@ -27,7 +25,6 @@ export const UpdateGameInput = z.object({
 	repetitions: z.number().int().positive().optional(),
 	frequencyPerWeek: z.number().int().positive().optional(),
 	instructions: z.string().optional(),
-	appliesToPhase: z.string().optional(),
 });
 
 export const ReorderGamesInput = z.object({
@@ -48,7 +45,6 @@ export const ModifyPlanInput = z.object({
 	changes: z.object({
 		name: z.string().optional(),
 		programLengthWeeks: z.number().int().positive().optional(),
-		phases: z.array(z.record(z.string(), z.unknown())).optional(),
 		startDate: z.coerce.date().optional(),
 		targetMilestones: z.array(z.string()).optional(),
 		sessionDurationMinutes: z.number().int().positive().optional(),
@@ -61,13 +57,6 @@ export const PlanPresetSchema = z.object({
 	case_label: z.string(),
 	linked_diagnoses: z.array(z.string()),
 	session_duration_minutes: z.number(),
-	session_structure: z.array(
-		z.object({
-			phase: z.string(),
-			minutes: z.number(),
-			label: z.string(),
-		}),
-	),
 	short_term_goals_template: z.array(z.string()),
 	long_term_goals_template: z.array(z.string()),
 	home_program: z.string(),

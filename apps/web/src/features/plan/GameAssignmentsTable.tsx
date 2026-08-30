@@ -15,7 +15,6 @@ type GameAssignment = {
 	durationSeconds: number | null;
 	repetitions: number | null;
 	frequencyPerWeek: number | null;
-	appliesToPhase: string | null;
 };
 
 type GameAssignmentsTableProps = {
@@ -61,7 +60,6 @@ export function GameAssignmentsTable({
 							<TableHead className="text-xs uppercase">Ver</TableHead>
 							<TableHead className="text-xs uppercase">Duration</TableHead>
 							<TableHead className="text-xs uppercase">Reps/Wk</TableHead>
-							<TableHead className="text-xs uppercase">Phase</TableHead>
 							<TableHead className="text-right text-xs uppercase">
 								Actions
 							</TableHead>
@@ -71,7 +69,7 @@ export function GameAssignmentsTable({
 						{assignments.length === 0 ? (
 							<TableRow>
 								<TableCell
-									colSpan={6}
+									colSpan={5}
 									className="py-8 text-center text-on-surface-variant"
 								>
 									No games assigned. Click "Add Game" to assign games to this
@@ -106,15 +104,6 @@ export function GameAssignmentsTable({
 										{assignment.frequencyPerWeek
 											? `${assignment.frequencyPerWeek}x`
 											: "—"}
-									</TableCell>
-									<TableCell>
-										{assignment.appliesToPhase ? (
-											<span className="rounded bg-secondary-container px-2 py-0.5 font-medium text-on-secondary-container text-xs">
-												{assignment.appliesToPhase}
-											</span>
-										) : (
-											<span className="text-on-surface-variant text-xs">—</span>
-										)}
 									</TableCell>
 									<TableCell className="text-right">
 										<div className="flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
@@ -159,7 +148,7 @@ export function GameAssignmentsTable({
 									)}{" "}
 									min
 								</TableCell>
-								<TableCell colSpan={3} />
+								<TableCell colSpan={2} />
 							</TableRow>
 						</tfoot>
 					)}

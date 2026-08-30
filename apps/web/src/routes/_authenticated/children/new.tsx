@@ -22,7 +22,7 @@ import { cn } from "@haber-final/ui/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { Check, ChevronRight, Upload, X } from "lucide-react";
+import { Check, ChevronRight, ExternalLink, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -689,14 +689,17 @@ function Step5SendConsentLink({
 	onComplete: () => void;
 }) {
 	const queryClient = useQueryClient();
+	const [openableConsentUrl, setOpenableConsentUrl] = useState<string | null>(
+		null,
+	);
 	const sendMutation = useMutation(
 		trpc.consentInvitation.send.mutationOptions({
-			onSuccess: () => {
+			onSuccess: (data) => {
 				toast.success("Consent link sent!");
+				setOpenableConsentUrl(data.consentUrl);
 				queryClient.invalidateQueries({
 					queryKey: trpc.child.list.queryOptions({}).queryKey,
 				});
-				onComplete();
 			},
 			onError: (err) => toast.error(err.message),
 		}),
@@ -729,6 +732,21 @@ function Step5SendConsentLink({
 				>
 					{sendMutation.isPending ? "Sending…" : "Send Consent Link"}
 				</Button>
+				{openableConsentUrl && (
+					<>
+						<Button
+							variant="outline"
+							className="w-full gap-2"
+							onClick={() => window.open(openableConsentUrl, "_blank")}
+						>
+							<ExternalLink className="h-4 w-4" />
+							Open Consent Page
+						</Button>
+						<p className="text-center text-on-surface-variant text-xs">
+							Or open it now to complete consent together.
+						</p>
+					</>
+				)}
 				<p className="text-center text-on-surface-variant text-xs">
 					The link expires in 7 days and can only be used once.
 				</p>
@@ -740,7 +758,7 @@ function Step5SendConsentLink({
 				<Button
 					disabled={sendMutation.isPending}
 					onClick={() => {
-						if (guardianEmail) {
+						if (guardianEmail && !openableConsentUrl) {
 							sendMutation.mutate({ childId });
 						} else {
 							onComplete();

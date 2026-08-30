@@ -22,7 +22,6 @@ type GameAssignment = {
 	repetitions: number | null;
 	frequencyPerWeek: number | null;
 	instructions: string | null;
-	appliesToPhase: string | null;
 };
 
 type EditGameAssignmentSheetProps = {
@@ -37,7 +36,6 @@ type FormValues = {
 	repetitions: number | null;
 	frequencyPerWeek: number | null;
 	instructions: string;
-	appliesToPhase: string;
 };
 
 export function EditGameAssignmentSheet({
@@ -53,7 +51,6 @@ export function EditGameAssignmentSheet({
 			repetitions: null,
 			frequencyPerWeek: null,
 			instructions: "",
-			appliesToPhase: "",
 		},
 	});
 
@@ -66,7 +63,6 @@ export function EditGameAssignmentSheet({
 				repetitions: assignment.repetitions,
 				frequencyPerWeek: assignment.frequencyPerWeek,
 				instructions: assignment.instructions ?? "",
-				appliesToPhase: assignment.appliesToPhase ?? "",
 			});
 		}
 	}, [assignment, form]);
@@ -98,7 +94,6 @@ export function EditGameAssignmentSheet({
 			repetitions: values.repetitions ?? undefined,
 			frequencyPerWeek: values.frequencyPerWeek ?? undefined,
 			instructions: values.instructions || undefined,
-			appliesToPhase: values.appliesToPhase || undefined,
 		});
 	};
 
@@ -157,15 +152,6 @@ export function EditGameAssignmentSheet({
 								min={1}
 								placeholder="e.g., 2"
 								{...form.register("frequencyPerWeek", { valueAsNumber: true })}
-							/>
-						</div>
-
-						<div className="space-y-2">
-							<Label htmlFor="appliesToPhase">Phase</Label>
-							<Input
-								id="appliesToPhase"
-								placeholder="e.g., Phase 1"
-								{...form.register("appliesToPhase")}
 							/>
 						</div>
 

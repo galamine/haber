@@ -120,9 +120,6 @@ export const planRouter = router({
 				childId: input.childId,
 				name: input.name,
 				programLengthWeeks: input.programLengthWeeks,
-				phases: (input.phases ?? []) as unknown as Parameters<
-					typeof prisma.treatmentPlan.create
-				>[0]["data"]["phases"],
 				startDate: input.startDate,
 				targetMilestones: input.targetMilestones ?? [],
 				sessionDurationMinutes: input.sessionDurationMinutes ?? 60,
@@ -225,7 +222,6 @@ export const planRouter = router({
 					repetitions: input.repetitions,
 					frequencyPerWeek: input.frequencyPerWeek,
 					instructions: input.instructions,
-					appliesToPhase: input.appliesToPhase,
 					order: nextOrder,
 				},
 			});
@@ -269,8 +265,6 @@ export const planRouter = router({
 				updateData.frequencyPerWeek = input.frequencyPerWeek;
 			if (input.instructions !== undefined)
 				updateData.instructions = input.instructions;
-			if (input.appliesToPhase !== undefined)
-				updateData.appliesToPhase = input.appliesToPhase;
 
 			return prisma.planGameAssignment.update({
 				where: { id: input.assignmentId },
@@ -450,9 +444,6 @@ export const planRouter = router({
 						name: input.changes.name ?? current.name,
 						programLengthWeeks:
 							input.changes.programLengthWeeks ?? current.programLengthWeeks,
-						phases: (input.changes.phases ?? current.phases) as Parameters<
-							typeof prisma.treatmentPlan.create
-						>[0]["data"]["phases"],
 						startDate: input.changes.startDate ?? current.startDate,
 						targetMilestones:
 							input.changes.targetMilestones ?? current.targetMilestones,
@@ -475,7 +466,6 @@ export const planRouter = router({
 						repetitions: a.repetitions,
 						frequencyPerWeek: a.frequencyPerWeek,
 						instructions: a.instructions,
-						appliesToPhase: a.appliesToPhase,
 						order: a.order,
 					})),
 				});
