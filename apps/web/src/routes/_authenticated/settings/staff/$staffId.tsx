@@ -345,7 +345,7 @@ function PermissionsEditor({ staff }: { staff: StaffData }) {
 				))}
 			</div>
 
-			<div className="mt-6 flex gap-3 border-outline-variant border-t pt-6">
+			<div className="mt-6 flex justify-end gap-3 border-outline-variant border-t pt-6">
 				<Button
 					variant="outline"
 					onClick={() => setActivePerms(new Set(original))}

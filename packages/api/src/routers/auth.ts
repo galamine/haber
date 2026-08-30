@@ -305,6 +305,9 @@ export const authRouter = router({
 				clinic: {
 					select: { name: true, code: true },
 				},
+				profile: {
+					select: { name: true },
+				},
 			},
 		});
 	}),

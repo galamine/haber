@@ -5,12 +5,13 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Sparkles } from "lucide-react";
+import { Sparkles, PlusCircle } from "lucide-react";
 
 import { usePlanData } from "@/features/plan/use-plan-data";
 import { PlanFormSchema, type PlanFormValues } from "@/features/plan/schema";
 import { PRESET_CARDS } from "@/features/plan/constants";
 import { PresetCard } from "@/features/plan/PresetCard";
+import { PhaseBuilder } from "@/features/plan/PhaseBuilder";
 import { SectionCard } from "@/features/assessment/SectionCard";
 import { FieldWrapper } from "@/features/assessment/FieldWrapper";
 import { trpc } from "@/utils/trpc";
@@ -26,7 +27,7 @@ function NewPlanPage() {
 
 	const form = useForm<PlanFormValues>({
 		resolver: zodResolver(PlanFormSchema),
-		defaultValues: { childId, name: "", programLengthWeeks: 12, sessionDurationMinutes: 60, targetMilestones: [] },
+		defaultValues: { childId, name: "", programLengthWeeks: 12, sessionDurationMinutes: 60, phases: [], targetMilestones: [] },
 	});
 
 	const create = useMutation(trpc.plan.create.mutationOptions({
@@ -41,7 +42,7 @@ function NewPlanPage() {
 			<div className="flex justify-between items-center">
 				<div>
 					<h1 className="font-bold text-on-background">Create Treatment Plan</h1>
-					<p className="text-on-surface-variant text-sm">Design a comprehensive intervention strategy.</p>
+					<p className="text-on-surface-variant text-sm">Design a comprehensive, phase-based intervention strategy.</p>
 				</div>
 				<div className="flex gap-2">
 					<Button variant="outline">Save Draft</Button>
@@ -68,6 +69,7 @@ function NewPlanPage() {
 								if (found) {
 									form.setValue("sessionDurationMinutes", found.session_duration_minutes);
 									form.setValue("name", found.case_label);
+									form.setValue("phases", found.session_structure.map(s => ({ phase: s.phase, weeks: s.minutes, label: s.label })));
 								}
 							}}
 						/>
@@ -75,25 +77,45 @@ function NewPlanPage() {
 				</div>
 			</div>
 
-			<div className="max-w-2xl">
-				<SectionCard title="Plan Details">
-					<div className="space-y-4">
-						<FieldWrapper label="Plan Name" error={form.formState.errors.name?.message}>
-							<Input {...form.register("name")} placeholder="e.g., Intensive Communication Protocol" />
-						</FieldWrapper>
-						<div className="grid grid-cols-2 gap-4">
-							<FieldWrapper label="Length (Weeks)" error={form.formState.errors.programLengthWeeks?.message}>
-								<Input {...form.register("programLengthWeeks", { valueAsNumber: true })} type="number" min={1} max={52} />
+			<div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+				<div className="lg:col-span-5">
+					<SectionCard title="Plan Details">
+						<div className="space-y-4">
+							<FieldWrapper label="Plan Name" error={form.formState.errors.name?.message}>
+								<Input {...form.register("name")} placeholder="e.g., Intensive Communication Protocol" />
 							</FieldWrapper>
-							<FieldWrapper label="Session Duration (Min)" error={form.formState.errors.sessionDurationMinutes?.message}>
-								<Input {...form.register("sessionDurationMinutes", { valueAsNumber: true })} type="number" min={15} step={15} />
+							<div className="grid grid-cols-2 gap-4">
+								<FieldWrapper label="Length (Weeks)" error={form.formState.errors.programLengthWeeks?.message}>
+									<Input {...form.register("programLengthWeeks", { valueAsNumber: true })} type="number" min={1} max={52} />
+								</FieldWrapper>
+								<FieldWrapper label="Session Duration (Min)" error={form.formState.errors.sessionDurationMinutes?.message}>
+									<Input {...form.register("sessionDurationMinutes", { valueAsNumber: true })} type="number" min={15} step={15} />
+								</FieldWrapper>
+							</div>
+							<FieldWrapper label="Target Start Date">
+								<Input {...form.register("startDate", { valueAsDate: true })} type="date" />
 							</FieldWrapper>
 						</div>
-						<FieldWrapper label="Target Start Date">
-							<Input {...form.register("startDate", { valueAsDate: true })} type="date" />
-						</FieldWrapper>
-					</div>
-				</SectionCard>
+					</SectionCard>
+				</div>
+
+				<div className="lg:col-span-7">
+					<SectionCard
+						title="Phase Builder"
+						description="Break down the treatment into chronological stages."
+						action={
+							<Button type="button" variant="ghost" size="sm" onClick={() => {
+								const phases = form.getValues("phases") ?? [];
+								form.setValue("phases", [...phases, { phase: `phase_${Date.now()}`, weeks: 4, label: `Phase ${phases.length + 1}` }]);
+							}}>
+								<PlusCircle className="mr-1 h-4 w-4" />
+								Add Phase
+							</Button>
+						}
+					>
+						<PhaseBuilder form={form} />
+					</SectionCard>
+				</div>
 			</div>
 		</div>
 	);

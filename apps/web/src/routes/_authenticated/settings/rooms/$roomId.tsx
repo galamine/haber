@@ -78,8 +78,14 @@ function EquipmentTagInput({
 					}}
 					placeholder="Add equipment and press Enter"
 				/>
-				<Button type="button" variant="outline" size="sm" onClick={add}>
-					<Plus className="h-3.5 w-3.5" />
+				<Button
+					type="button"
+					variant="outline"
+					size="icon"
+					className="h-11 w-11 shrink-0"
+					onClick={add}
+				>
+					<Plus className="h-4 w-4" />
 				</Button>
 			</div>
 			<div className="flex flex-wrap gap-1.5">
@@ -267,7 +273,7 @@ function EditRoomPage() {
 							</div>
 						</div>
 
-						<div className="flex gap-3 border-outline-variant border-t px-6 py-4">
+						<div className="flex justify-end gap-3 border-outline-variant border-t px-6 py-4">
 							<Button
 								type="button"
 								variant="outline"
@@ -275,12 +281,7 @@ function EditRoomPage() {
 							>
 								Cancel
 							</Button>
-							<Button
-								size="lg"
-								type="submit"
-								disabled={mutation.isPending}
-								className="w-full"
-							>
+							<Button type="submit" disabled={mutation.isPending}>
 								{mutation.isPending ? "Saving…" : "Save Changes"}
 							</Button>
 						</div>

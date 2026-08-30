@@ -122,7 +122,6 @@ export function AppShell() {
 
 	const { data: me } = useQuery({
 		...trpc.auth.me.queryOptions(),
-		enabled: role !== "SUPER_ADMIN",
 	});
 
 	const visibleNav = NAV_ITEMS.filter(
@@ -191,7 +190,7 @@ export function AppShell() {
 					<div className="flex flex-col gap-1 px-2 pb-2">
 						<div className="mb-1 flex flex-col gap-0.5 rounded-lg bg-muted p-2">
 							<span className="truncate font-medium text-foreground text-sm">
-								{userId ?? "User"}
+								{me?.profile?.name ?? me?.email ?? userId ?? "User"}
 							</span>
 							{role && (
 								<span className="text-muted-foreground text-xs">

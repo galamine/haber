@@ -22,6 +22,7 @@ type GameAssignmentData = {
 	repetitions?: number;
 	frequencyPerWeek?: number;
 	instructions?: string;
+	appliesToPhase?: string;
 };
 
 type GameLibraryBrowserSheetProps = {
@@ -34,6 +35,7 @@ type FormState = {
 	durationMinutes: string;
 	repetitions: string;
 	frequencyPerWeek: string;
+	phase: string;
 	instructions: string;
 };
 
@@ -49,6 +51,7 @@ export function GameLibraryBrowserSheet({
 		durationMinutes: "",
 		repetitions: "",
 		frequencyPerWeek: "",
+		phase: "",
 		instructions: "",
 	});
 
@@ -74,6 +77,7 @@ export function GameLibraryBrowserSheet({
 			durationMinutes: "",
 			repetitions: "",
 			frequencyPerWeek: "",
+			phase: "",
 			instructions: "",
 		});
 	};
@@ -99,6 +103,7 @@ export function GameLibraryBrowserSheet({
 				? Number.parseInt(form.frequencyPerWeek, 10)
 				: undefined,
 			instructions: form.instructions || undefined,
+			appliesToPhase: form.phase || undefined,
 		});
 		setSelectedGame(null);
 	};
@@ -181,6 +186,16 @@ export function GameLibraryBrowserSheet({
 										}
 									/>
 								</div>
+							</div>
+
+							<div className="space-y-2">
+								<Label htmlFor="phase">Phase</Label>
+								<Input
+									id="phase"
+									placeholder="e.g., Phase 1, Introduction"
+									value={form.phase}
+									onChange={(e) => handleInputChange("phase", e.target.value)}
+								/>
 							</div>
 
 							<div className="space-y-2">

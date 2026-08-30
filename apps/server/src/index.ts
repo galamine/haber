@@ -50,8 +50,14 @@ app.use(async (c, next) => {
 app.use(
 	"/*",
 	cors({
-		origin: env.CORS_ORIGIN,
-		allowMethods: ["GET", "POST", "OPTIONS"],
+		origin: (origin) => {
+			if (!origin) return env.CORS_ORIGIN[0];
+			if (env.CORS_ORIGIN.includes(origin)) return origin;
+			return env.CORS_ORIGIN[0]; // fallback
+		},
+		allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+		allowHeaders: ["Content-Type", "Authorization"],
+		credentials: true,
 	}),
 );
 

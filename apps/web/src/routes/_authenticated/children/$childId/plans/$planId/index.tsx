@@ -124,6 +124,7 @@ function PlanDetailPage() {
 			durationSeconds: number | null;
 			repetitions: number | null;
 			frequencyPerWeek: number | null;
+			appliesToPhase: string | null;
 		}>;
 		goals: Array<{
 			id: string;

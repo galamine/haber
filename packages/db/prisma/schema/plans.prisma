@@ -25,6 +25,7 @@ model TreatmentPlan {
   createdById            String
   name                   String
   programLengthWeeks     Int
+  phases                 Json       @default("[]")
   startDate              DateTime?
   projectedEndDate       DateTime?
   targetMilestones       String[]
@@ -54,6 +55,7 @@ model PlanGameAssignment {
   repetitions      Int?
   frequencyPerWeek Int?
   instructions     String?
+  appliesToPhase   String?
   order            Int     @default(0)
 
   plan        TreatmentPlan @relation(fields: [planId], references: [id])
