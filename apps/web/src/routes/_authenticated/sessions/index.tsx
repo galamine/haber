@@ -32,7 +32,8 @@ type SessionStatus =
 	| "IN_PROGRESS"
 	| "COMPLETED"
 	| "ABSENT"
-	| "MANUALLY_CLOSED";
+	| "MANUALLY_CLOSED"
+	| "TIMED_OUT";
 
 const STATUS_BADGE: Record<
 	SessionStatus,
@@ -47,6 +48,7 @@ const STATUS_BADGE: Record<
 	COMPLETED: { bg: "bg-green-100", text: "text-green-800", label: "Completed" },
 	ABSENT: { bg: "bg-gray-100", text: "text-gray-600", label: "Absent" },
 	MANUALLY_CLOSED: { bg: "bg-red-100", text: "text-red-700", label: "Closed" },
+	TIMED_OUT: { bg: "bg-red-100", text: "text-red-700", label: "Timed Out" },
 };
 
 const SESSION_TABS_BASE = [
@@ -98,6 +100,9 @@ function TodaySessionsPage() {
 		ABSENT: (sessions ?? []).filter((s: Session) => s.status === "ABSENT"),
 		MANUALLY_CLOSED: (sessions ?? []).filter(
 			(s: Session) => s.status === "MANUALLY_CLOSED",
+		),
+		TIMED_OUT: (sessions ?? []).filter(
+			(s: Session) => s.status === "TIMED_OUT",
 		),
 	};
 

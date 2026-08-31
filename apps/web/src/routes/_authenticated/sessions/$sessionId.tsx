@@ -32,7 +32,8 @@ type SessionStatus =
 	| "IN_PROGRESS"
 	| "COMPLETED"
 	| "ABSENT"
-	| "MANUALLY_CLOSED";
+	| "MANUALLY_CLOSED"
+	| "TIMED_OUT";
 
 const STATUS_BADGE: Record<
 	SessionStatus,
@@ -52,6 +53,7 @@ const STATUS_BADGE: Record<
 	COMPLETED: { variant: "success", label: "Completed" },
 	ABSENT: { variant: "outline", label: "Absent" },
 	MANUALLY_CLOSED: { variant: "destructive", label: "Closed" },
+	TIMED_OUT: { variant: "destructive", label: "Timed Out" },
 };
 
 type GameAssignment = {

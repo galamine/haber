@@ -34,6 +34,11 @@ const SESSION_STATUS_COLORS: Record<string, StatusColors> = {
 		text: "text-gray-700",
 		border: "border-gray-200",
 	},
+	TIMED_OUT: {
+		bg: "bg-gray-100",
+		text: "text-gray-700",
+		border: "border-gray-200",
+	},
 };
 
 function transformSessionData(

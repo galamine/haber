@@ -4,6 +4,7 @@ enum SessionStatus {
   COMPLETED
   ABSENT
   MANUALLY_CLOSED
+  TIMED_OUT
 }
 
 model TherapySession {

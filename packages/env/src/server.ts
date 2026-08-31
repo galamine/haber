@@ -18,6 +18,7 @@ export const env = createEnv({
 		SUPER_ADMIN_EMAIL: z.string().email().optional(),
 		CLOUDINARY_URL: z.string().min(1),
 		DATA_REGION: z.enum(["india"]).default("india"),
+		SESSION_TIMEOUT_MINUTES: z.coerce.number().int().positive().default(120),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,

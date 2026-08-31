@@ -67,6 +67,7 @@ const DEFAULT_COLOR_MAP: Record<string, string> = {
 	COMPLETED: "bg-green-200",
 	ABSENT: "bg-red-200",
 	MANUALLY_CLOSED: "bg-gray-200",
+	TIMED_OUT: "bg-gray-200",
 	meeting: "bg-purple-200",
 	event: "bg-orange-200",
 	schedule: "bg-brown-200",
@@ -119,6 +120,11 @@ function getDefaultStatusColors(): Record<string, StatusColors> {
 			border: "border-red-200",
 		},
 		MANUALLY_CLOSED: {
+			bg: "bg-gray-100",
+			text: "text-gray-700",
+			border: "border-gray-200",
+		},
+		TIMED_OUT: {
 			bg: "bg-gray-100",
 			text: "text-gray-700",
 			border: "border-gray-200",

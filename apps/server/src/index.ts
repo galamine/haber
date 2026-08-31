@@ -13,11 +13,14 @@ import { trpcServer } from "@hono/trpc-server";
 import { v2 as cloudinary } from "cloudinary";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { startSessionTimeoutSweep } from "./jobs/session-timeout";
 import { BUILD_DATE, BUILD_VERSION, GIT_SHA } from "./lib/build-info";
 
 cloudinary.config({
 	cloudinary_url: env.CLOUDINARY_URL,
 });
+
+startSessionTimeoutSweep();
 
 const app = new Hono();
 
