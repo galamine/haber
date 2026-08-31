@@ -410,18 +410,6 @@ export const GAME_REGISTRY: Record<string, GameEntry> = {
 		path: "/trail_games/draw-games/paint-floor.html",
 		assets: {},
 	},
-	"drawing-floor": {
-		name: "drawing-floor",
-		version: "1-0-0",
-		title: "Drawing Floor",
-		description:
-			"Draw on the floor — pick colors, shapes, and sizes, then erase or save your artwork",
-		entryScenes: ["GameScene"],
-		supportedLevels: [1],
-		totalTimeSec: 600,
-		path: "/trail_games/draw-games/drawing-floor.html",
-		assets: {},
-	},
 	"trace-walk-number": {
 		name: "trace-walk-number",
 		version: "1-0-0",
