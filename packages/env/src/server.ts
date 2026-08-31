@@ -5,6 +5,7 @@ import { z } from "zod";
 export const env = createEnv({
 	server: {
 		DATABASE_URL: z.string().min(1),
+		FRONTEND_URL: z.string().url().default("http://localhost:3001"),
 		CORS_ORIGIN: z
 			.string()
 			.transform((val) => val.split(",").map((s) => s.trim())),

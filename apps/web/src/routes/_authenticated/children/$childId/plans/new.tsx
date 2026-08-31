@@ -12,6 +12,7 @@ import { PlanFormSchema, type PlanFormValues } from "@/features/plan/schema";
 import { NO_PRESET_ID, PRESET_ICONS } from "@/features/plan/constants";
 import { PresetCard } from "@/features/plan/PresetCard";
 import { CustomGoalsSection } from "@/features/plan/CustomGoalsSection";
+import { PresetGoalsPreview } from "@/features/plan/PresetGoalsPreview";
 import { SectionCard } from "@/features/assessment/SectionCard";
 import { FieldWrapper } from "@/features/assessment/FieldWrapper";
 import { trpc } from "@/utils/trpc";
@@ -43,6 +44,7 @@ function NewPlanPage() {
 	}));
 
 	const selectedPresetId = form.watch("presetId");
+	const selectedPreset = presets.data?.find(p => p.preset_id === selectedPresetId);
 
 	return (
 		<div className="space-y-6 p-8">
@@ -100,7 +102,9 @@ function NewPlanPage() {
 				</div>
 			</div>
 
-			{!selectedPresetId && <CustomGoalsSection form={form} />}
+			{selectedPresetId
+				? (selectedPreset && <PresetGoalsPreview preset={selectedPreset} />)
+				: <CustomGoalsSection form={form} />}
 
 			<div className="mx-auto w-full max-w-3xl">
 				<SectionCard title="Plan Details" description="Core information for this treatment plan.">

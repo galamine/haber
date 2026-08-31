@@ -122,7 +122,7 @@ export const clinicRouter = router({
 				});
 			});
 
-			const inviteUrl = `${env.CORS_ORIGIN}/accept-invite?email=${encodeURIComponent(input.email)}&code=${code}`;
+			const inviteUrl = `${env.FRONTEND_URL}/accept-invite?email=${encodeURIComponent(input.email)}&code=${code}`;
 
 			await resend.emails.send({
 				from: env.RESEND_FROM_EMAIL,

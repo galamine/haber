@@ -74,7 +74,7 @@ export const consentInvitationRouter = router({
 				},
 			});
 
-			const consentUrl = `${env.CORS_ORIGIN}/consent?token=${token}`;
+			const consentUrl = `${env.FRONTEND_URL}/consent?token=${token}`;
 
 			if (env.NODE_ENV === "production") {
 				await resend.emails.send({

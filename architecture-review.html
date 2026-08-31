@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Architecture review — haber</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+    </script>
+    <style>
+      .seam { stroke-dasharray: 4 4; }
+      .leak-line { stroke: #dc2626; stroke-width: 2; }
+      .leak-box { border-color: #dc2626 !important; background: #fef2f2; }
+      .deep-box { background: linear-gradient(135deg, #0f172a, #1e293b); color: #e2e8f0; }
+      .mod-box { border: 1.5px solid #94a3b8; background: #fff; }
+      .badge { font-size: 0.65rem; letter-spacing: 0.05em; }
+      svg.arrows { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    </style>
+  </head>
+  <body class="bg-stone-50 text-slate-900 font-sans">
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-16">
+      <header class="space-y-4 border-b border-slate-200 pb-8">
+        <div class="flex items-baseline justify-between">
+          <h1 class="font-serif text-3xl">Architecture review — haber</h1>
+          <span class="text-sm text-slate-500">31 Aug 2026</span>
+        </div>
+        <p class="text-sm text-slate-500 max-w-2xl">Scope: Child / Plan / Session — the hottest area of the commit history, culminating in the "treatment plan session revamp." No <code class="font-mono">CONTEXT.md</code> or ADRs exist yet, so domain terms below are read directly off the Prisma schema and routers.</p>
+        <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-500 pt-2">
+          <span class="flex items-center gap-1.5"><span class="inline-block w-4 h-3 mod-box"></span> module</span>
+          <span class="flex items-center gap-1.5"><span class="inline-block w-4 h-3 deep-box"></span> deep module</span>
+          <span class="flex items-center gap-1.5"><svg width="16" height="8"><line x1="0" y1="4" x2="16" y2="4" stroke="#64748b" stroke-dasharray="3 3" stroke-width="1.5"/></svg> seam</span>
+          <span class="flex items-center gap-1.5"><svg width="16" height="8"><line x1="0" y1="4" x2="16" y2="4" stroke="#dc2626" stroke-width="2"/></svg> leakage</span>
+        </div>
+      </header>
+
+      <section id="candidates" class="space-y-16">
+
+        <!-- Candidate A -->
+        <article class="space-y-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <h2 class="font-serif text-xl">A. Give tenant &amp; access checks one seam</h2>
+            <span class="badge uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">Strong</span>
+            <span class="badge uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">in-process</span>
+          </div>
+          <p class="font-mono text-sm text-slate-500">packages/api/src/routers/child.ts, plan.ts, session.ts, dashboard.ts</p>
+
+          <div class="rounded-lg border border-slate-200 bg-white p-4">
+            <div class="grid grid-cols-2 gap-6">
+              <div>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mb-2 text-center">Before</p>
+                <div class="relative h-80">
+                  <div class="mod-box rounded p-2 absolute top-0 left-0 w-36 text-xs">
+                    <p class="uppercase tracking-wider text-slate-500 mb-1">child.ts</p>
+                    <p class="text-slate-600">assertChildInClinic<br/>assertAssignedTherapist</p>
+                  </div>
+                  <div class="mod-box rounded p-2 absolute top-0 right-0 w-36 text-xs">
+                    <p class="uppercase tracking-wider text-slate-500 mb-1">plan.ts</p>
+                    <p class="text-slate-600">getPlanForTherapist<br/>(reimplements both checks, differently)</p>
+                  </div>
+                  <div class="mod-box rounded p-2 absolute bottom-16 left-0 w-36 text-xs">
+                    <p class="uppercase tracking-wider text-slate-500 mb-1">dashboard.ts</p>
+                    <p class="text-slate-600">assertAssignedTherapist +<br/>getChildForRead, x7</p>
+                  </div>
+                  <div class="leak-box rounded p-2 absolute bottom-16 right-0 w-36 text-xs border">
+                    <p class="uppercase tracking-wider text-red-600 mb-1">session.ts</p>
+                    <p class="text-red-700">no tenant check at all — any authenticated user, any clinic</p>
+                  </div>
+                  <svg class="arrows"><line x1="130" y1="245" x2="230" y2="245" class="leak-line"/></svg>
+                  <p class="absolute bottom-0 inset-x-0 text-center text-xs text-slate-400">four seams, one silently missing</p>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mb-2 text-center">After</p>
+                <div class="h-80 flex flex-col items-center justify-center gap-4">
+                  <div class="deep-box rounded-lg p-4 w-56 text-center">
+                    <p class="uppercase tracking-wider text-xs opacity-70 mb-1">access-control module</p>
+                    <p class="text-sm">requireChildAccess<br/>requirePlanAccess<br/>requireSessionAccess</p>
+                  </div>
+                  <div class="grid grid-cols-2 gap-3 w-full">
+                    <div class="mod-box rounded p-2 text-xs text-center">child.ts</div>
+                    <div class="mod-box rounded p-2 text-xs text-center">plan.ts</div>
+                    <div class="mod-box rounded p-2 text-xs text-center">session.ts</div>
+                    <div class="mod-box rounded p-2 text-xs text-center">dashboard.ts</div>
+                  </div>
+                  <p class="text-xs text-slate-400">one interface, every router calls through it</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p><strong>Problem:</strong> tenant and therapist-assignment checks are hand-rolled per router, and <span class="font-mono text-sm">session.ts</span> skips them entirely — any authenticated user can read or mutate another clinic's session by guessing an id.</p>
+          <p><strong>Solution:</strong> deepen a single access-control module that owns "does this record belong to this caller" for Child, Plan, and Session; every router calls through it instead of writing its own guard.</p>
+          <ul class="text-sm space-y-1 list-disc pl-5">
+            <li>Locality: tenant bugs fixed once, not four times</li>
+            <li>Leverage: one interface, every router a caller</li>
+            <li>Closes a real cross-tenant leak at the seam</li>
+          </ul>
+        </article>
+
+        <!-- Candidate B -->
+        <article class="space-y-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <h2 class="font-serif text-xl">B. Collapse scattered status guards into one lifecycle module</h2>
+            <span class="badge uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">Strong</span>
+            <span class="badge uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">in-process</span>
+          </div>
+          <p class="font-mono text-sm text-slate-500">packages/api/src/routers/session.ts, plan.ts, schemas/session-execution.ts</p>
+
+          <div class="rounded-lg border border-slate-200 bg-white p-4">
+            <pre class="mermaid">
+flowchart LR
+  subgraph Before
+    S1["session.markAbsent<br/>inline if-guard"]
+    S2["session.manualClose<br/>inline if-guard"]
+    P1["plan.activate<br/>inline if-guard"]
+    P2["plan.pause<br/>inline if-guard"]
+    P3["plan.resume<br/>inline if-guard"]
+    P4["plan.close<br/>inline if-guard"]
+    SCHEMA["schemas/session-execution.ts<br/>types only, no rules"]
+    S1 -.leak.-> SCHEMA
+    S2 -.leak.-> SCHEMA
+    P1 -.leak.-> SCHEMA
+    P2 -.leak.-> SCHEMA
+  end
+  classDef leak stroke:#dc2626,stroke-width:2px;
+  class S1,S2,P1,P2,P3,P4 leak
+            </pre>
+          </div>
+          <div class="rounded-lg border border-slate-200 bg-white p-4">
+            <pre class="mermaid">
+flowchart LR
+  subgraph After
+    L["PlanLifecycle / SessionLifecycle<br/>transition(current, action)"]
+    R1[session.ts] --> L
+    R2[plan.ts] --> L
+  end
+  classDef deep fill:#0f172a,color:#e2e8f0,stroke:#0f172a;
+  class L deep
+            </pre>
+          </div>
+
+          <p><strong>Problem:</strong> ~10 near-identical "if status isn't X/Y, throw" blocks are duplicated across <span class="font-mono text-sm">session.ts</span> and <span class="font-mono text-sm">plan.ts</span>; the schema file that looks like it should own these rules holds only types.</p>
+          <p><strong>Solution:</strong> deepen a lifecycle module per entity — one <span class="font-mono text-sm">transition(current, action)</span> function each — that routers call before persisting.</p>
+          <ul class="text-sm space-y-1 list-disc pl-5">
+            <li>Interface shrinks to one transition call</li>
+            <li>Transitions become testable without a database</li>
+            <li>Locality: legal moves defined in one place</li>
+          </ul>
+        </article>
+
+        <!-- Candidate C -->
+        <article class="space-y-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <h2 class="font-serif text-xl">C. Fix the plan-decision vocabulary drift at its seam</h2>
+            <span class="badge uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">Strong</span>
+            <span class="badge uppercase tracking-wider bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">live bug</span>
+          </div>
+          <p class="font-mono text-sm text-slate-500">packages/api/src/schemas/plan.ts · apps/web/src/features/plan/types.ts · ModifyPlanSheet.tsx</p>
+
+          <div class="rounded-lg border border-slate-200 bg-white p-4">
+            <div class="grid grid-cols-2 gap-6">
+              <div>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mb-2 text-center">Before — 3 declarations</p>
+                <div class="space-y-2 text-xs">
+                  <div class="mod-box rounded p-2"><span class="uppercase tracking-wider text-slate-500">schemas/plan.ts</span><br/>CARRY_OVER · CLOSE · MODIFY</div>
+                  <div class="mod-box rounded p-2"><span class="uppercase tracking-wider text-slate-500">features/plan/types.ts</span><br/>CARRY_OVER · CLOSE · MODIFY</div>
+                  <div class="leak-box rounded p-2 border"><span class="uppercase tracking-wider text-red-600">ModifyPlanSheet.tsx</span><br/>MAINTAIN · MODIFY · DISCONTINUE</div>
+                </div>
+                <p class="text-xs text-red-600 mt-2">only "MODIFY" overlaps — the other two buttons fail validation silently</p>
+              </div>
+              <div>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mb-2 text-center">After — 1 declaration</p>
+                <div class="h-full flex items-center justify-center">
+                  <div class="deep-box rounded-lg p-4 text-center text-sm">
+                    schemas/plan.ts<br/>
+                    <span class="text-xs opacity-70">CARRY_OVER · CLOSE · MODIFY</span><br/>
+                    <span class="text-xs opacity-70">imported everywhere else</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p><strong>Problem:</strong> the goal-decision enum is declared three times; two files agree, the UI drifted to a different vocabulary, so two of three action buttons silently fail form validation with no visible error.</p>
+          <p><strong>Solution:</strong> import the enum from <span class="font-mono text-sm">schemas/plan.ts</span> directly in the component instead of re-declaring it.</p>
+          <ul class="text-sm space-y-1 list-disc pl-5">
+            <li>Deletion test: duplicate vanishes, no complexity reappears</li>
+            <li>One export, zero drift</li>
+            <li>Fixes the bug structurally, not with a patch</li>
+          </ul>
+        </article>
+
+        <!-- Candidate D -->
+        <article class="space-y-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <h2 class="font-serif text-xl">D. Extract date-boundary math into one interface</h2>
+            <span class="badge uppercase tracking-wider bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">Worth exploring</span>
+            <span class="badge uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">in-process</span>
+          </div>
+          <p class="font-mono text-sm text-slate-500">packages/api/src/routers/dashboard.ts (x3) · session.ts (x3)</p>
+
+          <div class="rounded-lg border border-slate-200 bg-white p-4">
+            <div class="grid grid-cols-2 gap-6 items-center">
+              <div class="space-y-1">
+                <p class="text-xs uppercase tracking-wider text-slate-400 mb-2 text-center">Before</p>
+                <div class="mod-box rounded p-2 text-xs">clinicSummary — inline today/week math</div>
+                <div class="mod-box rounded p-2 text-xs">childSnapshot — inline today/week math</div>
+                <div class="mod-box rounded p-2 text-xs">myCaseloadSummary — inline today/week math</div>
+                <div class="mod-box rounded p-2 text-xs">listForToday / listForWeek / listUncovered — inline, again</div>
+              </div>
+              <div class="flex justify-center">
+                <div class="deep-box rounded-lg p-4 text-center text-sm">
+                  getTodayRange()<br/>getWeekRange()<br/>
+                  <span class="text-xs opacity-70">one timezone assumption</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p><strong>Problem:</strong> the same six-line "start/end of today or week" block is duplicated six times, each copy baking in the same unreviewed server-local-time assumption.</p>
+          <p><strong>Solution:</strong> two small functions replace the duplicated blocks; if clinic-local time is ever needed, there's one place to fix.</p>
+          <ul class="text-sm space-y-1 list-disc pl-5">
+            <li>Locality: one timezone assumption, not six</li>
+            <li>Interface: two functions replace ~30 lines</li>
+          </ul>
+        </article>
+
+        <!-- Candidate E -->
+        <article class="space-y-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <h2 class="font-serif text-xl">E. Give clinicSummary's seven internal views their own interfaces</h2>
+            <span class="badge uppercase tracking-wider bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">Worth exploring</span>
+            <span class="badge uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">in-process</span>
+          </div>
+          <p class="font-mono text-sm text-slate-500">packages/api/src/routers/dashboard.ts:377-663</p>
+
+          <div class="rounded-lg border border-slate-200 bg-white p-4">
+            <div class="grid grid-cols-2 gap-6">
+              <div>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mb-2 text-center">Before — mass diagram</p>
+                <div class="flex flex-col items-center gap-1">
+                  <div class="w-40 h-6 bg-slate-300 rounded-t flex items-center justify-center text-xs">interface: () =&gt; ClinicSummary</div>
+                  <div class="w-40 h-48 bg-slate-700 rounded-b flex items-center justify-center text-center text-xs text-slate-200 p-2">7 inline views: session breakdown, room utilization, therapist load, adherence, top games, consent backlog, retention — none separately callable or testable</div>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs uppercase tracking-wider text-slate-400 mb-2 text-center">After — mass diagram</p>
+                <div class="flex flex-col items-center gap-1">
+                  <div class="w-40 h-4 bg-slate-300 rounded-t flex items-center justify-center text-xs">interface: 7 named views</div>
+                  <div class="w-40 h-52 bg-slate-900 rounded-b flex items-center justify-center text-center text-xs text-slate-200 p-2">each view a deep, independently testable function; clinicSummary just composes them</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p><strong>Problem:</strong> a 280-line procedure with no arguments hides seven independent derived views, none of which can be exercised except by calling the whole procedure end-to-end.</p>
+          <p><strong>Solution:</strong> give each derived view (session breakdown, room utilization, therapist load, adherence, top games, consent backlog, retention) its own named function; <span class="font-mono text-sm">clinicSummary</span> composes them.</p>
+          <ul class="text-sm space-y-1 list-disc pl-5">
+            <li>Each view testable without the other six</li>
+            <li>Locality: a broken view is isolated to its own function</li>
+          </ul>
+        </article>
+
+      </section>
+
+      <section id="top-recommendation" class="rounded-xl border-2 border-emerald-700 bg-emerald-50 p-6 space-y-2">
+        <p class="text-xs uppercase tracking-wider text-emerald-700">Top recommendation</p>
+        <h2 class="font-serif text-xl">Start with <a href="#candidates" class="underline">A — the access-control seam</a></h2>
+        <p class="text-sm text-slate-700">It's the only candidate with a live cross-tenant leak, not just friction, and unifying it first gives B a natural home to call into for the same tenant checks it currently skips.</p>
+      </section>
+
+    </main>
+  </body>
+</html>
