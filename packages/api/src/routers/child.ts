@@ -326,9 +326,6 @@ export const childRouter = router({
 				).map((f) => f.id);
 
 				if (sessionIds.length > 0) {
-					await tx.roomBooking.deleteMany({
-						where: { sessionId: { in: sessionIds } },
-					});
 					await tx.gameResult.deleteMany({
 						where: { sessionId: { in: sessionIds } },
 					});
@@ -348,9 +345,6 @@ export const childRouter = router({
 				if (planIds.length > 0) {
 					await tx.goal.deleteMany({
 						where: { treatmentPlanId: { in: planIds } },
-					});
-					await tx.planGameAssignment.deleteMany({
-						where: { planId: { in: planIds } },
 					});
 				}
 

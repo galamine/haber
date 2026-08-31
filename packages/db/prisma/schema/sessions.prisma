@@ -13,6 +13,7 @@ model TherapySession {
   assignedTherapistId String?
   roomId              String?
   scheduledDate       DateTime
+  durationMinutes     Int           @default(60)
   startedAt           DateTime?
   completedAt         DateTime?
   status              SessionStatus @default(PENDING)
@@ -33,6 +34,8 @@ model TherapySession {
   @@index([childId])
   @@index([scheduledDate])
   @@index([assignedTherapistId])
+  @@index([roomId, scheduledDate])
+  @@index([assignedTherapistId, scheduledDate])
   @@map("therapy_session")
 }
 
@@ -65,16 +68,4 @@ model GameResult {
   assignment SessionGameAssignment? @relation(fields: [sessionAssignmentId], references: [id])
 
   @@map("game_result")
-}
-
-model RoomBooking {
-  id            String   @id @default(cuid())
-  sessionId     String   @unique
-  roomId        String
-  scheduledDate DateTime
-  claimedAt     DateTime @default(now())
-  claimedById   String
-
-  @@index([roomId, scheduledDate])
-  @@map("room_booking")
 }

@@ -62,20 +62,21 @@ export function SectionB({
 									control={control}
 									name={`sectionB.goalProgress.${idx}.attainmentPct`}
 									render={({ field: sliderField }) => (
-										<Slider
-											min={0}
-											max={100}
-											step={1}
-											value={[sliderField.value ?? 0]}
-											onValueChange={([v]) => sliderField.onChange(v)}
-											className="flex-1"
-										/>
+										<>
+											<Slider
+												min={0}
+												max={100}
+												step={1}
+												value={[sliderField.value ?? 0]}
+												onValueChange={([v]) => sliderField.onChange(v)}
+												className="flex-1"
+											/>
+											<span className="w-12 text-center font-medium text-sm">
+												{sliderField.value ?? 0}%
+											</span>
+										</>
 									)}
 								/>
-								<span className="w-12 text-center font-medium text-sm">
-									{/* Will be filled by watched value */}
-									{fields[idx]?.attainmentPct ?? 0}%
-								</span>
 							</div>
 						</FieldWrapper>
 

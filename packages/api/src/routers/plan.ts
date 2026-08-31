@@ -4,36 +4,22 @@ import { z } from "zod";
 import type { AuthUser } from "../context";
 import { protectedProcedure, router } from "../index";
 import {
-	AddGameInput,
 	CreatePlanInput,
 	type ModificationDecisionInput,
 	ModifyPlanInput,
-	ReorderGamesInput,
-	UpdateGameInput,
 } from "../schemas/plan";
-import {
-	generateSessionsForPlan,
-	regenerateFutureSessions,
-} from "../services/session-generator";
 import { getChildForRead } from "./child";
 
-async function getPlanForTherapist(planId: string, ctx: { auth: AuthUser }) {
+export async function getPlanForTherapist(
+	planId: string,
+	ctx: { auth: AuthUser },
+) {
 	const plan = await prisma.treatmentPlan.findFirst({
 		where: {
 			id: planId,
 			...(ctx.auth.role !== "SUPER_ADMIN"
 				? { clinicId: ctx.auth.tenantId ?? undefined }
 				: {}),
-		},
-		include: {
-			gameAssignments: {
-				include: {
-					gameVersion: {
-						include: { game: true },
-					},
-				},
-				orderBy: { order: "asc" },
-			},
 		},
 	});
 	if (!plan) throw new TRPCError({ code: "NOT_FOUND" });
@@ -120,9 +106,6 @@ export const planRouter = router({
 				childId: input.childId,
 				name: input.name,
 				programLengthWeeks: input.programLengthWeeks,
-				phases: (input.phases ?? []) as unknown as Parameters<
-					typeof prisma.treatmentPlan.create
-				>[0]["data"]["phases"],
 				startDate: input.startDate,
 				targetMilestones: input.targetMilestones ?? [],
 				sessionDurationMinutes: input.sessionDurationMinutes ?? 60,
@@ -138,6 +121,11 @@ export const planRouter = router({
 			return prisma.$transaction(async (tx) => {
 				const plan = await tx.treatmentPlan.create({ data: planData });
 
+				let goalTemplates: {
+					short_term: string[];
+					long_term: string[];
+				} | null = null;
+
 				if (input.presetId) {
 					const { PLAN_PRESETS } = await import("../index");
 					const preset = PLAN_PRESETS.find(
@@ -150,20 +138,31 @@ export const planRouter = router({
 						});
 					}
 
+					goalTemplates = {
+						short_term: preset.short_term_goals_template,
+						long_term: preset.long_term_goals_template,
+					};
+				} else if (input.customGoals) {
+					goalTemplates = input.customGoals;
+				}
+
+				if (goalTemplates) {
 					const goalsToCreate = [
-						...preset.short_term_goals_template.map((description: string) => ({
+						...goalTemplates.short_term.map((description: string) => ({
 							treatmentPlanId: plan.id,
 							description,
 							horizon: "SHORT_TERM" as const,
 						})),
-						...preset.long_term_goals_template.map((description: string) => ({
+						...goalTemplates.long_term.map((description: string) => ({
 							treatmentPlanId: plan.id,
 							description,
 							horizon: "LONG_TERM" as const,
 						})),
 					];
 
-					await tx.goal.createMany({ data: goalsToCreate });
+					if (goalsToCreate.length > 0) {
+						await tx.goal.createMany({ data: goalsToCreate });
+					}
 				}
 
 				return plan;
@@ -196,125 +195,6 @@ export const planRouter = router({
 			});
 		}),
 
-	addGame: protectedProcedure
-		.input(AddGameInput)
-		.mutation(async ({ input, ctx }) => {
-			await getPlanForTherapist(input.planId, ctx);
-
-			const gameVersion = await prisma.gameVersion.findUnique({
-				where: { id: input.gameVersionId },
-			});
-			if (!gameVersion) {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "Game version not found",
-				});
-			}
-
-			const lastAssignment = await prisma.planGameAssignment.findFirst({
-				where: { planId: input.planId },
-				orderBy: { order: "desc" },
-			});
-			const nextOrder = (lastAssignment?.order ?? 0) + 1;
-
-			return prisma.planGameAssignment.create({
-				data: {
-					planId: input.planId,
-					gameVersionId: input.gameVersionId,
-					durationSeconds: input.durationSeconds,
-					repetitions: input.repetitions,
-					frequencyPerWeek: input.frequencyPerWeek,
-					instructions: input.instructions,
-					appliesToPhase: input.appliesToPhase,
-					order: nextOrder,
-				},
-			});
-		}),
-
-	removeGame: protectedProcedure
-		.input(z.object({ assignmentId: z.string() }))
-		.mutation(async ({ input, ctx }) => {
-			const assignment = await prisma.planGameAssignment.findUnique({
-				where: { id: input.assignmentId },
-			});
-			if (!assignment) {
-				throw new TRPCError({ code: "NOT_FOUND" });
-			}
-
-			await getPlanForTherapist(assignment.planId, ctx);
-
-			return prisma.planGameAssignment.delete({
-				where: { id: input.assignmentId },
-			});
-		}),
-
-	updateGame: protectedProcedure
-		.input(UpdateGameInput)
-		.mutation(async ({ input, ctx }) => {
-			const assignment = await prisma.planGameAssignment.findUnique({
-				where: { id: input.assignmentId },
-			});
-			if (!assignment) {
-				throw new TRPCError({ code: "NOT_FOUND" });
-			}
-
-			await getPlanForTherapist(assignment.planId, ctx);
-
-			const updateData: Record<string, unknown> = {};
-			if (input.durationSeconds !== undefined)
-				updateData.durationSeconds = input.durationSeconds;
-			if (input.repetitions !== undefined)
-				updateData.repetitions = input.repetitions;
-			if (input.frequencyPerWeek !== undefined)
-				updateData.frequencyPerWeek = input.frequencyPerWeek;
-			if (input.instructions !== undefined)
-				updateData.instructions = input.instructions;
-			if (input.appliesToPhase !== undefined)
-				updateData.appliesToPhase = input.appliesToPhase;
-
-			return prisma.planGameAssignment.update({
-				where: { id: input.assignmentId },
-				data: updateData,
-			});
-		}),
-
-	reorderGames: protectedProcedure
-		.input(ReorderGamesInput)
-		.mutation(async ({ input, ctx }) => {
-			await getPlanForTherapist(input.planId, ctx);
-
-			await prisma.$transaction(
-				input.orderedIds.map((id, index) =>
-					prisma.planGameAssignment.update({
-						where: { id },
-						data: { order: index },
-					}),
-				),
-			);
-		}),
-
-	checkSessionDuration: protectedProcedure
-		.input(z.object({ planId: z.string() }))
-		.query(async ({ input, ctx }) => {
-			const plan = await getPlanForTherapist(input.planId, ctx);
-
-			const assignments = await prisma.planGameAssignment.findMany({
-				where: { planId: input.planId },
-			});
-
-			const maxSeconds = assignments.reduce(
-				(max, a) => Math.max(max, a.durationSeconds ?? 0),
-				0,
-			);
-			const limitSeconds = plan.sessionDurationMinutes * 60;
-
-			return {
-				maxSeconds,
-				limitSeconds,
-				exceeds: maxSeconds > limitSeconds,
-			};
-		}),
-
 	activate: protectedProcedure
 		.input(z.object({ planId: z.string() }))
 		.mutation(async ({ input, ctx }) => {
@@ -327,15 +207,9 @@ export const planRouter = router({
 				});
 			}
 
-			await prisma.treatmentPlan.update({
-				where: { id: input.planId },
+			return prisma.treatmentPlan.update({
+				where: { id: plan.id },
 				data: { status: "ACTIVE", isActive: true },
-			});
-
-			await generateSessionsForPlan(input.planId);
-
-			return prisma.treatmentPlan.findUniqueOrThrow({
-				where: { id: input.planId },
 			});
 		}),
 
@@ -432,10 +306,6 @@ export const planRouter = router({
 				});
 			}
 
-			const currentAssignments = await prisma.planGameAssignment.findMany({
-				where: { planId: current.id },
-			});
-
 			const newPlan = await prisma.$transaction(async (tx) => {
 				await tx.treatmentPlan.update({
 					where: { id: current.id },
@@ -450,9 +320,6 @@ export const planRouter = router({
 						name: input.changes.name ?? current.name,
 						programLengthWeeks:
 							input.changes.programLengthWeeks ?? current.programLengthWeeks,
-						phases: (input.changes.phases ?? current.phases) as Parameters<
-							typeof prisma.treatmentPlan.create
-						>[0]["data"]["phases"],
 						startDate: input.changes.startDate ?? current.startDate,
 						targetMilestones:
 							input.changes.targetMilestones ?? current.targetMilestones,
@@ -467,19 +334,6 @@ export const planRouter = router({
 					},
 				});
 
-				await tx.planGameAssignment.createMany({
-					data: currentAssignments.map((a) => ({
-						planId: created.id,
-						gameVersionId: a.gameVersionId,
-						durationSeconds: a.durationSeconds,
-						repetitions: a.repetitions,
-						frequencyPerWeek: a.frequencyPerWeek,
-						instructions: a.instructions,
-						appliesToPhase: a.appliesToPhase,
-						order: a.order,
-					})),
-				});
-
 				await applyPlanModificationDecisions(
 					tx,
 					created.id,
@@ -488,8 +342,6 @@ export const planRouter = router({
 
 				return created;
 			});
-
-			await regenerateFutureSessions(current.id, newPlan.id, new Date());
 
 			return newPlan;
 		}),

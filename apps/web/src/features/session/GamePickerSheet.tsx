@@ -16,42 +16,35 @@ import { useState } from "react";
 import type { GameItem } from "@/components/game-library/GameCard";
 import { trpc } from "@/utils/trpc";
 
-type GameAssignmentData = {
-	gameVersionId: string;
-	durationSeconds?: number;
-	repetitions?: number;
-	frequencyPerWeek?: number;
-	instructions?: string;
-	appliesToPhase?: string;
-};
-
-type GameLibraryBrowserSheetProps = {
+type GamePickerSheetProps = {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
-	onSelectGame: (data: GameAssignmentData) => void;
+	onSelect: (game: {
+		gameVersionId: string;
+		gameName: string;
+		durationSeconds?: number;
+		repetitions?: number;
+		instructions?: string;
+	}) => void;
 };
 
 type FormState = {
 	durationMinutes: string;
 	repetitions: string;
-	frequencyPerWeek: string;
-	phase: string;
 	instructions: string;
 };
 
-export function GameLibraryBrowserSheet({
+export function GamePickerSheet({
 	open,
 	onOpenChange,
-	onSelectGame,
-}: GameLibraryBrowserSheetProps) {
+	onSelect,
+}: GamePickerSheetProps) {
 	const [search, setSearch] = useState("");
 	const [page, setPage] = useState(1);
 	const [selectedGame, setSelectedGame] = useState<GameItem | null>(null);
 	const [form, setForm] = useState<FormState>({
 		durationMinutes: "",
 		repetitions: "",
-		frequencyPerWeek: "",
-		phase: "",
 		instructions: "",
 	});
 
@@ -71,15 +64,9 @@ export function GameLibraryBrowserSheet({
 		onOpenChange(newOpen);
 	};
 
-	const handlePinToPlan = (game: GameItem) => {
+	const handlePickGame = (game: GameItem) => {
 		setSelectedGame(game);
-		setForm({
-			durationMinutes: "",
-			repetitions: "",
-			frequencyPerWeek: "",
-			phase: "",
-			instructions: "",
-		});
+		setForm({ durationMinutes: "", repetitions: "", instructions: "" });
 	};
 
 	const handleBack = () => {
@@ -91,19 +78,16 @@ export function GameLibraryBrowserSheet({
 		const latestVersion = selectedGame.versions[0];
 		if (!latestVersion) return;
 
-		onSelectGame({
+		onSelect({
 			gameVersionId: latestVersion.id,
+			gameName: selectedGame.name,
 			durationSeconds: form.durationMinutes
 				? Number.parseInt(form.durationMinutes, 10) * 60
 				: undefined,
 			repetitions: form.repetitions
 				? Number.parseInt(form.repetitions, 10)
 				: undefined,
-			frequencyPerWeek: form.frequencyPerWeek
-				? Number.parseInt(form.frequencyPerWeek, 10)
-				: undefined,
 			instructions: form.instructions || undefined,
-			appliesToPhase: form.phase || undefined,
 		});
 		setSelectedGame(null);
 	};
@@ -122,7 +106,7 @@ export function GameLibraryBrowserSheet({
 				>
 					<SheetHeader className="flex-shrink-0 pr-6">
 						<SheetTitle className="font-semibold text-base">
-							Add Game to Plan
+							Add Game to Session
 						</SheetTitle>
 						<SheetDescription className="flex items-center gap-2 pt-1 font-medium text-on-surface">
 							<span>{selectedGame.name}</span>
@@ -158,43 +142,17 @@ export function GameLibraryBrowserSheet({
 								</div>
 							</div>
 
-							<div className="grid grid-cols-2 gap-4">
-								<div className="space-y-2">
-									<Label htmlFor="repetitions">Repetitions</Label>
-									<Input
-										id="repetitions"
-										type="number"
-										min={1}
-										placeholder="e.g., 3"
-										value={form.repetitions}
-										onChange={(e) =>
-											handleInputChange("repetitions", e.target.value)
-										}
-									/>
-								</div>
-
-								<div className="space-y-2">
-									<Label htmlFor="frequency">Frequency / Week</Label>
-									<Input
-										id="frequency"
-										type="number"
-										min={1}
-										placeholder="e.g., 2"
-										value={form.frequencyPerWeek}
-										onChange={(e) =>
-											handleInputChange("frequencyPerWeek", e.target.value)
-										}
-									/>
-								</div>
-							</div>
-
 							<div className="space-y-2">
-								<Label htmlFor="phase">Phase</Label>
+								<Label htmlFor="repetitions">Repetitions</Label>
 								<Input
-									id="phase"
-									placeholder="e.g., Phase 1, Introduction"
-									value={form.phase}
-									onChange={(e) => handleInputChange("phase", e.target.value)}
+									id="repetitions"
+									type="number"
+									min={1}
+									placeholder="e.g., 3"
+									value={form.repetitions}
+									onChange={(e) =>
+										handleInputChange("repetitions", e.target.value)
+									}
 								/>
 							</div>
 
@@ -215,7 +173,7 @@ export function GameLibraryBrowserSheet({
 
 					<div className="mt-auto flex flex-col gap-2 border-t pt-4">
 						<Button onClick={handleSubmit} disabled={!form.durationMinutes}>
-							Add to Plan
+							Add Game
 						</Button>
 						<Button variant="outline" onClick={handleBack}>
 							Back
@@ -236,9 +194,7 @@ export function GameLibraryBrowserSheet({
 					<SheetTitle className="font-semibold text-base">
 						Game Library
 					</SheetTitle>
-					<SheetDescription>
-						Select a game to add to this plan.
-					</SheetDescription>
+					<SheetDescription>Select a game for this session.</SheetDescription>
 				</SheetHeader>
 
 				<div className="py-4">
@@ -317,10 +273,10 @@ export function GameLibraryBrowserSheet({
 									<div className="flex-shrink-0">
 										<Button
 											size="sm"
-											onClick={() => handlePinToPlan(game)}
+											onClick={() => handlePickGame(game)}
 											className="w-full sm:w-auto"
 										>
-											Pin to Plan
+											Choose
 										</Button>
 									</div>
 								</div>

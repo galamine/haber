@@ -25,7 +25,6 @@ model TreatmentPlan {
   createdById            String
   name                   String
   programLengthWeeks     Int
-  phases                 Json       @default("[]")
   startDate              DateTime?
   projectedEndDate       DateTime?
   targetMilestones       String[]
@@ -40,28 +39,10 @@ model TreatmentPlan {
   createdAt              DateTime   @default(now())
   updatedAt              DateTime   @updatedAt
 
-  gameAssignments PlanGameAssignment[]
   goals           Goal[]
   sessions        TherapySession[]
 
   @@map("treatment_plan")
-}
-
-model PlanGameAssignment {
-  id               String  @id @default(cuid())
-  planId           String
-  gameVersionId    String
-  durationSeconds  Int?
-  repetitions      Int?
-  frequencyPerWeek Int?
-  instructions     String?
-  appliesToPhase   String?
-  order            Int     @default(0)
-
-  plan        TreatmentPlan @relation(fields: [planId], references: [id])
-  gameVersion GameVersion   @relation(fields: [gameVersionId], references: [id])
-
-  @@map("plan_game_assignment")
 }
 
 model Goal {
@@ -164,7 +145,6 @@ model GameVersion {
   createdAt       DateTime @default(now())
 
   game            Game                 @relation(fields: [gameId], references: [id])
-  planAssignments PlanGameAssignment[]
   sessionAssignments SessionGameAssignment[]
 
   @@map("game_version")

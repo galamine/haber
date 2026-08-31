@@ -121,11 +121,7 @@ function NewFollowUpPage() {
 			sectionA: values.sectionA,
 			sectionB: values.sectionB,
 			sectionC: values.sectionC,
-			sectionD: {
-				...values.sectionD,
-				equipmentEffectivelyUsed:
-					values.sectionD.equipmentEffectivelyUsed.join(", "),
-			},
+			sectionD: values.sectionD,
 			sectionE: values.sectionE,
 			sectionF: {
 				therapistName: values.sectionF.therapistName,

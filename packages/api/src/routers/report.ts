@@ -48,7 +48,7 @@ export const reportRouter = router({
 								orderBy: { order: "asc" },
 								include: {
 									gameVersion: {
-										include: { game: { select: { name: true } } },
+										include: { game: { select: { name: true, key: true } } },
 									},
 								},
 							},

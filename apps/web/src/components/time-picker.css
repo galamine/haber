@@ -1,0 +1,18 @@
+.time-picker-field .react-time-picker__wrapper {
+	height: 2.75rem;
+	border: 1px solid var(--color-brown-300, #d6c7b8);
+	border-radius: 0.5rem;
+	padding: 0 0.75rem;
+}
+
+.time-picker-field .react-time-picker__wrapper:hover {
+	border-color: var(--color-brown-400, #c2ab93);
+}
+
+.time-picker-field .react-time-picker__inputGroup__input {
+	font-size: 0.875rem;
+}
+
+.time-picker-field .react-clock {
+	margin: 0.5rem;
+}

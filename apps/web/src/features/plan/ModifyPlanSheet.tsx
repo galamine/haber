@@ -10,12 +10,12 @@ import { Textarea } from "@haber-final/ui/components/textarea";
 import { cn } from "@haber-final/ui/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Flag, Gamepad2 } from "lucide-react";
+import { Flag } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
 import { ModifyPlanFormSchema, type ModifyPlanFormValues } from "./schema";
-import type { GameAssignment, Goal } from "./types";
+import type { Goal } from "./types";
 
 type ModifyPlanSheetProps = {
 	open: boolean;
@@ -24,7 +24,6 @@ type ModifyPlanSheetProps = {
 		id: string;
 		name: string;
 		goals?: Goal[];
-		gameAssignments?: GameAssignment[];
 	};
 	onSuccess: (newPlanId: string) => void;
 };
@@ -32,7 +31,7 @@ type ModifyPlanSheetProps = {
 export function ModifyPlanSheet({
 	open,
 	onOpenChange,
-	plan: { goals = [], gameAssignments = [], ...plan },
+	plan: { goals = [], ...plan },
 	onSuccess,
 }: ModifyPlanSheetProps) {
 	const queryClient = useQueryClient();
@@ -152,17 +151,6 @@ export function ModifyPlanSheet({
 									);
 								})}
 							</div>
-						</div>
-
-						<div className="space-y-4">
-							<h3 className="flex items-center gap-2 font-semibold text-on-background">
-								<Gamepad2 className="h-5 w-5 text-brown-500" />
-								Game Assignments
-							</h3>
-							<p className="text-on-surface-variant text-sm">
-								{gameAssignments.length} game(s) assigned. Games are copied to
-								the new version.
-							</p>
 						</div>
 					</div>
 

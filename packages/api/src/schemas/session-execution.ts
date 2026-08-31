@@ -3,6 +3,7 @@ import { z } from "zod";
 export const AssignRoomInput = z.object({
 	sessionId: z.string(),
 	roomId: z.string(),
+	acknowledgeConflict: z.boolean().default(false),
 });
 
 export const ManualCloseInput = z.object({

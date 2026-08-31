@@ -1,24 +1,9 @@
-export type Phase = {
-	phase: string;
-	weeks: number;
-	label: string;
-};
-
 export type GoalDecision = {
 	goalId: string;
 	action: "CARRY_OVER" | "CLOSE" | "MODIFY";
 	newDescription?: string;
 	newHorizon?: "SHORT_TERM" | "LONG_TERM";
 	newTargetAttainmentPct?: number;
-};
-
-export type GameAssignment = {
-	id: string;
-	gameVersion: { game: { name: string }; versionNumber: string };
-	durationSeconds: number | null;
-	repetitions: number | null;
-	frequencyPerWeek: number | null;
-	appliesToPhase: string | null;
 };
 
 export type Goal = {

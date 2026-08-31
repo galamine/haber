@@ -19,6 +19,7 @@ import { ArrowLeft, ExternalLink, Gamepad2, MapPin, UserX } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { ConflictWarning } from "@/features/session/ConflictWarning";
 import { GameResultCard } from "@/features/session/game-result/GameResultCard";
 import { trpc } from "@/utils/trpc";
 
@@ -77,6 +78,7 @@ type Session = {
 	id: string;
 	childId: string;
 	scheduledDate: Date;
+	durationMinutes: number;
 	status: SessionStatus;
 	startedAt: Date | null;
 	completedAt: Date | null;
@@ -131,6 +133,7 @@ function SessionDetailPage() {
 	const queryClient = useQueryClient();
 	const [closeSheetOpen, setCloseSheetOpen] = useState(false);
 	const [notes, setNotes] = useState("");
+	const [pendingRoomId, setPendingRoomId] = useState<string>();
 
 	const { data: session, isLoading } = useQuery(
 		trpc.session.get.queryOptions({ sessionId }),
@@ -150,10 +153,21 @@ function SessionDetailPage() {
 
 	const { data: rooms } = useQuery(trpc.clinic.listSensoryRooms.queryOptions());
 
+	const roomConflicts = useQuery({
+		...trpc.session.checkConflicts.queryOptions({
+			scheduledDate: session?.scheduledDate ?? new Date(),
+			durationMinutes: session?.durationMinutes ?? 0,
+			roomId: pendingRoomId,
+			excludeSessionId: sessionId,
+		}),
+		enabled: !!session && !!pendingRoomId && pendingRoomId !== session.roomId,
+	});
+
 	const assignRoomMutation = useMutation(
 		trpc.session.assignRoom.mutationOptions({
 			onSuccess: () => {
 				toast.success("Room assigned");
+				setPendingRoomId(undefined);
 				queryClient.invalidateQueries({
 					queryKey: trpc.session.get.queryOptions({ sessionId }).queryKey,
 				});
@@ -204,6 +218,20 @@ function SessionDetailPage() {
 			onError: (err) => toast.error(err.message),
 		}),
 	);
+
+	useEffect(() => {
+		if (
+			!pendingRoomId ||
+			!session ||
+			pendingRoomId === session.roomId ||
+			!roomConflicts.data
+		) {
+			return;
+		}
+		if (roomConflicts.data.roomConflicts.length === 0) {
+			assignRoomMutation.mutate({ sessionId, roomId: pendingRoomId });
+		}
+	}, [pendingRoomId, roomConflicts.data, session?.roomId, sessionId]);
 
 	function handleOpenGame(assignment: GameAssignment) {
 		if (!assignment.gameVersion.path) {
@@ -271,11 +299,14 @@ function SessionDetailPage() {
 				<SectionHeader
 					badge={{ label: statusInfo.label, variant: statusInfo.variant }}
 					title="Session"
-					description={
+					description={[
 						s.startedAt
 							? `Started: ${new Date(s.startedAt).toLocaleTimeString()}`
-							: undefined
-					}
+							: undefined,
+						`${s.durationMinutes} min`,
+					]
+						.filter(Boolean)
+						.join(" · ")}
 					actions={
 						<>
 							{s.status === "PENDING" && (
@@ -334,28 +365,66 @@ function SessionDetailPage() {
 					icon={<MapPin className="h-5 w-5" />}
 					title="Room Assignment"
 				/>
-				<CardContent>
-					<Select
-						value={s.roomId ?? "unassigned"}
-						onValueChange={(value) => {
-							if (value !== "unassigned") {
-								assignRoomMutation.mutate({ sessionId, roomId: value });
-							}
-						}}
-						disabled={assignRoomMutation.isPending}
-					>
-						<SelectTrigger className="w-64">
-							<SelectValue placeholder="Select a room" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="unassigned">Unassigned</SelectItem>
-							{(rooms ?? []).map((room: Room) => (
-								<SelectItem key={room.id} value={room.id}>
-									{room.name}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
+				<CardContent className="flex flex-col gap-3">
+					{pendingRoomId &&
+						pendingRoomId !== s.roomId &&
+						roomConflicts.data &&
+						roomConflicts.data.roomConflicts.length > 0 && (
+							<ConflictWarning
+								roomConflicts={roomConflicts.data.roomConflicts}
+								therapistConflicts={[]}
+							/>
+						)}
+					<div className="flex items-center gap-2">
+						<Select
+							value={pendingRoomId ?? s.roomId ?? "unassigned"}
+							onValueChange={(value) => {
+								if (value !== "unassigned") {
+									setPendingRoomId(value);
+								}
+							}}
+							disabled={assignRoomMutation.isPending}
+						>
+							<SelectTrigger className="w-64">
+								<SelectValue placeholder="Select a room" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="unassigned">Unassigned</SelectItem>
+								{(rooms ?? []).map((room: Room) => (
+									<SelectItem key={room.id} value={room.id}>
+										{room.name}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+						{pendingRoomId &&
+							pendingRoomId !== s.roomId &&
+							roomConflicts.data &&
+							roomConflicts.data.roomConflicts.length > 0 && (
+								<>
+									<Button
+										size="sm"
+										disabled={assignRoomMutation.isPending}
+										onClick={() =>
+											assignRoomMutation.mutate({
+												sessionId,
+												roomId: pendingRoomId,
+												acknowledgeConflict: true,
+											})
+										}
+									>
+										Assign Anyway
+									</Button>
+									<Button
+										size="sm"
+										variant="outline"
+										onClick={() => setPendingRoomId(undefined)}
+									>
+										Cancel
+									</Button>
+								</>
+							)}
+					</div>
 				</CardContent>
 			</Card>
 

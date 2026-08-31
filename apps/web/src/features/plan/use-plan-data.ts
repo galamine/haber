@@ -22,14 +22,6 @@ export function usePlanData({
 		retry: false,
 	});
 
-	const sessionDuration = useQuery({
-		...(planId
-			? trpc.plan.checkSessionDuration.queryOptions({ planId })
-			: { queryKey: ["unused"], queryFn: () => null }),
-		enabled: !!planId,
-		retry: false,
-	});
-
 	const goals = useQuery({
 		...(planId
 			? trpc.goal.list.queryOptions({ treatmentPlanId: planId })
@@ -38,15 +30,9 @@ export function usePlanData({
 		retry: false,
 	});
 
-	const isLoading = [
-		child,
-		plans,
-		presets,
-		activePlans,
-		plan,
-		sessionDuration,
-		goals,
-	].some((q) => q.isLoading);
+	const isLoading = [child, plans, presets, activePlans, plan, goals].some(
+		(q) => q.isLoading,
+	);
 
 	return {
 		child,
@@ -54,7 +40,6 @@ export function usePlanData({
 		presets,
 		activePlans,
 		plan,
-		sessionDuration,
 		goals,
 		isLoading,
 	};

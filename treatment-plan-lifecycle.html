@@ -406,7 +406,7 @@
           <h2>Draft</h2>
           <span class="status-badge">status: DRAFT</span>
         </div>
-        <p class="stage-sub">The plan exists but nothing is running yet. It can be freely reshaped — activities and goals added, removed, reordered — before it ever reaches a family or a session calendar.</p>
+        <p class="stage-sub">The plan exists but nothing is running yet. Goals can be added and reshaped before it ever reaches a family or a session calendar. There is no plan-level activity pool — games are chosen per session once sessions start getting created (see below).</p>
 
         <div class="actions">
           <div class="action">
@@ -417,21 +417,9 @@
             </div>
           </div>
           <div class="action">
-            <div class="name">Manage activities<small>build-out</small></div>
-            <div class="detail">
-              <span class="procedure">plan.addGame · removeGame · updateGame · reorderGames</span> — attach, remove, edit, or resequence assigned games/activities.
-            </div>
-          </div>
-          <div class="action">
             <div class="name">Add goals<small>build-out</small></div>
             <div class="detail">
               <span class="procedure">goal.create</span> — short-term or long-term goals, each starting at <code>IN_PROGRESS</code>.
-            </div>
-          </div>
-          <div class="action">
-            <div class="name">Check duration<small>validation</small></div>
-            <div class="detail">
-              <span class="procedure">plan.checkSessionDuration</span> — read-only check that assigned activity durations fit inside the configured session length.
             </div>
           </div>
         </div>
@@ -446,13 +434,13 @@
           <h2>Active ⇄ Paused</h2>
           <span class="status-badge">status: ACTIVE / PAUSED</span>
         </div>
-        <p class="stage-sub">Once activated, the plan is live: sessions exist, activities are being delivered, and progress is being tracked. It can be paused and resumed any number of times without losing history.</p>
+        <p class="stage-sub">Once activated, the therapist can start creating sessions on the plan one at a time — each with its own date, time, room, and game. Progress is tracked as those sessions run. It can be paused and resumed any number of times without losing history.</p>
 
         <div class="actions">
           <div class="action">
             <div class="name">Activate<small>enter live state</small></div>
             <div class="detail">
-              <span class="procedure">plan.activate</span> — flips <code>isActive: true</code> and calls <code>generateSessionsForPlan</code>, which creates the <code>TherapySession</code> rows the plan will run on.
+              <span class="procedure">plan.activate</span> — flips <code>isActive: true</code> and the plan's status to <code>ACTIVE</code>. It does not create any sessions — the therapist creates each one manually via <span class="procedure">session.create</span>.
               <div class="transition"><span class="from">DRAFT / PAUSED</span><span>→</span><span class="to">ACTIVE</span></div>
             </div>
           </div>
@@ -491,11 +479,10 @@
           <p>Unlike every other action here, <code>plan.modify</code> doesn't just change a status field. While the plan is <code>ACTIVE</code>, it:</p>
           <ul>
             <li>Marks the current version <code>isActive: false</code> (its status field is untouched)</li>
-            <li>Creates a <strong>new plan row</strong> at <code>versionNumber + 1</code>, <code>status: ACTIVE</code>, linked back via <code>parentPlanId</code></li>
-            <li>Copies over the activity assignments, then calls <code>regenerateFutureSessions</code></li>
+            <li>Creates a <strong>new plan row</strong> at <code>versionNumber + 1</code>, <code>status: ACTIVE</code>, linked back via <code>parentPlanId</code>, with <strong>zero sessions</strong> carried over</li>
             <li>Runs <code>goal.applyPlanModificationDecisions</code> for every existing goal — see below</li>
           </ul>
-          <p style="margin-top:0.6rem">Blocked entirely once the plan is <code>CLOSED</code>.</p>
+          <p style="margin-top:0.6rem">The old plan version's sessions stay attached to it as history — the therapist creates new sessions on the new version manually. Blocked entirely once the plan is <code>CLOSED</code>.</p>
         </aside>
 
         <aside class="callout">
@@ -549,8 +536,8 @@
 
   <div class="support-grid">
     <div class="support-card">
-      <h3>Sessions (spawned by an active plan)</h3>
-      <p>Each activation or modification generates <code>TherapySession</code> rows, which run their own independent state machine:</p>
+      <h3>Sessions (manually created by the therapist, attached to the plan)</h3>
+      <p>Each <code>TherapySession</code> is created one at a time via <span class="procedure">session.create</span> — never generated in bulk. Once created, a session runs its own independent state machine:</p>
       <div class="flow-row">
         <span class="pill">PENDING</span><span class="arrow">→</span><span class="pill">IN_PROGRESS</span><span class="arrow">→</span><span class="pill">COMPLETED</span>
       </div>

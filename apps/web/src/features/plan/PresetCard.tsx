@@ -5,6 +5,7 @@ import {
 	Brain,
 	Heart,
 	type LucideIcon,
+	Plus,
 	Zap,
 } from "lucide-react";
 
@@ -14,20 +15,26 @@ const ICON_MAP: Record<string, LucideIcon> = {
 	Zap,
 	Heart,
 	Activity,
+	Plus,
 };
 
 type PresetCardProps = {
 	preset: {
 		preset_id: string;
 		case_label: string;
-		icon: string;
 		description: string;
 	};
+	icon: string;
 	selected?: boolean;
 	onSelect: (presetId: string) => void;
 };
 
-export function PresetCard({ preset, selected, onSelect }: PresetCardProps) {
+export function PresetCard({
+	preset,
+	icon,
+	selected,
+	onSelect,
+}: PresetCardProps) {
 	return (
 		<button
 			type="button"
@@ -48,7 +55,7 @@ export function PresetCard({ preset, selected, onSelect }: PresetCardProps) {
 				)}
 			>
 				{(() => {
-					const Icon = ICON_MAP[preset.icon] ?? Activity;
+					const Icon = ICON_MAP[icon] ?? Activity;
 					return <Icon className="h-5 w-5" />;
 				})()}
 			</div>

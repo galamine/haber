@@ -4,35 +4,16 @@ export const CreatePlanInput = z.object({
 	childId: z.string(),
 	name: z.string(),
 	programLengthWeeks: z.number().int().positive(),
-	phases: z.array(z.record(z.string(), z.unknown())).optional(),
 	startDate: z.coerce.date().optional(),
 	targetMilestones: z.array(z.string()).optional(),
 	sessionDurationMinutes: z.number().int().positive().optional(),
 	presetId: z.string().optional(),
-});
-
-export const AddGameInput = z.object({
-	planId: z.string(),
-	gameVersionId: z.string(),
-	durationSeconds: z.number().int().positive().optional(),
-	repetitions: z.number().int().positive().optional(),
-	frequencyPerWeek: z.number().int().positive().optional(),
-	instructions: z.string().optional(),
-	appliesToPhase: z.string().optional(),
-});
-
-export const UpdateGameInput = z.object({
-	assignmentId: z.string(),
-	durationSeconds: z.number().int().positive().optional(),
-	repetitions: z.number().int().positive().optional(),
-	frequencyPerWeek: z.number().int().positive().optional(),
-	instructions: z.string().optional(),
-	appliesToPhase: z.string().optional(),
-});
-
-export const ReorderGamesInput = z.object({
-	planId: z.string(),
-	orderedIds: z.array(z.string()),
+	customGoals: z
+		.object({
+			short_term: z.array(z.string()).default([]),
+			long_term: z.array(z.string()).default([]),
+		})
+		.optional(),
 });
 
 export const ModificationDecisionInput = z.object({
@@ -48,7 +29,6 @@ export const ModifyPlanInput = z.object({
 	changes: z.object({
 		name: z.string().optional(),
 		programLengthWeeks: z.number().int().positive().optional(),
-		phases: z.array(z.record(z.string(), z.unknown())).optional(),
 		startDate: z.coerce.date().optional(),
 		targetMilestones: z.array(z.string()).optional(),
 		sessionDurationMinutes: z.number().int().positive().optional(),

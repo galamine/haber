@@ -433,23 +433,29 @@ export const dashboardRouter = router({
 			where: { clinicId },
 			select: { id: true, name: true, code: true, status: true },
 		});
-		const todayBookings = await prisma.roomBooking.findMany({
+		const todaySessions = await prisma.therapySession.findMany({
 			where: {
 				roomId: { in: allRooms.map((r) => r.id) },
 				scheduledDate: { gte: today, lt: tomorrow },
 			},
-			select: { roomId: true, claimedById: true },
+			select: { roomId: true, assignedTherapistId: true },
 		});
 
 		const bookingByRoom = new Map(
-			todayBookings.map((b) => [b.roomId, b.claimedById]),
+			todaySessions
+				.filter((b): b is typeof b & { roomId: string } => b.roomId !== null)
+				.map((b) => [b.roomId, b.assignedTherapistId]),
 		);
-		const bookedRoomIds = new Set(todayBookings.map((b) => b.roomId));
+		const bookedRoomIds = new Set(
+			todaySessions
+				.map((b) => b.roomId)
+				.filter((id): id is string => id !== null),
+		);
 
 		const therapistIdsAssigned = [
 			...new Set(
-				todayBookings
-					.map((b) => b.claimedById)
+				todaySessions
+					.map((b) => b.assignedTherapistId)
 					.filter((id): id is string => id !== null),
 			),
 		];
@@ -477,8 +483,8 @@ export const dashboardRouter = router({
 
 		const assignedTherapistIds = [
 			...new Set(
-				todayBookings
-					.map((b) => b.claimedById)
+				todaySessions
+					.map((b) => b.assignedTherapistId)
 					.filter((id): id is string => id !== null),
 			),
 		];

@@ -164,6 +164,9 @@ function ChildProfilePage() {
 	const activePlan = useQuery(
 		trpc.assessment.getActivePlan.queryOptions({ childId }),
 	);
+	const followUps = useQuery(
+		trpc.assessment.listFollowUps.queryOptions({ childId }),
+	);
 
 	const withdrawMutation = useMutation(
 		trpc.consent.withdraw.mutationOptions({
@@ -568,6 +571,48 @@ function ChildProfilePage() {
 						<div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center text-on-surface-variant text-sm">
 							No assessment completed yet.
 						</div>
+					)}
+
+					{followUps.data && followUps.data.length > 0 ? (
+						<div className="mt-4 space-y-3">
+							{[...followUps.data]
+								.sort((a, b) => b.versionNumber - a.versionNumber)
+								.map((followUp) => (
+									<div
+										key={followUp.id}
+										className="rounded-xl border border-outline-variant bg-surface-container-lowest p-5"
+									>
+										<div className="flex items-center justify-between">
+											<div>
+												<p className="font-medium text-on-surface text-sm">
+													Follow-up #{followUp.versionNumber}
+												</p>
+												<p className="text-on-surface-variant text-xs">
+													Completed{" "}
+													{new Date(followUp.createdAt).toLocaleDateString()}
+												</p>
+											</div>
+											<Button
+												variant="outline"
+												onClick={() =>
+													router.navigate({
+														to: "/children/$childId/followup/$followUpId",
+														params: { childId, followUpId: followUp.id },
+													})
+												}
+											>
+												View
+											</Button>
+										</div>
+									</div>
+								))}
+						</div>
+					) : (
+						!initialAssessment.data && (
+							<div className="mt-4 rounded-xl border border-outline-variant bg-surface-container-lowest p-8 text-center text-on-surface-variant text-sm">
+								No follow-ups completed yet.
+							</div>
+						)
 					)}
 				</TabsContent>
 

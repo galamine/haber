@@ -3,7 +3,10 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { protectedProcedure, router } from "../index";
 import { matchResultToAssignments } from "../lib/game-result-summary";
+import { findConflicts } from "../lib/session-conflicts";
 import {
+	CheckConflictsInput,
+	CreateSessionInput,
 	GetCalendarInput,
 	ListForChildInput,
 	ListForPlanInput,
@@ -14,11 +17,14 @@ import {
 	GetWebhookUrlInput,
 	ManualCloseInput,
 } from "../schemas/session-execution";
+import { getPlanForTherapist } from "./plan";
 
 function attachResultSummary<
 	T extends {
 		result: { rawMetrics: unknown } | null;
-		gameAssignments: { gameVersion: { game: { name: string } } }[];
+		gameAssignments: {
+			gameVersion: { game: { key: string | null } };
+		}[];
 	},
 >(session: T) {
 	return {
@@ -186,6 +192,94 @@ export const sessionRouter = router({
 			return grouped;
 		}),
 
+	checkConflicts: protectedProcedure
+		.input(CheckConflictsInput)
+		.query(async ({ input }) => findConflicts(input)),
+
+	create: protectedProcedure
+		.input(CreateSessionInput)
+		.mutation(async ({ input, ctx }) => {
+			const plan = await getPlanForTherapist(input.planId, ctx);
+
+			if (plan.status === "CLOSED") {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Cannot create sessions for a closed plan",
+				});
+			}
+
+			const room = await prisma.sensoryRoom.findFirst({
+				where: {
+					id: input.roomId,
+					...(ctx.auth.role !== "SUPER_ADMIN"
+						? { clinicId: ctx.auth.tenantId ?? undefined }
+						: {}),
+				},
+			});
+			if (!room) {
+				throw new TRPCError({ code: "BAD_REQUEST", message: "Room not found" });
+			}
+			if (room.status === "MAINTENANCE") {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Room is under maintenance",
+				});
+			}
+
+			const { roomConflicts, therapistConflicts } = await findConflicts({
+				scheduledDate: input.scheduledDate,
+				durationMinutes: input.durationMinutes,
+				roomId: input.roomId,
+				assignedTherapistId: input.assignedTherapistId,
+			});
+
+			if (
+				(roomConflicts.length > 0 || therapistConflicts.length > 0) &&
+				!input.acknowledgeConflict
+			) {
+				throw new TRPCError({
+					code: "CONFLICT",
+					message:
+						"This room or therapist is already booked for an overlapping time.",
+					cause: { roomConflicts, therapistConflicts },
+				});
+			}
+
+			return prisma.$transaction(async (tx) => {
+				const session = await tx.therapySession.create({
+					data: {
+						planId: plan.id,
+						childId: plan.childId,
+						assignedTherapistId: input.assignedTherapistId,
+						roomId: input.roomId,
+						scheduledDate: input.scheduledDate,
+						durationMinutes: input.durationMinutes,
+						status: "PENDING",
+					},
+				});
+
+				await tx.sessionGameAssignment.create({
+					data: {
+						sessionId: session.id,
+						gameVersionId: input.gameVersionId,
+						durationSeconds: input.durationSeconds,
+						repetitions: input.repetitions,
+						instructions: input.instructions,
+						order: 0,
+					},
+				});
+
+				return tx.therapySession.findUniqueOrThrow({
+					where: { id: session.id },
+					include: {
+						gameAssignments: {
+							include: { gameVersion: { include: { game: true } } },
+						},
+					},
+				});
+			});
+		}),
+
 	get: protectedProcedure
 		.input(z.object({ sessionId: z.string() }))
 		.query(async ({ input }) => {
@@ -217,33 +311,23 @@ export const sessionRouter = router({
 				throw new TRPCError({ code: "NOT_FOUND" });
 			}
 
-			const existingBooking = await prisma.roomBooking.findFirst({
-				where: {
-					roomId: input.roomId,
-					scheduledDate: session.scheduledDate,
-				},
+			const { roomConflicts } = await findConflicts({
+				scheduledDate: session.scheduledDate,
+				durationMinutes: session.durationMinutes,
+				roomId: input.roomId,
+				excludeSessionId: session.id,
 			});
-			if (existingBooking) {
+			if (roomConflicts.length > 0 && !input.acknowledgeConflict) {
 				throw new TRPCError({
 					code: "CONFLICT",
-					message: "Room is already booked for this date",
+					message: "Room is already booked for an overlapping time.",
+					cause: { roomConflicts },
 				});
 			}
 
-			return prisma.$transaction(async (tx) => {
-				const booking = await tx.roomBooking.create({
-					data: {
-						sessionId: input.sessionId,
-						roomId: input.roomId,
-						scheduledDate: session.scheduledDate,
-						claimedById: session.assignedTherapistId ?? "",
-					},
-				});
-				await tx.therapySession.update({
-					where: { id: input.sessionId },
-					data: { roomId: input.roomId },
-				});
-				return booking;
+			return prisma.therapySession.update({
+				where: { id: session.id },
+				data: { roomId: input.roomId },
 			});
 		}),
 

@@ -196,7 +196,7 @@ export function summarizeGameResult(rawMetrics: unknown): GameResultSummary {
  * it there even if the payload shape wasn't recognized.
  */
 export function matchResultToAssignments<
-	A extends { gameVersion: { game: { name: string } } },
+	A extends { gameVersion: { game: { key: string | null } } },
 >(
 	assignments: A[],
 	result: { rawMetrics: unknown } | null,
@@ -210,7 +210,7 @@ export function matchResultToAssignments<
 
 	return assignments.map((assignment) => {
 		const isMatch = resultGameName
-			? assignment.gameVersion.game.name === resultGameName
+			? assignment.gameVersion.game.key === resultGameName
 			: assignment === onlyAssignment;
 		return {
 			...assignment,
