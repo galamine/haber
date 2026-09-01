@@ -151,67 +151,108 @@ export function SessionsTab(props: SessionsTabProps) {
 
 	return (
 		<div className="flex flex-col gap-6">
-			{props.scope === "plan" && (
-				<div className="flex items-center justify-between">
-					{props.planStatus === "DRAFT" && (
-						<div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-amber-800 text-sm">
-							Please activate the treatment plan to create a session.
-						</div>
-					)}
-					<div className="ml-auto">
-						{props.planStatus === "ACTIVE" && (
-							<Button onClick={() => setCreateSheetOpen(true)}>
-								<PlusCircle className="mr-1 h-4 w-4" />
-								New Session
-							</Button>
-						)}
+			{props.scope === "plan" &&
+				props.planStatus === "ACTIVE" &&
+				list.length > 0 && (
+					<div className="flex items-center justify-end">
+						<Button onClick={() => setCreateSheetOpen(true)}>
+							<PlusCircle className="mr-2 h-4 w-4" />
+							New Session
+						</Button>
 					</div>
-				</div>
-			)}
+				)}
 
 			{list.length > 0 && <AggregateSummary sessions={list} />}
 
-			{list.length === 0 ? (
-				<p className="text-on-surface-variant text-sm">
-					No sessions have been scheduled for this plan yet.
-				</p>
+			{props.scope === "plan" && props.planStatus === "DRAFT" ? (
+				<div className="flex flex-col items-center justify-center rounded-2xl border border-outline-variant border-dashed bg-surface-container-lowest p-12 text-center">
+					<div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10">
+						<CalendarClock className="h-6 w-6 text-amber-600" />
+					</div>
+					<h3 className="mb-2 font-medium text-lg text-on-surface">
+						Plan Not Activated
+					</h3>
+					<p className="mx-auto max-w-md text-on-surface-variant text-sm">
+						This treatment plan is currently a draft. You must activate the plan
+						from the overview before you can begin scheduling sessions.
+					</p>
+				</div>
+			) : list.length === 0 ? (
+				<div className="flex flex-col items-center justify-center rounded-2xl border border-outline-variant border-dashed bg-surface-container-lowest p-12 text-center">
+					<div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+						<CalendarClock className="h-6 w-6 text-primary" />
+					</div>
+					<h3 className="mb-2 font-medium text-lg text-on-surface">
+						No Sessions Scheduled
+					</h3>
+					<p className="mx-auto mb-6 max-w-md text-on-surface-variant text-sm">
+						You haven't scheduled any sessions for this plan yet. Start by
+						scheduling the first session to begin treatment.
+					</p>
+					{props.scope === "plan" && props.planStatus === "ACTIVE" && (
+						<Button onClick={() => setCreateSheetOpen(true)}>
+							<PlusCircle className="mr-2 h-4 w-4" />
+							Schedule Session
+						</Button>
+					)}
+				</div>
 			) : (
-				list.map((session) => {
-					const statusInfo =
-						STATUS_BADGE[session.status] ?? STATUS_BADGE.PENDING;
-					return (
-						<div
-							key={session.id}
-							className="rounded-xl border border-surface-container-highest bg-surface-container-lowest p-4"
-						>
-							<div className="mb-3 flex items-center gap-2">
-								<CalendarClock className="h-4 w-4 text-on-surface-variant" />
-								<span className="font-medium text-on-surface text-sm">
-									{new Date(session.scheduledDate).toLocaleDateString()}
-								</span>
-								<Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
-							</div>
-							{session.status === "COMPLETED" &&
-							session.gameAssignments.length > 0 ? (
-								<div className="grid gap-4 lg:grid-cols-2">
-									{session.gameAssignments.map((assignment) => (
-										<GameResultCard
-											key={assignment.id}
-											gameName={assignment.gameVersion.game.name}
-											resultSummary={assignment.resultSummary}
-										/>
-									))}
+				<div className="grid gap-4">
+					{list.map((session) => {
+						const statusInfo =
+							STATUS_BADGE[session.status] ?? STATUS_BADGE.PENDING;
+						return (
+							<div
+								key={session.id}
+								className="rounded-xl border border-surface-container-highest bg-surface-container-lowest p-5 transition-shadow hover:shadow-sm"
+							>
+								<div className="mb-4 flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<CalendarClock className="h-5 w-5 text-on-surface-variant" />
+										<span className="font-semibold text-base text-on-surface">
+											{new Date(session.scheduledDate).toLocaleDateString(
+												undefined,
+												{
+													weekday: "long",
+													year: "numeric",
+													month: "long",
+													day: "numeric",
+												},
+											)}
+										</span>
+									</div>
+									<Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
 								</div>
-							) : (
-								<p className="text-on-surface-variant text-xs">
-									{session.gameAssignments
-										.map((a) => a.gameVersion.game.name)
-										.join(", ") || "No games assigned"}
-								</p>
-							)}
-						</div>
-					);
-				})
+
+								{session.status === "COMPLETED" &&
+								session.gameAssignments.length > 0 ? (
+									<div className="mt-2 grid gap-4 lg:grid-cols-2">
+										{session.gameAssignments.map((assignment) => (
+											<GameResultCard
+												key={assignment.id}
+												gameName={assignment.gameVersion.game.name}
+												resultSummary={assignment.resultSummary}
+											/>
+										))}
+									</div>
+								) : (
+									<div className="mt-2 rounded-lg border border-outline-variant/30 bg-surface-container-lowest p-3">
+										<p className="font-medium text-on-surface-variant text-sm">
+											Assigned Activities:{" "}
+											<span className="font-normal">
+												{session.gameAssignments.length > 0
+													? session.gameAssignments
+															.map((a) => a.gameVersion.game.name)
+															.join(", ")
+													: "No specific games assigned"}
+											</span>
+										</p>
+									</div>
+								)}
+							</div>
+						);
+					})}
+				</div>
 			)}
 
 			{props.scope === "plan" && (
