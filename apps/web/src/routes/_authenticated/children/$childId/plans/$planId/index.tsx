@@ -102,10 +102,10 @@ function PlanDetailPage() {
 					<TabsTrigger value="goals">Goals</TabsTrigger>
 					<TabsTrigger value="sessions">Sessions</TabsTrigger>
 				</TabsList>
-				<TabsContent value="overview">
+				<TabsContent value="overview" className="pt-6">
 					<GoalSection goals={goals.data} />
 				</TabsContent>
-				<TabsContent value="goals">
+				<TabsContent value="goals" className="pt-6">
 					<GoalTabContent
 						goals={goalsWithLatestNote.data ?? []}
 						childId={childId}
@@ -113,7 +113,7 @@ function PlanDetailPage() {
 						isLoading={goalsWithLatestNote.isLoading}
 					/>
 				</TabsContent>
-				<TabsContent value="sessions">
+				<TabsContent value="sessions" className="pt-6">
 					<SessionsTab
 						scope="plan"
 						planId={planId}
