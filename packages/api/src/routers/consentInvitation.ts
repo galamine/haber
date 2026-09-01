@@ -18,6 +18,7 @@ import {
 	SubmitConsentInput,
 	ValidateTokenInput,
 } from "../schemas/consentInvitation";
+import { assertChildInClinic } from "./child";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
@@ -220,6 +221,10 @@ export const consentInvitationRouter = router({
 		.input(z.object({ childId: z.string() }))
 		.query(async ({ input, ctx }) => {
 			await requireIntakePermission(ctx);
+
+			if (ctx.auth.role !== "SUPER_ADMIN") {
+				await assertChildInClinic(input.childId, ctx.auth.tenantId!);
+			}
 
 			const invitations = await prisma.consentInvitation.findMany({
 				where: { childId: input.childId },

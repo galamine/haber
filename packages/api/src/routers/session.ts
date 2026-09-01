@@ -17,7 +17,37 @@ import {
 	GetWebhookUrlInput,
 	ManualCloseInput,
 } from "../schemas/session-execution";
+import { getChildForRead } from "./child";
 import { getPlanForTherapist } from "./plan";
+
+async function getSessionForTherapist(
+	sessionId: string,
+	ctx: Parameters<typeof getChildForRead>[1],
+) {
+	const session = await prisma.therapySession.findFirst({
+		where: {
+			id: sessionId,
+			...(ctx.auth.role !== "SUPER_ADMIN"
+				? { plan: { clinicId: ctx.auth.tenantId ?? undefined } }
+				: {}),
+		},
+	});
+	if (!session) throw new TRPCError({ code: "NOT_FOUND" });
+
+	if (ctx.auth.role === "THERAPIST" || ctx.auth.role === "STAFF") {
+		const isAssigned =
+			(await prisma.childTherapistAssignment.findFirst({
+				where: { childId: session.childId, therapistId: ctx.auth.userId },
+			})) !== null;
+		if (!isAssigned)
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "You are not assigned to this child",
+			});
+	}
+
+	return session;
+}
 
 function attachResultSummary<
 	T extends {
@@ -39,7 +69,9 @@ function attachResultSummary<
 export const sessionRouter = router({
 	listForPlan: protectedProcedure
 		.input(ListForPlanInput)
-		.query(async ({ input }) => {
+		.query(async ({ input, ctx }) => {
+			await getPlanForTherapist(input.planId, ctx);
+
 			const where: Record<string, unknown> = { planId: input.planId };
 
 			if (input.status) {
@@ -73,7 +105,9 @@ export const sessionRouter = router({
 
 	listForChild: protectedProcedure
 		.input(ListForChildInput)
-		.query(async ({ input }) => {
+		.query(async ({ input, ctx }) => {
+			await getChildForRead(input.childId, ctx);
+
 			const where: Record<string, unknown> = { childId: input.childId };
 
 			if (input.status) {
@@ -164,7 +198,9 @@ export const sessionRouter = router({
 
 	getCalendar: protectedProcedure
 		.input(GetCalendarInput)
-		.query(async ({ input }) => {
+		.query(async ({ input, ctx }) => {
+			await getChildForRead(input.childId, ctx);
+
 			const startDate = new Date(input.year, input.month - 1, 1);
 			const endDate = new Date(input.year, input.month, 0, 23, 59, 59, 999);
 
@@ -194,7 +230,28 @@ export const sessionRouter = router({
 
 	checkConflicts: protectedProcedure
 		.input(CheckConflictsInput)
-		.query(async ({ input }) => findConflicts(input)),
+		.query(async ({ input, ctx }) => {
+			const clinicFilter =
+				ctx.auth.role !== "SUPER_ADMIN"
+					? { clinicId: ctx.auth.tenantId ?? undefined }
+					: {};
+
+			if (input.roomId) {
+				const room = await prisma.sensoryRoom.findFirst({
+					where: { id: input.roomId, ...clinicFilter },
+				});
+				if (!room) throw new TRPCError({ code: "NOT_FOUND" });
+			}
+
+			if (input.assignedTherapistId) {
+				const therapist = await prisma.user.findFirst({
+					where: { id: input.assignedTherapistId, ...clinicFilter },
+				});
+				if (!therapist) throw new TRPCError({ code: "NOT_FOUND" });
+			}
+
+			return findConflicts(input);
+		}),
 
 	create: protectedProcedure
 		.input(CreateSessionInput)
@@ -282,8 +339,10 @@ export const sessionRouter = router({
 
 	get: protectedProcedure
 		.input(z.object({ sessionId: z.string() }))
-		.query(async ({ input }) => {
-			const session = await prisma.therapySession.findUnique({
+		.query(async ({ input, ctx }) => {
+			await getSessionForTherapist(input.sessionId, ctx);
+
+			const session = await prisma.therapySession.findUniqueOrThrow({
 				where: { id: input.sessionId },
 				include: {
 					gameAssignments: {
@@ -295,21 +354,23 @@ export const sessionRouter = router({
 					plan: true,
 				},
 			});
-			if (!session) {
-				throw new TRPCError({ code: "NOT_FOUND" });
-			}
 			return attachResultSummary(session);
 		}),
 
 	assignRoom: protectedProcedure
 		.input(AssignRoomInput)
-		.mutation(async ({ input }) => {
-			const session = await prisma.therapySession.findUnique({
-				where: { id: input.sessionId },
+		.mutation(async ({ input, ctx }) => {
+			const session = await getSessionForTherapist(input.sessionId, ctx);
+
+			const room = await prisma.sensoryRoom.findFirst({
+				where: {
+					id: input.roomId,
+					...(ctx.auth.role !== "SUPER_ADMIN"
+						? { clinicId: ctx.auth.tenantId ?? undefined }
+						: {}),
+				},
 			});
-			if (!session) {
-				throw new TRPCError({ code: "NOT_FOUND" });
-			}
+			if (!room) throw new TRPCError({ code: "NOT_FOUND" });
 
 			const { roomConflicts } = await findConflicts({
 				scheduledDate: session.scheduledDate,
@@ -333,13 +394,8 @@ export const sessionRouter = router({
 
 	markAbsent: protectedProcedure
 		.input(z.object({ sessionId: z.string() }))
-		.mutation(async ({ input }) => {
-			const session = await prisma.therapySession.findUnique({
-				where: { id: input.sessionId },
-			});
-			if (!session) {
-				throw new TRPCError({ code: "NOT_FOUND" });
-			}
+		.mutation(async ({ input, ctx }) => {
+			const session = await getSessionForTherapist(input.sessionId, ctx);
 
 			if (session.status !== "PENDING") {
 				throw new TRPCError({
@@ -356,13 +412,8 @@ export const sessionRouter = router({
 
 	manualClose: protectedProcedure
 		.input(ManualCloseInput)
-		.mutation(async ({ input }) => {
-			const session = await prisma.therapySession.findUnique({
-				where: { id: input.sessionId },
-			});
-			if (!session) {
-				throw new TRPCError({ code: "NOT_FOUND" });
-			}
+		.mutation(async ({ input, ctx }) => {
+			const session = await getSessionForTherapist(input.sessionId, ctx);
 
 			if (session.status !== "PENDING" && session.status !== "IN_PROGRESS") {
 				throw new TRPCError({
@@ -389,13 +440,8 @@ export const sessionRouter = router({
 				qualityTag: z.enum(["CALM", "DISTRACTED", "REFUSED"]).optional(),
 			}),
 		)
-		.mutation(async ({ input }) => {
-			const session = await prisma.therapySession.findUnique({
-				where: { id: input.sessionId },
-			});
-			if (!session) {
-				throw new TRPCError({ code: "NOT_FOUND" });
-			}
+		.mutation(async ({ input, ctx }) => {
+			const session = await getSessionForTherapist(input.sessionId, ctx);
 
 			return prisma.therapySession.update({
 				where: { id: input.sessionId },
@@ -408,14 +454,8 @@ export const sessionRouter = router({
 
 	getWebhookUrl: protectedProcedure
 		.input(GetWebhookUrlInput)
-		.query(async ({ input }) => {
-			const session = await prisma.therapySession.findUnique({
-				where: { id: input.sessionId },
-				include: { gameAssignments: true },
-			});
-			if (!session) {
-				throw new TRPCError({ code: "NOT_FOUND" });
-			}
+		.query(async ({ input, ctx }) => {
+			const session = await getSessionForTherapist(input.sessionId, ctx);
 
 			return {
 				gameId: input.gameId,
@@ -428,12 +468,15 @@ export const sessionRouter = router({
 	claimCoverage: protectedProcedure
 		.input(ClaimCoverageInput)
 		.mutation(async ({ input, ctx }) => {
-			const session = await prisma.therapySession.findUnique({
-				where: { id: input.sessionId },
+			const session = await prisma.therapySession.findFirst({
+				where: {
+					id: input.sessionId,
+					...(ctx.auth.role !== "SUPER_ADMIN"
+						? { plan: { clinicId: ctx.auth.tenantId ?? undefined } }
+						: {}),
+				},
 			});
-			if (!session) {
-				throw new TRPCError({ code: "NOT_FOUND" });
-			}
+			if (!session) throw new TRPCError({ code: "NOT_FOUND" });
 
 			if (session.assignedTherapistId) {
 				throw new TRPCError({
@@ -448,7 +491,7 @@ export const sessionRouter = router({
 			});
 		}),
 
-	listUncovered: protectedProcedure.query(async () => {
+	listUncovered: protectedProcedure.query(async ({ ctx }) => {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 		const tomorrow = new Date(today);
@@ -462,6 +505,9 @@ export const sessionRouter = router({
 					gte: today,
 					lt: tomorrow,
 				},
+				...(ctx.auth.role !== "SUPER_ADMIN"
+					? { plan: { clinicId: ctx.auth.tenantId ?? undefined } }
+					: {}),
 			},
 			orderBy: { scheduledDate: "asc" },
 			include: { gameAssignments: { orderBy: { order: "asc" } }, child: true },
