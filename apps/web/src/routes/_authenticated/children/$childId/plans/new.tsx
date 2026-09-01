@@ -5,6 +5,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Sparkles } from "lucide-react";
 
 import { usePlanData } from "@/features/plan/use-plan-data";
@@ -26,7 +27,7 @@ function NewPlanPage() {
 	const navigate = useNavigate();
 	const { presets } = usePlanData({ childId });
 
-	const form = useForm<PlanFormValues>({
+	const form = useForm<z.input<typeof PlanFormSchema>>({
 		resolver: zodResolver(PlanFormSchema),
 		defaultValues: {
 			childId,
@@ -39,7 +40,13 @@ function NewPlanPage() {
 	});
 
 	const create = useMutation(trpc.plan.create.mutationOptions({
-		onSuccess: (plan) => navigate({ to: "/children/$childId/plans/$planId", params: { childId, planId: plan.id } }),
+		onSuccess: (plan, variables) => {
+			if (variables.publish) {
+				navigate({ to: "/children/$childId/plans/$planId", params: { childId, planId: plan.id } });
+			} else {
+				navigate({ to: "/children/$childId/plans", params: { childId } });
+			}
+		},
 		onError: (err) => toast.error(err.message),
 	}));
 
@@ -54,8 +61,10 @@ function NewPlanPage() {
 					<p className="mt-1 text-on-surface-variant text-sm">Design a comprehensive, phase-based intervention strategy.</p>
 				</div>
 				<div className="flex gap-2">
-					<Button variant="outline">Save Draft</Button>
-					<Button onClick={form.handleSubmit(v => create.mutate(v))} disabled={create.isPending}>
+					<Button variant="outline" onClick={form.handleSubmit((v: z.input<typeof PlanFormSchema>) => create.mutate({ ...v, publish: false }))} disabled={create.isPending}>
+						Save Draft
+					</Button>
+					<Button onClick={form.handleSubmit((v: z.input<typeof PlanFormSchema>) => create.mutate({ ...v, publish: true }))} disabled={create.isPending}>
 						{create.isPending ? "Creating…" : "Publish Plan"}
 					</Button>
 				</div>
@@ -108,13 +117,13 @@ function NewPlanPage() {
 
 			<div className="mx-auto w-full max-w-3xl">
 				<SectionCard title="Plan Details" description="Core information for this treatment plan.">
-					<FieldWrapper label="Plan Name" className="md:col-span-2" error={form.formState.errors.name?.message}>
+					<FieldWrapper label="Plan Name" className="md:col-span-2" error={form.formState.errors.name?.message as string}>
 						<Input {...form.register("name")} placeholder="e.g., Intensive Communication Protocol" />
 					</FieldWrapper>
-					<FieldWrapper label="Length (Weeks)" error={form.formState.errors.programLengthWeeks?.message}>
+					<FieldWrapper label="Length (Weeks)" error={form.formState.errors.programLengthWeeks?.message as string}>
 						<Input {...form.register("programLengthWeeks", { valueAsNumber: true })} type="number" min={1} max={52} />
 					</FieldWrapper>
-					<FieldWrapper label="Session Duration (Min)" error={form.formState.errors.sessionDurationMinutes?.message}>
+					<FieldWrapper label="Session Duration (Min)" error={form.formState.errors.sessionDurationMinutes?.message as string}>
 						<Input {...form.register("sessionDurationMinutes", { valueAsNumber: true })} type="number" min={15} step={15} />
 					</FieldWrapper>
 					<FieldWrapper label="Target Start Date" className="md:col-span-2">

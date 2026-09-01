@@ -3,11 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import type { AuthUser } from "../context";
 import { protectedProcedure, router } from "../index";
-import {
-	CreatePlanInput,
-	type ModificationDecisionInput,
-	ModifyPlanInput,
-} from "../schemas/plan";
+import { CreatePlanInput } from "../schemas/plan";
 import { getChildForRead } from "./child";
 
 export async function getPlanForTherapist(
@@ -42,54 +38,6 @@ export async function getPlanForTherapist(
 	return plan;
 }
 
-async function applyPlanModificationDecisions(
-	tx: Parameters<Parameters<typeof prisma.$transaction>[0]>[0],
-	newPlanId: string,
-	decisions: z.infer<typeof ModificationDecisionInput>[],
-) {
-	for (const d of decisions) {
-		if (d.action === "CLOSE") {
-			await tx.goal.update({
-				where: { id: d.goalId },
-				data: { status: "DISCONTINUED" },
-			});
-		} else if (d.action === "CARRY_OVER") {
-			const old = await tx.goal.findUniqueOrThrow({ where: { id: d.goalId } });
-			const next = await tx.goal.create({
-				data: {
-					treatmentPlanId: newPlanId,
-					description: old.description,
-					horizon: old.horizon,
-					targetAttainmentPct: old.targetAttainmentPct,
-					currentAttainmentPct: old.currentAttainmentPct,
-					status: old.status,
-				},
-			});
-			await tx.goal.update({
-				where: { id: d.goalId },
-				data: { supersededByGoalId: next.id },
-			});
-		} else if (d.action === "MODIFY") {
-			const old = await tx.goal.findUniqueOrThrow({ where: { id: d.goalId } });
-			const next = await tx.goal.create({
-				data: {
-					treatmentPlanId: newPlanId,
-					description: d.newDescription ?? old.description,
-					horizon: d.newHorizon ?? old.horizon,
-					targetAttainmentPct:
-						d.newTargetAttainmentPct ?? old.targetAttainmentPct,
-					currentAttainmentPct: 0,
-					status: "IN_PROGRESS",
-				},
-			});
-			await tx.goal.update({
-				where: { id: d.goalId },
-				data: { supersededByGoalId: next.id },
-			});
-		}
-	}
-}
-
 export const planRouter = router({
 	create: protectedProcedure
 		.input(CreatePlanInput)
@@ -109,8 +57,8 @@ export const planRouter = router({
 				startDate: input.startDate,
 				targetMilestones: input.targetMilestones ?? [],
 				sessionDurationMinutes: input.sessionDurationMinutes ?? 60,
-				status: "DRAFT" as const,
-				isActive: false,
+				status: input.publish ? ("ACTIVE" as const) : ("DRAFT" as const),
+				isActive: input.publish ? true : false,
 				versionNumber: 1,
 				parentPlanId: null,
 				sourcePresetId: input.presetId ?? null,
@@ -200,68 +148,16 @@ export const planRouter = router({
 		.mutation(async ({ input, ctx }) => {
 			const plan = await getPlanForTherapist(input.planId, ctx);
 
-			if (plan.status !== "DRAFT" && plan.status !== "PAUSED") {
+			if (plan.status !== "DRAFT") {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
-					message: "Plan must be in DRAFT or PAUSED status to activate",
+					message: "Plan must be in DRAFT status to activate",
 				});
 			}
 
 			return prisma.treatmentPlan.update({
 				where: { id: plan.id },
 				data: { status: "ACTIVE", isActive: true },
-			});
-		}),
-
-	pause: protectedProcedure
-		.input(z.object({ planId: z.string() }))
-		.mutation(async ({ input, ctx }) => {
-			const plan = await getPlanForTherapist(input.planId, ctx);
-
-			if (plan.status !== "ACTIVE") {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "Plan must be ACTIVE to pause",
-				});
-			}
-
-			return prisma.treatmentPlan.update({
-				where: { id: input.planId },
-				data: { status: "PAUSED" },
-			});
-		}),
-
-	resume: protectedProcedure
-		.input(z.object({ planId: z.string() }))
-		.mutation(async ({ input, ctx }) => {
-			const plan = await getPlanForTherapist(input.planId, ctx);
-
-			if (plan.status !== "PAUSED") {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "Plan must be PAUSED to resume",
-				});
-			}
-
-			return prisma.treatmentPlan.update({
-				where: { id: input.planId },
-				data: { status: "ACTIVE" },
-			});
-		}),
-
-	extend: protectedProcedure
-		.input(
-			z.object({
-				planId: z.string(),
-				programLengthWeeks: z.number().int().positive(),
-			}),
-		)
-		.mutation(async ({ input, ctx }) => {
-			await getPlanForTherapist(input.planId, ctx);
-
-			return prisma.treatmentPlan.update({
-				where: { id: input.planId },
-				data: { programLengthWeeks: input.programLengthWeeks },
 			});
 		}),
 
@@ -292,58 +188,6 @@ export const planRouter = router({
 					outcomeSummary: input.outcomeSummary,
 				},
 			});
-		}),
-
-	modify: protectedProcedure
-		.input(ModifyPlanInput)
-		.mutation(async ({ input, ctx }) => {
-			const current = await getPlanForTherapist(input.planId, ctx);
-
-			if (current.status === "CLOSED") {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "Cannot modify a closed plan",
-				});
-			}
-
-			const newPlan = await prisma.$transaction(async (tx) => {
-				await tx.treatmentPlan.update({
-					where: { id: current.id },
-					data: { isActive: false },
-				});
-
-				const created = await tx.treatmentPlan.create({
-					data: {
-						childId: current.childId,
-						clinicId: current.clinicId,
-						createdById: ctx.auth.userId,
-						name: input.changes.name ?? current.name,
-						programLengthWeeks:
-							input.changes.programLengthWeeks ?? current.programLengthWeeks,
-						startDate: input.changes.startDate ?? current.startDate,
-						targetMilestones:
-							input.changes.targetMilestones ?? current.targetMilestones,
-						sessionDurationMinutes:
-							input.changes.sessionDurationMinutes ??
-							current.sessionDurationMinutes,
-						status: "ACTIVE",
-						isActive: true,
-						versionNumber: current.versionNumber + 1,
-						parentPlanId: current.id,
-						sourcePresetId: current.sourcePresetId,
-					},
-				});
-
-				await applyPlanModificationDecisions(
-					tx,
-					created.id,
-					input.goalDecisions,
-				);
-
-				return created;
-			});
-
-			return newPlan;
 		}),
 
 	listPresets: protectedProcedure.query(async () => {

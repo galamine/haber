@@ -152,13 +152,20 @@ export function SessionsTab(props: SessionsTabProps) {
 	return (
 		<div className="flex flex-col gap-6">
 			{props.scope === "plan" && (
-				<div className="flex items-center justify-end">
-					{props.planStatus !== "CLOSED" && (
-						<Button onClick={() => setCreateSheetOpen(true)}>
-							<PlusCircle className="mr-1 h-4 w-4" />
-							New Session
-						</Button>
+				<div className="flex items-center justify-between">
+					{props.planStatus === "DRAFT" && (
+						<div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-amber-800 text-sm">
+							Please activate the treatment plan to create a session.
+						</div>
 					)}
+					<div className="ml-auto">
+						{props.planStatus === "ACTIVE" && (
+							<Button onClick={() => setCreateSheetOpen(true)}>
+								<PlusCircle className="mr-1 h-4 w-4" />
+								New Session
+							</Button>
+						)}
+					</div>
 				</div>
 			)}
 

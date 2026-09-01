@@ -4,13 +4,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@haber-final/ui/compon
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, ArrowLeft } from "lucide-react";
-import { useState } from "react";
 
 import { usePlanData } from "@/features/plan/use-plan-data";
 import { PlanHeader } from "@/features/plan/PlanHeader";
 import { PlanLifecycleButtons } from "@/features/plan/PlanLifecycleButtons";
 import { GoalSection } from "@/features/plan/GoalSection";
-import { ModifyPlanSheet } from "@/features/plan/ModifyPlanSheet";
 import { PlanDetailSkeleton } from "@/features/plan/skeletons/PlanDetailSkeleton";
 import { GoalTabContent } from "@/features/goals/GoalTabContent";
 import { SessionsTab } from "@/features/plan/SessionsTab";
@@ -41,11 +39,9 @@ function PlanDetailPage() {
 						return results;
 					},
 				}
-			: { queryKey: ["unused"], queryFn: () => null as GoalWithLatestNote[] }),
+			: { queryKey: ["unused"], queryFn: () => [] as GoalWithLatestNote[] }),
 		enabled: !!goals.data,
 	});
-
-	const [modifySheetOpen, setModifySheetOpen] = useState(false);
 
 	if (isLoading) return <PlanDetailSkeleton />;
 	if (plan.isError) {
@@ -98,10 +94,7 @@ function PlanDetailPage() {
 
 			<PlanHeader plan={planData} childName={child.data?.fullName} />
 
-			<PlanLifecycleButtons
-				plan={planData}
-				onModify={() => setModifySheetOpen(true)}
-			/>
+			<PlanLifecycleButtons plan={planData} />
 
 			<Tabs defaultValue="overview">
 				<TabsList className="grid w-full grid-cols-3">
@@ -130,13 +123,7 @@ function PlanDetailPage() {
 					/>
 				</TabsContent>
 			</Tabs>
-
-			<ModifyPlanSheet
-				open={modifySheetOpen}
-				onOpenChange={setModifySheetOpen}
-				plan={{ ...planData, goals: goals.data }}
-				onSuccess={(newPlanId) => navigate({ to: "/children/$childId/plans/$planId", params: { childId, planId: newPlanId } })}
-			/>
 		</div>
 	);
 }
+

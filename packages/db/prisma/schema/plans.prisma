@@ -1,7 +1,6 @@
 enum PlanStatus {
   DRAFT
   ACTIVE
-  PAUSED
   COMPLETED
   CLOSED
 }

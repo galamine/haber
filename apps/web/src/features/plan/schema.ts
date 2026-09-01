@@ -1,7 +1,4 @@
-import {
-	CreatePlanInput,
-	ModificationDecisionInput,
-} from "@haber-final/api/schemas/plan";
+import { CreatePlanInput } from "@haber-final/api/schemas/plan";
 import { z } from "zod";
 
 export const PlanFormSchema = CreatePlanInput.extend({
@@ -15,19 +12,7 @@ export const PlanFormSchema = CreatePlanInput.extend({
 		.default({ short_term: [], long_term: [] }),
 });
 
-export const ModifyPlanFormSchema = z.object({
-	changes: z.object({
-		name: z.string().optional(),
-		programLengthWeeks: z.number().optional(),
-		startDate: z.coerce.date().optional(),
-		targetMilestones: z.array(z.string()).optional(),
-		sessionDurationMinutes: z.number().optional(),
-	}),
-	goalDecisions: z.array(ModificationDecisionInput),
-});
-
 export type PlanFormValues = z.infer<typeof PlanFormSchema>;
-export type ModifyPlanFormValues = z.infer<typeof ModifyPlanFormSchema>;
 
 export function buildPlanDefaultValues({
 	preset,

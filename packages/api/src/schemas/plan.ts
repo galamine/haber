@@ -14,26 +14,7 @@ export const CreatePlanInput = z.object({
 			long_term: z.array(z.string()).default([]),
 		})
 		.optional(),
-});
-
-export const ModificationDecisionInput = z.object({
-	goalId: z.string(),
-	action: z.enum(["CARRY_OVER", "CLOSE", "MODIFY"]),
-	newDescription: z.string().optional(),
-	newHorizon: z.enum(["SHORT_TERM", "LONG_TERM"]).optional(),
-	newTargetAttainmentPct: z.number().int().min(0).max(100).optional(),
-});
-
-export const ModifyPlanInput = z.object({
-	planId: z.string(),
-	changes: z.object({
-		name: z.string().optional(),
-		programLengthWeeks: z.number().int().positive().optional(),
-		startDate: z.coerce.date().optional(),
-		targetMilestones: z.array(z.string()).optional(),
-		sessionDurationMinutes: z.number().int().positive().optional(),
-	}),
-	goalDecisions: z.array(ModificationDecisionInput),
+	publish: z.boolean().optional(),
 });
 
 export const PlanPresetSchema = z.object({
