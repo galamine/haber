@@ -136,6 +136,9 @@ function SessionDetailPage() {
 	const [closeSheetOpen, setCloseSheetOpen] = useState(false);
 	const [notes, setNotes] = useState("");
 	const [pendingRoomId, setPendingRoomId] = useState<string>();
+	const [hasCalibration, setHasCalibration] = useState(
+		() => !!localStorage.getItem("calibration_launched"),
+	);
 
 	const { data: session, isLoading } = useQuery(
 		trpc.session.get.queryOptions({ sessionId }),
@@ -235,17 +238,18 @@ function SessionDetailPage() {
 		}
 	}, [pendingRoomId, roomConflicts.data, session?.roomId, sessionId]);
 
+	function handleSetCalibration() {
+		window.open(
+			`${env.VITE_GAME_SERVER_URL}/trail_games/calibration.html`,
+			"_blank",
+		);
+		localStorage.setItem("calibration_launched", "true");
+		setHasCalibration(true);
+	}
+
 	function handleOpenGame(assignment: GameAssignment) {
 		if (!assignment.gameVersion.path) {
 			toast.error("This game version has no launch path configured");
-			return;
-		}
-		if (!localStorage.getItem("calibration_launched")) {
-			localStorage.setItem("calibration_launched", "true");
-			window.open(
-				`${env.VITE_GAME_SERVER_URL}/trail_games/calibration.html`,
-				"_blank",
-			);
 			return;
 		}
 		const totalTime =
@@ -466,15 +470,27 @@ function SessionDetailPage() {
 										<span>Reps: {assignment.repetitions}</span>
 									)}
 								</div>
-								<Button
-									size="sm"
-									variant="outline"
-									className="w-full gap-1.5"
-									onClick={() => handleOpenGame(assignment)}
-								>
-									<ExternalLink className="h-4 w-4" />
-									Open Game
-								</Button>
+								{hasCalibration ? (
+									<Button
+										size="sm"
+										variant="outline"
+										className="w-full gap-1.5"
+										onClick={() => handleOpenGame(assignment)}
+									>
+										<ExternalLink className="h-4 w-4" />
+										Open Game
+									</Button>
+								) : (
+									<Button
+										size="sm"
+										variant="outline"
+										className="w-full gap-1.5"
+										onClick={handleSetCalibration}
+									>
+										<ExternalLink className="h-4 w-4" />
+										Set Calibration
+									</Button>
+								)}
 							</div>
 						))}
 					</div>
