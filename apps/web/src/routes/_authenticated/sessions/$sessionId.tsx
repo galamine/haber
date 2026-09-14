@@ -239,8 +239,12 @@ function SessionDetailPage() {
 	}, [pendingRoomId, roomConflicts.data, session?.roomId, sessionId]);
 
 	function handleSetCalibration() {
+		const params = new URLSearchParams({
+			session: sessionId,
+			webhook_secret: session?.webhookSecret ?? "",
+		});
 		window.open(
-			`${env.VITE_GAME_SERVER_URL}/trail_games/calibration.html`,
+			`${env.VITE_GAME_SERVER_URL}/trail_games/calibration.html?${params.toString()}`,
 			"_blank",
 		);
 		localStorage.setItem("calibration_launched", "true");
