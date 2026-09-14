@@ -111,10 +111,6 @@ function NewPlanPage() {
 				</div>
 			</div>
 
-			{selectedPresetId
-				? (selectedPreset && <PresetGoalsPreview preset={selectedPreset} />)
-				: <CustomGoalsSection form={form} />}
-
 			<div className="mx-auto w-full max-w-3xl">
 				<SectionCard title="Plan Details" description="Core information for this treatment plan.">
 					<FieldWrapper label="Plan Name" className="md:col-span-2" error={form.formState.errors.name?.message as string}>
@@ -131,6 +127,10 @@ function NewPlanPage() {
 					</FieldWrapper>
 				</SectionCard>
 			</div>
+
+			{selectedPresetId
+				? (selectedPreset && <PresetGoalsPreview preset={selectedPreset} />)
+				: <CustomGoalsSection form={form} />}
 		</div>
 	);
 }
