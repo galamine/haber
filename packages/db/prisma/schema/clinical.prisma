@@ -96,8 +96,8 @@ model InitialAssessment {
   sectionC      Json
   sectionD      Json
   sectionE      Json
-  sectionF      Json
-  sectionG      Json
+  sectionF      Json?
+  sectionG      Json?
   sectionH      Json
   createdAt     DateTime @default(now())
 

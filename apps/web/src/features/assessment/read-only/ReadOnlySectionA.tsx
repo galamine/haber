@@ -17,12 +17,10 @@ export function ReadOnlySectionA({ data }: { data: SectionAData }) {
 			/>
 			<ReadOnlyField label="Gender" value={data.gender} />
 			<ReadOnlyField label="Date of Assessment" value={data.assessmentDate} />
-			<ReadOnlyField label="Assessment Location" value={data.location} />
 			<ReadOnlyField
 				label="Referring Therapist / Doctor"
 				value={data.referringTherapist}
 			/>
-			<ReadOnlyField label="Referral Source" value={data.referralSource} />
 			<ReadOnlyField
 				label="Primary Caregiver Name"
 				value={data.caregiverName}

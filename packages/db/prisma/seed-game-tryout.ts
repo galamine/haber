@@ -125,9 +125,7 @@ await prisma.initialAssessment.create({
 			age: { years: 7, months: 0 },
 			gender: "Prefer not to say",
 			assessmentDate: new Date().toISOString().slice(0, 10),
-			location: "Clinic",
 			referringTherapist: therapistName,
-			referralSource: "Internal",
 			caregiverName: "Game Tryout Guardian",
 			caregiverRelation: "Parent",
 			caregiverContact: "9999999999",
@@ -142,7 +140,6 @@ await prisma.initialAssessment.create({
 			medicalHistory: "N/A",
 			currentMedications: "None",
 			allergies: "None",
-			previousTherapies: "",
 		},
 		sectionC: {
 			milestones: [
@@ -164,33 +161,6 @@ await prisma.initialAssessment.create({
 		sectionE: {
 			functionalConcerns: [],
 			observations: ["Synthetic observation for device tryout"],
-		},
-		sectionF: {
-			toolsAdministered: [],
-			overallSummary: "Synthetic assessment for device tryout",
-		},
-		sectionG: {
-			shortTermGoals: [
-				{
-					goalId: "tryout-short",
-					description: "Try out games on device",
-					targetAttainmentPct: 100,
-				},
-			],
-			longTermGoals: [
-				{
-					goalId: "tryout-long",
-					description: "Try out games on device",
-					targetAttainmentPct: 100,
-				},
-			],
-			recommendedFrequency: 1,
-			sessionDurationMinutes: 60,
-			interventionSetting: "Clinic",
-			reviewPeriodWeeks: 12,
-			homeProgramRecommendations: "N/A",
-			equipment: [],
-			referrals: "N/A",
 		},
 		sectionH: {
 			therapistName,

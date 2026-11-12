@@ -116,19 +116,6 @@ export function SectionA({
 			</FieldWrapper>
 
 			<FieldWrapper
-				label="Assessment Location"
-				htmlFor="sectionA.location"
-				required
-				error={e?.location?.message}
-			>
-				<Input
-					id="sectionA.location"
-					{...register("sectionA.location")}
-					className={e?.location ? "border-red-500" : ""}
-				/>
-			</FieldWrapper>
-
-			<FieldWrapper
 				label="Referring Therapist / Doctor"
 				htmlFor="sectionA.referringTherapist"
 				required
@@ -138,19 +125,6 @@ export function SectionA({
 					id="sectionA.referringTherapist"
 					{...register("sectionA.referringTherapist")}
 					className={e?.referringTherapist ? "border-red-500" : ""}
-				/>
-			</FieldWrapper>
-
-			<FieldWrapper
-				label="Referral Source"
-				htmlFor="sectionA.referralSource"
-				required
-				error={e?.referralSource?.message}
-			>
-				<Input
-					id="sectionA.referralSource"
-					{...register("sectionA.referralSource")}
-					className={e?.referralSource ? "border-red-500" : ""}
 				/>
 			</FieldWrapper>
 
@@ -200,7 +174,6 @@ export function SectionA({
 			<FieldWrapper
 				label="Email Address"
 				htmlFor="sectionA.caregiverEmail"
-				required
 				error={e?.caregiverEmail?.message}
 			>
 				<Input

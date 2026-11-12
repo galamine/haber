@@ -186,10 +186,8 @@ export const dashboardRouter = router({
 				prisma.initialAssessment.findMany({
 					where: { childId: input.childId },
 					select: {
-						sectionB: true,
 						sectionD: true,
 						sectionE: true,
-						sectionF: true,
 						createdAt: true,
 					},
 				}),
@@ -219,31 +217,12 @@ export const dashboardRouter = router({
 			}
 
 			for (const a of initialAssessments) {
-				const b = a.sectionB as {
-					prenatalHistory?: string;
-					birthHistory?: string;
-					neonatalHistory?: string;
-					medicalHistory?: string;
-					previousTherapies?: string;
-				} | null;
 				const d = a.sectionD as {
 					behaviouralObservations?: string;
 				} | null;
 				const e = a.sectionE as {
 					observations?: string;
 				} | null;
-				const f = a.sectionF as {
-					overallSummary?: string;
-				} | null;
-
-				if (b?.previousTherapies) {
-					entries.push({
-						date: a.createdAt,
-						source: "assessment",
-						section: "B",
-						content: b.previousTherapies,
-					});
-				}
 				if (d?.behaviouralObservations) {
 					entries.push({
 						date: a.createdAt,
@@ -258,14 +237,6 @@ export const dashboardRouter = router({
 						source: "assessment",
 						section: "E",
 						content: e.observations,
-					});
-				}
-				if (f?.overallSummary) {
-					entries.push({
-						date: a.createdAt,
-						source: "assessment",
-						section: "F",
-						content: f.overallSummary,
 					});
 				}
 			}

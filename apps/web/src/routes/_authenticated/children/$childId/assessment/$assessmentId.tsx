@@ -4,8 +4,6 @@ import type {
 	SectionCSchema,
 	SectionDSchema,
 	SectionESchema,
-	SectionFSchema,
-	SectionGSchema,
 	SectionHSchema,
 } from "@haber-final/api/schemas/assessment";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
@@ -22,8 +20,6 @@ import { ReadOnlySectionB } from "@/features/assessment/read-only/ReadOnlySectio
 import { ReadOnlySectionC } from "@/features/assessment/read-only/ReadOnlySectionC";
 import { ReadOnlySectionD } from "@/features/assessment/read-only/ReadOnlySectionD";
 import { ReadOnlySectionE } from "@/features/assessment/read-only/ReadOnlySectionE";
-import { ReadOnlySectionF } from "@/features/assessment/read-only/ReadOnlySectionF";
-import { ReadOnlySectionG } from "@/features/assessment/read-only/ReadOnlySectionG";
 import { ReadOnlySectionH } from "@/features/assessment/read-only/ReadOnlySectionH";
 import { useAssessmentTaxonomy } from "@/features/assessment/use-assessment-taxonomy";
 import { trpc } from "@/utils/trpc";
@@ -49,7 +45,7 @@ function AssessmentDetailPage() {
 
 	const [activeTab, setActiveTab] = useState<SectionTabValue>("a");
 
-	const allTabs = new Set(["a", "b", "c", "d", "e", "f", "g", "h"]);
+	const allTabs = new Set(["a", "b", "c", "d", "e", "h"]);
 
 	if (assessmentQuery.isLoading || taxonomy.isLoading) {
 		return (
@@ -95,12 +91,6 @@ function AssessmentDetailPage() {
 	);
 	const functionalConcernById = Object.fromEntries(
 		(taxonomy.functionalConcerns.data ?? []).map((c) => [c.id, c.label]),
-	);
-	const assessmentToolById = Object.fromEntries(
-		(taxonomy.assessmentTools.data ?? []).map((t) => [t.id, t.label]),
-	);
-	const equipmentById = Object.fromEntries(
-		(taxonomy.equipment.data ?? []).map((eq) => [eq.id, eq.label]),
 	);
 	const milestoneById = Object.fromEntries(
 		(taxonomy.milestones.data ?? []).map((m) => [m.id, m.description]),
@@ -172,22 +162,6 @@ function AssessmentDetailPage() {
 								assessment.sectionE,
 							)}
 							functionalConcernById={functionalConcernById}
-						/>
-					),
-					f: (
-						<ReadOnlySectionF
-							data={castSection<z.infer<typeof SectionFSchema>>(
-								assessment.sectionF,
-							)}
-							assessmentToolById={assessmentToolById}
-						/>
-					),
-					g: (
-						<ReadOnlySectionG
-							data={castSection<z.infer<typeof SectionGSchema>>(
-								assessment.sectionG,
-							)}
-							equipmentById={equipmentById}
 						/>
 					),
 					h: (

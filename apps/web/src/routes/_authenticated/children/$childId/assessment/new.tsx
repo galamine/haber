@@ -25,8 +25,6 @@ import { SectionB } from "@/features/assessment/sections/SectionB";
 import { SectionC } from "@/features/assessment/sections/SectionC";
 import { SectionD } from "@/features/assessment/sections/SectionD";
 import { SectionE } from "@/features/assessment/sections/SectionE";
-import { SectionF } from "@/features/assessment/sections/SectionF";
-import { SectionG } from "@/features/assessment/sections/SectionG";
 import { SectionH } from "@/features/assessment/sections/SectionH";
 import { useAssessmentTaxonomy } from "@/features/assessment/use-assessment-taxonomy";
 import { trpc } from "@/utils/trpc";
@@ -108,9 +106,7 @@ function NewAssessmentPage() {
 		const isValid = await trigger(currentTabConfig.field);
 
 		if (!isValid) {
-			toast.error(
-				"Please fill short term goal and long term goal fields before proceeding",
-			);
+			toast.error("Please complete the required fields before proceeding");
 			return false;
 		}
 		const nextIdx = SECTION_TABS.findIndex((t) => t.value === activeTab) + 1;
@@ -146,23 +142,13 @@ function NewAssessmentPage() {
 	);
 
 	function onValid(values: AssessmentFormValues) {
-		const { previousTherapiesRows, ...sectionBRest } = values.sectionB;
-		const previousTherapies = previousTherapiesRows
-			.map(
-				(row) =>
-					`${row.therapyType} — ${row.durationFrequency} — ${row.providerLocation}`,
-			)
-			.join("\n");
-
 		createMutation.mutate({
 			childId,
 			sectionA: values.sectionA,
-			sectionB: { ...sectionBRest, previousTherapies },
+			sectionB: values.sectionB,
 			sectionC: values.sectionC,
 			sectionD: values.sectionD,
 			sectionE: values.sectionE,
-			sectionF: values.sectionF,
-			sectionG: values.sectionG,
 			sectionH: values.sectionH,
 		});
 	}
@@ -269,10 +255,6 @@ function NewAssessmentPage() {
 		value: d.id,
 		label: d.label,
 	}));
-	const equipmentOptions = (taxonomy.equipment.data ?? []).map((eq) => ({
-		value: eq.id,
-		label: eq.label,
-	}));
 	const milestoneById = Object.fromEntries(
 		(taxonomy.milestones.data ?? []).map((m) => [m.id, m.description]),
 	);
@@ -352,24 +334,6 @@ function NewAssessmentPage() {
 							functionalConcernOptions={taxonomy.functionalConcerns.data ?? []}
 						/>
 					),
-					f: (
-						<SectionF
-							register={register}
-							control={control}
-							errors={errors}
-							trigger={trigger}
-							assessmentToolOptions={taxonomy.assessmentTools.data ?? []}
-						/>
-					),
-					g: (
-						<SectionG
-							register={register}
-							control={control}
-							errors={errors}
-							trigger={trigger}
-							equipmentOptions={equipmentOptions}
-						/>
-					),
 					h: (
 						<SectionH
 							register={register}
@@ -377,6 +341,7 @@ function NewAssessmentPage() {
 							errors={errors}
 							trigger={trigger}
 							therapistCredentials={therapistCredentials}
+							guardianNameLocked={!!child?.guardian?.name}
 						/>
 					),
 				}}

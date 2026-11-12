@@ -33,19 +33,14 @@ function NewPlanPage() {
 			childId,
 			name: "",
 			programLengthWeeks: 12,
-			sessionDurationMinutes: 60,
 			targetMilestones: [],
 			customGoals: { short_term: [], long_term: [] },
 		},
 	});
 
 	const create = useMutation(trpc.plan.create.mutationOptions({
-		onSuccess: (plan, variables) => {
-			if (variables.publish) {
-				navigate({ to: "/children/$childId/plans/$planId", params: { childId, planId: plan.id } });
-			} else {
-				navigate({ to: "/children/$childId/plans", params: { childId } });
-			}
+		onSuccess: (plan) => {
+			navigate({ to: "/children/$childId/plans/$planId", params: { childId, planId: plan.id } });
 		},
 		onError: (err) => toast.error(err.message),
 	}));
@@ -61,9 +56,6 @@ function NewPlanPage() {
 					<p className="mt-1 text-on-surface-variant text-sm">Design a comprehensive, phase-based intervention strategy.</p>
 				</div>
 				<div className="flex gap-2">
-					<Button variant="outline" onClick={form.handleSubmit((v: z.input<typeof PlanFormSchema>) => create.mutate({ ...v, publish: false }))} disabled={create.isPending}>
-						Save Draft
-					</Button>
 					<Button onClick={form.handleSubmit((v: z.input<typeof PlanFormSchema>) => create.mutate({ ...v, publish: true }))} disabled={create.isPending}>
 						{create.isPending ? "Creating…" : "Publish Plan"}
 					</Button>
@@ -87,7 +79,6 @@ function NewPlanPage() {
 						selected={!selectedPresetId}
 						onSelect={() => {
 							form.setValue("presetId", undefined);
-							form.setValue("sessionDurationMinutes", 60);
 							form.setValue("name", "");
 						}}
 					/>
@@ -103,7 +94,6 @@ function NewPlanPage() {
 							selected={selectedPresetId === preset.preset_id}
 							onSelect={(id) => {
 								form.setValue("presetId", id);
-								form.setValue("sessionDurationMinutes", preset.session_duration_minutes);
 								form.setValue("name", preset.case_label);
 							}}
 						/>
@@ -118,9 +108,6 @@ function NewPlanPage() {
 					</FieldWrapper>
 					<FieldWrapper label="Length (Weeks)" error={form.formState.errors.programLengthWeeks?.message as string}>
 						<Input {...form.register("programLengthWeeks", { valueAsNumber: true })} type="number" min={1} max={52} />
-					</FieldWrapper>
-					<FieldWrapper label="Session Duration (Min)" error={form.formState.errors.sessionDurationMinutes?.message as string}>
-						<Input {...form.register("sessionDurationMinutes", { valueAsNumber: true })} type="number" min={15} step={15} />
 					</FieldWrapper>
 					<FieldWrapper label="Target Start Date" className="md:col-span-2">
 						<Input {...form.register("startDate", { valueAsDate: true })} type="date" />

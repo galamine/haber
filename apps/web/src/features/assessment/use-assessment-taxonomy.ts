@@ -10,10 +10,6 @@ export function useAssessmentTaxonomy() {
 	const functionalConcerns = useQuery(
 		trpc.taxonomy.listFunctionalConcerns.queryOptions(),
 	);
-	const assessmentTools = useQuery(
-		trpc.taxonomy.listAssessmentTools.queryOptions(),
-	);
-	const equipment = useQuery(trpc.taxonomy.listEquipment.queryOptions());
 	const milestones = useQuery(trpc.milestone.list.queryOptions());
 	const therapistMe = useQuery(trpc.auth.me.queryOptions());
 
@@ -21,8 +17,6 @@ export function useAssessmentTaxonomy() {
 		diagnoses,
 		sensorySystems,
 		functionalConcerns,
-		assessmentTools,
-		equipment,
 		milestones,
 		therapistMe,
 	].some((q) => q.isLoading);
@@ -31,8 +25,6 @@ export function useAssessmentTaxonomy() {
 		diagnoses,
 		sensorySystems,
 		functionalConcerns,
-		assessmentTools,
-		equipment,
 		milestones,
 		therapistMe,
 		isLoading,

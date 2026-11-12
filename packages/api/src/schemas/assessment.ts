@@ -13,11 +13,6 @@ export const SensoryRatingSchema = z.object({
 	notes: z.string(),
 });
 
-export const ToolEntrySchema = z.object({
-	toolId: z.string(),
-	scoresSummary: z.string(),
-});
-
 export const GoalTemplateSchema = z.object({
 	goalId: z.string(),
 	description: z.string().min(1, "Goal description is required"),
@@ -35,11 +30,9 @@ export const SectionASchema = z.object({
 		message: "Gender is required",
 	}),
 	assessmentDate: z.string().min(1, "Assessment date is required"),
-	location: z.string().min(1, "Assessment location is required"),
 	referringTherapist: z
 		.string()
 		.min(1, "Referring therapist/doctor is required"),
-	referralSource: z.string().min(1, "Referral source is required"),
 	caregiverName: z.string().min(1, "Caregiver name is required"),
 	caregiverRelation: z.string().min(1, "Relationship to child is required"),
 	caregiverContact: z
@@ -49,10 +42,10 @@ export const SectionASchema = z.object({
 			/^(\+91[\s-]?)?(91|0)?[6-9]\d{9}$/,
 			"Enter a valid 10-digit Indian mobile number",
 		),
-	caregiverEmail: z
-		.string()
-		.min(1, "Email is required")
-		.email("Invalid email address"),
+	caregiverEmail: z.union([
+		z.literal(""),
+		z.string().email("Invalid email address"),
+	]),
 	chiefComplaint: z.string().min(1, "Chief complaint is required"),
 });
 
@@ -65,7 +58,6 @@ export const SectionBSchema = z.object({
 	medicalHistory: z.string().min(1, "Medical history is required"),
 	currentMedications: z.string().min(1, "Current medications is required"),
 	allergies: z.string().min(1, "Allergies is required"),
-	previousTherapies: z.string(),
 });
 
 export const SectionCSchema = z.object({
@@ -86,29 +78,6 @@ export const SectionESchema = z.object({
 		.min(1, "At least one observation is required"),
 });
 
-export const SectionFSchema = z.object({
-	toolsAdministered: z.array(ToolEntrySchema),
-	overallSummary: z.string().min(1, "Overall summary is required"),
-});
-
-export const SectionGSchema = z.object({
-	shortTermGoals: z
-		.array(GoalTemplateSchema)
-		.min(1, "At least one short-term goal is required"),
-	longTermGoals: z
-		.array(GoalTemplateSchema)
-		.min(1, "At least one long-term goal is required"),
-	recommendedFrequency: z.number().min(1, "Recommended frequency is required"),
-	sessionDurationMinutes: z.number().min(1, "Session duration is required"),
-	interventionSetting: z.string().min(1, "Intervention setting is required"),
-	reviewPeriodWeeks: z.number().min(1, "Review period is required"),
-	homeProgramRecommendations: z
-		.string()
-		.min(1, "Home program recommendations are required"),
-	equipment: z.array(z.string()),
-	referrals: z.string().min(1, "Referrals field is required"),
-});
-
 export const SectionHSchema = z.object({
 	therapistName: z.string().min(1, "Therapist name is required"),
 	signedAt: z.string(),
@@ -126,8 +95,6 @@ export const CreateAssessmentInput = z.object({
 	sectionC: SectionCSchema,
 	sectionD: SectionDSchema,
 	sectionE: SectionESchema,
-	sectionF: SectionFSchema,
-	sectionG: SectionGSchema,
 	sectionH: SectionHSchema,
 });
 
@@ -141,8 +108,6 @@ export const InitialAssessmentSchema = z.object({
 	sectionC: SectionCSchema,
 	sectionD: SectionDSchema,
 	sectionE: SectionESchema,
-	sectionF: SectionFSchema,
-	sectionG: SectionGSchema,
 	sectionH: SectionHSchema,
 	createdAt: z.date(),
 });

@@ -47,8 +47,6 @@ async function createAssessmentVersion(
 				sectionC: input.sectionC,
 				sectionD: input.sectionD,
 				sectionE: input.sectionE,
-				sectionF: input.sectionF,
-				sectionG: input.sectionG,
 				sectionH,
 			},
 		});

@@ -4,32 +4,16 @@ import {
 	SectionCSchema,
 	SectionDSchema,
 	SectionESchema,
-	SectionFSchema,
-	SectionGSchema,
 	SectionHSchema,
 } from "@haber-final/api/schemas/assessment";
 import { z } from "zod";
 
-export const PreviousTherapyRowSchema = z.object({
-	therapyType: z.string(),
-	durationFrequency: z.string(),
-	providerLocation: z.string(),
-});
-
-export const SectionBFormSchema = SectionBSchema.omit({
-	previousTherapies: true,
-}).extend({
-	previousTherapiesRows: z.array(PreviousTherapyRowSchema),
-});
-
 export const AssessmentFormSchema = z.object({
 	sectionA: SectionASchema,
-	sectionB: SectionBFormSchema,
+	sectionB: SectionBSchema,
 	sectionC: SectionCSchema,
 	sectionD: SectionDSchema,
 	sectionE: SectionESchema,
-	sectionF: SectionFSchema,
-	sectionG: SectionGSchema,
 	sectionH: SectionHSchema,
 });
 
@@ -42,9 +26,7 @@ export const EMPTY_DEFAULTS: AssessmentFormValues = {
 		age: { years: 0, months: 0 },
 		gender: "",
 		assessmentDate: "",
-		location: "",
 		referringTherapist: "",
-		referralSource: "",
 		caregiverName: "",
 		caregiverRelation: "",
 		caregiverContact: "",
@@ -60,7 +42,6 @@ export const EMPTY_DEFAULTS: AssessmentFormValues = {
 		medicalHistory: "",
 		currentMedications: "",
 		allergies: "",
-		previousTherapiesRows: [],
 	},
 	sectionC: {
 		milestones: [],
@@ -80,21 +61,6 @@ export const EMPTY_DEFAULTS: AssessmentFormValues = {
 	sectionE: {
 		functionalConcerns: [],
 		observations: [],
-	},
-	sectionF: {
-		toolsAdministered: [],
-		overallSummary: "",
-	},
-	sectionG: {
-		shortTermGoals: [],
-		longTermGoals: [],
-		recommendedFrequency: 1,
-		sessionDurationMinutes: 30,
-		interventionSetting: "",
-		reviewPeriodWeeks: 1,
-		homeProgramRecommendations: "",
-		equipment: [],
-		referrals: "",
 	},
 	sectionH: {
 		therapistName: "",
@@ -121,7 +87,17 @@ export function buildDefaultValues({
 	sensorySystems,
 	milestones,
 }: {
-	child: { fullName: string; dob: string | Date; sex: string };
+	child: {
+		fullName: string;
+		dob: string | Date;
+		sex: string;
+		guardian?: {
+			name: string;
+			relation: string;
+			phone: string;
+			email: string | null;
+		} | null;
+	};
 	sensorySystems: { id: string }[];
 	milestones: { id: string }[];
 }): AssessmentFormValues {
@@ -135,6 +111,10 @@ export function buildDefaultValues({
 			dob: dob.toISOString().slice(0, 10),
 			age: computeAge(dob),
 			gender: child.sex,
+			caregiverName: child.guardian?.name ?? "",
+			caregiverRelation: child.guardian?.relation ?? "",
+			caregiverContact: child.guardian?.phone ?? "",
+			caregiverEmail: child.guardian?.email ?? "",
 		},
 		sectionC: {
 			milestones:
@@ -157,6 +137,10 @@ export function buildDefaultValues({
 							notes: "",
 						}))
 					: EMPTY_DEFAULTS.sectionD.sensoryProfile,
+		},
+		sectionH: {
+			...EMPTY_DEFAULTS.sectionH,
+			guardianName: child.guardian?.name ?? "",
 		},
 	};
 }

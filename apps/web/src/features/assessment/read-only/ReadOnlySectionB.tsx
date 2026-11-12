@@ -47,17 +47,6 @@ export function ReadOnlySectionB({ data }: { data: SectionBData }) {
 				label="Allergies / Clinical Precautions"
 				value={data.allergies}
 			/>
-			<ReadOnlyField
-				label="Previous Therapies"
-				value={
-					data.previousTherapies ? (
-						<span className="whitespace-pre-line">
-							{data.previousTherapies}
-						</span>
-					) : null
-				}
-				className="md:col-span-2"
-			/>
 		</AssessmentSectionCard>
 	);
 }

@@ -1,8 +1,6 @@
-import { Button } from "@haber-final/ui/components/button";
 import { Input } from "@haber-final/ui/components/input";
 import { Textarea } from "@haber-final/ui/components/textarea";
-import { Plus, Trash2 } from "lucide-react";
-import { Controller, useFieldArray } from "react-hook-form";
+import { Controller } from "react-hook-form";
 
 import { MultiSelectCombobox } from "@/components/multi-select-combobox";
 import { AssessmentSectionCard } from "../AssessmentSectionCard";
@@ -21,15 +19,10 @@ export function SectionB({
 }: SectionBProps) {
 	const e = errors.sectionB;
 
-	const { fields, append, remove } = useFieldArray({
-		control,
-		name: "sectionB.previousTherapiesRows",
-	});
-
 	return (
 		<AssessmentSectionCard
 			title="Section B — Medical & Developmental History"
-			description="Diagnoses, pre/peri-natal history, medical background, and previous therapies"
+			description="Diagnoses, pre/peri-natal history, and medical background"
 		>
 			<FieldWrapper
 				label="Primary Diagnoses"
@@ -153,68 +146,6 @@ export function SectionB({
 					className={e?.allergies ? "border-red-500" : ""}
 				/>
 			</FieldWrapper>
-
-			<div className="flex flex-col gap-3 md:col-span-2">
-				<p className="font-medium text-on-surface text-sm">
-					Previous Therapies
-				</p>
-
-				{fields.map((field, idx) => (
-					<div
-						key={field.id}
-						className="grid grid-cols-1 gap-3 rounded-lg border border-outline-variant p-4 md:grid-cols-3"
-					>
-						<FieldWrapper label="Therapy Type">
-							<Input
-								{...register(
-									`sectionB.previousTherapiesRows.${idx}.therapyType`,
-								)}
-							/>
-						</FieldWrapper>
-						<FieldWrapper label="Duration / Frequency">
-							<Input
-								{...register(
-									`sectionB.previousTherapiesRows.${idx}.durationFrequency`,
-								)}
-							/>
-						</FieldWrapper>
-						<div className="flex items-end gap-2">
-							<FieldWrapper label="Provider / Location" className="flex-1">
-								<Input
-									{...register(
-										`sectionB.previousTherapiesRows.${idx}.providerLocation`,
-									)}
-								/>
-							</FieldWrapper>
-							<Button
-								type="button"
-								variant="outline"
-								size="icon"
-								onClick={() => remove(idx)}
-								className="shrink-0 text-red-600 hover:bg-red-50"
-							>
-								<Trash2 className="h-4 w-4" />
-							</Button>
-						</div>
-					</div>
-				))}
-
-				<Button
-					type="button"
-					variant="outline"
-					className="w-full gap-2"
-					onClick={() =>
-						append({
-							therapyType: "",
-							durationFrequency: "",
-							providerLocation: "",
-						})
-					}
-				>
-					<Plus className="h-4 w-4" />
-					Add Therapy
-				</Button>
-			</div>
 		</AssessmentSectionCard>
 	);
 }

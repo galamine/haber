@@ -1,11 +1,9 @@
 import {
 	Accessibility,
 	Brain,
-	Clipboard,
 	FileSignature,
 	FileText,
 	type LucideIcon,
-	Target,
 	TrendingUp,
 	User,
 } from "lucide-react";
@@ -33,13 +31,6 @@ export const SECTION_TABS: readonly SectionTabEntry[] = [
 		field: "sectionE",
 		icon: Accessibility,
 	},
-	{ value: "f", label: "Assessment Tools", field: "sectionF", icon: Clipboard },
-	{
-		value: "g",
-		label: "Goals & Intervention",
-		field: "sectionG",
-		icon: Target,
-	},
 	{
 		value: "h",
 		label: "Signatures & Consent",
@@ -49,12 +40,3 @@ export const SECTION_TABS: readonly SectionTabEntry[] = [
 ];
 
 export type SectionTabValue = (typeof SECTION_TABS)[number]["value"];
-
-export const INTERVENTION_SETTINGS = [
-	{ value: "ot_clinic", label: "OT Clinic" },
-	{ value: "home", label: "Home" },
-	{ value: "school", label: "School" },
-	{ value: "early_intervention", label: "Early Intervention Programme" },
-	{ value: "pediatric_rehab", label: "Pediatric Rehabilitation Clinic" },
-	{ value: "hybrid", label: "Hybrid (combination)" },
-];

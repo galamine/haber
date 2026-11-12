@@ -1,5 +1,5 @@
 import { cn } from "@haber-final/ui/lib/utils";
-import { Baby, Calendar, CalendarX, Clock } from "lucide-react";
+import { Baby, Calendar, CalendarX } from "lucide-react";
 import { PLAN_STATUS_COLORS, PLAN_STATUS_LABELS } from "./constants";
 
 function formatDate(date: Date | string | null | undefined): string {
@@ -16,7 +16,6 @@ type PlanHeaderProps = {
 		name: string;
 		versionNumber: number;
 		status: string;
-		sessionDurationMinutes: number;
 		startDate?: Date | string | null;
 		projectedEndDate?: Date | string | null;
 	};
@@ -54,15 +53,6 @@ export function PlanHeader({ plan, childName }: PlanHeaderProps) {
 						</p>
 					)}
 					<div className="flex flex-wrap gap-x-6 gap-y-2">
-						<div className="flex items-center gap-2 text-on-surface-variant text-sm">
-							<Clock className="h-4 w-4" />
-							<span>
-								Session Target:{" "}
-								<strong className="font-medium text-on-surface">
-									{plan.sessionDurationMinutes}m
-								</strong>
-							</span>
-						</div>
 						{plan.startDate && (
 							<div className="flex items-center gap-2 text-on-surface-variant text-sm">
 								<Calendar className="h-4 w-4" />
