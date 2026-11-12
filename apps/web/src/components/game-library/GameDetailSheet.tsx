@@ -126,6 +126,27 @@ export function GameDetailSheet({
 							)}
 						</div>
 
+						{/* Secondary Domains */}
+						{game.secondaryDomains && game.secondaryDomains.length > 0 && (
+							<div>
+								<h3 className="mb-2 flex items-center gap-2 font-medium text-muted-foreground text-sm">
+									<Target className="h-4 w-4" />
+									Also supports
+								</h3>
+								<div className="flex flex-wrap gap-2">
+									{game.secondaryDomains.map((domain) => (
+										<Badge
+											key={domain}
+											variant="outline"
+											className="px-2 py-0.5"
+										>
+											{domain}
+										</Badge>
+									))}
+								</div>
+							</div>
+						)}
+
 						{/* Target Issues */}
 						{game.targetIssues && game.targetIssues.length > 0 && (
 							<div>

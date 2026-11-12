@@ -23,6 +23,7 @@
 		"seed:superadmin": "cross-env DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-super-admin.ts",
 		"seed:clinical": "cross-env DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-clinical.ts",
 		"seed:games": "cross-env DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-games.ts",
+		"export:catalog-handoff": "tsx prisma/export-catalog-handoff.ts",
 		"seed:game-tryout": "cross-env DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/seed-game-tryout.ts",
 		"seed:game-tryout:reset": "cross-env DOTENV_CONFIG_PATH=../../apps/server/.env tsx prisma/reset-game-tryout.ts"
 	},

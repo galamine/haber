@@ -1,0 +1,658 @@
+{
+	"generatedAt": "2026-11-12",
+	"note": "Rename list for the HaberApp game catalog. `key` and `path` identify each game and must not change. Update only the title and description shown inside the game and in the game registry to `newTitle` and `newDescription`, so the game that opens matches what the app lists.",
+	"domains": [
+		"Motor Skills",
+		"Cognitive Processing",
+		"Attention & Focus",
+		"Memory & Learning",
+		"Balance & Coordination",
+		"Communication & Language",
+		"Sensory Processing",
+		"Emotional Regulation",
+		"Social Interaction",
+		"Daily Living Skills"
+	],
+	"games": [
+		{
+			"reviewId": "R01",
+			"key": "trace-walk-shapes",
+			"path": "/trail_games/draw-games/trace-walk-shapes.html",
+			"currentTitle": "Trace Walk - Shapes",
+			"newTitle": "Shape Trace Walk",
+			"newDescription": "Move your feet over a shape to fill it with colour. Practise directing your movement towards a visible target.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Balance & Coordination"
+			]
+		},
+		{
+			"reviewId": "R02",
+			"key": "trace-walk-alphabet",
+			"path": "/trail_games/draw-games/trace-walk-alphabet.html",
+			"currentTitle": "Trace Walk - Alphabet",
+			"newTitle": "Letter Trace Walk",
+			"newDescription": "Move your feet over a letter to fill it with colour. Practise directing your movement towards a visible target.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Balance & Coordination"
+			]
+		},
+		{
+			"reviewId": "R03",
+			"key": "trace-walk-number",
+			"path": "/trail_games/draw-games/trace-walk-number.html",
+			"currentTitle": "Trace Walk - Numbers",
+			"newTitle": "Number Trace Walk",
+			"newDescription": "Move your feet over a number to fill it with colour. Practise directing your movement towards a visible target.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Balance & Coordination"
+			]
+		},
+		{
+			"reviewId": "R04",
+			"key": "paint-floor",
+			"path": "/trail_games/draw-games/paint-floor.html",
+			"currentTitle": "Paint Floor",
+			"newTitle": "Walk & Paint",
+			"newDescription": "Move your feet to paint pictures and patterns. Choose colours and brushes for open-ended creative movement.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Sensory Processing"
+			]
+		},
+		{
+			"reviewId": "R05",
+			"key": "trail-confetti",
+			"path": "/trail_games/trail-games/trail-confetti.html",
+			"currentTitle": "Confetti",
+			"newTitle": "Confetti Trail",
+			"newDescription": "Move your feet to create the confetti trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R06",
+			"key": "trail-flower-garden",
+			"path": "/trail_games/trail-games/trail-flower-garden.html",
+			"currentTitle": "Flower Garden",
+			"newTitle": "Petal Trail",
+			"newDescription": "Move your feet to create the petal trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R07",
+			"key": "trail-ice-crystal",
+			"path": "/trail_games/trail-games/trail-ice-crystal.html",
+			"currentTitle": "Ice Crystal",
+			"newTitle": "Ice Crystal Trail",
+			"newDescription": "Move your feet to create the ice crystal trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R08",
+			"key": "trail-underwater-bubble",
+			"path": "/trail_games/trail-games/trail-underwater-bubble.html",
+			"currentTitle": "Bubble",
+			"newTitle": "Underwater Bubble Trail",
+			"newDescription": "Move your feet to create the underwater bubble trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R09",
+			"key": "trail-firework",
+			"path": "/trail_games/trail-games/trail-firework.html",
+			"currentTitle": "Firework",
+			"newTitle": "Firework Spark Trail",
+			"newDescription": "Move your feet to create the firework spark trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R10",
+			"key": "trail-teddy-print",
+			"path": "/trail_games/trail-games/trail-teddy-print.html",
+			"currentTitle": "Teddy Prints",
+			"newTitle": "Teddy Paw Trail",
+			"newDescription": "Move your feet to create the teddy paw trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R11",
+			"key": "trail-candy-drop",
+			"path": "/trail_games/trail-games/trail-candy-drop.html",
+			"currentTitle": "Candy Drops",
+			"newTitle": "Candy Drop Trail",
+			"newDescription": "Move your feet to create the candy drop trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R12",
+			"key": "trail-cloud-puff",
+			"path": "/trail_games/trail-games/trail-cloud-puff.html",
+			"currentTitle": "Cloud Puff",
+			"newTitle": "Cloud Puff Trail",
+			"newDescription": "Move your feet to create the cloud puff trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R13",
+			"key": "trail-rainbow-swirl",
+			"path": "/trail_games/trail-games/trail-rainbow-swirl.html",
+			"currentTitle": "Rainbow Swirl",
+			"newTitle": "Rainbow Star Trail",
+			"newDescription": "Move your feet to create the rainbow star trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R14",
+			"key": "trail-heart",
+			"path": "/trail_games/trail-games/trail-heart.html",
+			"currentTitle": "Heart",
+			"newTitle": "Floating Heart Trail",
+			"newDescription": "Move your feet to create the floating heart trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R15",
+			"key": "trail-rainbow-lines",
+			"path": "/trail_games/trail-games/trail-rainbow-lines.html",
+			"currentTitle": "Rainbow Lines",
+			"newTitle": "Rainbow Ribbon Trail",
+			"newDescription": "Move your feet to create the rainbow ribbon trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R16",
+			"key": "trail-firefly",
+			"path": "/trail_games/trail-games/trail-firefly.html",
+			"currentTitle": "Firefly",
+			"newTitle": "Firefly Glow Trail",
+			"newDescription": "Move your feet to create the firefly glow trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R17",
+			"key": "trail-glitter",
+			"path": "/trail_games/trail-games/trail-glitter.html",
+			"currentTitle": "Glitter",
+			"newTitle": "Diamond Glitter Trail",
+			"newDescription": "Move your feet to create the diamond glitter trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R18",
+			"key": "trail-bubble",
+			"path": "/trail_games/trail-games/trail-bubble.html",
+			"currentTitle": "Bubble",
+			"newTitle": "Soap Bubble Trail",
+			"newDescription": "Move your feet to create the soap bubble trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R19",
+			"key": "trail-galaxy",
+			"path": "/trail_games/trail-games/trail-galaxy.html",
+			"currentTitle": "Galaxy",
+			"newTitle": "Galaxy Swirl Trail",
+			"newDescription": "Move your feet to create the galaxy swirl trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R20",
+			"key": "trail-magic-sparkle",
+			"path": "/trail_games/trail-games/trail-magic-sparkle.html",
+			"currentTitle": "Magic Sparkle",
+			"newTitle": "Magic Star Trail",
+			"newDescription": "Move your feet to create the magic star trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R21",
+			"key": "trail-ember",
+			"path": "/trail_games/trail-games/trail-ember.html",
+			"currentTitle": "Ember",
+			"newTitle": "Ember Glow Trail",
+			"newDescription": "Move your feet to create the ember glow trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R22",
+			"key": "trail-snow",
+			"path": "/trail_games/trail-games/trail-snow.html",
+			"currentTitle": "Snow",
+			"newTitle": "Snowfall Trail",
+			"newDescription": "Move your feet to create the snowfall trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R23",
+			"key": "trail-paint",
+			"path": "/trail_games/trail-games/trail-paint.html",
+			"currentTitle": "Paint Splash",
+			"newTitle": "Paint Splatter Trail",
+			"newDescription": "Move your feet to create the paint splatter trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R24",
+			"key": "trail-stardust",
+			"path": "/trail_games/trail-games/trail-stardust.html",
+			"currentTitle": "Star Dust",
+			"newTitle": "Falling Stardust Trail",
+			"newDescription": "Move your feet to create the falling stardust trail effect across the floor. Explore how your movement changes the visual display.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R25",
+			"key": "water-walk",
+			"path": "/trail_games/sensory-games/water-walk.html",
+			"currentTitle": "Water Walk",
+			"newTitle": "Ripple Walk",
+			"newDescription": "Move your feet to create ripples in the water display. Explore controlled movement and its visible effects.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Sensory Processing"
+			]
+		},
+		{
+			"reviewId": "R26",
+			"key": "scatter-leaf",
+			"path": "/trail_games/sensory-games/scatter-leaf.html",
+			"currentTitle": "Scatter Leaf",
+			"newTitle": "Autumn Leaf Sweep",
+			"newDescription": "Move your feet to push aside the displayed leaves. Explore controlled movement and its visible effects.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Sensory Processing"
+			]
+		},
+		{
+			"reviewId": "R27",
+			"key": "scatter-shells",
+			"path": "/trail_games/sensory-games/scatter-shells.html",
+			"currentTitle": "Scatter Shells",
+			"newTitle": "Seashell Sweep",
+			"newDescription": "Move your feet to push aside the displayed shells. Explore controlled movement and its visible effects.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Sensory Processing"
+			]
+		},
+		{
+			"reviewId": "R28",
+			"key": "scatter-fruit",
+			"path": "/trail_games/sensory-games/scatter-fruit.html",
+			"currentTitle": "Scatter Fruit",
+			"newTitle": "Fruit Sweep",
+			"newDescription": "Move your feet to push aside the displayed fruit. Explore controlled movement and its visible effects.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Sensory Processing"
+			]
+		},
+		{
+			"reviewId": "R29",
+			"key": "guess-fruits",
+			"path": "/trail_games/reveal-guess-games/guess-fruits.html",
+			"currentTitle": "Guess the Fruit",
+			"newTitle": "Reveal & Guess: Fruit",
+			"newDescription": "Move your feet to uncover a hidden picture of fruit. Choose its name from three options as the picture appears. Practise recognising pictures while controlling your movements.",
+			"primaryDomain": "Cognitive Processing",
+			"secondaryDomains": [
+				"Communication & Language",
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R30",
+			"key": "guess-animals",
+			"path": "/trail_games/reveal-guess-games/guess-animals.html",
+			"currentTitle": "Guess the Animal",
+			"newTitle": "Reveal & Guess: Animals",
+			"newDescription": "Move your feet to uncover a hidden picture of animals. Choose its name from three options as the picture appears. Practise recognising pictures while controlling your movements.",
+			"primaryDomain": "Cognitive Processing",
+			"secondaryDomains": [
+				"Communication & Language",
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R31",
+			"key": "reveal-flowers",
+			"path": "/trail_games/reveal-games/reveal-flowers.html",
+			"currentTitle": "Reveal Flowers",
+			"newTitle": "Flower Picture Reveal",
+			"newDescription": "Move your feet to uncover a hidden picture of flowers. Practise directing movement to uncover more of the picture.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Sensory Processing"
+			]
+		},
+		{
+			"reviewId": "R32",
+			"key": "reveal-birds",
+			"path": "/trail_games/reveal-games/reveal-birds.html",
+			"currentTitle": "Reveal Birds",
+			"newTitle": "Bird Picture Reveal",
+			"newDescription": "Move your feet to uncover a hidden picture of birds. Practise directing movement to uncover more of the picture.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Sensory Processing"
+			]
+		},
+		{
+			"reviewId": "R33",
+			"key": "reveal-fruits",
+			"path": "/trail_games/reveal-games/reveal-fruits.html",
+			"currentTitle": "Reveal Fruits",
+			"newTitle": "Fruit Picture Reveal",
+			"newDescription": "Move your feet to uncover a hidden picture of fruit. Practise directing movement to uncover more of the picture.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Sensory Processing"
+			]
+		},
+		{
+			"reviewId": "R34",
+			"key": "reveal-vehicles",
+			"path": "/trail_games/reveal-games/reveal-vehicles.html",
+			"currentTitle": "Reveal Vehicles",
+			"newTitle": "Vehicle Picture Reveal",
+			"newDescription": "Move your feet to uncover a hidden picture of vehicles. Practise directing movement to uncover more of the picture.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Sensory Processing"
+			]
+		},
+		{
+			"reviewId": "R35",
+			"key": "reveal-animals",
+			"path": "/trail_games/reveal-games/reveal-animals.html",
+			"currentTitle": "Reveal Animals",
+			"newTitle": "Animal Picture Reveal",
+			"newDescription": "Move your feet to uncover a hidden picture of animals. Practise directing movement to uncover more of the picture.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Sensory Processing"
+			]
+		},
+		{
+			"reviewId": "R36",
+			"key": "balloon-pop",
+			"path": "/activity_games/pop-games/balloon-pop.html",
+			"currentTitle": "Balloon Pop",
+			"newTitle": "Step & Pop: Balloons",
+			"newDescription": "Step on floating balloons to pop them. Practise directed stepping and movement control.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Balance & Coordination",
+				"Attention & Focus"
+			]
+		},
+		{
+			"reviewId": "R37",
+			"key": "apple-catch",
+			"path": "/activity_games/catch-games/apple-catch.html",
+			"currentTitle": "Apple Catch",
+			"newTitle": "Basket Apple Catch",
+			"newDescription": "Move a basket to catch falling apples. Practise interception timing and coordination.",
+			"primaryDomain": "Balance & Coordination",
+			"secondaryDomains": [
+				"Motor Skills",
+				"Attention & Focus"
+			]
+		},
+		{
+			"reviewId": "R38",
+			"key": "bubble-pop",
+			"path": "/activity_games/pop-games/bubble-pop.html",
+			"currentTitle": "Bubble Pop",
+			"newTitle": "Step & Pop: Bubbles",
+			"newDescription": "Step on bubbles to pop them. Practise directed stepping and movement control.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Balance & Coordination"
+			]
+		},
+		{
+			"reviewId": "R39",
+			"key": "candy-pop",
+			"path": "/activity_games/pop-games/candy-pop.html",
+			"currentTitle": "Candy Pop",
+			"newTitle": "Step & Pop: Candy",
+			"newDescription": "Step on candy targets to pop them. Practise directed stepping and movement control.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Balance & Coordination"
+			]
+		},
+		{
+			"reviewId": "R40",
+			"key": "heart-balloon-pop",
+			"path": "/activity_games/pop-games/heart-balloon-pop.html",
+			"currentTitle": "Heart Balloon Pop",
+			"newTitle": "Step & Pop: Heart Balloons",
+			"newDescription": "Step on heart-shaped balloons to pop them. Practise directed stepping and movement control.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Balance & Coordination"
+			]
+		},
+		{
+			"reviewId": "R41",
+			"key": "ball-pop",
+			"path": "/activity_games/pop-games/ball-pop.html",
+			"currentTitle": "Ball Pop",
+			"newTitle": "Step & Pop: Balls",
+			"newDescription": "Step on ball targets to pop them. Practise directed stepping and movement control.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Balance & Coordination"
+			]
+		},
+		{
+			"reviewId": "R42",
+			"key": "emotion_recognition_ai",
+			"path": "/therapy_games/selection_game/emotion_recognition_ai.html",
+			"currentTitle": "Emotion Recognition AI",
+			"newTitle": "Emotion Match",
+			"newDescription": "Listen to an emotion word and step on the matching face. Practise recognising facial expressions and understanding emotion words.",
+			"primaryDomain": "Emotional Regulation",
+			"secondaryDomains": [
+				"Communication & Language",
+				"Cognitive Processing"
+			]
+		},
+		{
+			"reviewId": "R43",
+			"key": "texture_identification",
+			"path": "/therapy_games/selection_game/texture_identification.html",
+			"currentTitle": "Texture Identification",
+			"newTitle": "Texture Picture Match",
+			"newDescription": "Listen to a texture word and choose its matching picture. Practise visual texture categories and vocabulary.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Cognitive Processing",
+				"Communication & Language"
+			]
+		},
+		{
+			"reviewId": "R44",
+			"key": "sound_direction_game",
+			"path": "/therapy_games/selection_game/sound_direction_game.html",
+			"currentTitle": "Sound Direction Game",
+			"newTitle": "Sound Direction Step",
+			"newDescription": "Listen to where a sound comes from, then step on Left, Both, or Right. Practise matching sound direction to a response.",
+			"primaryDomain": "Sensory Processing",
+			"secondaryDomains": [
+				"Attention & Focus"
+			]
+		},
+		{
+			"reviewId": "R45",
+			"key": "yes_or_no_response_game",
+			"path": "/therapy_games/selection_game/yes_or_no_response_game.html",
+			"currentTitle": "Yes Or No Response Game",
+			"newTitle": "Yes or No Step",
+			"newDescription": "Read or listen to a question and step on Yes or No. Practise understanding questions and choosing an answer.",
+			"primaryDomain": "Communication & Language",
+			"secondaryDomains": [
+				"Cognitive Processing"
+			]
+		},
+		{
+			"reviewId": "R46",
+			"key": "sentence_completion",
+			"path": "/therapy_games/selection_game/sentence_completion.html",
+			"currentTitle": "Sentence Completion",
+			"newTitle": "Complete the Sentence",
+			"newDescription": "Read the unfinished sentence and step on the word that completes it. Practise vocabulary and sentence comprehension.",
+			"primaryDomain": "Communication & Language",
+			"secondaryDomains": [
+				"Cognitive Processing"
+			]
+		},
+		{
+			"reviewId": "R47",
+			"key": "ignore-distraction-game",
+			"path": "/therapy_games/selection_game/ignore-distraction-game.html",
+			"currentTitle": "Ignore Distraction Game",
+			"newTitle": "Focus: Colour & Shape",
+			"newDescription": "Find the shape that matches both the colour and shape prompt, while ignoring distracting decorations. Practise selective attention and accurate choices.",
+			"primaryDomain": "Attention & Focus",
+			"secondaryDomains": [
+				"Cognitive Processing",
+				"Motor Skills"
+			]
+		},
+		{
+			"reviewId": "R48",
+			"key": "shape-and-size-logic",
+			"path": "/therapy_games/selection_game/shape-and-size-logic.html",
+			"currentTitle": "Shape And Size Logic",
+			"newTitle": "Biggest or Smallest",
+			"newDescription": "Step on the biggest or smallest shape, as instructed. Practise comparing sizes and following comparison words.",
+			"primaryDomain": "Cognitive Processing",
+			"secondaryDomains": [
+				"Communication & Language"
+			]
+		},
+		{
+			"reviewId": "R49",
+			"key": "odd-one-out-category",
+			"path": "/therapy_games/selection_game/odd-one-out-category.html",
+			"currentTitle": "Odd One Out - Category",
+			"newTitle": "Odd One Out: Categories",
+			"newDescription": "Find the item that belongs to a different category. Practise grouping objects by shared features.",
+			"primaryDomain": "Cognitive Processing",
+			"secondaryDomains": [
+				"Communication & Language"
+			]
+		},
+		{
+			"reviewId": "R50",
+			"key": "odd-one-out-color",
+			"path": "/therapy_games/selection_game/odd-one-out-color.html",
+			"currentTitle": "Odd One Out - Color",
+			"newTitle": "Odd One Out: Colours",
+			"newDescription": "Find the tile with a different colour. Practise noticing visual differences.",
+			"primaryDomain": "Cognitive Processing",
+			"secondaryDomains": []
+		},
+		{
+			"reviewId": "R51",
+			"key": "odd-one-out-shape",
+			"path": "/therapy_games/selection_game/odd-one-out-shape.html",
+			"currentTitle": "Odd One Out - Shape",
+			"newTitle": "Odd One Out: Shapes",
+			"newDescription": "Find the shape that differs from the others. Practise comparing and distinguishing shapes.",
+			"primaryDomain": "Cognitive Processing",
+			"secondaryDomains": []
+		},
+		{
+			"reviewId": "R52",
+			"key": "smart-object-recognition",
+			"path": "/therapy_games/selection_game/smart-object-recognition.html",
+			"currentTitle": "Smart Object Recognition",
+			"newTitle": "Find the Named Object",
+			"newDescription": "Find and step on the object named in the prompt. Practise recognising everyday objects and linking names to pictures.",
+			"primaryDomain": "Cognitive Processing",
+			"secondaryDomains": [
+				"Communication & Language"
+			]
+		},
+		{
+			"reviewId": "R53",
+			"key": "color-reaction-step",
+			"path": "/therapy_games/selection_game/color-reaction-step.html",
+			"currentTitle": "Color Reaction Step",
+			"newTitle": "Colour Cue Step",
+			"newDescription": "Step on the colour named in the prompt. Practise responding to cues with controlled, directed steps.",
+			"primaryDomain": "Motor Skills",
+			"secondaryDomains": [
+				"Attention & Focus",
+				"Balance & Coordination"
+			]
+		}
+	]
+}

@@ -14,19 +14,6 @@ const seedData =
 		developmental_milestones: { items: { id: string; label: string }[] };
 	};
 
-const GAME_CATEGORIES = [
-	{ id: "gc_gross_motor", name: "Gross Motor" },
-	{ id: "gc_fine_motor", name: "Fine Motor" },
-	{ id: "gc_sensory_integration", name: "Sensory Integration" },
-	{ id: "gc_visual_motor", name: "Visual-Motor" },
-	{ id: "gc_cognitive", name: "Cognitive" },
-	{ id: "gc_speech_language", name: "Speech & Language" },
-	{ id: "gc_social", name: "Social" },
-	{ id: "gc_self_care", name: "Self-Care" },
-	{ id: "gc_balance", name: "Balance" },
-	{ id: "gc_coordination", name: "Coordination" },
-] as const;
-
 const prisma = createPrismaClient();
 
 for (const item of seedData.diagnoses.items) {
@@ -112,15 +99,6 @@ for (const item of seedData.developmental_milestones.items) {
 console.log(
 	`Seeded ${seedData.developmental_milestones.items.length} milestones`,
 );
-
-for (const cat of GAME_CATEGORIES) {
-	await prisma.gameCategory.upsert({
-		where: { id: cat.id },
-		update: { name: cat.name },
-		create: { id: cat.id, name: cat.name, clinicId: null, parentId: null },
-	});
-}
-console.log(`Seeded ${GAME_CATEGORIES.length} game categories`);
 
 await prisma.$disconnect();
 console.log("Clinical seed complete.");

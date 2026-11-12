@@ -172,19 +172,19 @@ Below are the exact 53 games to update in [`packages/db/prisma/game-registry/`](
 #### Trace Walk & Paint (R01–R04)
 *File:* `trail-draw-reveal-sensory-games.ts`
 
-- [ ] **R01 | Key: `trace-walk-shapes`**
+- [x] **R01 | Key: `trace-walk-shapes`**
   - **Proposed Title:** `Shape Trace Walk`
   - **Proposed Description:** *"Move your feet over a shape to fill it with colour. Practise directing your movement towards a visible target."*
   - **Primary Domain:** `Motor Skills` | **Secondary:** `Balance & Coordination`
-- [ ] **R02 | Key: `trace-walk-alphabet`**
+- [x] **R02 | Key: `trace-walk-alphabet`**
   - **Proposed Title:** `Letter Trace Walk`
   - **Proposed Description:** *"Move your feet over a letter to fill it with colour. Practise directing your movement towards a visible target."*
   - **Primary Domain:** `Motor Skills` | **Secondary:** `Balance & Coordination`
-- [ ] **R03 | Key: `trace-walk-number`**
+- [x] **R03 | Key: `trace-walk-number`**
   - **Proposed Title:** `Number Trace Walk`
   - **Proposed Description:** *"Move your feet over a number to fill it with colour. Practise directing your movement towards a visible target."*
   - **Primary Domain:** `Motor Skills` | **Secondary:** `Balance & Coordination`
-- [ ] **R04 | Key: `paint-floor`**
+- [x] **R04 | Key: `paint-floor`**
   - **Proposed Title:** `Walk & Paint`
   - **Proposed Description:** *"Move your feet to paint pictures and patterns. Choose colours and brushes for open-ended creative movement."*
   - **Primary Domain:** `Motor Skills` | **Secondary:** `Sensory Processing` *(provisional)*
@@ -194,143 +194,143 @@ Below are the exact 53 games to update in [`packages/db/prisma/game-registry/`](
 *All 20 games use the shared particle emitter engine. All have:*  
 *Primary Domain:* `Sensory Processing` *(provisional)* | *Secondary Domain:* `Motor Skills`
 
-- [ ] **R05 | Key: `trail-confetti`** -> **Title:** `Confetti Trail`  
+- [x] **R05 | Key: `trail-confetti`** -> **Title:** `Confetti Trail`  
   *Description:* *"Move your feet to create the confetti trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R06 | Key: `trail-flower-garden`** -> **Title:** `Petal Trail`  
+- [x] **R06 | Key: `trail-flower-garden`** -> **Title:** `Petal Trail`  
   *Description:* *"Move your feet to create the petal trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R07 | Key: `trail-ice-crystal`** -> **Title:** `Ice Crystal Trail`  
+- [x] **R07 | Key: `trail-ice-crystal`** -> **Title:** `Ice Crystal Trail`  
   *Description:* *"Move your feet to create the ice crystal trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R08 | Key: `trail-underwater-bubble`** -> **Title:** `Underwater Bubble Trail`  
+- [x] **R08 | Key: `trail-underwater-bubble`** -> **Title:** `Underwater Bubble Trail`  
   *Description:* *"Move your feet to create the underwater bubble trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R09 | Key: `trail-firework`** -> **Title:** `Firework Spark Trail`  
+- [x] **R09 | Key: `trail-firework`** -> **Title:** `Firework Spark Trail`  
   *Description:* *"Move your feet to create the firework spark trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R10 | Key: `trail-teddy-print`** -> **Title:** `Teddy Paw Trail`  
+- [x] **R10 | Key: `trail-teddy-print`** -> **Title:** `Teddy Paw Trail`  
   *Description:* *"Move your feet to create the teddy paw trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R11 | Key: `trail-candy-drop`** -> **Title:** `Candy Drop Trail`  
+- [x] **R11 | Key: `trail-candy-drop`** -> **Title:** `Candy Drop Trail`  
   *Description:* *"Move your feet to create the candy drop trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R12 | Key: `trail-cloud-puff`** -> **Title:** `Cloud Puff Trail`  
+- [x] **R12 | Key: `trail-cloud-puff`** -> **Title:** `Cloud Puff Trail`  
   *Description:* *"Move your feet to create the cloud puff trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R13 | Key: `trail-rainbow-swirl`** -> **Title:** `Rainbow Star Trail`  
+- [x] **R13 | Key: `trail-rainbow-swirl`** -> **Title:** `Rainbow Star Trail`  
   *Description:* *"Move your feet to create the rainbow star trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R14 | Key: `trail-heart`** -> **Title:** `Floating Heart Trail`  
+- [x] **R14 | Key: `trail-heart`** -> **Title:** `Floating Heart Trail`  
   *Description:* *"Move your feet to create the floating heart trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R15 | Key: `trail-rainbow-lines`** -> **Title:** `Rainbow Ribbon Trail`  
+- [x] **R15 | Key: `trail-rainbow-lines`** -> **Title:** `Rainbow Ribbon Trail`  
   *Description:* *"Move your feet to create the rainbow ribbon trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R16 | Key: `trail-firefly`** -> **Title:** `Firefly Glow Trail`  
+- [x] **R16 | Key: `trail-firefly`** -> **Title:** `Firefly Glow Trail`  
   *Description:* *"Move your feet to create the firefly glow trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R17 | Key: `trail-glitter`** -> **Title:** `Diamond Glitter Trail`  
+- [x] **R17 | Key: `trail-glitter`** -> **Title:** `Diamond Glitter Trail`  
   *Description:* *"Move your feet to create the diamond glitter trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R18 | Key: `trail-bubble`** -> **Title:** `Soap Bubble Trail`  
+- [x] **R18 | Key: `trail-bubble`** -> **Title:** `Soap Bubble Trail`  
   *Description:* *"Move your feet to create the soap bubble trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R19 | Key: `trail-galaxy`** -> **Title:** `Galaxy Swirl Trail`  
+- [x] **R19 | Key: `trail-galaxy`** -> **Title:** `Galaxy Swirl Trail`  
   *Description:* *"Move your feet to create the galaxy swirl trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R20 | Key: `trail-magic-sparkle`** -> **Title:** `Magic Star Trail`  
+- [x] **R20 | Key: `trail-magic-sparkle`** -> **Title:** `Magic Star Trail`  
   *Description:* *"Move your feet to create the magic star trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R21 | Key: `trail-ember`** -> **Title:** `Ember Glow Trail`  
+- [x] **R21 | Key: `trail-ember`** -> **Title:** `Ember Glow Trail`  
   *Description:* *"Move your feet to create the ember glow trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R22 | Key: `trail-snow`** -> **Title:** `Snowfall Trail`  
+- [x] **R22 | Key: `trail-snow`** -> **Title:** `Snowfall Trail`  
   *Description:* *"Move your feet to create the snowfall trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R23 | Key: `trail-paint`** -> **Title:** `Paint Splatter Trail`  
+- [x] **R23 | Key: `trail-paint`** -> **Title:** `Paint Splatter Trail`  
   *Description:* *"Move your feet to create the paint splatter trail effect across the floor. Explore how your movement changes the visual display."*
-- [ ] **R24 | Key: `trail-stardust`** -> **Title:** `Falling Stardust Trail`  
+- [x] **R24 | Key: `trail-stardust`** -> **Title:** `Falling Stardust Trail`  
   *Description:* *"Move your feet to create the falling stardust trail effect across the floor. Explore how your movement changes the visual display."*
 
 #### Physical Sweeps, Reveal & Guess, and Picture Reveals (R25–R35)
 *File:* `trail-draw-reveal-sensory-games.ts`
 
-- [ ] **R25 | Key: `water-walk`** -> **Title:** `Ripple Walk`  
+- [x] **R25 | Key: `water-walk`** -> **Title:** `Ripple Walk`  
   *Description:* *"Move your feet to create ripples in the water display. Explore controlled movement and its visible effects."*  
   *Primary:* `Motor Skills` | *Secondary:* `Sensory Processing`
-- [ ] **R26 | Key: `scatter-leaf`** -> **Title:** `Autumn Leaf Sweep`  
+- [x] **R26 | Key: `scatter-leaf`** -> **Title:** `Autumn Leaf Sweep`  
   *Description:* *"Move your feet to push aside the displayed leaves. Explore controlled movement and its visible effects."*  
   *Primary:* `Motor Skills` | *Secondary:* `Sensory Processing`
-- [ ] **R27 | Key: `scatter-shells`** -> **Title:** `Seashell Sweep`  
+- [x] **R27 | Key: `scatter-shells`** -> **Title:** `Seashell Sweep`  
   *Description:* *"Move your feet to push aside the displayed shells. Explore controlled movement and its visible effects."*  
   *Primary:* `Motor Skills` | *Secondary:* `Sensory Processing`
-- [ ] **R28 | Key: `scatter-fruit`** -> **Title:** `Fruit Sweep`  
+- [x] **R28 | Key: `scatter-fruit`** -> **Title:** `Fruit Sweep`  
   *Description:* *"Move your feet to push aside the displayed fruit. Explore controlled movement and its visible effects."*  
   *Primary:* `Motor Skills` | *Secondary:* `Sensory Processing`
-- [ ] **R29 | Key: `guess-fruits`** -> **Title:** `Reveal & Guess: Fruit`  
+- [x] **R29 | Key: `guess-fruits`** -> **Title:** `Reveal & Guess: Fruit`  
   *Description:* *"Move your feet to uncover a hidden picture of fruit. Choose its name from three options as the picture appears. Practise recognising pictures while controlling your movements."*  
   *Primary:* `Cognitive Processing` | *Secondary:* `Communication & Language`, `Motor Skills`
-- [ ] **R30 | Key: `guess-animals`** -> **Title:** `Reveal & Guess: Animals`  
+- [x] **R30 | Key: `guess-animals`** -> **Title:** `Reveal & Guess: Animals`  
   *Description:* *"Move your feet to uncover a hidden picture of animals. Choose its name from three options as the picture appears. Practise recognising pictures while controlling your movements."*  
   *Primary:* `Cognitive Processing` | *Secondary:* `Communication & Language`, `Motor Skills`
-- [ ] **R31 | Key: `reveal-flowers`** -> **Title:** `Flower Picture Reveal`  
+- [x] **R31 | Key: `reveal-flowers`** -> **Title:** `Flower Picture Reveal`  
   *Description:* *"Move your feet to uncover a hidden picture of flowers. Practise directing movement to uncover more of the picture."*  
   *Primary:* `Motor Skills` | *Secondary:* `Sensory Processing`
-- [ ] **R32 | Key: `reveal-birds`** -> **Title:** `Bird Picture Reveal`  
+- [x] **R32 | Key: `reveal-birds`** -> **Title:** `Bird Picture Reveal`  
   *Description:* *"Move your feet to uncover a hidden picture of birds. Practise directing movement to uncover more of the picture."*  
   *Primary:* `Motor Skills` | *Secondary:* `Sensory Processing`
-- [ ] **R33 | Key: `reveal-fruits`** -> **Title:** `Fruit Picture Reveal`  
+- [x] **R33 | Key: `reveal-fruits`** -> **Title:** `Fruit Picture Reveal`  
   *Description:* *"Move your feet to uncover a hidden picture of fruit. Practise directing movement to uncover more of the picture."*  
   *Primary:* `Motor Skills` | *Secondary:* `Sensory Processing`
-- [ ] **R34 | Key: `reveal-vehicles`** -> **Title:** `Vehicle Picture Reveal`  
+- [x] **R34 | Key: `reveal-vehicles`** -> **Title:** `Vehicle Picture Reveal`  
   *Description:* *"Move your feet to uncover a hidden picture of vehicles. Practise directing movement to uncover more of the picture."*  
   *Primary:* `Motor Skills` | *Secondary:* `Sensory Processing`
-- [ ] **R35 | Key: `reveal-animals`** -> **Title:** `Animal Picture Reveal`  
+- [x] **R35 | Key: `reveal-animals`** -> **Title:** `Animal Picture Reveal`  
   *Description:* *"Move your feet to uncover a hidden picture of animals. Practise directing movement to uncover more of the picture."*  
   *Primary:* `Motor Skills` | *Secondary:* `Sensory Processing`
 
 #### Catch & Pop Games (R36–R41)
 *File:* `catch-pop-games.ts`
 
-- [ ] **R36 | Key: `balloon-pop`** -> **Title:** `Step & Pop: Balloons`  
+- [x] **R36 | Key: `balloon-pop`** -> **Title:** `Step & Pop: Balloons`  
   *Description:* *"Step on floating balloons to pop them. Suggested purpose: target-directed stepping and movement control."*  
   *Primary:* `Motor Skills` | *Secondary:* `Balance & Coordination`, `Attention & Focus`
-- [ ] **R37 | Key: `apple-catch`** -> **Title:** `Basket Apple Catch`  
+- [x] **R37 | Key: `apple-catch`** -> **Title:** `Basket Apple Catch`  
   *Description:* *"Move a basket to catch falling apples. Suggested purpose: interception timing and coordination; confirm how the basket is controlled."*  
   *Primary:* `Balance & Coordination` | *Secondary:* `Motor Skills`, `Attention & Focus`
-- [ ] **R38 | Key: `bubble-pop`** -> **Title:** `Step & Pop: Bubbles`  
+- [x] **R38 | Key: `bubble-pop`** -> **Title:** `Step & Pop: Bubbles`  
   *Description:* *"Step on bubbles to pop them. Suggested purpose: directed stepping and movement control."*  
   *Primary:* `Motor Skills` | *Secondary:* `Balance & Coordination`
-- [ ] **R39 | Key: `candy-pop`** -> **Title:** `Step & Pop: Candy`  
+- [x] **R39 | Key: `candy-pop`** -> **Title:** `Step & Pop: Candy`  
   *Description:* *"Step on candy targets to pop them. Suggested purpose: directed stepping and movement control."*  
   *Primary:* `Motor Skills` | *Secondary:* `Balance & Coordination`
-- [ ] **R40 | Key: `heart-balloon-pop`** -> **Title:** `Step & Pop: Heart Balloons`  
+- [x] **R40 | Key: `heart-balloon-pop`** -> **Title:** `Step & Pop: Heart Balloons`  
   *Description:* *"Step on heart-shaped balloons to pop them. Suggested purpose: directed stepping and movement control."*  
   *Primary:* `Motor Skills` | *Secondary:* `Balance & Coordination`
-- [ ] **R41 | Key: `ball-pop`** -> **Title:** `Step & Pop: Balls`  
+- [x] **R41 | Key: `ball-pop`** -> **Title:** `Step & Pop: Balls`  
   *Description:* *"Step on ball targets to pop them. Suggested purpose: directed stepping and movement control."*  
   *Primary:* `Motor Skills` | *Secondary:* `Balance & Coordination`
 
 #### Selection, Cognitive & Communication Games (R42–R53)
 *File:* `selection-games.ts`
 
-- [ ] **R42 | Key: `emotion_recognition_ai`** -> **Title:** `Emotion Match`  
+- [x] **R42 | Key: `emotion_recognition_ai`** -> **Title:** `Emotion Match`  
   *Description:* *"Listen to an emotion word and step on the matching face. Practise recognising facial expressions and understanding emotion words."*  
   *Primary:* `Emotional Regulation` | *Secondary:* `Communication & Language`, `Cognitive Processing`
-- [ ] **R43 | Key: `texture_identification`** -> **Title:** `Texture Picture Match`  
+- [x] **R43 | Key: `texture_identification`** -> **Title:** `Texture Picture Match`  
   *Description:* *"Listen to a texture word and choose its matching picture. Practise visual texture categories and vocabulary; touching real textures is not confirmed."*  
   *Primary:* `Sensory Processing` | *Secondary:* `Cognitive Processing`, `Communication & Language`
-- [ ] **R44 | Key: `sound_direction_game`** -> **Title:** `Sound Direction Step`  
+- [x] **R44 | Key: `sound_direction_game`** -> **Title:** `Sound Direction Step`  
   *Description:* *"Listen to where a sound comes from, then step on Left, Both, or Right. Practise matching sound direction to a response."*  
   *Primary:* `Sensory Processing` | *Secondary:* `Attention & Focus`
-- [ ] **R45 | Key: `yes_or_no_response_game`** -> **Title:** `Yes or No Step`  
+- [x] **R45 | Key: `yes_or_no_response_game`** -> **Title:** `Yes or No Step`  
   *Description:* *"Read or listen to a question and step on Yes or No. Practise understanding questions and choosing an answer."*  
   *Primary:* `Communication & Language` | *Secondary:* `Cognitive Processing`
-- [ ] **R46 | Key: `sentence_completion`** -> **Title:** `Complete the Sentence`  
+- [x] **R46 | Key: `sentence_completion`** -> **Title:** `Complete the Sentence`  
   *Description:* *"Read the unfinished sentence and step on the word that completes it. Practise vocabulary and sentence comprehension."*  
   *Primary:* `Communication & Language` | *Secondary:* `Cognitive Processing`
-- [ ] **R47 | Key: `ignore-distraction-game`** -> **Title:** `Focus: Colour & Shape`  
+- [x] **R47 | Key: `ignore-distraction-game`** -> **Title:** `Focus: Colour & Shape`  
   *Description:* *"Find the shape that matches both the colour and shape prompt, while ignoring distracting decorations. Practise selective attention and accurate choices."*  
   *Primary:* `Attention & Focus` | *Secondary:* `Cognitive Processing`, `Motor Skills`
-- [ ] **R48 | Key: `shape-and-size-logic`** -> **Title:** `Biggest or Smallest`  
+- [x] **R48 | Key: `shape-and-size-logic`** -> **Title:** `Biggest or Smallest`  
   *Description:* *"Step on the biggest or smallest shape, as instructed. Practise comparing sizes and following comparison words."*  
   *Primary:* `Cognitive Processing` | *Secondary:* `Communication & Language`
-- [ ] **R49 | Key: `odd-one-out-category`** -> **Title:** `Odd One Out: Categories`  
+- [x] **R49 | Key: `odd-one-out-category`** -> **Title:** `Odd One Out: Categories`  
   *Description:* *"Find the item that belongs to a different category. Practise grouping objects by shared features."*  
   *Primary:* `Cognitive Processing` | *Secondary:* `Communication & Language`
-- [ ] **R50 | Key: `odd-one-out-color`** -> **Title:** `Odd One Out: Colours`  
+- [x] **R50 | Key: `odd-one-out-color`** -> **Title:** `Odd One Out: Colours`  
   *Description:* *"Find the tile with a different colour. Practise noticing visual differences."*  
   *Primary:* `Cognitive Processing` | *Secondary:* `None`
-- [ ] **R51 | Key: `odd-one-out-shape`** -> **Title:** `Odd One Out: Shapes`  
+- [x] **R51 | Key: `odd-one-out-shape`** -> **Title:** `Odd One Out: Shapes`  
   *Description:* *"Find the shape that differs from the others. Practise comparing and distinguishing shapes."*  
   *Primary:* `Cognitive Processing` | *Secondary:* `None`
-- [ ] **R52 | Key: `smart-object-recognition`** -> **Title:** `Find the Named Object`  
+- [x] **R52 | Key: `smart-object-recognition`** -> **Title:** `Find the Named Object`  
   *Description:* *"Find and step on the object named in the prompt. Practise recognising everyday objects and linking names to pictures."*  
   *Primary:* `Cognitive Processing` | *Secondary:* `Communication & Language`
-- [ ] **R53 | Key: `color-reaction-step`** -> **Title:** `Colour Cue Step`  
+- [x] **R53 | Key: `color-reaction-step`** -> **Title:** `Colour Cue Step`  
   *Description:* *"Step on the colour named in the prompt. Practise responding to cues with controlled, directed steps."*  
   *Primary:* `Motor Skills` | *Secondary:* `Attention & Focus`, `Balance & Coordination`
 
@@ -379,9 +379,9 @@ Below are the exact 53 games to update in [`packages/db/prisma/game-registry/`](
 ## 4. Execution Checklist & Verification Gates
 
 ### Step 1: Database & Seed Updates
-1. [ ] Update titles & descriptions across `catch-pop-games.ts`, `selection-games.ts`, and `trail-draw-reveal-sensory-games.ts`.
-2. [ ] Update `seed-games.ts` to seed the 10 Clinical Domains and assign them as `categoryId`.
-3. [ ] Run `pnpm db:push` (or `pnpm db:migrate`) and re-seed the catalog.
+1. [x] Titles, descriptions and domains applied through `packages/db/prisma/game-registry/catalog-overlay.ts` (registry files left untouched).
+2. [x] Update `seed-games.ts` to seed the 10 Clinical Domains and assign them as `categoryId`.
+3. [x] Run `pnpm db:push` and re-seed the catalog (local database reset 13 Nov 2026).
 
 ### Step 2: Hono Server & tRPC API
 1. [ ] Add `goalPreset` router in `packages/api/src/routers/`.

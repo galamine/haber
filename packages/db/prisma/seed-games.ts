@@ -1,5 +1,9 @@
 import "dotenv/config";
 import { createPrismaClient } from "../src/index";
+import {
+	CATALOG_OVERLAY,
+	CLINICAL_DOMAINS,
+} from "./game-registry/catalog-overlay";
 import { GAME_REGISTRY as CATCH_POP_GAMES } from "./game-registry/catch-pop-games";
 import { GAME_REGISTRY as SELECTION_GAMES } from "./game-registry/selection-games";
 import { GAME_REGISTRY as TRAIL_DRAW_REVEAL_SENSORY_GAMES } from "./game-registry/trail-draw-reveal-sensory-games";
@@ -29,66 +33,53 @@ const SCAFFOLDING_KEYS = new Set([
 	"template-reveal",
 ]);
 
-const SUBFOLDER_CATEGORY_LABELS: Record<string, string> = {
-	selection_game: "Selection Games",
-	"pop-games": "Pop Games",
-	"catch-games": "Catch Games",
-	"trail-games": "Trail Games",
-	"draw-games": "Draw Games",
-	"reveal-games": "Reveal Games",
-	"reveal-guess-games": "Reveal-Guess Games",
-	"sensory-games": "Sensory Games",
-};
-
-function categorySlugFromPath(path: string): string {
-	const segment = path.split("/")[2];
-	if (!segment || !(segment in SUBFOLDER_CATEGORY_LABELS)) {
-		throw new Error(`Cannot derive game category from path: ${path}`);
-	}
-	return segment;
-}
-
 const registries: Record<string, RegistryEntry>[] = [
 	SELECTION_GAMES,
 	CATCH_POP_GAMES,
 	TRAIL_DRAW_REVEAL_SENSORY_GAMES,
 ];
 
-const categoryIds = new Map<string, string>();
+const domainIds = new Map<string, string>();
+for (const domain of CLINICAL_DOMAINS) {
+	await prisma.gameCategory.upsert({
+		where: { id: domain.id },
+		update: { name: domain.name },
+		create: {
+			id: domain.id,
+			name: domain.name,
+			clinicId: null,
+			parentId: null,
+		},
+	});
+	domainIds.set(domain.name, domain.id);
+}
+
 let gamesSeeded = 0;
 
 for (const registry of registries) {
 	for (const entry of Object.values(registry)) {
 		if (SCAFFOLDING_KEYS.has(entry.name)) continue;
 
-		const slug = categorySlugFromPath(entry.path);
-		let categoryId = categoryIds.get(slug);
+		const overlay = CATALOG_OVERLAY[entry.name];
+		if (!overlay) {
+			throw new Error(`No catalog overlay entry for game: ${entry.name}`);
+		}
+		const categoryId = domainIds.get(overlay.primaryDomain);
 		if (!categoryId) {
-			categoryId = `gc_reg_${slug.replace(/-/g, "_")}`;
-			const label = SUBFOLDER_CATEGORY_LABELS[slug] ?? slug;
-			await prisma.gameCategory.upsert({
-				where: { id: categoryId },
-				update: { name: label },
-				create: { id: categoryId, name: label, clinicId: null, parentId: null },
-			});
-			categoryIds.set(slug, categoryId);
+			throw new Error(`Unknown clinical domain: ${overlay.primaryDomain}`);
 		}
 
+		const gameData = {
+			name: overlay.title,
+			description: overlay.description,
+			categoryId,
+			secondaryDomains: overlay.secondaryDomains,
+			isGlobal: true,
+		};
 		const game = await prisma.game.upsert({
 			where: { key: entry.name },
-			update: {
-				name: entry.title,
-				description: entry.description,
-				categoryId,
-				isGlobal: true,
-			},
-			create: {
-				key: entry.name,
-				name: entry.title,
-				description: entry.description,
-				categoryId,
-				isGlobal: true,
-			},
+			update: gameData,
+			create: { key: entry.name, ...gameData },
 		});
 
 		const existingVersion = await prisma.gameVersion.findFirst({
@@ -129,7 +120,7 @@ for (const registry of registries) {
 }
 
 console.log(
-	`Seeded ${gamesSeeded} games across ${categoryIds.size} categories`,
+	`Seeded ${gamesSeeded} games across ${CLINICAL_DOMAINS.length} clinical domains`,
 );
 
 await prisma.$disconnect();

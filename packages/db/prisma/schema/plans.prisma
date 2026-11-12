@@ -117,6 +117,7 @@ model Game {
   categoryId   String
   subCategory  String?
   targetIssues String[]
+  secondaryDomains String[] @default([])
   difficulty   String?
   ageRangeMin  Int?
   ageRangeMax  Int?
