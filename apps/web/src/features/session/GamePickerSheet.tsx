@@ -1,4 +1,3 @@
-import { Badge } from "@haber-final/ui/components/badge";
 import { Button } from "@haber-final/ui/components/button";
 import { Input } from "@haber-final/ui/components/input";
 import { Label } from "@haber-final/ui/components/label";
@@ -241,29 +240,7 @@ export function GamePickerSheet({
 											<h4 className="font-semibold text-on-surface">
 												{game.name}
 											</h4>
-											<Badge variant="secondary" className="text-xs">
-												Level {game.difficulty || "N/A"}
-											</Badge>
-											{game.ageRangeMin !== null &&
-											game.ageRangeMax !== null ? (
-												<Badge variant="outline" className="text-xs">
-													Ages {game.ageRangeMin}-{game.ageRangeMax}
-												</Badge>
-											) : null}
 										</div>
-										{game.targetIssues && game.targetIssues.length > 0 ? (
-											<div className="flex flex-wrap gap-1">
-												{game.targetIssues.map((issue) => (
-													<Badge
-														key={issue}
-														variant="outline"
-														className="px-1.5 py-0 text-[11px]"
-													>
-														{issue}
-													</Badge>
-												))}
-											</div>
-										) : null}
 										{game.description ? (
 											<p className="line-clamp-2 text-muted-foreground text-xs">
 												{game.description}

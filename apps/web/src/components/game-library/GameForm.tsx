@@ -22,13 +22,11 @@ import {
 import { Textarea } from "@haber-final/ui/components/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 import { trpc } from "@/utils/trpc";
-import { DIFFICULTY_LEVELS, TARGET_ISSUES } from "./constants";
 
 export const gameFormSchema = CreateGameInput.omit({
 	isGlobal: true,
@@ -36,6 +34,10 @@ export const gameFormSchema = CreateGameInput.omit({
 	initialScoringSchema: true,
 	entryScenes: true,
 	supportedLevels: true,
+	targetIssues: true,
+	difficulty: true,
+	ageRangeMin: true,
+	ageRangeMax: true,
 }).extend({
 	isGlobal: z.boolean().default(true),
 	clinicIds: z.array(z.string()).default([]),
@@ -61,10 +63,6 @@ export function GameForm({
 	onSuccess,
 	onCancel,
 }: GameFormProps) {
-	const [selectedDifficulty, setSelectedDifficulty] = useState(
-		initialValues?.difficulty || "",
-	);
-
 	const { data: categories } = useQuery(
 		trpc.game.listCategories.queryOptions(),
 	);
@@ -79,10 +77,6 @@ export function GameForm({
 			description: initialValues?.description || "",
 			categoryId: initialValues?.categoryId || "",
 			subCategory: initialValues?.subCategory || "",
-			targetIssues: initialValues?.targetIssues || [],
-			difficulty: initialValues?.difficulty || "",
-			ageRangeMin: initialValues?.ageRangeMin,
-			ageRangeMax: initialValues?.ageRangeMax,
 			isGlobal: initialValues?.isGlobal ?? true,
 			clinicIds: initialValues?.clinicIds || [],
 			initialVersionNumber: initialValues?.initialVersionNumber || "1",
@@ -132,10 +126,6 @@ export function GameForm({
 				description: values.description,
 				categoryId: values.categoryId,
 				subCategory: values.subCategory,
-				targetIssues: values.targetIssues,
-				difficulty: values.difficulty,
-				ageRangeMin: values.ageRangeMin,
-				ageRangeMax: values.ageRangeMax,
 				isGlobal: values.isGlobal,
 				clinicIds: values.isGlobal ? undefined : values.clinicIds,
 			});
@@ -153,10 +143,6 @@ export function GameForm({
 				description: values.description,
 				categoryId: values.categoryId,
 				subCategory: values.subCategory,
-				targetIssues: values.targetIssues,
-				difficulty: values.difficulty,
-				ageRangeMin: values.ageRangeMin,
-				ageRangeMax: values.ageRangeMax,
 				isGlobal: values.isGlobal,
 				clinicIds: values.isGlobal ? undefined : values.clinicIds,
 				initialVersionNumber: values.initialVersionNumber,
@@ -258,136 +244,6 @@ export function GameForm({
 						)}
 					/>
 				</div>
-
-				<FormField
-					control={form.control}
-					name="difficulty"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Difficulty Level</FormLabel>
-							<FormControl>
-								<div className="flex gap-2">
-									{DIFFICULTY_LEVELS.map((level) => (
-										<button
-											key={level}
-											type="button"
-											onClick={() => {
-												setSelectedDifficulty(level);
-												field.onChange(level);
-											}}
-											className={`h-10 w-10 rounded-lg border font-medium text-sm transition-colors ${
-												selectedDifficulty === level
-													? "border-primary bg-primary text-primary-foreground"
-													: "border-input bg-background hover:bg-muted"
-											}`}
-										>
-											{level}
-										</button>
-									))}
-								</div>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				<div className="grid grid-cols-2 gap-4">
-					<FormField
-						control={form.control}
-						name="ageRangeMin"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Min Age</FormLabel>
-								<FormControl>
-									<Input
-										type="number"
-										min={0}
-										placeholder="3"
-										{...field}
-										onChange={(e) =>
-											field.onChange(
-												e.target.value
-													? Number.parseInt(e.target.value)
-													: undefined,
-											)
-										}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-
-					<FormField
-						control={form.control}
-						name="ageRangeMax"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Max Age</FormLabel>
-								<FormControl>
-									<Input
-										type="number"
-										min={0}
-										placeholder="18"
-										{...field}
-										onChange={(e) =>
-											field.onChange(
-												e.target.value
-													? Number.parseInt(e.target.value)
-													: undefined,
-											)
-										}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-				</div>
-
-				<FormField
-					control={form.control}
-					name="targetIssues"
-					render={() => (
-						<FormItem>
-							<div className="mb-2">
-								<FormLabel>Target Issues</FormLabel>
-							</div>
-							<div className="grid grid-cols-2 gap-2">
-								{TARGET_ISSUES.map((issue) => (
-									<FormField
-										key={issue}
-										control={form.control}
-										name="targetIssues"
-										render={({ field }) => (
-											<FormItem className="flex flex-row items-start space-x-3 space-y-0">
-												<FormControl>
-													<Checkbox
-														checked={field.value?.includes(issue)}
-														onCheckedChange={(checked) => {
-															const current = field.value || [];
-															if (checked) {
-																field.onChange([...current, issue]);
-															} else {
-																field.onChange(
-																	current.filter((v) => v !== issue),
-																);
-															}
-														}}
-													/>
-												</FormControl>
-												<FormLabel className="cursor-pointer font-normal">
-													{issue}
-												</FormLabel>
-											</FormItem>
-										)}
-									/>
-								))}
-							</div>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
 
 				<FormField
 					control={form.control}

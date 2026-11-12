@@ -103,10 +103,6 @@ function GameDetailPage() {
 								description: game.description || "",
 								categoryId: game.categoryId,
 								subCategory: game.subCategory || "",
-								targetIssues: game.targetIssues || [],
-								difficulty: game.difficulty || "",
-								ageRangeMin: game.ageRangeMin ?? undefined,
-								ageRangeMax: game.ageRangeMax ?? undefined,
 								isGlobal: game.isGlobal,
 							}}
 							onSuccess={() => {}}

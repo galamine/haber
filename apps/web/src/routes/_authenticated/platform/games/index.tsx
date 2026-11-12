@@ -143,7 +143,6 @@ function PlatformGamesPage() {
 							<TableRow>
 								<TableHead>Game</TableHead>
 								<TableHead>Category</TableHead>
-								<TableHead>Difficulty</TableHead>
 								<TableHead>Status</TableHead>
 								<TableHead className="text-right">Actions</TableHead>
 							</TableRow>
@@ -171,11 +170,6 @@ function PlatformGamesPage() {
 										<Badge variant="outline">
 											{game.category?.name || "N/A"}
 										</Badge>
-									</TableCell>
-									<TableCell>
-										<span className="text-sm">
-											{game.difficulty ? `Level ${game.difficulty}` : "N/A"}
-										</span>
 									</TableCell>
 									<TableCell>{getStatusBadge(game)}</TableCell>
 									<TableCell className="text-right">

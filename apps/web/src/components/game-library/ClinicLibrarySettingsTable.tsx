@@ -1,4 +1,3 @@
-import { Badge } from "@haber-final/ui/components/badge";
 import { Input } from "@haber-final/ui/components/input";
 import { Switch } from "@haber-final/ui/components/switch";
 import {
@@ -90,21 +89,19 @@ export function ClinicLibrarySettingsTable() {
 						<TableRow>
 							<TableHead>Game Name</TableHead>
 							<TableHead>Category</TableHead>
-							<TableHead>Level</TableHead>
-							<TableHead>Target Issues</TableHead>
 							<TableHead className="text-right">Enabled</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
 						{isLoading ? (
 							<TableRow>
-								<TableCell colSpan={5} className="py-8 text-center">
+								<TableCell colSpan={3} className="py-8 text-center">
 									Loading games...
 								</TableCell>
 							</TableRow>
 						) : allGames.length === 0 ? (
 							<TableRow>
-								<TableCell colSpan={5} className="py-8 text-center">
+								<TableCell colSpan={3} className="py-8 text-center">
 									No games found.
 								</TableCell>
 							</TableRow>
@@ -118,25 +115,6 @@ export function ClinicLibrarySettingsTable() {
 									>
 										<TableCell className="font-medium">{game.name}</TableCell>
 										<TableCell>{game.subCategory || "General"}</TableCell>
-										<TableCell>{game.difficulty || "N/A"}</TableCell>
-										<TableCell>
-											<div className="flex flex-wrap gap-1">
-												{game.targetIssues?.slice(0, 2).map((issue) => (
-													<Badge
-														key={issue}
-														variant="outline"
-														className="text-xs"
-													>
-														{issue}
-													</Badge>
-												))}
-												{(game.targetIssues?.length || 0) > 2 && (
-													<Badge variant="outline" className="text-xs">
-														+{(game.targetIssues?.length || 0) - 2} more
-													</Badge>
-												)}
-											</div>
-										</TableCell>
 										<TableCell className="text-right">
 											<Switch
 												checked={isEnabled}

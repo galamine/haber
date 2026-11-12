@@ -1,5 +1,4 @@
 import type { AppRouter } from "@haber-final/api/routers/index";
-import { Badge } from "@haber-final/ui/components/badge";
 import { Button } from "@haber-final/ui/components/button";
 import { Card, CardContent, CardFooter } from "@haber-final/ui/components/card";
 import { Skeleton } from "@haber-final/ui/components/skeleton";
@@ -25,22 +24,6 @@ export function GameCard({ game, onViewDetails }: GameCardProps) {
 			<CardContent className="flex-1 p-4">
 				<div className="mb-2 flex items-start justify-between">
 					<h3 className="line-clamp-1 font-semibold text-lg">{game.name}</h3>
-					<Badge variant="secondary" className="ml-2 whitespace-nowrap">
-						Level {game.difficulty || "N/A"}
-					</Badge>
-				</div>
-
-				<div className="mb-3 flex flex-wrap gap-1">
-					{game.ageRangeMin !== null && game.ageRangeMax !== null ? (
-						<Badge variant="outline" className="text-xs">
-							Ages {game.ageRangeMin}-{game.ageRangeMax}
-						</Badge>
-					) : null}
-					{game.targetIssues?.map((issue) => (
-						<Badge key={issue} variant="outline" className="text-xs">
-							{issue}
-						</Badge>
-					))}
 				</div>
 
 				<p className="line-clamp-3 text-muted-foreground text-sm">
