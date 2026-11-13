@@ -10,6 +10,7 @@ export const CreateGameInput = z.object({
 	difficulty: z.string().optional(),
 	ageRangeMin: z.number().int().nonnegative().optional(),
 	ageRangeMax: z.number().int().nonnegative().optional(),
+	previewPath: z.string().optional(),
 	isGlobal: z.boolean().default(true),
 	clinicIds: z.array(z.string()).optional(),
 	initialVersionNumber: z.string().default("1"),
@@ -32,6 +33,7 @@ export const UpdateGameInput = z.object({
 	difficulty: z.string().optional(),
 	ageRangeMin: z.number().int().nonnegative().optional(),
 	ageRangeMax: z.number().int().nonnegative().optional(),
+	previewPath: z.string().optional(),
 	isGlobal: z.boolean().optional(),
 	clinicIds: z.array(z.string()).optional(),
 });
@@ -58,6 +60,11 @@ export const GameListInput = z.object({
 	ageRangeMin: z.number().int().nonnegative().optional(),
 	ageRangeMax: z.number().int().nonnegative().optional(),
 	enabledForClinic: z.boolean().optional(),
+	playedByChildId: z.string().optional(),
+});
+
+export const PlayHistoryInput = z.object({
+	childId: z.string(),
 });
 
 export const CreateSubCategoryInput = z.object({

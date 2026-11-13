@@ -37,26 +37,6 @@ export function ReadOnlySectionE({ data }: ReadOnlySectionEProps) {
 				className="md:col-span-2"
 			/>
 
-			<div className="md:col-span-2">
-				<dt className="font-medium text-on-surface-variant text-xs uppercase tracking-wider">
-					Updated Goals
-				</dt>
-				{data.updatedGoals.length > 0 ? (
-					<ul className="mt-1 list-inside list-disc text-on-surface text-sm">
-						{data.updatedGoals.map((g) => (
-							<li key={g.goalId}>{g.description}</li>
-						))}
-					</ul>
-				) : (
-					<dd className="mt-1 text-on-surface text-sm">—</dd>
-				)}
-			</div>
-
-			<ReadOnlyField
-				label="Updated Home Program"
-				value={data.updatedHomeProgram}
-				className="md:col-span-2"
-			/>
 			<ReadOnlyField
 				label="Next Follow-Up Date"
 				value={data.nextFollowUpDate}

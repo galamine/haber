@@ -43,7 +43,6 @@ export const FOLLOWUP_EMPTY_DEFAULTS: FollowUpFormValues = {
 		improvementsAtHome: [],
 		improvementsAtSchool: [],
 		regressions: undefined,
-		homeProgramCompliance: "",
 		sessionEngagement: "",
 		schoolPerformanceChanges: [],
 		behaviourChanges: [],
@@ -53,8 +52,6 @@ export const FOLLOWUP_EMPTY_DEFAULTS: FollowUpFormValues = {
 	},
 	sectionE: {
 		goalStatusDecisions: [],
-		updatedGoals: [],
-		updatedHomeProgram: "",
 		nextFollowUpDate: "",
 		nextAssessmentType: "",
 		clinicalNotes: "",

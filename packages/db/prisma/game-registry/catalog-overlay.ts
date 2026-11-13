@@ -24,6 +24,8 @@ export interface CatalogOverlayEntry {
 	description: string;
 	primaryDomain: ClinicalDomain;
 	secondaryDomains: ClinicalDomain[];
+	/** Preview clip (mp4/webm/gif) path on the game server, shown in the game picker. */
+	previewPath?: string;
 }
 
 function trail(

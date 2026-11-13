@@ -319,8 +319,6 @@ export const sessionRouter = router({
 					data: {
 						sessionId: session.id,
 						gameVersionId: input.gameVersionId,
-						durationSeconds: input.durationSeconds,
-						repetitions: input.repetitions,
 						instructions: input.instructions,
 						order: 0,
 					},

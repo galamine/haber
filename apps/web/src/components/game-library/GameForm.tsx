@@ -77,6 +77,7 @@ export function GameForm({
 			description: initialValues?.description || "",
 			categoryId: initialValues?.categoryId || "",
 			subCategory: initialValues?.subCategory || "",
+			previewPath: initialValues?.previewPath || "",
 			isGlobal: initialValues?.isGlobal ?? true,
 			clinicIds: initialValues?.clinicIds || [],
 			initialVersionNumber: initialValues?.initialVersionNumber || "1",
@@ -85,7 +86,6 @@ export function GameForm({
 			path: initialValues?.path || "",
 			entryScenes: initialValues?.entryScenes || "",
 			supportedLevels: initialValues?.supportedLevels || "",
-			totalTimeSec: initialValues?.totalTimeSec,
 		},
 	});
 
@@ -126,6 +126,7 @@ export function GameForm({
 				description: values.description,
 				categoryId: values.categoryId,
 				subCategory: values.subCategory,
+				previewPath: values.previewPath,
 				isGlobal: values.isGlobal,
 				clinicIds: values.isGlobal ? undefined : values.clinicIds,
 			});
@@ -143,6 +144,7 @@ export function GameForm({
 				description: values.description,
 				categoryId: values.categoryId,
 				subCategory: values.subCategory,
+				previewPath: values.previewPath || undefined,
 				isGlobal: values.isGlobal,
 				clinicIds: values.isGlobal ? undefined : values.clinicIds,
 				initialVersionNumber: values.initialVersionNumber,
@@ -161,7 +163,6 @@ export function GameForm({
 							.map((s) => Number.parseInt(s.trim(), 10))
 							.filter((n) => !Number.isNaN(n))
 					: [],
-				totalTimeSec: values.totalTimeSec,
 			});
 		}
 	}
@@ -244,6 +245,24 @@ export function GameForm({
 						)}
 					/>
 				</div>
+
+				<FormField
+					control={form.control}
+					name="previewPath"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Preview clip path</FormLabel>
+							<FormControl>
+								<Input placeholder="/previews/ball-pop.mp4" {...field} />
+							</FormControl>
+							<FormDescription>
+								Short video (mp4/webm) or GIF on the game server, shown to
+								therapists when they pick a game.
+							</FormDescription>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
 
 				<FormField
 					control={form.control}
@@ -378,31 +397,6 @@ export function GameForm({
 										<FormDescription>
 											Path on the game server this version launches.
 										</FormDescription>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="totalTimeSec"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Total Time (sec)</FormLabel>
-										<FormControl>
-											<Input
-												type="number"
-												min={0}
-												placeholder="90"
-												{...field}
-												onChange={(e) =>
-													field.onChange(
-														e.target.value
-															? Number.parseInt(e.target.value)
-															: undefined,
-													)
-												}
-											/>
-										</FormControl>
 										<FormMessage />
 									</FormItem>
 								)}

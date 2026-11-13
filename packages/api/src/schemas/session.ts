@@ -43,8 +43,6 @@ export const CreateSessionInput = z.object({
 	roomId: z.string(),
 	assignedTherapistId: z.string().optional(),
 	gameVersionId: z.string(),
-	durationSeconds: z.number().int().positive().optional(),
-	repetitions: z.number().int().positive().optional(),
 	instructions: z.string().optional(),
 	acknowledgeConflict: z.boolean().default(false),
 });

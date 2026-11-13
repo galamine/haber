@@ -46,6 +46,7 @@ export function CreateSessionSheet({
 	open,
 	onOpenChange,
 	planId,
+	childId,
 	defaultDurationMinutes,
 	onSuccess,
 }: CreateSessionSheetProps) {
@@ -62,8 +63,6 @@ export function CreateSessionSheet({
 	const [game, setGame] = useState<{
 		gameVersionId: string;
 		gameName: string;
-		durationSeconds?: number;
-		repetitions?: number;
 		instructions?: string;
 	}>();
 	const [gamePickerOpen, setGamePickerOpen] = useState(false);
@@ -121,6 +120,10 @@ export function CreateSessionSheet({
 			toast.error("Date and time are required");
 			return;
 		}
+		if (!(durationMinutes > 0)) {
+			toast.error("Duration is required");
+			return;
+		}
 		if (!roomId) {
 			toast.error("Room is required");
 			return;
@@ -137,8 +140,6 @@ export function CreateSessionSheet({
 			roomId,
 			assignedTherapistId,
 			gameVersionId: game.gameVersionId,
-			durationSeconds: game.durationSeconds,
-			repetitions: game.repetitions,
 			instructions: game.instructions,
 			acknowledgeConflict,
 		});
@@ -185,7 +186,9 @@ export function CreateSessionSheet({
 						</div>
 					</div>
 					<div className="space-y-2">
-						<Label htmlFor="durationMinutes">Duration (minutes)</Label>
+						<Label htmlFor="durationMinutes">
+							Duration (minutes) <span className="text-danger">*</span>
+						</Label>
 						<Input
 							id="durationMinutes"
 							type="number"
@@ -275,6 +278,7 @@ export function CreateSessionSheet({
 				</SheetFooter>
 
 				<GamePickerSheet
+					childId={childId}
 					open={gamePickerOpen}
 					onOpenChange={setGamePickerOpen}
 					onSelect={(g) => {

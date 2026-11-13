@@ -44,14 +44,6 @@ export const FOLLOWUP_TABS: readonly FollowUpTabEntry[] = [
 ];
 export type FollowUpTabValue = (typeof FOLLOWUP_TABS)[number]["value"];
 
-export const COMPLIANCE_OPTIONS = [
-	{ value: "excellent", label: "Excellent" },
-	{ value: "good", label: "Good" },
-	{ value: "partial", label: "Partial" },
-	{ value: "minimal", label: "Minimal" },
-	{ value: "not_started", label: "Not Started" },
-] as const;
-
 export const ENGAGEMENT_OPTIONS = [
 	{ value: "excellent", label: "Excellent" },
 	{ value: "good", label: "Good" },

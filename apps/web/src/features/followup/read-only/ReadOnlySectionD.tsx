@@ -3,17 +3,13 @@ import type { z } from "zod";
 import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
 import { ReadOnlyField } from "../../assessment/read-only/ReadOnlyField";
 import { TagList } from "../../assessment/read-only/TagList";
-import { COMPLIANCE_OPTIONS, ENGAGEMENT_OPTIONS } from "../constants";
+import { ENGAGEMENT_OPTIONS } from "../constants";
 
 type SectionDData = z.infer<typeof FollowUpSectionDSchema>;
 
 type ReadOnlySectionDProps = {
 	data: SectionDData;
 };
-
-function getComplianceLabel(value: string): string {
-	return COMPLIANCE_OPTIONS.find((o) => o.value === value)?.label ?? value;
-}
 
 function getEngagementLabel(value: string): string {
 	return ENGAGEMENT_OPTIONS.find((o) => o.value === value)?.label ?? value;
@@ -36,10 +32,6 @@ export function ReadOnlySectionD({ data }: ReadOnlySectionDProps) {
 				label="Regression(s) Noted"
 				value={data.regressions}
 				className="md:col-span-2"
-			/>
-			<ReadOnlyField
-				label="Home Program Compliance"
-				value={getComplianceLabel(data.homeProgramCompliance)}
 			/>
 			<ReadOnlyField
 				label="Session Engagement"

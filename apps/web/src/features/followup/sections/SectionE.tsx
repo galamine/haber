@@ -1,4 +1,3 @@
-import { Button } from "@haber-final/ui/components/button";
 import { Checkbox } from "@haber-final/ui/components/checkbox";
 import { Input } from "@haber-final/ui/components/input";
 import {
@@ -9,8 +8,7 @@ import {
 	SelectValue,
 } from "@haber-final/ui/components/select";
 import { Textarea } from "@haber-final/ui/components/textarea";
-import { Plus, Trash2 } from "lucide-react";
-import { Controller, useFieldArray } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
 import { FieldWrapper } from "../../assessment/FieldWrapper";
 import {
@@ -20,11 +18,6 @@ import {
 import type { FollowUpSectionProps } from "../types";
 
 export function SectionE({ register, control, errors }: FollowUpSectionProps) {
-	const { fields, append, remove } = useFieldArray({
-		control,
-		name: "sectionE.updatedGoals",
-	});
-
 	const e = errors.sectionE;
 
 	return (
@@ -68,64 +61,6 @@ export function SectionE({ register, control, errors }: FollowUpSectionProps) {
 					)}
 				/>
 			</div>
-
-			<div className="flex flex-col gap-3 md:col-span-2">
-				<p className="font-medium text-on-surface text-sm">Updated Goals</p>
-
-				{fields.map((field, idx) => (
-					<div
-						key={field.id}
-						className="grid grid-cols-1 gap-3 rounded-lg border border-outline-variant p-4 md:grid-cols-[1fr_auto]"
-					>
-						<FieldWrapper label="Goal Description">
-							<Input
-								{...register(`sectionE.updatedGoals.${idx}.description`)}
-							/>
-						</FieldWrapper>
-						<div className="flex items-end">
-							<Button
-								type="button"
-								variant="outline"
-								size="icon"
-								onClick={() => remove(idx)}
-								className="shrink-0 text-red-600 hover:bg-red-50"
-							>
-								<Trash2 className="h-4 w-4" />
-							</Button>
-						</div>
-					</div>
-				))}
-
-				<Button
-					type="button"
-					variant="outline"
-					className="w-full gap-2"
-					onClick={() =>
-						append({
-							goalId: crypto.randomUUID(),
-							description: "",
-							targetAttainmentPct: 100,
-						})
-					}
-				>
-					<Plus className="h-4 w-4" />
-					Add Goal
-				</Button>
-			</div>
-
-			<FieldWrapper
-				label="Updated Home Program"
-				htmlFor="sectionE.updatedHomeProgram"
-				error={e?.updatedHomeProgram?.message}
-				className="md:col-span-2"
-			>
-				<Textarea
-					id="sectionE.updatedHomeProgram"
-					rows={3}
-					{...register("sectionE.updatedHomeProgram")}
-					className={e?.updatedHomeProgram ? "border-red-500" : ""}
-				/>
-			</FieldWrapper>
 
 			<FieldWrapper
 				label="Next Follow-Up Date"

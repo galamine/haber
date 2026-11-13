@@ -13,6 +13,7 @@ import {
 	CreateSubCategoryInput,
 	EnableDisableGameInput,
 	GameListInput,
+	PlayHistoryInput,
 	UpdateGameInput,
 } from "../schemas/game";
 
@@ -124,13 +125,32 @@ export const gameRouter = router({
 	list: protectedProcedure
 		.input(GameListInput)
 		.query(async ({ ctx, input }) => {
-			const { page, pageSize, enabledForClinic, ...filters } = input;
+			const { page, pageSize, enabledForClinic, playedByChildId, ...filters } =
+				input;
 			const skip = (page - 1) * pageSize;
 
-			const where: any = {};
+			const where: any = { AND: [] };
 
 			if (filters.search)
-				where.name = { contains: filters.search, mode: "insensitive" };
+				where.AND.push({
+					OR: [
+						{ name: { contains: filters.search, mode: "insensitive" } },
+						{ description: { contains: filters.search, mode: "insensitive" } },
+					],
+				});
+			if (playedByChildId)
+				where.versions = {
+					some: {
+						sessionAssignments: {
+							some: {
+								session: {
+									childId: playedByChildId,
+									plan: { clinicId: ctx.auth.tenantId ?? undefined },
+								},
+							},
+						},
+					},
+				};
 			if (filters.categoryId) where.categoryId = filters.categoryId;
 			if (filters.subCategory) where.subCategory = filters.subCategory;
 			if (filters.difficulty) where.difficulty = filters.difficulty;
@@ -141,17 +161,21 @@ export const gameRouter = router({
 
 			if (enabledForClinic === true) {
 				const tenantId = ctx.auth.tenantId;
-				where.OR = [
-					{
-						isGlobal: true,
-						NOT: {
-							clinicEnables: { some: { clinicId: tenantId!, enabled: false } },
+				where.AND.push({
+					OR: [
+						{
+							isGlobal: true,
+							NOT: {
+								clinicEnables: {
+									some: { clinicId: tenantId!, enabled: false },
+								},
+							},
 						},
-					},
-					{
-						clinicEnables: { some: { clinicId: tenantId!, enabled: true } },
-					},
-				];
+						{
+							clinicEnables: { some: { clinicId: tenantId!, enabled: true } },
+						},
+					],
+				});
 			}
 
 			const [items, total] = await prisma.$transaction([
@@ -159,13 +183,56 @@ export const gameRouter = router({
 					where,
 					skip,
 					take: pageSize,
-					orderBy: { createdAt: "desc" },
-					include: { versions: { where: { isLatest: true }, take: 1 } },
+					orderBy: { name: "asc" },
+					include: {
+						category: true,
+						versions: { where: { isLatest: true }, take: 1 },
+					},
 				}),
 				prisma.game.count({ where }),
 			]);
 
 			return { items, total, page, totalPages: Math.ceil(total / pageSize) };
+		}),
+
+	playHistoryForChild: protectedProcedure
+		.input(PlayHistoryInput)
+		.query(async ({ ctx, input }) => {
+			const assignments = await prisma.sessionGameAssignment.findMany({
+				where: {
+					session: {
+						childId: input.childId,
+						plan: { clinicId: ctx.auth.tenantId ?? undefined },
+						status: { not: "ABSENT" },
+						scheduledDate: { lte: new Date() },
+					},
+				},
+				select: {
+					gameVersion: { select: { gameId: true } },
+					session: { select: { scheduledDate: true } },
+				},
+			});
+
+			const history = new Map<
+				string,
+				{ gameId: string; lastPlayedAt: Date; timesPlayed: number }
+			>();
+			for (const a of assignments) {
+				const gameId = a.gameVersion.gameId;
+				const playedAt = a.session.scheduledDate;
+				const entry = history.get(gameId);
+				if (!entry) {
+					history.set(gameId, {
+						gameId,
+						lastPlayedAt: playedAt,
+						timesPlayed: 1,
+					});
+				} else {
+					entry.timesPlayed++;
+					if (playedAt > entry.lastPlayedAt) entry.lastPlayedAt = playedAt;
+				}
+			}
+			return [...history.values()];
 		}),
 
 	listCategories: protectedProcedure.query(async ({ ctx }) => {

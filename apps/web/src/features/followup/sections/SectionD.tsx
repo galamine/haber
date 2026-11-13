@@ -8,7 +8,7 @@ import { Controller } from "react-hook-form";
 import { MultiSelectCombobox } from "@/components/multi-select-combobox";
 import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
 import { FieldWrapper } from "../../assessment/FieldWrapper";
-import { COMPLIANCE_OPTIONS, ENGAGEMENT_OPTIONS } from "../constants";
+import { ENGAGEMENT_OPTIONS } from "../constants";
 import type { FollowUpSectionProps } from "../types";
 
 type SectionDProps = FollowUpSectionProps & {
@@ -74,38 +74,6 @@ export function SectionD({
 					rows={2}
 					{...register("sectionD.regressions")}
 					className={e?.regressions ? "border-red-500" : ""}
-				/>
-			</FieldWrapper>
-
-			<FieldWrapper
-				label="Home Program Compliance"
-				htmlFor="sectionD.homeProgramCompliance"
-				required
-				error={e?.homeProgramCompliance?.message}
-			>
-				<Controller
-					control={control}
-					name="sectionD.homeProgramCompliance"
-					render={({ field }) => (
-						<RadioGroup
-							value={field.value}
-							onValueChange={field.onChange}
-							className="flex flex-col gap-2"
-						>
-							{COMPLIANCE_OPTIONS.map((option) => (
-								// biome-ignore lint/a11y/noLabelWithoutControl: RadioGroupItem (Radix) renders an accessible radio; label association is implicit
-								<label
-									key={option.value}
-									className="flex cursor-pointer items-center gap-2"
-								>
-									<RadioGroupItem value={option.value} />
-									<span className="text-on-surface text-sm">
-										{option.label}
-									</span>
-								</label>
-							))}
-						</RadioGroup>
-					)}
 				/>
 			</FieldWrapper>
 

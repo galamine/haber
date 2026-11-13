@@ -121,6 +121,7 @@ model Game {
   difficulty   String?
   ageRangeMin  Int?
   ageRangeMax  Int?
+  previewPath  String?
   isGlobal     Boolean  @default(true)
   createdAt    DateTime @default(now())
 

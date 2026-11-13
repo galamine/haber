@@ -75,6 +75,9 @@ for (const registry of registries) {
 			categoryId,
 			secondaryDomains: overlay.secondaryDomains,
 			isGlobal: true,
+			// Only set when the overlay has one, so a re-seed never wipes a
+			// path entered in the platform game form.
+			...(overlay.previewPath ? { previewPath: overlay.previewPath } : {}),
 		};
 		const game = await prisma.game.upsert({
 			where: { key: entry.name },

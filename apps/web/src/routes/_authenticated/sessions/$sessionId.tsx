@@ -256,8 +256,6 @@ function SessionDetailPage() {
 			toast.error("This game version has no launch path configured");
 			return;
 		}
-		const totalTime =
-			assignment.durationSeconds ?? assignment.gameVersion.totalTimeSec;
 		const level = assignment.gameVersion.supportedLevels[0] ?? 1;
 		const params = new URLSearchParams({
 			session: sessionId,
@@ -265,8 +263,8 @@ function SessionDetailPage() {
 			version: assignment.gameVersion.versionNumber,
 			webhook_secret: session?.webhookSecret ?? "",
 		});
-		if (totalTime != null) {
-			params.set("totalTime", String(totalTime));
+		if (session) {
+			params.set("totalTime", String(session.durationMinutes * 60));
 		}
 		const webhookUrl = `${env.VITE_GAME_SERVER_URL}${assignment.gameVersion.path}?${params.toString()}`;
 		window.open(webhookUrl, "_blank");
@@ -467,9 +465,6 @@ function SessionDetailPage() {
 									</p>
 								)}
 								<div className="mb-3 flex items-center gap-3 text-muted-foreground text-xs">
-									{assignment.durationSeconds && (
-										<span>Duration: {assignment.durationSeconds}s</span>
-									)}
 									{assignment.repetitions && (
 										<span>Reps: {assignment.repetitions}</span>
 									)}

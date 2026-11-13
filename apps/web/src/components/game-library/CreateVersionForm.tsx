@@ -31,7 +31,6 @@ const createVersionSchema = z.object({
 	rubricVersion: z.string().min(1, "Rubric version is required"),
 	scoringSchema: z.string().default("{}"),
 	path: z.string().default(""),
-	totalTimeSec: z.number().int().positive().optional(),
 	entryScenes: z.string().default(""),
 	supportedLevels: z.string().default(""),
 });
@@ -63,7 +62,6 @@ export function CreateVersionForm({
 			rubricVersion: "",
 			scoringSchema: "{}",
 			path: "",
-			totalTimeSec: undefined,
 			entryScenes: "",
 			supportedLevels: "",
 		},
@@ -99,7 +97,6 @@ export function CreateVersionForm({
 			rubricVersion: values.rubricVersion,
 			scoringSchema,
 			path: values.path || undefined,
-			totalTimeSec: values.totalTimeSec,
 			entryScenes: values.entryScenes
 				? values.entryScenes
 						.split(",")
@@ -189,32 +186,6 @@ export function CreateVersionForm({
 										<Input
 											placeholder="/activity_games/pop-games/ball-pop.html"
 											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name="totalTimeSec"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Total Time (sec)</FormLabel>
-									<FormControl>
-										<Input
-											type="number"
-											min={0}
-											placeholder="90"
-											{...field}
-											onChange={(e) =>
-												field.onChange(
-													e.target.value
-														? Number.parseInt(e.target.value)
-														: undefined,
-												)
-											}
 										/>
 									</FormControl>
 									<FormMessage />

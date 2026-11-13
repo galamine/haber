@@ -13,12 +13,6 @@ export const SensoryRatingSchema = z.object({
 	notes: z.string(),
 });
 
-export const GoalTemplateSchema = z.object({
-	goalId: z.string(),
-	description: z.string().min(1, "Goal description is required"),
-	targetAttainmentPct: z.number().min(0).max(100),
-});
-
 export const SectionASchema = z.object({
 	patientName: z.string().min(1, "Patient name is required"),
 	dob: z.string().min(1, "Date of birth is required"),
@@ -153,7 +147,6 @@ export const FollowUpSectionDSchema = z.object({
 	improvementsAtHome: z.array(z.string()),
 	improvementsAtSchool: z.array(z.string()),
 	regressions: z.string().optional(),
-	homeProgramCompliance: z.string(),
 	sessionEngagement: z.string(),
 	schoolPerformanceChanges: z.array(z.string()),
 	behaviourChanges: z.array(z.string()),
@@ -164,8 +157,6 @@ export const FollowUpSectionDSchema = z.object({
 
 export const FollowUpSectionESchema = z.object({
 	goalStatusDecisions: z.array(z.string()),
-	updatedGoals: z.array(GoalTemplateSchema),
-	updatedHomeProgram: z.string(),
 	nextFollowUpDate: z.string(),
 	nextAssessmentType: z.string(),
 	clinicalNotes: z.string(),

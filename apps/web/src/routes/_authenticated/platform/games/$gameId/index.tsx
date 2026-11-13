@@ -103,6 +103,7 @@ function GameDetailPage() {
 								description: game.description || "",
 								categoryId: game.categoryId,
 								subCategory: game.subCategory || "",
+								previewPath: game.previewPath || "",
 								isGlobal: game.isGlobal,
 							}}
 							onSuccess={() => {}}

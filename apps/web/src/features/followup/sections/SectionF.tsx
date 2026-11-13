@@ -1,5 +1,6 @@
 import { Checkbox } from "@haber-final/ui/components/checkbox";
 import { Input } from "@haber-final/ui/components/input";
+import { cn } from "@haber-final/ui/lib/utils";
 import { Controller } from "react-hook-form";
 
 import { AssessmentSectionCard } from "../../assessment/AssessmentSectionCard";
@@ -8,6 +9,7 @@ import type { FollowUpSectionProps } from "../types";
 
 type SectionFProps = FollowUpSectionProps & {
 	therapistCredentials?: string;
+	guardianNameLocked: boolean;
 };
 
 export function SectionF({
@@ -15,6 +17,7 @@ export function SectionF({
 	control,
 	errors,
 	therapistCredentials,
+	guardianNameLocked,
 }: SectionFProps) {
 	const e = errors.sectionF;
 
@@ -47,8 +50,13 @@ export function SectionF({
 			>
 				<Input
 					id="sectionF.guardianName"
+					readOnly={guardianNameLocked}
 					{...register("sectionF.guardianName")}
-					className={e?.guardianName ? "border-red-500" : ""}
+					className={cn(
+						e?.guardianName && "border-red-500",
+						guardianNameLocked &&
+							"cursor-not-allowed bg-surface-container text-on-surface-variant",
+					)}
 				/>
 			</FieldWrapper>
 

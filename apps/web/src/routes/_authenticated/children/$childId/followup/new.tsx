@@ -72,8 +72,13 @@ function NewFollowUpPage() {
 			}),
 		);
 		form.setValue("sectionF.therapistName", data.therapistMe.data?.email ?? "");
+		form.setValue(
+			"sectionF.guardianName",
+			data.child.data?.guardian?.name ?? "",
+		);
 	}, [
 		data.isLoading,
+		data.child.data,
 		data.initialAssessment.data,
 		data.therapistMe.data,
 		data.followUps.data,
@@ -292,6 +297,7 @@ function NewFollowUpPage() {
 							control={control}
 							errors={errors}
 							therapistCredentials={therapistCredentials}
+							guardianNameLocked={!!data.child.data?.guardian?.name}
 						/>
 					),
 				}}

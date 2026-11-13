@@ -4,6 +4,7 @@ import { trpc } from "@/utils/trpc";
 
 export function useFollowUpData({ childId }: { childId: string }) {
 	const therapistMe = useQuery(trpc.auth.me.queryOptions());
+	const child = useQuery(trpc.child.get.queryOptions({ childId }));
 	const initialAssessment = useQuery({
 		...trpc.assessment.get.queryOptions({ childId }),
 		retry: false,
@@ -22,6 +23,7 @@ export function useFollowUpData({ childId }: { childId: string }) {
 
 	const isLoading = [
 		therapistMe,
+		child,
 		initialAssessment,
 		followUps,
 		activePlan,
@@ -31,6 +33,7 @@ export function useFollowUpData({ childId }: { childId: string }) {
 
 	return {
 		therapistMe,
+		child,
 		initialAssessment,
 		followUps,
 		activePlan,
