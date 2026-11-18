@@ -1,6 +1,9 @@
 import { cn } from "@haber-final/ui/lib/utils";
+import { useState } from "react";
 
-// Placeholder until real game artwork exists: a tile coloured by clinical domain.
+// Animated thumbnails live in apps/web/public/game-thumbnails/<key>.gif (wide)
+// and <key>-sm.gif (square), made by scripts/game-thumbnails/generate.py.
+// Games without one fall back to a tile coloured by clinical domain.
 const CATEGORY_COLORS: Record<string, string> = {
 	"Motor Skills": "bg-blue-100 text-blue-800",
 	"Cognitive Processing": "bg-purple-100 text-purple-700",
@@ -25,6 +28,7 @@ function initials(name: string) {
 
 interface GameThumbnailProps {
 	name: string;
+	gameKey?: string | null;
 	categoryName?: string;
 	size?: "sm" | "lg";
 	className?: string;
@@ -32,10 +36,30 @@ interface GameThumbnailProps {
 
 export function GameThumbnail({
 	name,
+	gameKey,
 	categoryName,
 	size = "sm",
 	className,
 }: GameThumbnailProps) {
+	const [failed, setFailed] = useState(false);
+
+	if (gameKey && !failed) {
+		return (
+			<img
+				src={`/game-thumbnails/${gameKey}${size === "sm" ? "-sm" : ""}.gif`}
+				alt=""
+				onError={() => setFailed(true)}
+				className={cn(
+					"flex-shrink-0 object-cover",
+					size === "sm"
+						? "h-16 w-16 rounded-lg"
+						: "aspect-video w-full rounded-xl",
+					className,
+				)}
+			/>
+		);
+	}
+
 	return (
 		<div
 			aria-hidden

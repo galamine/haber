@@ -38,12 +38,15 @@ function GamePreview({ game }: { game: GameItem }) {
 			<div className="space-y-1.5">
 				<GameThumbnail
 					name={game.name}
+					gameKey={game.key}
 					categoryName={game.category.name}
 					size="lg"
 				/>
-				<p className="text-center text-on-surface-variant text-xs">
-					Preview not available yet
-				</p>
+				{game.key ? null : (
+					<p className="text-center text-on-surface-variant text-xs">
+						Preview not available yet
+					</p>
+				)}
 			</div>
 		);
 	}
@@ -339,6 +342,7 @@ export function GamePickerSheet({
 									>
 										<GameThumbnail
 											name={game.name}
+											gameKey={game.key}
 											categoryName={game.category.name}
 										/>
 										<div className="min-w-0 flex-1 space-y-1.5">
